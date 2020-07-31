@@ -204,6 +204,8 @@ async def on_data(websocket, path):
     try:
         async for message in websocket:
             audio_buffer.put(message)
+
+            # Comment out next two lines if no recording needed 
             decoded_audio_data = dec.decode(message, 4096)
             record_audio.append(decoded_audio_data)
 
