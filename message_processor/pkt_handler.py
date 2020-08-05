@@ -12,9 +12,13 @@ def isRequestValid(pkt):
         return False
 
 
-def prepare_response(status=None, response=None):
-    if status == 200:
-        print(response)
-        return json.dumps(response), status, {"ContentType": "application/json"}
+def prepare_response(pkt , is_ok):
+    if is_ok: 
+        response_pkt = pkt
+        response_pkt["response"] = {"name": pkt["msg"]["name"], "status": True}
+        return response_pkt
     else:
-        return json.dumps(response), status, {"ContentType": "application/json"}
+        response_pkt = pkt
+        response_pkt["response"] = {"name": pkt["msg"]["name"], "status": False}
+        return response_pkt
+

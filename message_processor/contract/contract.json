@@ -1,0 +1,73 @@
+{
+    "context": {
+        "id": "",
+        "origin": "client1 / client2",
+        "conversation_id": ""
+    },
+    "msg": {
+        "name": "INIT",
+        "desc": "ADD new record",
+        "data": {
+            "Start_time": "DDMMYYY",
+            "End_time": "DDMMYY"
+        },
+        "version": ""
+    },
+    "response": [
+        {
+            "name": "INIT",
+            "status": true
+        }
+    ]
+}
+    
+
+
+{
+    "context": {
+        "id": "",
+        "origin": "client1 / client2",
+        "conversation_id": ""
+    },
+    "msg": {
+        "name": "UPDATE",
+        "desc": "Update record",
+        "data": {
+            "Start_time": "DDMMYYY",
+            "End_time": "DDMMYY"
+        },
+        "version": ""
+    },
+    "response": [
+        {
+            "name": "UPDATE",
+            "status": true
+        }
+    ]
+}
+
+
+
+{
+    "context": {
+        "id": "",
+        "origin": "client1 / client2",
+        "conversation_id": ""
+    },
+    "msg": {
+        "name": "DELETE",
+        "desc": "Delete record",
+        "data": {
+            "Start_time": "DDMMYYY",
+            "End_time": "DDMMYY"
+        },
+        "version": ""
+    },
+    "response": [
+        {
+            "name": "DELETE",
+            "status": true
+        }
+    ]
+}
+
