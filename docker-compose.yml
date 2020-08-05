@@ -1,0 +1,28 @@
+version: '3'
+services:
+  # mongo:
+  #   image: mongo
+  #   command: mongod --port 27018 --directoryperdb --dbpath=/data/db --bind_ip_all
+  #   ports:
+  #   - "27018:27018"
+  #   volumes:
+  #     - ./db/:/data/db
+
+  transcription:
+    build: ./transcription/
+    ports:
+    - "5000:5000"
+    volumes:
+      - ./transcription/:/home/transcription/
+      # Exclude mount node_modules directory
+    environment:
+      - GOOGLE_APPLICATION_CREDENTIALS=/home/transcription/project-voicebox-fa7bc2f8fa18.json # Google credential file
+
+  message_processor:
+    build: ./message_processor/
+    ports:
+    - "8000:8000"
+    volumes:
+      - ./message_processor/:/home/message_processor/
+      # Exclude mount node_modules directory
+      #- /usr/src/app/node_modules/

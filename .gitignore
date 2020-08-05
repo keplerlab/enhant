@@ -6,6 +6,8 @@ npm-debug.log
 package-lock.json
 test/*.log
 
+# Log files 
+log.txt
 # Skip recoreded audio 
 *.wav 
 
