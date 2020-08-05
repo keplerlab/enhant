@@ -71,3 +71,85 @@
     ]
 }
 
+
+
+
+///  Example update record for transcription 
+
+{
+    "context": {
+        "id": "",
+        "origin": "client1 / client2",
+        "conversation_id": ""
+    },
+    "msg": {
+        "name": "UPDATE",
+        "desc": "Update record",
+        "data": {
+            "Start_time": "DDMMYYY",
+            "End_time": "DDMMYY",
+            "meeting_name": "rohit_nitin",
+            "transcription": "Transcription here.."
+        },
+        "version": ""
+    },
+    "response": [
+        {
+            "name": "UPDATE",
+            "status": true
+        }
+    ]
+}
+
+
+// Example request for adding new note
+{
+    "context": {
+        "id": "",
+        "origin": "client1 / client2",
+        "conversation_id": ""
+    },
+    "msg": {
+        "name": "UPDATE",
+        "desc": "Update record",
+        "data": {
+            "meeting_name": "rohit_nitin",
+            "notes": "Notes here.",
+            "client1": "Rohit Pandey",
+            "client2": "Nitin Katyal",
+            "email": "rohit.pandey@gmail.com"
+        },
+        "version": ""
+    },
+    "response": [
+        {
+            "name": "UPDATE",
+            "status": true
+        }
+    ]
+}
+
+
+// Example request for adding capture moment/bookmark
+{
+    "context": {
+        "id": "",
+        "origin": "client1 / client2",
+        "conversation_id": ""
+    },
+    "msg": {
+        "name": "UPDATE",
+        "desc": "Update record",
+        "data": {
+            "meeting_name": "rohit_nitin",
+            "bookmark_time": "DDMMYYY"
+        },
+        "version": ""
+    },
+    "response": [
+        {
+            "name": "UPDATE",
+            "status": true
+        }
+    ]
+}
