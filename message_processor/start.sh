@@ -1,0 +1,1 @@
+uvicorn message_processor:app --port 8000 --ssl-keyfile=./certificates/key.pem --ssl-certfile=./certificates/cert.pem --reload
