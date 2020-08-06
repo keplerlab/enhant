@@ -11,6 +11,10 @@ record_btn.onclick = function(){
         chrome.tabs.sendMessage(tabs[0].id, {action: "start_local_recording"}, function(response){
             console.log("Local recording status : ", response.status);
         })
+
+        chrome.runtime.sendMessage({action: "start_tab_recording"}, function(response){
+            console.log("Local recording status : ", response.status);
+        })
     })
 }
 
@@ -20,6 +24,11 @@ stop_btn.onclick = function(){
 
         // sends message to content script (main.js)
         chrome.tabs.sendMessage(tabs[0].id, {action: "stop_local_recording"}, function(response){
+            console.log("Local recording status : ", response.status);
+        })
+
+        // stop the tab recording
+        chrome.runtime.sendMessage({action: "stop_tab_recording"}, function(response){
             console.log("Local recording status : ", response.status);
         })
     })

@@ -36,7 +36,7 @@
 			this.decoder = new OpusDecoder(this.config.codec.sampleRate, this.config.codec.channels);
 			this.silence = new Float32Array(this.config.codec.bufferSize);
 		},
-		Streamer: function(config, socket) {
+		Streamer: function(config, socket, stream) {
 			navigator.getUserMedia = (navigator.getUserMedia ||
 				navigator.webkitGetUserMedia ||
 				navigator.mozGetUserMedia ||
@@ -49,9 +49,9 @@
 			this.parentSocket = socket;
 			this.encoder = new OpusEncoder(this.config.codec.sampleRate, this.config.codec.channels, this.config.codec.app, this.config.codec.frameDuration);
 			var _this = this;
-			this._makeStream = function(onError) {
-				navigator.getUserMedia({ audio: true }, function(stream) {
-					_this.stream = stream;
+
+			this.process_stream = function(stream){
+				_this.stream = stream;
 					_this.audioInput = audioContext.createMediaStreamSource(stream);
 					_this.gainNode = audioContext.createGain();
 					_this.recorder = audioContext.createScriptProcessor(_this.config.codec.bufferSize, 1, 1);
@@ -67,7 +67,20 @@
 					_this.audioInput.connect(_this.gainNode);
 					_this.gainNode.connect(_this.recorder);
 					_this.recorder.connect(audioContext.destination);
-				}, onError || _this.onError);
+			}
+			this._makeStream = function(onError) {
+
+				if (stream){
+					this.process_stream(stream);
+				}
+				else{
+
+					navigator.getUserMedia({ audio: true }, function(stream) {
+						_this.process_stream(stream);
+					}, onError || _this.onError);
+
+				}
+				
 			}
 
 
