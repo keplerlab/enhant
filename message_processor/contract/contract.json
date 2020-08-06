@@ -58,8 +58,7 @@
         "name": "DELETE",
         "desc": "Delete record",
         "data": {
-            "Start_time": "DDMMYYY",
-            "End_time": "DDMMYY"
+            "id": 111
         },
         "version": ""
     },
@@ -72,7 +71,28 @@
 }
 
 
-
+// Meeting starting 
+{
+    "context": {
+        "id": "",
+        "origin": "client1 / client2",
+        "conversation_id": ""
+    },
+    "msg": {
+        "name": "INIT",
+        "desc": "ADD new record",
+        "data": {
+            "Meeting_Start_time": "DDMMYYY"
+        },
+        "version": ""
+    },
+    "response": [
+        {
+            "name": "INIT",
+            "status": true
+        }
+    ]
+}
 
 ///  Example update record for transcription 
 
@@ -86,10 +106,14 @@
         "name": "UPDATE",
         "desc": "Update record",
         "data": {
-            "Start_time": "DDMMYYY",
-            "End_time": "DDMMYY",
-            "meeting_name": "rohit_nitin",
-            "transcription": "Transcription here.."
+
+            "transcription":{
+                "content": "Transcription here..",
+                "Start_time": "DDMMYYY",
+                "End_time": "DDMMYY",
+                "type": "text"
+            }
+            
         },
         "version": ""
     },
@@ -113,18 +137,19 @@
         "name": "UPDATE",
         "desc": "Update record",
         "data": {
-            "meeting_name": "rohit_nitin",
-            "notes": "Notes here.",
-            "client1": "Rohit Pandey",
-            "client2": "Nitin Katyal",
-            "email": "rohit.pandey@gmail.com"
+            "note":{
+                "content": "Note",
+                "time": "DDMMYYYTTT",
+                "type": "text"
+            }
         },
         "version": ""
     },
     "response": [
         {
             "name": "UPDATE",
-            "status": true
+            "status": true,
+            "id": 111
         }
     ]
 }
@@ -141,8 +166,11 @@
         "name": "UPDATE",
         "desc": "Update record",
         "data": {
-            "meeting_name": "rohit_nitin",
-            "bookmark_time": "DDMMYYY"
+            "note":{
+                "content": "base64Image",
+                "time": "DDMMYYYTTT",
+                "type": "image"
+            }
         },
         "version": ""
     },
@@ -153,3 +181,32 @@
         }
     ]
 }
+
+// Example request for adding capture moment without image/bookmark
+{
+    "context": {
+        "id": "",
+        "origin": "client1 / client2",
+        "conversation_id": ""
+    },
+    "msg": {
+        "name": "UPDATE",
+        "desc": "Update record",
+        "data": {
+            "note":{
+                "content": "",
+                "time": "DDMMYYYTTT",
+                "type": "bookmark"
+            }
+        },
+        "version": ""
+    },
+    "response": [
+        {
+            "name": "UPDATE",
+            "status": true
+        }
+    ]
+}
+
+
