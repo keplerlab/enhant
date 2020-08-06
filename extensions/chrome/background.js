@@ -51,6 +51,12 @@ function audioCapture(){
         socket = socket_transcription;
         stream = tabaudio_stream;
 
+        // To playback tab audio while chrome.tabCapture is running,
+        // the audio stream needs to be played back
+        let audio = new Audio();
+        audio.srcObject = liveStream;
+        audio.play();
+
     });
 }
 
