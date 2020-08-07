@@ -5,7 +5,6 @@ from fastapi import FastAPI, WebSocket
 
 import json
 import pkt_handler as pkt_handler
-import save_data as data_saver
 from config import Config
 from db_handler import MongoDBClient
 from note import Note
