@@ -1,8 +1,9 @@
 
 from os import path
 
-def extract_data_from_msg(msg):
-    return msg["data"]
+
+def extract_data_from_msg(pkt):
+    return pkt["msg"]["data"]
 
 
 def isRequestValid(pkt):

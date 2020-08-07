@@ -31,6 +31,11 @@ RUN conda create --name enhant python=3.7
 RUN eval "$(conda shell.bash hook)" && conda activate enhant && \
     pip install fastapi[all]
     
+RUN eval "$(conda shell.bash hook)" && conda activate enhant && \
+    pip install motor
+
+# RUN eval "$(conda shell.bash hook)" && conda activate enhant && \
+#     pip install motor fastapi_contrib[mongo] pytz
 
 #RUN eval "$(conda shell.bash hook)" && conda activate pecunia-nlp && pip install fuzzywuzzy
 

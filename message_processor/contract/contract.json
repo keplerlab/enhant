@@ -48,6 +48,19 @@
 
 
 
+Sample Mongodb transformed schema 
+data = Note.transformRequest(pkt)
+
+"data": {
+    "origin": "client1 / client2",
+    "conversation_id": "",
+    "Start_time": "DDMMYYY",
+    "End_time": "DDMMYY",
+    "version": ""
+}
+
+
+
 {
     "context": {
         "id": "",
