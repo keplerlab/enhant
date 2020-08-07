@@ -34,6 +34,10 @@ RUN eval "$(conda shell.bash hook)" && conda activate enhant && \
 RUN eval "$(conda shell.bash hook)" && conda activate enhant && \
     pip install motor
 
+# For autoformatting code for dev use, uncomment for production
+RUN eval "$(conda shell.bash hook)" && conda activate enhant && \
+    pip install black
+
 # RUN eval "$(conda shell.bash hook)" && conda activate enhant && \
 #     pip install motor fastapi_contrib[mongo] pytz
 

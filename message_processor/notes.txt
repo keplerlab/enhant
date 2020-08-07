@@ -1,8 +1,3 @@
-
-
- Conversation_ID {  transcriptions, notes, processedData    }
-
- transcriptions { transcription1 ,  transcription2 ,}
- notes {}
-
- 
+Conversation_ID {transcriptions, notes, processedData}
+transcriptions { transcription1 ,  transcription2 ,}
+notes {}
