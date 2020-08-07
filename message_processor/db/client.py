@@ -4,10 +4,19 @@ from pymongo.collection import Collection
 from pymongo.cursor import Cursor
 from pymongo.results import InsertOneResult, DeleteResult, UpdateResult
 
-from fastapi_contrib.db.models import MongoDBModel, notset
-from fastapi_contrib.common.utils import get_current_app, get_timezone
+from models import MongoDBModel, notset
+from utils import get_current_app, get_timezone
 
-
+class Singleton(type):
+    _instances = {}
+    def __call__(cls, *args, **kwargs):
+        if cls not in cls._instances:
+            cls._instances[cls] = super(Singleton, cls).__call__(*args, **kwargs)
+        return cls._instances[cls]
+        
+class Logger(object):
+    __metaclass__ = Singleton
+    
 class MongoDBClient(object):
     """
     Singleton client for interacting with MongoDB.

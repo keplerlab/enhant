@@ -112,7 +112,7 @@ data = Note.transformRequest(pkt)
 {
     "context": {
         "id": "",
-        "origin": "client1 / client2",
+        "origin": "client1",
         "conversation_id": ""
     },
     "msg": {
