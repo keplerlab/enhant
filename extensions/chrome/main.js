@@ -27,9 +27,12 @@ function connectToBackend(){
   
       var obj = new InternalStreamer(socket_transcription, transcription_ip);
       var streamer = obj.getStreamer();
+
+      document.querySelector('body').click();
   
       // start the streamer again
       streamer.start();
+      
     }
   
     return socket_transcription;
@@ -59,17 +62,17 @@ class Enhant{
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     console.log(" Received message from popup script : ", message);
 
-    if (message.action == "start_local_recording"){
-        const enhant_obj = new Enhant();
+    // if (message.action == "start_local_recording"){
+    //     const enhant_obj = new Enhant();
 
-        // create a click on body
-        document.querySelector('body').click();
+    //     // create a click on body
+    //     document.querySelector('body').click();
 
-        sendResponse({status: true});
-    }
-    else {
-        sendResponse({status: false});
-    }
+    //     sendResponse({status: true});
+    // }
+    // else {
+    //     sendResponse({status: false});
+    // }
 })
 
-console.log(" Running main ...");
+console.log("Content Script Loaded from extension - [enhan(t)]");
