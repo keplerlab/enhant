@@ -8,8 +8,11 @@
         "name": "INIT",
         "desc": "ADD new record",
         "data": {
-            "Start_time": "DDMMYYY",
-            "End_time": "DDMMYY"
+            "conversation":{ 
+                "Start_time": "DDMMYYY",
+                "End_time": "DDMMYY"
+            }
+            
         },
         "version": ""
     },
@@ -22,7 +25,6 @@
 }
     
 
-
 {
     "context": {
         "id": "",
@@ -33,20 +35,48 @@
         "name": "UPDATE",
         "desc": "Update record",
         "data": {
-            "Start_time": "DDMMYYY",
-            "End_time": "DDMMYY"
+
+            "conversation":{ 
+                "Start_time": "DDMMYYY",
+                "End_time": "DDMMYY"
+            }
+            
         },
         "version": ""
     },
     "response": [
         {
-            "name": "UPDATE",
+            "name": "INIT",
             "status": true
         }
     ]
 }
 
+{
+    "context": {
+        "id": "",
+        "origin": "client1 / client2",
+        "conversation_id": ""
+    },
+    "msg": {
+        "name": "DELETE",
+        "desc": "Update record",
+        "data": {
 
+            "conversation":{ 
+                "id": 111
+            }
+            
+        },
+        "version": ""
+    },
+    "response": [
+        {
+            "name": "INIT",
+            "status": true
+        }
+    ]
+}
 
 Sample Mongodb transformed schema 
 data = Note.transformRequest(pkt)

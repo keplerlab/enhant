@@ -1,6 +1,7 @@
 from os import path
 import motor.motor_asyncio
 from fastapi.encoders import jsonable_encoder
+from bson import ObjectId
 
 
 class MongoDBClient(object):
@@ -33,3 +34,12 @@ class MongoDBClient(object):
         db_insert_json = jsonable_encoder(jsonPkt)
         result = await collection.insert_one(db_insert_json)
         return result
+
+    async def delete_json(self, id, collectionName):
+        collection = self.db_handler[collectionName]
+        myquery = { "_id" : ObjectId(id) }
+        result = await collection.delete_one(myquery)
+        # print the API call's results
+        print("API call recieved:", result.acknowledged)
+        print("Documents deleted:", result.deleted_count)
+        return result.deleted_count
