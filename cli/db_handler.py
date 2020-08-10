@@ -1,7 +1,8 @@
 from os import path
-import motor.motor_asyncio
+from pymongo import MongoClient
 from fastapi.encoders import jsonable_encoder
 from bson import ObjectId
+from pymongo.errors import ConnectionFailure
 
 
 class MongoDBClient(object):
@@ -15,30 +16,34 @@ class MongoDBClient(object):
         self.db_client_handler = None
         self.db_handler = None
 
-    async def connect(self):
+    def connect(self):
         """Connecting to db"""
         print("Connecting to db:", flush=True)
-        self.db_client_handler = motor.motor_asyncio.AsyncIOMotorClient(
-            self.db_hostname, self.db_port
-        )
-        print("Connection established with db using motor", flush=True)
+        #self.db_client_handler = motor.motor_asyncio.AsyncIOMotorClient(
+        #    self.db_hostname, self.db_port
+        #)
+        print("Connection established with db using pymongo", flush=True)
+        self.db_client_handler = MongoClient(self.db_hostname, self.db_port)
         self.db_handler = self.db_client_handler[self.db_name]
 
-    async def insert_json(self, jsonPkt, collectionName):
+        try:
+            # The ismaster command is cheap and does not require auth.
+            self.db_client_handler.admin.command('ismaster')
+        except ConnectionFailure:
+            print("Server not available")
+
+
+
+    def insert_json(self, jsonPkt, collectionName):
         collection = self.db_handler[collectionName]
-
-        # print('Data saving in db', jsonPkt, flush=True)
-
-        # Convert json packet to pymongo compatible serialize
-        # format using fastapi helper api
         db_insert_json = jsonable_encoder(jsonPkt)
-        result = await collection.insert_one(db_insert_json)
+        result = collection.insert_one(db_insert_json)
         return result
 
-    async def delete_json(self, id, collectionName):
+    def delete_json(self, id, collectionName):
         collection = self.db_handler[collectionName]
         myquery = { "_id" : ObjectId(id) }
-        result = await collection.delete_one(myquery)
+        result = collection.delete_one(myquery)
         # print the API call's results
         print("API call recieved:", result.acknowledged)
         print("Documents deleted:", result.deleted_count)
