@@ -26,3 +26,20 @@ services:
       - ./message_processor/:/home/message_processor/
       # Exclude mount node_modules directory
       #- /usr/src/app/node_modules/
+
+  cli:
+    build: ./cli/
+    stdin_open: true # docker run -i
+    tty: true        # docker run -t
+    volumes:
+      - ./cli/:/home/cli/
+      - ./nlp_lib/:/home/nlp_lib/
+      # Exclude mount node_modules directory
+      #- /usr/src/app/node_modules/
+
+  # web:
+  #   build: ./web/
+  #   ports:
+  #   - "8000:8000"
+  #   volumes:
+  #     - ./web/:/home/web/
