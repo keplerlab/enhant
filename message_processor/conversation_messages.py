@@ -1,7 +1,7 @@
 """
-.. module:: Note
+.. module:: Conversation
     :platform: Platform Independent
-    :synopsis: This module is for handling all functions for notes 
+    :synopsis: This module is for handling all functions for Conversation 
 """
 
 class Conversation(object):
@@ -12,8 +12,7 @@ class Conversation(object):
         self.pkt = pkt
         self.mongo_client = mongo_client 
         
-    async def process_conversation(self):
-        print('Data saving in db', self.pkt["msg"]["name"], flush=True)
+    async def save_conversation(self):
         if self.pkt["msg"]["name"] == "INIT":
             result = await self.mongo_client.insert_json(self.pkt["msg"]["data"], self.collection)
             print('inserted_id for record', result.inserted_id, flush=True)

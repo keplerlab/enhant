@@ -7,9 +7,9 @@ import json
 import pkt_handler as pkt_handler
 from config import Config
 from db_handler import MongoDBClient
-from note import Note
-from conversation import Conversation
-from transcription import Transcription
+from note_messages import Note
+from conversation_messages import Conversation
+from transcription_messages import Transcription
 
 # Import config
 cfg = Config()
@@ -40,13 +40,13 @@ async def websocket_endpoint(websocket: WebSocket):
             if "transcription" in data:
                 print("Saving transcription", data, flush=True)
                 myTranscription = Transcription(mongo_client, pkt)
-                inserted_record_id = await myTranscription.process_transcription()
+                inserted_record_id = await myTranscription.save_transcription()
             elif "note" in data:
                 myNote = Note(mongo_client, pkt)
-                inserted_record_id = await myNote.process_note()
+                inserted_record_id = await myNote.save_note()
             elif "conversation" in data:
                 myConoversation = Conversation(mongo_client, pkt)
-                inserted_record_id = await myConoversation.process_conversation()
+                inserted_record_id = await myConoversation.save_conversation()
             else:
                 is_ok = False
                 print("Error in processing incoming request: ", pkt, flush=True)
