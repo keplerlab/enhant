@@ -35,6 +35,17 @@ class MongoDBClient(object):
         result = await collection.insert_one(db_insert_json)
         return result
 
+    async def update_json(self, conversation_id, jsonPkt, collectionName):
+        collection = self.db_handler[collectionName]
+        db_insert_json = jsonable_encoder(jsonPkt)
+        result = await collection.find_one_and_update({"conversation_id": conversation_id}, 
+                                 {"$set": db_insert_json})
+        # print('Data saving in db', jsonPkt, flush=True)
+
+        # Convert json packet to pymongo compatible serialize
+        # format using fastapi helper api
+        return result
+
     async def delete_json(self, id, collectionName):
         collection = self.db_handler[collectionName]
         myquery = { "_id" : ObjectId(id) }

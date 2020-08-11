@@ -25,6 +25,31 @@
 }
     
 
+{
+    "context": {
+        "id": "",
+        "origin": "client1",
+        "conversation_id": "111"
+    },
+    "msg": {
+        "name": "UPDATE",
+        "desc": "ADD new record",
+        "data": {
+            "conversation":{ 
+                "End_time": "DDMMYYY"
+            }
+            
+        },
+        "version": ""
+    },
+    "response": [
+        {
+            "name": "INIT",
+            "status": true
+        }
+    ]
+}
+
 
 
 
