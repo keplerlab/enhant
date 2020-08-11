@@ -1,4 +1,7 @@
 from pydantic import BaseSettings
+from note import Note
+from transcription import Transcription
+from db_handler import MongoDBClient
 
 class foo():
     def __init__(self, dbString: str):
@@ -15,21 +18,24 @@ class bar():
 class Settings(BaseSettings):
     app_name: str = "Enhanr"
     mongo_DB_string: str = "What ever it is"
-            # mongo db parameters
+    # mongo db parameters
     mongodb_hostname: str = "mongo"
     mongodb_port: int = 27018
     mongodb_dbname: str = "enhant_db"
+    mongo_client = MongoDBClient(mongodb_hostname, mongodb_port, mongodb_dbname)
 
-    def get_data_analyers(conString: str):
+    #mongo_client: MongoClient = None
+
+    def get_data_analyers(mongo_client):
         """
         Returns the list of analyzers.
         """
 
         # Add or remove analyzers here. All the analyzers will update the conversation JSON
-        return [foo(conString), bar(conString)]
+        return [Note(mongo_client), Transcription(mongo_client)]
     
 
-    data_analyzers: list =  get_data_analyers(mongo_DB_string)
+    data_analyzers: list =  get_data_analyers(mongo_client)
 
 
 

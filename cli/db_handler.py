@@ -32,8 +32,6 @@ class MongoDBClient(object):
         except ConnectionFailure:
             print("Server not available")
 
-
-
     def insert_json(self, jsonPkt, collectionName):
         collection = self.db_handler[collectionName]
         db_insert_json = jsonable_encoder(jsonPkt)
@@ -48,3 +46,8 @@ class MongoDBClient(object):
         print("API call recieved:", result.acknowledged)
         print("Documents deleted:", result.deleted_count)
         return result.deleted_count
+
+    def findQueryProcessor(self, query, collectionName):
+        collection = self.db_handler[collectionName]
+        cursor = collection.find(query)
+        return cursor
