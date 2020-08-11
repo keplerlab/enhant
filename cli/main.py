@@ -1,7 +1,6 @@
 import typer
 import config
 from db_handler import MongoDBClient
-import asyncio
 # Initialize mongo db client
 mongo_client = MongoDBClient(config.settings.mongodb_hostname, config.settings.mongodb_port, config.settings.mongodb_dbname)
 
