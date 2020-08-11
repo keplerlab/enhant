@@ -4,6 +4,8 @@ from db_handler import MongoDBClient
 # Initialize mongo db client
 mongo_client = MongoDBClient(config.settings.mongodb_hostname, config.settings.mongodb_port, config.settings.mongodb_dbname)
 
+from operator import methodcaller
+
 APP_NAME = "enhant-cli-app"
 
 app = typer.Typer()
@@ -18,6 +20,15 @@ def analyze(convid: str):
     mongo_client.delete_json("5f30de5f32a2c613887abbc2", "notes")
     typer.echo(config.settings.mongo_DB_string)
     typer.echo(f"Your conv ID is {convid}")
+    
+    # Get all the analyzers
+    analyzers = config.settings.get_data_analyers()
+    results = map(methodcaller("show"), analyzers)
+
+    #map is a lazy operation and hence needs to be called explicitly
+    list(results)
+
+
 
 
 @app.command()
