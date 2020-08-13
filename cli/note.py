@@ -42,7 +42,7 @@ class Note(object):
             print(f"No matching conversation for conv ID: {convid}")
             return
         # mycollection.update_one({'_id':mongo_id}, {"$set": post}, upsert=False)
-        query = {"context": {"conversation_id": str(convid)}}
+        query = {"context.conversation_id": str(convid)}
         cursor = self.mongo_client.findQueryProcessor(query, self.collection)
 
         listOfNotes = []
