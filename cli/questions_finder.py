@@ -1,10 +1,16 @@
 """
-.. module:: Transcription
+.. module:: QuestionsFinder
     :platform: Platform Independent
     :synopsis: This module is for handling all functions for a transcription 
 """
+import sys
+import os
 
-class Transcription(object):
+sys.path.insert(1, os.path.join(sys.path[0], '..', 'nlp_lib'))
+
+from pecunia_nlp_lib_questions_finder import Questions_finder
+
+class QuestionsFinder(object):
     """Client for handling notes"""
 
     def __init__(self, mongo_client):
@@ -36,13 +42,13 @@ class Transcription(object):
         query = {"context.conversation_id": str(convid)}
         cursor = self.mongo_client.findQueryProcessor(query, self.collection)
 
-        listOfNotes = []
-        for note_pkt in cursor:
-            print("note_pkt", note_pkt)
-            note = self._transformNote(note_pkt)
-            print("note",note)
-            listOfNotes.append(note)
+        listOfTranscriptions = []
+        for transcriptions_pkt in cursor:
+            print("note_pkt", transcriptions_pkt)
+            transcription = self._transformNote(transcriptions_pkt)
+            print("transcription",transcription)
+            listOfTranscriptions.append(transcription)
 
-        if len(listOfNotes) != 0:
-            jsonPkt = {"notes": listOfNotes}
-            self.mongo_client.update_json(str(convid), jsonPkt, "conversations")
+        #if len(listOfNotes) != 0:
+        #    jsonPkt = {"notes": listOfNotes}
+        #    self.mongo_client.update_json(str(convid), jsonPkt, "conversations")
