@@ -47,7 +47,20 @@ class MongoDBClient(object):
         print("Documents deleted:", result.deleted_count)
         return result.deleted_count
 
+    def update_json(self, conversation_id, jsonPkt, collectionName):
+        collection = self.db_handler[collectionName]
+        db_insert_json = jsonable_encoder(jsonPkt)
+        result = collection.find_one_and_update({"conversation_id": conversation_id}, 
+                                 {"$set": db_insert_json})
+        return result
+
     def findQueryProcessor(self, query, collectionName):
         collection = self.db_handler[collectionName]
         cursor = collection.find(query)
         return cursor
+
+    def findOneQueryProcessor(self, query, collectionName):
+        collection = self.db_handler[collectionName]
+        #t_query = jsonable_encoder(query)
+        myDocument = collection.find_one(query)
+        return myDocument

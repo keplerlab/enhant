@@ -24,7 +24,7 @@ def analyze(convid: str):
     
     # Get all the analyzers
     analyzers = config.settings.data_analyzers
-    results = map(methodcaller("process"), analyzers)
+    results = map(methodcaller("process", convid), analyzers)
 
     #map is a lazy operation and hence needs to be called explicitly
     list(results)

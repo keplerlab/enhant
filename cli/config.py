@@ -32,7 +32,8 @@ class Settings(BaseSettings):
         """
 
         # Add or remove analyzers here. All the analyzers will update the conversation JSON
-        return [Note(mongo_client), Transcription(mongo_client)]
+        return [Note(mongo_client)]
+        #return [Note(mongo_client), Transcription(mongo_client)]
     
 
     data_analyzers: list =  get_data_analyers(mongo_client)

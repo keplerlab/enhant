@@ -21,7 +21,7 @@ class Transcription(object):
             result = self.mongo_client.delete_json(id, self.collection)
             return result
 
-    def process(self):
+    def process(self, convid):
         print("inside transcription processing code")
         query = {}
         self.mongo_client.connect()
