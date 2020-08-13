@@ -91,7 +91,7 @@ def write_audio_flac(audio_data, filename, RATE, SAMPLE_WIDTH, CHANNELS=1):
     #print("arr.dtype", arr.dtype)
     #bytearray(audio_data)
 
-    if len(audio_data) > 0:
+    if len(audio_data) > 100:
         binary_format = b"".join(audio_data)
         f = open(filename, 'w+b')
         f.write(binary_format)
