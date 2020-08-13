@@ -12,7 +12,9 @@ class InternalStreamer{
         }, socket_transcription);
 
         // start the streamer
-        this.streamer.start();
+        this.streamer.start(function(error){
+            console.log(" Error in WS Capture stream : ", error);
+        });
     }
 
     getStreamer(){

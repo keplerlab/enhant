@@ -15,22 +15,25 @@
     },
     "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
     "background": {
-      "scripts": ["ws-audio/libopus.js", "ws-audio/opus.js", "ws-audio/xaudio.js" ,
-        "ws-audio/ws-audio-api.js", "socket.js", "capture_tab.js", "background.js"],
+      "scripts": ["config.js", "socket.js", "background.js"],
       "persistent": true
     },
     "content_scripts": [
       {
         "matches": ["https://*.com/*", "http://*.com/*"],
-        "js": ["ws-audio/libopus.js", "ws-audio/opus.js", "ws-audio/xaudio.js" ,
-          "ws-audio/ws-audio-api.js", "socket.js", "capture_audio.js", "main.js"]
+        "js": ["flac-encoder/setpath.js", "flac-encoder/libflac.js", "config.js", "socket.js", "main.js"],
+        "persistent": true
       }
     ],
+    "web_accessible_resources": ["ws-audio/libopus.js", "ws-audio/opus.js", "ws-audio/xaudio.js",
+      "ws-audio/ws-audio-api.js", "socket.js", "capture_audio.js", "inject.js"],
     "permissions": [
       "tabs",
       "tabCapture",
       "downloads",
-      "storage"
+      "storage",
+      "<all_urls>",
+      "activeTab"
     ]
   }
   

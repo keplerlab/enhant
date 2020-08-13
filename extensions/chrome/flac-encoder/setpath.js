@@ -1,0 +1,1 @@
+window.FLAC_SCRIPT_LOCATION = '../flac-encoder/';
