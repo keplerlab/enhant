@@ -6,7 +6,6 @@ from six.moves import queue
 import datetime
 import traceback
 import asyncio
-import opuslib
 
 from config import cfg 
 

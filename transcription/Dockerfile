@@ -31,9 +31,9 @@ RUN conda create --name pecunia-transcription python=3.7
 RUN eval "$(conda shell.bash hook)" && conda activate pecunia-transcription && \
     pip install websockets google.cloud.speech
 
-RUN apt-get install -y libopus-dev
+RUN apt-get install -y libopus-dev libsndfile1
 RUN eval "$(conda shell.bash hook)" && conda activate pecunia-transcription && \
-    pip install opuslib
+    pip install opuslib pysoundfile cffi numpy
     
     
 COPY start_transcription_server.sh ${PROJECT_DIR}

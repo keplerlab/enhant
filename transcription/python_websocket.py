@@ -18,8 +18,6 @@ from config import cfg
 from concurrent.futures import ProcessPoolExecutor
 from multiprocessing import Process, Queue, Pipe, Value, Manager
 
-import opuslib
-
 #dec = opuslib.Decoder(cfg.SAMPLE_RATE, cfg.CHANNELS)
 
 #import logging
@@ -219,7 +217,7 @@ async def on_data(websocket, path):
     fileName = "recorded_audio_" + helper.generate_filename() + ".flac"
     print("\n*** Writing audio data in file:", fileName)
 
-    helper.write_audio(
+    helper.write_audio_flac(
         record_audio,
         fileName,
         cfg.SAMPLE_RATE,
