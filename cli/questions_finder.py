@@ -27,6 +27,8 @@ class QuestionsFinder(object):
             result = self.mongo_client.delete_json(id, self.collection)
             return result
 
+    def _transformTranscription(self, transcriptions_pkt):
+        return transcriptions_pkt["msg"]["data"]["transcription"]["content"]
 
     def process(self, convid):
         print("inside questions processing code with conversationo id: ", convid)
@@ -44,8 +46,8 @@ class QuestionsFinder(object):
 
         listOfTranscriptions = []
         for transcriptions_pkt in cursor:
-            print("note_pkt", transcriptions_pkt)
-            transcription = self._transformNote(transcriptions_pkt)
+            print("transcriptions_pkt", transcriptions_pkt)
+            transcription = self._transformTranscription(transcriptions_pkt)
             print("transcription",transcription)
             listOfTranscriptions.append(transcription)
 
