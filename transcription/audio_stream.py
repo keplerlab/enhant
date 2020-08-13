@@ -8,16 +8,7 @@ import traceback
 import asyncio
 import opuslib
 
-from config import Config
-
-STREAMING_LIMIT = 240000  # 4 minutes
-
-# from opuslib import decoder
-RATE = 24000
-CHANNELS = 1
-dec = opuslib.Decoder(RATE, CHANNELS)
-
-
+from config import cfg 
 
 def get_current_time():
     """Return Current Time in MS."""
@@ -75,7 +66,7 @@ class ResumableMediaStream:
             try:
                 if self.new_stream and self.last_audio_input:
 
-                    chunk_time = STREAMING_LIMIT / len(self.last_audio_input)
+                    chunk_time = cfg.STREAMING_LIMIT / len(self.last_audio_input)
 
                     if chunk_time != 0:
 
@@ -107,9 +98,8 @@ class ResumableMediaStream:
 
                 if chunk is None:
                     return
-                decoded_audio_data = dec.decode(chunk, 4096)
-                self.audio_input.append(decoded_audio_data)
-                data.append(decoded_audio_data)
+                self.audio_input.append(chunk)
+                data.append(chunk)
                 # Now consume whatever other data's still buffered.
                 while True:
                     try:
@@ -117,10 +107,9 @@ class ResumableMediaStream:
 
                         if chunk is None:
                             return
-                        decoded_audio_data = dec.decode(chunk, 4096)
 
-                        data.append(decoded_audio_data)
-                        self.audio_input.append(decoded_audio_data)
+                        data.append(chunk)
+                        self.audio_input.append(chunk)
 
                     except queue.Empty:
                         break

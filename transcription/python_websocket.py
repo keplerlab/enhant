@@ -14,18 +14,13 @@ from google.cloud import speech_v1p1beta1 as speech
 from six.moves import queue
 
 from audio_stream import ResumableMediaStream
-from config import Config
+from config import cfg 
 from concurrent.futures import ProcessPoolExecutor
 from multiprocessing import Process, Queue, Pipe, Value, Manager
 
 import opuslib
 
-cfg = Config()
-
-# from opuslib import decoder
-RATE = 24000
-CHANNELS = 1
-dec = opuslib.Decoder(RATE, CHANNELS)
+#dec = opuslib.Decoder(cfg.SAMPLE_RATE, cfg.CHANNELS)
 
 #import logging
 
@@ -38,13 +33,7 @@ def get_current_time():
     return int(round(time.time() * 1000))
 
 
-# from opuslib import decoder
-RATE = 24000
-CHANNELS = 1
-
 # Audio recording parameters
-STREAMING_LIMIT = 240000  # 4 minutes
-CHUNK_SIZE = int(RATE / 10)  # 100ms
 
 RED = "\033[0;31m"
 GREEN = "\033[0;32m"
@@ -77,7 +66,7 @@ def listen_print_loop(responses, stream, parent_conn, stream_closed_flag):
             print("Breaking out of loop")
             break
 
-        if get_current_time() - stream.start_time > STREAMING_LIMIT:
+        if get_current_time() - stream.start_time > cfg.STREAMING_LIMIT:
             stream.start_time = get_current_time()
             break
 
@@ -105,7 +94,7 @@ def listen_print_loop(responses, stream, parent_conn, stream_closed_flag):
         corrected_time = (
             stream.result_end_time
             - stream.bridging_offset
-            + (STREAMING_LIMIT * stream.restart_counter)
+            + (cfg.STREAMING_LIMIT * stream.restart_counter)
         )
         # uncomment next line if want to Display interim results, but with a carriage return at the end of the
         # line, so subsequent lines will overwrite them.
@@ -124,13 +113,13 @@ def transcription_loop(audio_buffer, parent_conn, stream_closed_flag, audio_reco
     # await asyncio.sleep(4)
     #audio_recording_frames = []
 
-    audio_manager = ResumableMediaStream(RATE, CHUNK_SIZE, audio_buffer, stream_closed_flag, audio_recording_frames)
+    audio_manager = ResumableMediaStream(cfg.SAMPLE_RATE, cfg.CHUNK_SIZE, audio_buffer, stream_closed_flag, audio_recording_frames)
     client = speech.SpeechClient()
     config = speech.types.RecognitionConfig(
-        encoding=speech.enums.RecognitionConfig.AudioEncoding.LINEAR16,
-        sample_rate_hertz=RATE,
-        enable_automatic_punctuation=True,
-        language_code="en-IN",
+        encoding=cfg.ENCODING,
+        sample_rate_hertz=cfg.SAMPLE_RATE,
+        enable_automatic_punctuation=cfg.ENABLE_AUTOMATIC_PUNCTUATION,
+        language_code=cfg.LANGUAGE_CODE,
         max_alternatives=1,
     )
     streaming_config = speech.types.StreamingRecognitionConfig(
@@ -146,7 +135,7 @@ def transcription_loop(audio_buffer, parent_conn, stream_closed_flag, audio_reco
                 print("Value of stream.closed flag: ", stream.closed)
                 # sys.stdout.write(YELLOW)
                 sys.stdout.write(
-                    "\n" + str(STREAMING_LIMIT * stream.restart_counter) + ": NEW REQUEST\n"
+                    "\n" + str(cfg.STREAMING_LIMIT * stream.restart_counter) + ": NEW REQUEST\n"
                 )
 
                 stream.audio_input = []
@@ -206,8 +195,7 @@ async def on_data(websocket, path):
             audio_buffer.put(message)
 
             # Comment out next two lines if no recording needed 
-            decoded_audio_data = dec.decode(message, 4096)
-            record_audio.append(decoded_audio_data)
+            record_audio.append(message)
 
             if child_conn.poll():
                 msg = child_conn.recv()
@@ -228,19 +216,16 @@ async def on_data(websocket, path):
     websocket.close()
 
     print("Exit from transcription_loop function saving recorded audio")
-    fileName = "recorded_audio_" + helper.generate_filename() + ".wav"
+    fileName = "recorded_audio_" + helper.generate_filename() + ".flac"
     print("\n*** Writing audio data in file:", fileName)
 
     helper.write_audio(
         record_audio,
         fileName,
-        RATE,
+        cfg.SAMPLE_RATE,
         2,
-        CHANNELS=1,
+        CHANNELS=cfg.CHANNELS,
     )
-
-
-
 
 
 ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
@@ -248,7 +233,7 @@ ssl_context.load_cert_chain(
     certfile="certificates/cert.pem", keyfile="certificates/key.pem"
 )
 
-start_server = websockets.serve(on_data, "0.0.0.0", 5000, ssl=ssl_context,max_queue=None)
+start_server = websockets.serve(on_data, "0.0.0.0", 1111, ssl=ssl_context,max_queue=None)
 
 asyncio.get_event_loop().run_until_complete(start_server)
 asyncio.get_event_loop().run_forever()

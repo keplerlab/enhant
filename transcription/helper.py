@@ -16,6 +16,7 @@ import datetime
 import time
 import json
 import collections
+from array import array 
 
 
 def eprint(*args, **kwargs):
@@ -66,8 +67,7 @@ def generate_filename():
     return now + rand_str
 
 
-def write_audio(audio_data, filename, RATE, SAMPLE_WIDTH, CHANNELS=1):
-
+def write_audio_wave(audio_data, filename, RATE, SAMPLE_WIDTH, CHANNELS=1):
     wf = wave.open(filename, "wb")
     wf.setnchannels(CHANNELS)
     wf.setsampwidth(SAMPLE_WIDTH)
@@ -75,3 +75,10 @@ def write_audio(audio_data, filename, RATE, SAMPLE_WIDTH, CHANNELS=1):
     wf.writeframes(b"".join(audio_data))
     wf.close()
 
+def write_audio(audio_data, filename, RATE, SAMPLE_WIDTH, CHANNELS=1):
+    f = open(filename, 'w+b')
+    #binary_format = bytes(audio_data)
+    #binary_format = bytearray(audio_data)
+    binary_format = b"".join(audio_data)
+    f.write(binary_format)
+    f.close()
