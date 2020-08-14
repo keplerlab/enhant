@@ -188,6 +188,11 @@ async def on_data(websocket, path):
 
     record_audio = []
 
+    jsonData = await websocket.recv()
+    print("\n\n****jsonData:", jsonData, flush=True)
+
+    #conv_id = jsonData[""]
+
     try:
         async for message in websocket:
             audio_buffer.put(message)
