@@ -12,7 +12,7 @@ from pecunia_nlp_lib_engagement import Pecunia_nlp_lib_engagement
 engagement_lib = Pecunia_nlp_lib_engagement()
 
 def timeSortingFunction(tuple):
-  return int(tuple[1]["Start_time"])
+  return int(tuple[1]["End_time"])
 
 class EngagmentFinder(object):
     """Client for handling notes"""
@@ -66,9 +66,9 @@ class EngagmentFinder(object):
             #print("transcriptionTuple",transcriptionTuple)
             print("transcriptionTuple[0]",transcriptionTuple[0])
             print("transcriptionTuple[1]",transcriptionTuple[1])
-            start_time = transcriptionTuple[1]["Start_time"]
+            end_time = transcriptionTuple[1]["End_time"]
             engagement_score = engagement_lib.processMessage(convid, transcriptionTuple[0], transcriptionTuple[1])
-            engagement_with_time = (int(start_time), engagement_score)
+            engagement_with_time = (int(end_time), engagement_score)
             engagement_scores.append(engagement_with_time)
 
         print("engagement_scores", engagement_scores)
