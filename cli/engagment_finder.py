@@ -11,6 +11,8 @@ sys.path.insert(1, os.path.join(sys.path[0], '..', 'nlp_lib'))
 from pecunia_nlp_lib_engagement import Pecunia_nlp_lib_engagement
 engagement_lib = Pecunia_nlp_lib_engagement()
 
+def timeSortingFunction(tuple):
+  return int(tuple[1]["Start_time"])
 
 class EngagmentFinder(object):
     """Client for handling notes"""
@@ -56,6 +58,9 @@ class EngagmentFinder(object):
             transcriptions_with_time.append(transcription_with_time)
             
         print("transcriptions_with_time", transcriptions_with_time)
+        transcriptions_with_time.sort(key=timeSortingFunction)
+        print("Sorted transcriptions_with_time", transcriptions_with_time)
+
         engagement_scores = []
         for transcriptionTuple in transcriptions_with_time:
             #print("transcriptionTuple",transcriptionTuple)
