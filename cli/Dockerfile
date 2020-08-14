@@ -44,6 +44,9 @@ RUN eval "$(conda shell.bash hook)" && conda activate enhant && \
 RUN eval "$(conda shell.bash hook)" && conda activate enhant && \
     pip install tensorflow_hub nltk
 
+# Download nltk model 
+RUN eval "$(conda shell.bash hook)" && conda activate enhant && \
+    (echo "import nltk" ; echo "nltk.download('punkt')") | python
 
 # RUN eval "$(conda shell.bash hook)" && conda activate enhant && \
 #     pip install motor fastapi_contrib[mongo] pytz

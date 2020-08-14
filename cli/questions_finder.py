@@ -9,6 +9,7 @@ import os
 sys.path.insert(1, os.path.join(sys.path[0], '..', 'nlp_lib'))
 
 from pecunia_nlp_lib_questions_finder import Questions_finder
+question_finder = Questions_finder()
 
 class QuestionsFinder(object):
     """Client for handling notes"""
@@ -31,26 +32,29 @@ class QuestionsFinder(object):
         return transcriptions_pkt["msg"]["data"]["transcription"]["content"]
 
     def process(self, convid):
-        print("inside questions processing code with conversationo id: ", convid)
+        #print("inside questions processing code with conversationo id: ", convid)
 
         # Connecct to db
         self.mongo_client.connect()
         query = {"conversation_id": str(convid)} 
         conversation_document = self.mongo_client.findOneQueryProcessor(query, "conversations")
-        print("\n***conversation_document: ", conversation_document)
+        #print("\n***conversation_document: ", conversation_document)
         if conversation_document == None:
             print(f"No matching conversation for conv ID: {convid}")
             return
         query = {"context.conversation_id": str(convid)}
         cursor = self.mongo_client.findQueryProcessor(query, self.collection)
 
-        listOfTranscriptions = []
+        listOfQuestions = []
         for transcriptions_pkt in cursor:
-            print("transcriptions_pkt", transcriptions_pkt)
+            #print("transcriptions_pkt", transcriptions_pkt)
             transcription = self._transformTranscription(transcriptions_pkt)
-            print("transcription",transcription)
-            listOfTranscriptions.append(transcription)
+            #print("transcription", transcription)
+            interrogativeSentences = question_finder.processMessage(transcription)
+            if len(interrogativeSentences) > 0:
+                listOfQuestions.extend(interrogativeSentences)
 
-        #if len(listOfNotes) != 0:
-        #    jsonPkt = {"notes": listOfNotes}
-        #    self.mongo_client.update_json(str(convid), jsonPkt, "conversations")
+        print("listOfQuestions", listOfQuestions)
+        if len(listOfQuestions) > 0:
+            jsonPkt = {"questionsAsked": listOfQuestions}
+            self.mongo_client.update_json(str(convid), jsonPkt, "conversations")
