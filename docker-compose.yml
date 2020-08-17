@@ -11,7 +11,7 @@ services:
   transcription:
     build: ./transcription/
     ports:
-    - "5000:5000"
+    - "1111:1111"
     volumes:
       - ./transcription/:/home/transcription/
       # Exclude mount node_modules directory

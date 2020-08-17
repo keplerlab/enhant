@@ -1,10 +1,10 @@
 const CONFIG = {
     transcription: {
         port: 1111,
-        ip: "192.168.0.102"
+        ip: "127.0.0.1"
     },
     backend: {
         port: 8000,
-        ip: "192.168.0.102"
+        ip: "127.0.0.1"
     }
 }
