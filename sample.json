@@ -17,8 +17,7 @@
         "event_time": {
             "start" : "",
             "end" : ""
-        }        
-        },
+        },        
         "version": ""
     },
     "response": [
@@ -43,7 +42,6 @@
         "desc": "END meeting",
         "data": {
             "conversation":{ 
-            
             }
             
         },
@@ -55,7 +53,7 @@
     },
     "response": [
         {
-            "name": "INIT",
+            "name": "END",
             "type": "MEETING",
             "status": true
         }

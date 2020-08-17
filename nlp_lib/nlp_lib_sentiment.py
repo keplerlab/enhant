@@ -5,7 +5,7 @@ import nltk
 import flair
 
 
-class Pecunia_nlp_lib_sentiment(object):
+class NLP_lib_sentiment(object):
     def __init__(self):
         self.flair_sentiment = flair.models.TextClassifier.load("en-sentiment")
 

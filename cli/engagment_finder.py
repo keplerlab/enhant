@@ -8,8 +8,8 @@ import os
 
 sys.path.insert(1, os.path.join(sys.path[0], '..', 'nlp_lib'))
 
-from pecunia_nlp_lib_engagement import Pecunia_nlp_lib_engagement
-engagement_lib = Pecunia_nlp_lib_engagement()
+from nlp_lib_engagement import NLP_lib_engagement
+engagement_lib = NLP_lib_engagement()
 
 def timeSortingFunction(tuple):
   return int(tuple[1]["End_time"])

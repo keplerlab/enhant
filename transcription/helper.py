@@ -17,7 +17,6 @@ import time
 import json
 import collections
 from array import array
-import numpy
 
 
 def eprint(*args, **kwargs):

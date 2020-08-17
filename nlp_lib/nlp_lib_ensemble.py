@@ -1,11 +1,11 @@
 from os import path
 import json
 
-from pecunia_nlp_lib_fuzzyWuzzy import FuzzyWuzzy
-from pecunia_nlp_lib_tf import TF_ULM
+from nlp_lib_fuzzyWuzzy import FuzzyWuzzy
+from nlp_lib_tf import TF_ULM
 
 
-class Pecunia_nlp_lib(object):
+class NLP_lib(object):
     weight_fuzzy_tokenset = 1.0
     weight_fuzzy_partial_ratio = 1.0
     weight_tf_ulm = 1.0

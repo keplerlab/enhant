@@ -8,7 +8,7 @@ import os
 
 sys.path.insert(1, os.path.join(sys.path[0], '..', 'nlp_lib'))
 
-from pecunia_nlp_lib_questions_finder import Questions_finder
+from nlp_lib_questions_finder import Questions_finder
 question_finder = Questions_finder()
 
 class QuestionsFinder(object):

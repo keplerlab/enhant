@@ -6,7 +6,7 @@ import flair
 from types import SimpleNamespace
 import copy
 
-class Pecunia_nlp_lib_engagement(object):
+class NLP_lib_engagement(object):
     def __init__(self):
         self.expected_multiplier = 2.0
         self.expected_time_window = 120

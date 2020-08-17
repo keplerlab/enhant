@@ -4,10 +4,10 @@ import time
 import traceback
 import json
 
-from pecunia_nlp_lib_questions_finder import Questions_finder
-from pecunia_nlp_lib_ensemble import Pecunia_nlp_lib
-from pecunia_nlp_lib_sentiment import Pecunia_nlp_lib_sentiment
-from pecunia_nlp_lib_engagement import Pecunia_nlp_lib_engagement
+from nlp_lib_questions_finder import Questions_finder
+from nlp_lib_ensemble import Pecunia_nlp_lib
+from nlp_lib_sentiment import Pecunia_nlp_lib_sentiment
+from nlp_lib_engagement import Pecunia_nlp_lib_engagement
 
 
 question_finder = Questions_finder()

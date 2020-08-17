@@ -8,8 +8,8 @@ import os
 
 sys.path.insert(1, os.path.join(sys.path[0], '..', 'nlp_lib'))
 
-from pecunia_nlp_lib_sentiment import Pecunia_nlp_lib_sentiment
-sentiment_lib = Pecunia_nlp_lib_sentiment()
+from nlp_lib_sentiment import NLP_lib_sentiment
+sentiment_lib = NLP_lib_sentiment()
 
 
 class SentimentFinder(object):
