@@ -12,9 +12,9 @@ record_btn.onclick = function(){
             console.log("Local recording status : ", response.status);
         })
 
-        chrome.runtime.sendMessage({action: "start_tab_recording"}, function(response){
-            console.log("Local recording status : ", response.status);
-        })
+        // chrome.runtime.sendMessage({action: "start_tab_recording"}, function(response){
+        //     console.log("Local recording status : ", response.status);
+        // })
     })
 }
 
@@ -28,8 +28,8 @@ stop_btn.onclick = function(){
         })
 
         // stop the tab recording
-        chrome.runtime.sendMessage({action: "stop_tab_recording"}, function(response){
-            console.log("Local recording status : ", response.status);
-        })
+        // chrome.runtime.sendMessage({action: "stop_tab_recording"}, function(response){
+        //     console.log("Local recording status : ", response.status);
+        // })
     })
 }

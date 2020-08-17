@@ -12,7 +12,9 @@ class TabStreamer{
         }, socket_transcription, stream);
 
         // start the streamer
-        this.streamer.start();
+        this.streamer.start(function(error){
+            console.log("Error in capturing stream: ", error);
+        });
     }
 
     getStreamer(){

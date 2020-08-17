@@ -1,0 +1,8 @@
+{
+"cmd": "start",
+"origin" : "mic",
+"meeting_id" : "LLP",
+"meeting_start_time": "DDMMYYHH"
+}
+
+conversation_id_meeting_start_time

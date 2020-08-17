@@ -1,78 +1,102 @@
-const transcription_ip = "192.168.0.102";
-const transcription_port = "5000";
-
-
-let socket = null;
-let stream = null;
-
-function connectToTrancriptionService(stream){
-  
-    var socket_transcription = new socketFactory(transcription_ip, transcription_port, "transcription").generateSocket(open_cb=null, close_cb=socket_transcription_closed_cb);
-  
-    function socket_transcription_closed_cb(new_socket){
-  
-      socket_transcription = new_socket;
-  
-      var obj = new TabStreamer(socket_transcription, transcription_ip, transcription_port ,stream);
-      var streamer = obj.getStreamer();
-
-      document.querySelector('body').click();
-  
-      // start the streamer again
-      streamer.start();
-      
+function convertFloat32ToInt16(buffer) {
+    l = buffer.length;
+    buf = new Int16Array(l);
+    while (l--) {
+        buf[l] = Math.min(1, buffer[l])*0x7FFF;
     }
-  
-    return socket_transcription;
-  
-}
-  
-function captureTabAudio(socket_transcription, stream){
-    var obj = new TabStreamer(socket_transcription, transcription_ip, transcription_port, stream);
-    var streamer = obj.getStreamer();
-
-    document.querySelector('body').click();
-
-    streamer.start();
-
-    return streamer;
+    return buf.buffer;
 }
 
-function audioCapture(){
-    chrome.tabCapture.capture({audio: true}, (stream) => { // sets up stream for capture
-        let startTabId; //tab when the capture is started
-        let completeTabID; //tab when the capture is stopped
-        chrome.tabs.query({active:true, currentWindow: true}, (tabs) => startTabId = tabs[0].id) //saves start tab
-        const liveStream = stream;
-        
-        var socket_transcription = connectToTrancriptionService(stream);
-        var tabaudio_stream = captureTabAudio(socket_transcription, stream);
+class TabRecorded{
+    constructor(){
+        this.transcription_ip = CONFIG.transcription.ip;
+        this.transcription_port = CONFIG.transcription.port;
 
-        socket = socket_transcription;
-        stream = tabaudio_stream;
+        this.context = null;
+        this.socket = null;
+        this.stream = null;
+    }
 
+    socketConnect(){
+        var _this = this;
+        function socket_transcription_closed_cb(new_socket){
+  
+            _this.socket = new_socket;
+            
+        }
+
+        _this.socket = new socketFactory(_this.transcription_ip, _this.transcription_port, "transcription").generateSocket(null, socket_transcription_closed_cb);
+    }
+
+    initalizeRecorder(stream){
+        var audioContext = window.AudioContext;
+        this.context = new audioContext();
+        var audioInput = this.context.createMediaStreamSource(stream);
+        var bufferSize = 2048;
+        // create a javascript node
+        var recorder = this.context.createScriptProcessor(bufferSize, 1, 1);
+
+        var _this = this;
+
+        // specify the processing function
+        recorder.onaudioprocess = function(e){
+            var left = e.inputBuffer.getChannelData(0);
+            _this.socket.send(convertFloat32ToInt16(left));
+        }
+        // connect stream to our recorder
+        audioInput.connect(recorder);
+        // connect our recorder to the previous destination
+        recorder.connect(this.context.destination);
+    }
+
+    playAudio(stream){
         // To playback tab audio while chrome.tabCapture is running,
         // the audio stream needs to be played back
         let audio = new Audio();
-        audio.srcObject = liveStream;
+        audio.srcObject = stream;
         audio.play();
+    }
 
-    });
+    startCapture(){
+        var _this = this;
+        chrome.tabCapture.capture({audio: true}, (stream) => { // sets up stream for capture
+
+            this.stream = stream;
+
+            if (_this.socket == null){
+                _this.socketConnect();
+            }
+            
+            _this.initalizeRecorder(stream);
+            _this.playAudio(stream);
+        });
+    }
+
+    stopCapture(){
+        this.audioContext.stop();
+        liveStream.getAudioTracks()[0].stop();
+    }
 }
 
+var tabAudioCapture = null;
+
+window.addEventListener("transcription", function(event){
+
+    let transcription = event.detail;
+    console.log(" TRANSCRIPTION : ", transcription);
+});
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => { 
 
     if (message.action == "start_tab_recording"){
-
-        // start the audio recording for tab and stream it for transcription service
-        audioCapture();
-        sendResponse({status: true});
-        
+        setTimeout(function(){
+            tabAudioCapture = new TabRecorded();
+            tabAudioCapture.startCapture();
+        }, 1000);
     }
     else if (message.action == "stop_tab_recording"){
-        stream.stop();
-        socket.close();
+        tabAudioCapture.stopCapture();
+        tabAudioCapture = null;
     }
 });
 
