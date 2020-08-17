@@ -1,5 +1,5 @@
 """
-.. module:: QuestionsFinder
+.. module:: EngagmentFinder
     :platform: Platform Independent
     :synopsis: This module is for handling all functions for a transcription 
 """
@@ -8,15 +8,21 @@ import os
 
 sys.path.insert(1, os.path.join(sys.path[0], '..', 'nlp_lib'))
 
-from pecunia_nlp_lib_questions_finder import Questions_finder
-question_finder = Questions_finder()
+from pecunia_nlp_lib_engagement import Pecunia_nlp_lib_engagement
+engagement_lib = Pecunia_nlp_lib_engagement()
 
-class QuestionsFinder(object):
+def timeSortingFunction(tuple):
+  return int(tuple[1]["End_time"])
+
+class EngagmentFinder(object):
     """Client for handling notes"""
 
     def __init__(self, mongo_client):
         self.collection = "transcriptions"
         self.mongo_client = mongo_client
+        self.low_sentiment_threshold = 0.3
+        self.high_sentiment_threshold = 0.7
+
 
     def save_transcription(self):
         if self.pkt["msg"]["name"] == "UPDATE":
@@ -29,7 +35,7 @@ class QuestionsFinder(object):
             return result
 
     def _transformTranscription(self, transcriptions_pkt):
-        return transcriptions_pkt["msg"]["data"]["transcription"]["content"]
+        return transcriptions_pkt["msg"]["data"]["transcription"], transcriptions_pkt["context"]["origin"]
 
     def process(self, convid):
         #print("inside questions processing code with conversationo id: ", convid)
@@ -45,14 +51,27 @@ class QuestionsFinder(object):
         query = {"context.conversation_id": str(convid)}
         cursor = self.mongo_client.findQueryProcessor(query, self.collection)
 
-        listOfQuestions = []
+        transcriptions_with_time = []
         for transcriptions_pkt in cursor:
-            transcription = self._transformTranscription(transcriptions_pkt)
-            interrogativeSentences = question_finder.processMessage(transcription)
-            if len(interrogativeSentences) > 0:
-                listOfQuestions.extend(interrogativeSentences)
+            msg, origin = self._transformTranscription(transcriptions_pkt)
+            transcription_with_time = (origin, msg)
+            transcriptions_with_time.append(transcription_with_time)
+            
+        print("transcriptions_with_time", transcriptions_with_time)
+        transcriptions_with_time.sort(key=timeSortingFunction)
+        print("Sorted transcriptions_with_time", transcriptions_with_time)
 
-        print("listOfQuestions", listOfQuestions)
-        if len(listOfQuestions) > 0:
-            jsonPkt = {"questionsAsked": listOfQuestions}
+        engagement_scores = []
+        for transcriptionTuple in transcriptions_with_time:
+            #print("transcriptionTuple",transcriptionTuple)
+            print("transcriptionTuple[0]",transcriptionTuple[0])
+            print("transcriptionTuple[1]",transcriptionTuple[1])
+            end_time = transcriptionTuple[1]["End_time"]
+            engagement_score = engagement_lib.processMessage(convid, transcriptionTuple[0], transcriptionTuple[1])
+            engagement_with_time = (int(end_time), engagement_score)
+            engagement_scores.append(engagement_with_time)
+
+        print("engagement_scores", engagement_scores)
+        if len(engagement_scores) > 0:
+            jsonPkt = {"engagement_scores": engagement_scores}
             self.mongo_client.update_json(str(convid), jsonPkt, "conversations")

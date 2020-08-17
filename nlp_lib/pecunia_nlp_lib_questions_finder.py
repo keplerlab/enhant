@@ -24,9 +24,8 @@ class Questions_finder(object):
             features["contains({})".format(word.lower())] = True
         return features
 
-    def processMessage(self, origin, requestData):
+    def processMessage(self, requestData):
         """ Returns responses as rules along with score """
-        speaker = origin
         interrogativeSentences = self._extract_questions(requestData)
 
         return interrogativeSentences

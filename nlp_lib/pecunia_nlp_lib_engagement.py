@@ -46,38 +46,38 @@ class Pecunia_nlp_lib_engagement(object):
         print("\n\n**********Reset state for engagement detection complete**********\n\n")
 
     def _getEngagement(self, meeting_id, origin, msg):
-        requestData = msg.data
+        requestData = msg["content"]
 
         num_of_words = len(requestData.split())
 
         wordMessage = dict(
             [
                 ("num_of_words", num_of_words),
-                ("timestamp_start", float(msg.timestamp_start) / 1000),
-                ("timestamp_stop", float(msg.timestamp_stop) / 1000),
+                ("timestamp_start", float(msg["Start_time"]) / 1000),
+                ("timestamp_stop", float(msg["End_time"]) / 1000),
             ]
         )
         wordMessage = SimpleNamespace(**wordMessage)
         avg_engagement_score = 1.0
 
-        if origin == "client":
+        if origin == "client2":
             self.spokenMsgsClientInTimeWindow[meeting_id].append(wordMessage)
             wordMessage2 = copy.deepcopy(wordMessage)
             wordMessage2.num_of_words = 0
             self.spokenMsgsAdvisorInTimeWindow[meeting_id].append(wordMessage2)
 
-        elif origin == "advisor":
+        elif origin == "client1":
             self.spokenMsgsAdvisorInTimeWindow[meeting_id].append(wordMessage)
             wordMessage2 = copy.deepcopy(wordMessage)
             wordMessage2.num_of_words = 0
             self.spokenMsgsClientInTimeWindow[meeting_id].append(wordMessage2)
 
         self.spokenMsgsClientInTimeWindow[meeting_id] = self._cleanListForTimeWindow(
-            self.spokenMsgsClientInTimeWindow[meeting_id], float(msg.timestamp_stop) / 1000.0
+            self.spokenMsgsClientInTimeWindow[meeting_id], float(msg["End_time"]) / 1000.0
         )
 
         self.spokenMsgsAdvisorInTimeWindow[meeting_id] = self._cleanListForTimeWindow(
-            self.spokenMsgsAdvisorInTimeWindow[meeting_id], float(msg.timestamp_stop) / 1000.0
+            self.spokenMsgsAdvisorInTimeWindow[meeting_id], float(msg["End_time"]) / 1000.0
         )
 
         for item in self.spokenMsgsClientInTimeWindow[meeting_id]:
