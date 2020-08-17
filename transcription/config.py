@@ -9,12 +9,12 @@ import os
 
 class Config:
     def __init__(self):
-#        os.environ[
-#            "GOOGLE_APPLICATION_CREDENTIALS"
-#        ] = "project-voicebox-fa7bc2f8fa18.json"
+        #        os.environ[
+        #            "GOOGLE_APPLICATION_CREDENTIALS"
+        #        ] = "project-voicebox-fa7bc2f8fa18.json"
         self.OUT_DIR = "data_dump"
-        #self.ENCODING = speech.enums.RecognitionConfig.AudioEncoding.LINEAR16
-        self.ENCODING = 'FLAC'
+        # self.ENCODING = speech.enums.RecognitionConfig.AudioEncoding.LINEAR16
+        self.ENCODING = "FLAC"
         self.CHANNELS = 1
         self.SAMPLE_RATE = 44100
         self.STREAMING_LIMIT = 240000

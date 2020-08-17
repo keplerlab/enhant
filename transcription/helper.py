@@ -16,7 +16,7 @@ import datetime
 import time
 import json
 import collections
-from array import array 
+from array import array
 import numpy
 
 
@@ -76,26 +76,28 @@ def write_audio_wave(audio_data, filename, RATE, SAMPLE_WIDTH, CHANNELS=1):
     wf.writeframes(b"".join(audio_data))
     wf.close()
 
+
 def write_audio(audio_data, filename, RATE, SAMPLE_WIDTH, CHANNELS=1):
-    f = open(filename, 'w+b')
-    #binary_format = bytes(audio_data)
-    #binary_format = bytearray(audio_data)
+    f = open(filename, "w+b")
+    # binary_format = bytes(audio_data)
+    # binary_format = bytearray(audio_data)
     binary_format = b"".join(audio_data)
     f.write(binary_format)
     f.close()
 
+
 def write_audio_flac(audio_data, filename, RATE, SAMPLE_WIDTH, CHANNELS=1):
-    
-    #arr = numpy.array(audio_data, dtype=numpy.float32) 
-    #print("arr.dtype", arr.dtype)
-    #bytearray(audio_data)
+
+    # arr = numpy.array(audio_data, dtype=numpy.float32)
+    # print("arr.dtype", arr.dtype)
+    # bytearray(audio_data)
 
     if len(audio_data) > 100:
         binary_format = b"".join(audio_data)
-        f = open(filename, 'w+b')
+        f = open(filename, "w+b")
         f.write(binary_format)
         f.close()
     else:
         print("audio Data is empty, skip save", flush=True)
 
-    #sf.write(filename, arr, RATE)
+    # sf.write(filename, arr, RATE)

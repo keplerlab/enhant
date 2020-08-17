@@ -7,7 +7,8 @@ import datetime
 import traceback
 import asyncio
 
-from config import cfg 
+from config import cfg
+
 
 def get_current_time():
     """Return Current Time in MS."""
@@ -18,7 +19,9 @@ def get_current_time():
 class ResumableMediaStream:
     """Opens a recording stream as a generator yielding the audio chunks."""
 
-    def __init__(self, rate, chunk_size, audio_buffer, stream_closed_flag, audio_recording_frames):
+    def __init__(
+        self, rate, chunk_size, audio_buffer, stream_closed_flag, audio_recording_frames
+    ):
         self._rate = rate
         self.audio_buffer = audio_buffer
         self.chunk_size = chunk_size
