@@ -13,8 +13,8 @@
         "type": "MEETING",
         "desc": "ADD new meeting",
         "data": {
-            "conversation":{ 
-        },       
+            "conversation":"",  
+        }     
         "version": ""
     },
     "response": [

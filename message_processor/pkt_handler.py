@@ -57,7 +57,7 @@ def isRequestValid(pkt):
     return True
 
 
-def prepare_response(pkt, is_ok, inserted_record_id):
+def prepare_response(pkt, is_ok, inserted_record_id=0):
     if is_ok:
         response_pkt = pkt
         response_pkt["response"] = {

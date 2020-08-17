@@ -1,27 +1,19 @@
 {
-    "context": {
-        "id": "",
-        "origin": "host",
-        "meeting_id": "111",
-        "event_time": "1000"
-    },
-    "msg": {
-        "name": "INIT",
-        "type": "MEETING",
-        "desc": "ADD new meeting",
-        "data": {
-            "conversation":{ 
-        },
-        "version": ""
-    },
-    "response": [
-        {
-            "name": "INIT",
-            "type": "MEETING",
-            "status": true,
-            "id": "inserted_record_id",
-        }
-    ]
+	"context": {
+		"id": "",
+		"origin": "host",
+		"meeting_id": "111",
+		"event_time": "1000"
+	},
+	"msg": {
+		"name": "INIT",
+		"type": "MEETING",
+		"desc": "ADD new meeting",
+		"data": {
+			"conversation": ""
+		},
+		"version": ""
+	}
 }
 
     
