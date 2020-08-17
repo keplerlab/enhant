@@ -2,7 +2,7 @@ import asyncio
 import pathlib
 import ssl
 import websockets
-
+import os
 import time
 import sys
 import re
@@ -17,6 +17,7 @@ from audio_stream import ResumableMediaStream
 from config import cfg 
 from concurrent.futures import ProcessPoolExecutor
 from multiprocessing import Process, Queue, Pipe, Value, Manager
+import json
 
 #dec = opuslib.Decoder(cfg.SAMPLE_RATE, cfg.CHANNELS)
 
@@ -165,12 +166,32 @@ def transcription_loop(audio_buffer, parent_conn, stream_closed_flag, audio_reco
         print("Error in transcription service: ", error)
         stream_closed_flag.value = True
     print("\n\n***Transcription process closed ")
+    stream_closed_flag.value = True
 
 
 
 async def on_data(websocket, path):
 
     print("\n****New Websocket connection Established ")
+    jsonDataString = await websocket.recv()
+    print("\n\n****jsonData:", jsonDataString, flush=True)
+    jsonData = json.loads(jsonDataString)
+    print("\n\n****jsonData:", jsonData, flush=True)
+    if jsonData["cmd"] != "start":
+        print("Error in initial packet start packet not found", flush=True)
+        return 0
+
+    if jsonData["origin"] != "mic" and jsonData["origin"] != "speaker":
+        print("Error in initial packet: Incorrect origin", flush=True)
+        return 0
+    
+    data_origin = jsonData["origin"]
+    
+    if "conversation_id" not in jsonData:
+        print("Error in initial packet conversation_id not found", flush=True)
+        return 0
+    
+    conversation_id = jsonData["conversation_id"]
 
     ## Make audio manager
     audio_buffer = Queue()
@@ -188,8 +209,6 @@ async def on_data(websocket, path):
 
     record_audio = []
 
-    jsonData = await websocket.recv()
-    print("\n\n****jsonData:", jsonData, flush=True)
 
     #conv_id = jsonData[""]
 
@@ -219,12 +238,18 @@ async def on_data(websocket, path):
     websocket.close()
 
     print("Exit from transcription_loop function saving recorded audio")
-    fileName = "recorded_audio_" + helper.generate_filename() + ".flac"
-    print("\n*** Writing audio data in file:", fileName)
+
+    folderName = os.path.join("recorded_audio", data_origin, conversation_id)
+
+    os.makedirs(folderName, exist_ok=True)
+
+    fileName =  "recorded_audio_" + helper.generate_filename() + ".flac"
+    full_file_name = os.path.join(folderName, fileName)
+    print("\n*** Writing audio data in file:", full_file_name)
 
     helper.write_audio_flac(
         record_audio,
-        fileName,
+        full_file_name,
         cfg.SAMPLE_RATE,
         2,
         CHANNELS=cfg.CHANNELS,
