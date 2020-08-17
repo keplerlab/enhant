@@ -1,8 +1,7 @@
 {
 "cmd": "start",
-"origin" : "mic",
-"meeting_id" : "LLP",
-"meeting_start_time": "DDMMYYHH"
+"origin": "host / guest",
+"meeting_id": "",
+"event_time": ""
 }
 
-conversation_id_meeting_start_time
