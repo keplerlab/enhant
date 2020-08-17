@@ -165,7 +165,7 @@
         "id": "",
         "origin": "host / guest",
         "meeting_id": "",
-        "event_time": "",
+        "event_time": ""
     },
     "msg": {
         "name": "ADD",
@@ -195,7 +195,7 @@
         "id": "",
         "origin": "host / guest",
         "meeting_id": "",
-        "event_time": "",
+        "event_time": ""
     },
     "msg": {
         "name": "ADD",

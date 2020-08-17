@@ -13,7 +13,7 @@ class Note(object):
         self.mongo_client = mongo_client 
         
     async def save_note(self):
-        if self.pkt["msg"]["name"] == "UPDATE":
+        if self.pkt["msg"]["name"] == "ADD":
             result = await self.mongo_client.insert_json(self.pkt, self.collection)
             print('inserted_id for record', result.inserted_id, flush=True)
             return result.inserted_id

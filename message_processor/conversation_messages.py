@@ -10,7 +10,7 @@ class Conversation(object):
     def __init__(self, mongo_client, pkt):
         self.collection = "conversations"
         self.pkt = pkt
-        self.mongo_client = mongo_client 
+        self.mongo_client = mongo_client
         
     async def save_conversation(self):
         if self.pkt["msg"]["name"] == "INIT" or  self.pkt["msg"]["name"] == "END":
