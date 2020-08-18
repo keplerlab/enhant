@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="18px" height="19px" viewBox="0 0 18 19" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>FIll</title>
+    <g id="Symbols" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="enhant/Icon/Orientation" transform="translate(-3.000000, -3.000000)" fill="#1E90FF">
+            <path d="M21,8 L21,22 L17,22 L17,8 L21,8 Z M11,10 L11,11 L7.707,11 L14,17.293 L14,14 L15,14 L15,19 L10,19 L10,18 L13.293,18 L7,11.707 L7,15 L6,15 L6,10 L11,10 Z M21,3 L21,7 L3,7 L3,3 L21,3 Z" id="FIll"></path>
+        </g>
+    </g>
+</svg>
