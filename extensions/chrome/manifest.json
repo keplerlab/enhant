@@ -5,11 +5,11 @@
     "description": "This extension captures the audio on the current tab and saves the output file on your computer when the capture is complete",
     "version": "1.1.1",
     "icons": {
-      "128":"static/images/icon.png"
+      "128":"static/images/logo.png"
       },
   
     "browser_action": {
-      "default_icon": "static/images/icon.png",
+      "default_icon": "static/images/logo.png",
       "default_popup": "popup.html",
       "default_title": "Open Chrome Audio Capture interface"
     },
@@ -21,7 +21,7 @@
     "content_scripts": [
       {
         "matches": ["https://*.com/*", "http://*.com/*"],
-        "js": ["flac-encoder/setpath.js", "flac-encoder/libflac.js", "config.js", "socket.js", "main.js"],
+        "js": ["flac-encoder/setpath.js", "flac-encoder/libflac.js", "config.js", "encoder.js" ,"socket.js", "main.js"],
         "persistent": true
       }
     ],

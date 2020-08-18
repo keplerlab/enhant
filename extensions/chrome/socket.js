@@ -7,6 +7,11 @@ class socketFactory{
         this.name = name;
         this.socket = null;
         this.reconnectTimeInSec = 1; 
+        this.reconnect = true;
+    }
+
+    doReconnect(state){
+        this.reconnect = state;
     }
 
     create(){
@@ -37,10 +42,11 @@ class socketFactory{
 
         this.socket.onclose = function(event) {
 
-            setTimeout(function(){
-                var new_socket = _this.reconnect(open_cb=open_cb, close_cb=close_cb);
-            }, _this.reconnectTimeInSec *  1000);
-
+            if (_this.reconnect){
+                setTimeout(function(){
+                    var new_socket = _this.reconnect(open_cb=open_cb, close_cb=close_cb);
+                }, _this.reconnectTimeInSec *  1000);
+            }
         }
 
         this.socket.onerror = function(error) {
