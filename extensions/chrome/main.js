@@ -21,7 +21,7 @@ class MicCapture{
     }
 
     sendFlacBufferData(buffer){
-        console.log(" socket connection before send : ", this.socket_transcription);
+        // console.log(" socket connection before send : ", this.socket_transcription);
         if (!(this.socket_transcription == null)){
             this.socket_transcription.send(buffer);
         }
@@ -31,9 +31,9 @@ class MicCapture{
         var _this = this;
         window.addEventListener(_this.EVENT_FLAC_ENCODER, function(event){
             var flac_buffer = event.detail
-            console.log("Buffer Data for mic : ", flac_buffer);
+            // console.log("Buffer Data for mic : ", flac_buffer);
 
-            if (_this.socket_transcription.readyState == WebSocket.OPEN){
+            if ((_this.socket_transcription !== null) && (_this.socket_transcription.readyState == WebSocket.OPEN)){
                 _this.sendFlacBufferData(flac_buffer);
             }
             
@@ -135,9 +135,12 @@ class MicCapture{
         delete this.stream_processor;
 
         this.reset();
+
+        console.log("Mic capture stopped...");
     }
 
     start(){
+        console.log("Starting the mic capture process ..");
         this.encoder.initialize();
         this.registerEventListner();
         this.connectToTranscriptionService();
