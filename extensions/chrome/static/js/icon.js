@@ -215,7 +215,7 @@ class RecordIcon extends Icon{
     }
 
     startCapturingTabAudio(){
-        chrome.runtime.sendMessage({action: "start_tab_capture"}, function(response){
+        chrome.runtime.sendMessage({action: "capture_screen_start"}, function(response){
             console.log("Tab recording status : ", response.status);
         })
     }
@@ -223,7 +223,7 @@ class RecordIcon extends Icon{
     stopCapturingTabAudio(){
 
         // stop the tab recording
-        chrome.runtime.sendMessage({action: "stop_tab_recording"}, function(response){
+        chrome.runtime.sendMessage({action: "capture_screen_stop"}, function(response){
             console.log("Local recording status : ", response.status);
         })
     }
@@ -231,12 +231,12 @@ class RecordIcon extends Icon{
 
     start(){
         this.startCapturingMicAudio();
-        // this.startCapturingTabAudio();
+        this.startCapturingTabAudio();
     }
 
     stop(){
         this.stopCapturingMicAudio();
-        // this.stopCapturingTabAudio();
+        this.stopCapturingTabAudio();
     }
 
     handleClick(){
