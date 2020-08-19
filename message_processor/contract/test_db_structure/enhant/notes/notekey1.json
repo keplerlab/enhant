@@ -1,6 +1,23 @@
+
 {
-   conv_id: "key1"
-   noteText: "hello"
-   start_time:"DDMMYYTT",
-   end_time:"DDMMYYTT"
+   "context": {
+       "id": "",
+       "origin": "guest",
+       "meeting_id": "",
+       "event_time": ""
+   },
+   "msg": {
+       "name" : "ADD",
+       "type" : "NOTE",
+       "desc": "Update record",
+       "data": {
+           "note":{
+               "content": "Note",
+               "type": "text",
+               "start_time":"",
+               "end_time":""
+           }
+       },
+       "version": ""
+   }
 }

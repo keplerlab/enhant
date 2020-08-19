@@ -6,21 +6,9 @@ from questions_finder import QuestionsFinder
 from sentiment_finder import SentimentFinder
 from engagment_finder import EngagmentFinder
 
-class foo():
-    def __init__(self, dbString: str):
-        self.conStr = dbString
-    def show(self):
-        print(self.conStr, "Hello Foo")
-
-class bar():
-    def __init__(self, dbString: str):
-        self.conStr = dbString
-    def show(self):
-        print(self.conStr, "Hello Bar")
 
 class Settings(BaseSettings):
-    app_name: str = "Enhanr"
-    mongo_DB_string: str = "What ever it is"
+
     # mongo db parameters
     mongodb_hostname: str = "mongo"
     mongodb_port: int = 27018

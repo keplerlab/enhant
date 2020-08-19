@@ -50,7 +50,22 @@ class MongoDBClient(object):
         collection = self.db_handler[collectionName]
         myquery = { "_id" : ObjectId(id) }
         result = await collection.delete_one(myquery)
-        # print the API call's results
         print("API call recieved:", result.acknowledged)
         print("Documents deleted:", result.deleted_count)
         return result.deleted_count
+
+    
+    async def findQueryProcessor(self, query, collectionName):
+        print("\n\n\n****Calling findQueryProcessor")
+        collection = self.db_handler[collectionName]
+        cursor = collection.find(query)
+        #print("cursor", cursor,  flush=True)
+        listOfItems = await cursor.to_list(None)
+        print("listOfItems", listOfItems,  flush=True)
+
+        return listOfItems
+
+    async def findOneQueryProcessor(self, query, collectionName):
+        collection = self.db_handler[collectionName]
+        myDocument = await collection.find_one(query)
+        return myDocument

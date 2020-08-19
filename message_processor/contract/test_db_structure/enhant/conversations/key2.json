@@ -1,4 +1,20 @@
+
 {
-   start_time:"DDMMYYTT",
-   end_time:"DDMMYYTT"
+   "context": {
+       "id": "",
+       "origin": "host",
+       "meeting_id": "111",
+       "event_time": "100000"
+   },
+   "msg": {
+       "name": "END",
+       "type": "MEETING",
+       "desc": "END meeting",
+       "data": {
+           "conversation":{ 
+           }
+       },
+       "version": ""
+   }
+   
 }
