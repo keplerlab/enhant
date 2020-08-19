@@ -18,13 +18,13 @@
     "colors": "^1.3.0",
     "dotenv": "^8.0.0",
     "express": "^4.16.3",
-    "forever": "^3.0.0",
+    "forever": "^3.0.0",    
     "snakecase-keys": "^3.1.0",
     "uuid": "^3.3.2"
   },
   "devDependencies": {
     "blue-tape": "^1.0.0",
-    "eslint": "^4.8.0",
+    "eslint": "^4.19.1",
     "eslint-config-standard": "^12.0.0",
     "eslint-plugin-import": "^2.14.0",
     "eslint-plugin-node": "^8.0.0",
