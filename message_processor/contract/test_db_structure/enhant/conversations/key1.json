@@ -1,15 +1,17 @@
 {
-   start_time:"DDMMYYTT",
-   end_time:"DDMMYYTT",
-   notes: [notekey1 Ref,
-           notekey2 Ref,
-           notekey3 Ref],
-
-   questionsAsked: [ "question1",  "question1" ],
-   sentimentScore: [],
-   lowSentimentSentence: [(time,sentence),(time,sentence)],
-   highSentimentSentence: [(time,sentence),(time,sentence)],
-   engagment_score: [ (time1,engagment1), (time2,engagment2), (time1,engagment1)]
-   engagment_graph: ""
-
+	"context": {
+		"id": "",
+		"origin": "host",
+		"meeting_id": "111",
+		"event_time": "1000"
+	},
+	"msg": {
+		"name": "INIT",
+		"type": "MEETING",
+		"desc": "ADD new meeting",
+		"data": {
+			"conversation": ""
+		},
+		"version": ""
+	}
 }

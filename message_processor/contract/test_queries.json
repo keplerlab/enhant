@@ -1,6 +1,6 @@
 {
 	"context": {
-		"id": "",
+		"conv_id": "",
 		"origin": "host",
 		"meeting_id": "111",
 		"event_time": "1000"
@@ -20,7 +20,7 @@
 
 {
     "context": {
-        "id": "",
+        "conv_id": "",
         "origin": "host",
         "meeting_id": "111",
         "event_time": "100000"
@@ -40,7 +40,7 @@
             "name": "END",
             "type": "MEETING",
             "status": true,
-            "id": "inserted_record_id",
+            "conv_id": "inserted_record_id",
         }
     ]
 }
@@ -48,7 +48,7 @@
 
 {
     "context": {
-        "id": "",
+        "conv_id": "",
         "origin": "host",
         "meeting_id": "",
         "event_time": ""
@@ -59,7 +59,7 @@
         "desc": "Delete record",
         "data": {
             "conversation":{ 
-                "id": "5f3a55be86c360f92e721259"
+                "conv_id": "5f3a55be86c360f92e721259"
             }
         },
         "version": ""
@@ -71,7 +71,7 @@
 
 {
     "context": {
-        "id": "",
+        "conv_id": "",
         "origin": "host",
         "meeting_id": "111",
         "event_time": ""
@@ -89,10 +89,6 @@
 
             }
         },
-        "msg_time" : {
-            "start":"",
-            "end":""
-        },
         "version": ""
     }
 }
@@ -100,7 +96,7 @@
 
 {
     "context": {
-        "id": "",
+        "conv_id": "",
         "origin": "guest",
         "meeting_id": "",
         "event_time": ""
@@ -125,7 +121,7 @@
 
 {
     "context": {
-        "id": "",
+        "conv_id": "",
         "origin": "guest",
         "meeting_id": "",
         "event_time": ""
@@ -149,7 +145,7 @@
 
 {
 	"context": {
-		"id": "",
+		"conv_id": "",
 		"origin": "host",
 		"meeting_id": "",
 		"event_time": ""
