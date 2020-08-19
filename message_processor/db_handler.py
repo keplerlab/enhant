@@ -15,6 +15,12 @@ class MongoDBClient(object):
         self.db_client_handler = None
         self.db_handler = None
 
+    def get_search_by_id_query(self, id):
+        return {"_id": ObjectId(id)}
+
+    def get_search_query_context_conv_id(self, conv_id):
+        return {"context.conv_id": str(conv_id)}
+
     async def connect(self):
         """Connecting to db"""
         print("Connecting to db:", flush=True)
@@ -38,27 +44,26 @@ class MongoDBClient(object):
     async def update_json(self, conv_id, jsonPkt, collectionName):
         collection = self.db_handler[collectionName]
         db_insert_json = jsonable_encoder(jsonPkt)
-        result = await collection.find_one_and_update({ "_id" : ObjectId(conv_id) }, 
-                                 {"$set": db_insert_json})
+        result = await collection.find_one_and_update(
+            self.get_search_by_id_query(conv_id), {"$set": db_insert_json}
+        )
 
         return result
 
     async def delete_json(self, id, collectionName):
         collection = self.db_handler[collectionName]
-        myquery = { "_id" : ObjectId(id) }
-        result = await collection.delete_one(myquery)
+        result = await collection.delete_one(self.get_search_by_id_query(conv_id))
         print("API call recieved:", result.acknowledged)
         print("Documents deleted:", result.deleted_count)
         return result.deleted_count
 
-    
     async def findQueryProcessor(self, query, collectionName):
         print("\n\n\n****Calling findQueryProcessor")
         collection = self.db_handler[collectionName]
         cursor = collection.find(query)
-        #print("cursor", cursor,  flush=True)
+        # print("cursor", cursor,  flush=True)
         listOfItems = await cursor.to_list(None)
-        print("listOfItems", listOfItems,  flush=True)
+        print("listOfItems", listOfItems, flush=True)
 
         return listOfItems
 

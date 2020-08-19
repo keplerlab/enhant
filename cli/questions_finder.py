@@ -31,7 +31,7 @@ class QuestionsFinder(object):
         self.mongo_client.connect()
 
         conversation_document = self.mongo_client.findOneQueryProcessor(
-            self.mongo_client.conv_finder_query_in_result_db(conv_id),
+            self.mongo_client.get_search_by_id_query(conv_id),
             self.processed_conversation_collection,
         )
         # print("\n***conversation_document: ", conversation_document)
@@ -41,7 +41,7 @@ class QuestionsFinder(object):
             return
 
         cursor = self.mongo_client.findQueryProcessor(
-            self.mongo_client.conv_finder_query_in_other_db(conv_id), self.collection
+            self.mongo_client.get_search_query_context_conv_id(conv_id), self.collection
         )
 
         listOfQuestions = []

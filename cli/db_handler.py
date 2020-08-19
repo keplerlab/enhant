@@ -16,10 +16,10 @@ class MongoDBClient(object):
         self.db_client_handler = None
         self.db_handler = None
 
-    def conv_finder_query_in_result_db(self, conv_id):
+    def get_search_by_id_query(self, conv_id):
         return {"_id": ObjectId(conv_id)}
 
-    def conv_finder_query_in_other_db(self, conv_id):
+    def get_search_query_context_conv_id(self, conv_id):
         return {"context.conv_id": str(conv_id)}
 
     def connect(self):
@@ -57,7 +57,7 @@ class MongoDBClient(object):
         collection = self.db_handler[collectionName]
         db_insert_json = jsonable_encoder(jsonPkt)
         result = collection.find_one_and_update(
-            self.conv_finder_query_in_result_db(conv_id), {"$set": db_insert_json}
+            self.get_search_by_id_query(conv_id), {"$set": db_insert_json}
         )
         return result
 

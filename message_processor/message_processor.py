@@ -50,7 +50,9 @@ async def websocket_endpoint(websocket: WebSocket):
             else:
                 is_ok = False
                 print("Error in processing incoming request: ", pkt, flush=True)
-            response_pkt = pkt_handler.prepare_response(pkt, is_ok, statusPkt, inserted_record_id)
+            response_pkt = pkt_handler.prepare_response(
+                pkt, is_ok, statusPkt, inserted_record_id
+            )
             print("Packet Sent", response_pkt, flush=True)
             await websocket.send_json(response_pkt)
 
