@@ -20,7 +20,7 @@
 
 {
     "context": {
-        "conv_id": "",
+        "conv_id": "5f3d85304864ab4962a7fafb",
         "origin": "host",
         "meeting_id": "111",
         "event_time": "100000"
@@ -34,21 +34,13 @@
             }
         },
         "version": ""
-    },
-    "response": [
-        {
-            "name": "END",
-            "type": "MEETING",
-            "status": true,
-            "conv_id": "inserted_record_id",
-        }
-    ]
+    }
 }
 
 
 {
     "context": {
-        "conv_id": "",
+        "conv_id": "5f3d85304864ab4962a7fafb",
         "origin": "host",
         "meeting_id": "",
         "event_time": ""
@@ -59,7 +51,6 @@
         "desc": "Delete record",
         "data": {
             "conversation":{ 
-                "conv_id": "5f3a55be86c360f92e721259"
             }
         },
         "version": ""

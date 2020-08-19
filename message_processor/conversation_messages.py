@@ -142,8 +142,8 @@ class Conversation(object):
             return result.inserted_id
 
         elif self.pkt["msg"]["name"] == "DELETE":
-            id = self.pkt["msg"]["data"]["conversation"]["id"]
+            id = self.pkt["context"]["conv_id"]
             result = await self.mongo_client.delete_json(
-                id, self.conversation_collection
+                id, self.processed_conversation_collection
             )
             return result

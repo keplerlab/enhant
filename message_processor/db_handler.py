@@ -52,7 +52,7 @@ class MongoDBClient(object):
 
     async def delete_json(self, id, collectionName):
         collection = self.db_handler[collectionName]
-        result = await collection.delete_one(self.get_search_by_id_query(conv_id))
+        result = await collection.delete_one(self.get_search_by_id_query(id))
         print("API call recieved:", result.acknowledged)
         print("Documents deleted:", result.deleted_count)
         return result.deleted_count

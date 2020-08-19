@@ -16,8 +16,8 @@ class MongoDBClient(object):
         self.db_client_handler = None
         self.db_handler = None
 
-    def get_search_by_id_query(self, conv_id):
-        return {"_id": ObjectId(conv_id)}
+    def get_search_by_id_query(self, id):
+        return {"_id": ObjectId(id)}
 
     def get_search_query_context_conv_id(self, conv_id):
         return {"context.conv_id": str(conv_id)}
@@ -46,8 +46,7 @@ class MongoDBClient(object):
 
     def delete_json(self, id, collectionName):
         collection = self.db_handler[collectionName]
-        myquery = {"_id": ObjectId(id)}
-        result = collection.delete_one(myquery)
+        result = collection.delete_one(self.get_search_by_id_query(id))
         # print the API call's results
         print("API call recieved:", result.acknowledged)
         print("Documents deleted:", result.deleted_count)
