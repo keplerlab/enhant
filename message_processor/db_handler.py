@@ -35,10 +35,10 @@ class MongoDBClient(object):
         result = await collection.insert_one(db_insert_json)
         return result
 
-    async def update_json(self, conversation_id, jsonPkt, collectionName):
+    async def update_json(self, conv_id, jsonPkt, collectionName):
         collection = self.db_handler[collectionName]
         db_insert_json = jsonable_encoder(jsonPkt)
-        result = await collection.find_one_and_update({"conversation_id": conversation_id}, 
+        result = await collection.find_one_and_update({ "_id" : ObjectId(conv_id) }, 
                                  {"$set": db_insert_json})
         # print('Data saving in db', jsonPkt, flush=True)
 
@@ -67,5 +67,5 @@ class MongoDBClient(object):
 
     async def findOneQueryProcessor(self, query, collectionName):
         collection = self.db_handler[collectionName]
-        myDocument = await collection.find_one(query)
+        myDocument = collection.find_one(query)
         return myDocument

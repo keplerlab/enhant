@@ -25,6 +25,12 @@ class Conversation(object):
                       }
         return result_json
 
+    def _process_end_json(self):
+        result_json = {
+                         "meeting_id": self.pkt["context"]["meeting_id"],
+                         "end_time": self.pkt["context"]["event_time"]
+                      }
+        return result_json
 
     async def _insert_new_conv(self):
         result_json = self._process_init_json()
@@ -37,6 +43,17 @@ class Conversation(object):
 
     async def _insert_old_conv(self, conv_id):
         inserted_conv_id = str(conv_id)
+        self.pkt["context"]["conv_id"] = inserted_conv_id
+        result = await self.mongo_client.insert_json(self.pkt, self.conversation_collection)
+
+        return inserted_conv_id
+
+
+    async def _update_end_conv(self, conv_id):
+        result_json = self._process_end_json()
+
+        result = await self.mongo_client.update_json(conv_id, result_json, self.processed_conversation_collection)
+
         self.pkt["context"]["conv_id"] = inserted_conv_id
         result = await self.mongo_client.insert_json(self.pkt, self.conversation_collection)
 
@@ -88,17 +105,21 @@ class Conversation(object):
                     inserted_conv_id = await self._insert_old_conv(conv_id)
                     return inserted_conv_id
 
-            
-        if self.pkt["msg"]["name"] == "END":
+        elif self.pkt["msg"]["name"] == "END":
             conv_id = self.pkt["context"]["conv_id"]
             query = {"conv_id": str(conv_id)}
-            processed_conversation_document = self.mongo_client.findOneQueryProcessor(query, self.processed_conversation_collection)
-            processed_conversation_document["end_time"] = self.pkt["context"]["event_time"]
-            self.mongo_client.update_json(str(convid), processed_conversation_document, self.processed_conversation_collection)
-            result = await self.mongo_client.insert_json(self.pkt, self.collection)
+            #self.mongo_client.update_json
+            #processed_conversation_document = self.mongo_client.findOneQueryProcessor(query, self.processed_conversation_collection)
+            #processed_conversation_document.count()
+            #print("processed_conversation_document",processed_conversation_document,flush=True)
+            result_json = {}
+            result_json["end_time"] = self.pkt["context"]["event_time"]
+            result = await self.mongo_client.update_json(str(conv_id), result_json, self.processed_conversation_collection)
+            result = await self.mongo_client.insert_json(self.pkt, self.conversation_collection)
             print('inserted_id for record', result.inserted_id, flush=True)
             return result.inserted_id
+
         elif self.pkt["msg"]["name"] == "DELETE":
             id = self.pkt["msg"]["data"]["conversation"]["id"]
-            result = await self.mongo_client.delete_json(id, self.collection)
+            result = await self.mongo_client.delete_json(id, self.conversation_collection)
             return result
