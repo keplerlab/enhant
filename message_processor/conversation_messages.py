@@ -108,13 +108,10 @@ class Conversation(object):
         elif self.pkt["msg"]["name"] == "END":
             conv_id = self.pkt["context"]["conv_id"]
             query = {"conv_id": str(conv_id)}
-            #self.mongo_client.update_json
-            #processed_conversation_document = self.mongo_client.findOneQueryProcessor(query, self.processed_conversation_collection)
-            #processed_conversation_document.count()
-            #print("processed_conversation_document",processed_conversation_document,flush=True)
             result_json = {}
             result_json["end_time"] = self.pkt["context"]["event_time"]
             result = await self.mongo_client.update_json(str(conv_id), result_json, self.processed_conversation_collection)
+            print("result", result)
             result = await self.mongo_client.insert_json(self.pkt, self.conversation_collection)
             print('inserted_id for record', result.inserted_id, flush=True)
             return result.inserted_id

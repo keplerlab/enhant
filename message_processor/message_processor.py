@@ -27,10 +27,10 @@ async def websocket_endpoint(websocket: WebSocket):
         pkt = await websocket.receive_json()
         print("Packet Received", pkt, flush=True)
         print(pkt["msg"]["name"])
-        is_ok = pkt_handler.isRequestValid(pkt)
+        is_ok, statusPkt = pkt_handler.isRequestValid(pkt)
         if is_ok is False:
             print("ERROR in request", flush=True)
-            response_pkt = pkt_handler.prepare_response(pkt, is_ok)
+            response_pkt = pkt_handler.prepare_response(pkt, is_ok, statusPkt)
             await websocket.send_json(response_pkt)
             # raise Exception("Incorrect request")
         else:
@@ -50,7 +50,7 @@ async def websocket_endpoint(websocket: WebSocket):
             else:
                 is_ok = False
                 print("Error in processing incoming request: ", pkt, flush=True)
-            response_pkt = pkt_handler.prepare_response(pkt, is_ok, inserted_record_id)
+            response_pkt = pkt_handler.prepare_response(pkt, is_ok, statusPkt, inserted_record_id)
             print("Packet Sent", response_pkt, flush=True)
             await websocket.send_json(response_pkt)
 

@@ -116,7 +116,10 @@
             "name": "ADD",
             "type": "TRANSCRIPTION",
             "record_id": "inserted_record_id",
-            "status": true
+            "status": {
+                "code": "SUCCESS/FAILURE",
+                "message": "msg"
+            }
         }
     ]
 }
