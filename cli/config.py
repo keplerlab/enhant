@@ -1,6 +1,5 @@
 from pydantic import BaseSettings
 from note import Note
-from transcription import Transcription
 from db_handler import MongoDBClient
 from questions_finder import QuestionsFinder
 from sentiment_finder import SentimentFinder
@@ -21,10 +20,8 @@ class Settings(BaseSettings):
         """
         Returns the list of analyzers.
         """
-
         # Add or remove analyzers here. All the analyzers will update the conversation JSON
         return [Note(mongo_client), QuestionsFinder(mongo_client), SentimentFinder(mongo_client), EngagmentFinder(mongo_client)]
-        #return [Note(mongo_client), Transcription(mongo_client)]
 
     data_analyzers: list =  get_data_analyers(mongo_client)
 

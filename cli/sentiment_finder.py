@@ -40,13 +40,13 @@ class SentimentFinder(object):
 
         # Connecct to db
         self.mongo_client.connect()
-        query = {"conversation_id": str(convid)} 
+        query = {"conv_id": str(convid)} 
         conversation_document = self.mongo_client.findOneQueryProcessor(query, "conversations")
         #print("\n***conversation_document: ", conversation_document)
         if conversation_document == None:
             print(f"No matching conversation for conv ID: {convid}")
             return
-        query = {"context.conversation_id": str(convid)}
+        query = {"context.conv_id": str(convid)}
         cursor = self.mongo_client.findQueryProcessor(query, self.collection)
 
         low_sentiment_scores = []
