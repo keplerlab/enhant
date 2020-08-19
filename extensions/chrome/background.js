@@ -1,152 +1,200 @@
-function convertFloat32ToInt16(buffer) {
-    l = buffer.length;
-    buf = new Int16Array(l);
-    while (l--) {
-        buf[l] = Math.min(1, buffer[l])*0x7FFF;
-    }
-    return buf.buffer;
-}
-
-class TabRecorded{
-    constructor(){
-        this.transcription_ip = CONFIG.transcription.ip;
-        this.transcription_port = CONFIG.transcription.port;
-
-        this.context = null;
-        this.socket = null;
+class ScreenCapture{
+    constructor(config){
+        this.transcription_ip = config.ip;
+        this.transcription_port = config.port;
+        this.socket_transcription = null;
+        this.socket_obj = null;
         this.stream = null;
+        this.stream_processor = null;
+        this.EVENT_FLAC_ENCODER = "screen_encoder";
+        this.encoder = new FlacEncoder(this.EVENT_FLAC_ENCODER);
+        this.bufferSize = config.bufferSize;
+        this.sampleRate = config.sampleRate;
     }
 
-    socketConnect(){
-        var _this = this;
-        function socket_transcription_closed_cb(new_socket){
-  
-            _this.socket = new_socket;
-            
+    reset(){
+        this.encoder = null;
+        this.socket_obj = null;
+        this.socket_transcription = null;
+        this.stream = null;
+        this.stream_processor = null;
+    }
+
+    sendFlacBufferData(buffer){
+        // console.log(" socket connection before send : ", this.socket_transcription);
+        if (!(this.socket_transcription == null)){
+            this.socket_transcription.send(buffer);
         }
-
-        _this.socket = new socketFactory(_this.transcription_ip, _this.transcription_port, "transcription").generateSocket(null, socket_transcription_closed_cb);
     }
 
-    initalizeRecorder(stream, encoder){
-        var audioContext = window.AudioContext;
-        this.context = new audioContext();
-        var audioInput = this.context.createMediaStreamSource(stream);
-        var bufferSize = 2048;
-        // create a javascript node
-        var recorder = this.context.createScriptProcessor(bufferSize, 1, 1);
-
+    registerEventListner(){
         var _this = this;
+        window.addEventListener(_this.EVENT_FLAC_ENCODER, function(event){
+            var flac_buffer = event.detail
+            // console.log("Buffer Data for mic : ", flac_buffer);
 
-        // specify the processing function
-        recorder.onaudioprocess = function(e){
-            var left = e.inputBuffer.getChannelData(0);
-            encoder.encode(left);
-        }
-        // connect stream to our recorder
-        audioInput.connect(recorder);
-        // connect our recorder to the previous destination
-        recorder.connect(this.context.destination);
-    }
-
-    playAudio(stream){
-        // To playback tab audio while chrome.tabCapture is running,
-        // the audio stream needs to be played back
-        let audio = new Audio();
-        audio.srcObject = stream;
-        audio.play();
-    }
-
-    startCapture(encoder){
-        var _this = this;
-        chrome.tabCapture.capture({audio: true}, (stream) => { // sets up stream for capture
-
-            this.stream = stream;
+            if ((_this.socket_transcription !== null) && (_this.socket_transcription.readyState == WebSocket.OPEN)){
+                _this.sendFlacBufferData(flac_buffer);
+            }
             
-            _this.initalizeRecorder(stream, encoder);
-            _this.playAudio(stream);
         });
     }
 
-    stopCapture(){
-        this.audioContext.stop();
-        liveStream.getAudioTracks()[0].stop();
+    playAudio(){
+        let audio = new Audio();
+        audio.srcObject = this.stream;
+        audio.play();
+    }
+
+    deregisterEventListner(){
+        var _this = this;
+        window.removeEventListener(_this.EVENT_FLAC_ENCODER, function(event){
+            console.log(" Event listners removed ");
+        });
+    }
+
+    socket_transcription_closed_cb(new_socket){
+        this.socket_transcription = new_socket;
+    }
+
+    connectToTranscriptionService(){
+        var _this = this;
+        this.socket_obj = new socketFactory(_this.transcription_ip, 
+            _this.transcription_port, "transcription");
+
+        this.socket_transcription = this.socket_obj.generateSocket(function(){
+            _this.socket_transcription.send(JSON.stringify({
+                "cmd": "start",
+                "origin": "speaker",
+                "conversation_id": "test"
+    
+            }));
+        },
+            _this.socket_transcription_closed_cb);
+
+    }
+
+    updateIP(ip){
+        this.transcription_ip = ip;
+    }
+
+    initializeStream(stream){
+        var _this = this;
+        var audioContext = window.AudioContext;
+        var context = new audioContext();
+        var source = context.createMediaStreamSource(stream);
+        var input = context.createGain();
+        source.connect(input);
+
+        var bufferSize = _this.bufferSize;
+        // create a javascript node
+        var recorder = context.createScriptProcessor(bufferSize, 1, 1);
+
+        _this.stream_processor = recorder;
+
+        // specify the processing function
+        recorder.onaudioprocess = function(e){
+
+            // This is left channel (for mono this is sufficient)
+            var left = e.inputBuffer.getChannelData(0);
+
+            // encode to flac
+            _this.encoder.encode(left);
+        };
+        // connect stream to our recorder
+        input.connect(recorder);
+        // connect our recorder to the previous destination
+        recorder.connect(context.destination);
+    }
+
+    captureStream(){
+
+        var _this = this;
+
+        chrome.tabCapture.capture({audio: true}, (stream) => {
+            _this.stream = stream;
+            _this.initializeStream(stream);
+            _this.playAudio();
+        })
+
+    }
+
+    stop(){
+
+        // stop teh event listner 
+        this.deregisterEventListner();
+
+        // stop the encoder
+        this.encoder.finish();
+
+        // disconnect from the transcription service
+        this.socket_obj.doReconnect(false);
+        this.socket_transcription.close();
+
+        // stop capturing the stream
+        this.stream_processor.disconnect();
+        delete this.stream_processor;
+
+        this.reset();
+
+        console.log("Screen capture stopped...");
+    }
+
+    start(){
+        console.log("Starting the screen capture process ..");
+        this.encoder.initialize();
+        this.registerEventListner();
+        this.connectToTranscriptionService();
+        this.captureStream();
     }
 }
 
-window.addEventListener("transcription", function(event){
+function startClicked(){
 
-    let transcription = event.detail;
-    console.log(" TRANSCRIPTION : ", transcription);
-});
+    var config = {
+        sampleRate: 44100,
+        bufferSize: 4096,
+        ip: CONFIG.transcription.ip,
+        port: CONFIG.transcription.port
+    }
 
+    console.log(" Configuration for Screen: ", config);
 
-function registerEventListners(socket){
-    window.addEventListener("encoder_tab", function(event){
-        console.log(" received buffer ", event.detail);
-        var buffer = event.detail;
-        socket.send(buffer);
-    })
+    var screen_capture = new ScreenCapture(config);
+    screen_capture.start();
 
-    window.addEventListener("transcription_tab", function(event){
+    function stopClicked(message, sender, sendResponse){
 
-        let transcription = event.detail;
-        console.log(" TRANSCRIPTION FROM TAB : ", transcription);
-    });
-}
+        if (message.action == "capture_screen_stop"){
 
-function unregisterEventListners(socket){
-    window.removeEventListener("encoder_tab", function(event){
-        console.log(" Encoder (Tab) event listner removed ");
-    });
-
-    window.removeEventListener("transcription_tab", function(event){
-        console.log(" Transcription (Tab) event listner removed ");
-    })
-}
-
-
-var tabAudioCapture = null;
-var encoder = null;
-
-chrome.browserAction.onClicked.addListener(function(request) {
-    console.log("Browser action ")
-});
-
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => { 
-
-    if (message.action == "start_tab_recording"){
-
-        encoder = new FlacEncoder("encoder_tab");
-        encoder.initialize();
-        tabAudioCapture = new TabRecorded();
-        tabAudioCapture.socketConnect();
-        registerEventListners(tabAudioCapture.socket);
-
-        if (tabAudioCapture.socket.readyState == WebSocket.OPEN) {
-			tabAudioCapture.socket.send("start_tab");
-            tabAudioCapture.startCapture(encoder);
-		} else if (tabAudioCapture.socket.readyState == WebSocket.CONNECTING) {
-			
-            setTimeout(function(){
-                tabAudioCapture.socket.send("start_tab");
-                tabAudioCapture.startCapture(encoder);
-            }, 3000);
-				
-		} else {
-			console.error('Socket is in CLOSED state');
+            if (!(screen_capture == null)){
+                screen_capture.stop();
+                delete screen_capture;
+            }
+          
         }
 
-        sendResponse({status: true})
-    
-    }
-    else if (message.action == "stop_tab_recording"){
-        unregisterEventListners()
-        tabAudioCapture.socket.send("stop_tab");
-        tabAudioCapture.stopCapture();
-        tabAudioCapture = null;
-        encoder = null;
+        // remove stop listner 
+        chrome.runtime.onMessage.removeListener(stopClicked);
 
-        sendResponse({status: true})
+        sendResponse({status: true});
+        
     }
-});
+
+    chrome.runtime.onMessage.addListener(stopClicked);
+}
+
+
+
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    console.log(" Received message from popup script : ", message);
+
+    if (message.action == "capture_screen_start"){
+
+        startClicked();
+
+        sendResponse({status: true});
+    }
+})
+
+console.log("Backround Script Loaded from extension - [enhan(t)]");
