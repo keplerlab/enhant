@@ -43,14 +43,10 @@ class Conversation(object):
         return inserted_conv_id
 
     def _check_record_in_time_window(self, list_db_processed_conv):
-        print("inside _check_record_in_time_window list_db_processed_conv:", list_db_processed_conv, flush=True)
-        print("Len list_db_processed_conv:", len(list_db_processed_conv), flush=True)
         packet_time = int(self.pkt["context"]["event_time"])
-
         nearest_conv_time = 0
         nearest_conv = None
         for processed_conv in list_db_processed_conv:
-            print("result_conv", processed_conv, flush=True)
             if "end_time" in processed_conv:
                 processed_conv_time = int(processed_conv["end_time"])
             else:
@@ -59,15 +55,9 @@ class Conversation(object):
             if (packet_time - nearest_conv_time) > (packet_time - processed_conv_time):
                 nearest_conv_time = processed_conv_time
                 nearest_conv = processed_conv
-            
-        #print("nearest_conv_time", nearest_conv_time, flush=True)
-        #print("processed_conv_time", processed_conv_time, flush=True)
-
-
         
         if (packet_time - nearest_conv_time) <= self.time_window:
-            print("Nearest conv", nearest_conv, flush=True)
-            print("Nearest conv time", nearest_conv_time, flush=True)
+            print("Nearest conv", nearest_conv, " time:", nearest_conv_time, flush=True)
             return nearest_conv
         else:
             print("No nearby conv found", flush=True)
@@ -81,7 +71,6 @@ class Conversation(object):
             query = {"meeting_id": str(meeting_id)}
 
             list_db_processed_conv = await self.mongo_client.findQueryProcessor(query, self.processed_conversation_collection)
-            print("conversation_document", list_db_processed_conv,  flush=True)
             # Add new record in conversation if no result found  
             if len(list_db_processed_conv) <= 0:
                 print(f"No matching conversation for meeting ID: {meeting_id} inserting new record",  flush=True)
@@ -90,10 +79,12 @@ class Conversation(object):
             else:
                 nearest_record = self._check_record_in_time_window(list_db_processed_conv)
                 if nearest_record is None:
+                    print(f"matching records not in window meeting ID: {meeting_id} inserting new record",  flush=True)
                     inserted_conv_id = await self._insert_new_conv()
                     return inserted_conv_id
                 else:
                     conv_id = nearest_record.get('_id')
+                    print(f"matching conversation found with conv ID: {conv_id} reusing same record",  flush=True)
                     inserted_conv_id = await self._insert_old_conv(conv_id)
                     return inserted_conv_id
 
