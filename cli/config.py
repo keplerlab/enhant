@@ -14,15 +14,21 @@ class Settings(BaseSettings):
     mongodb_dbname: str = "enhant_db"
     mongo_client = MongoDBClient(mongodb_hostname, mongodb_port, mongodb_dbname)
 
-    #mongo_client: MongoClient = None
+    # mongo_client: MongoClient = None
 
     def get_data_analyers(mongo_client):
         """
         Returns the list of analyzers.
         """
         # Add or remove analyzers here. All the analyzers will update the conversation JSON
-        return [Note(mongo_client), QuestionsFinder(mongo_client), SentimentFinder(mongo_client), EngagmentFinder(mongo_client)]
+        return [
+            Note(mongo_client),
+            QuestionsFinder(mongo_client),
+            SentimentFinder(mongo_client),
+            EngagmentFinder(mongo_client),
+        ]
 
-    data_analyzers: list =  get_data_analyers(mongo_client)
+    data_analyzers: list = get_data_analyers(mongo_client)
+
 
 settings = Settings()

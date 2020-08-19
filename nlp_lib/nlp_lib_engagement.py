@@ -53,8 +53,8 @@ class NLP_lib_engagement(object):
         wordMessage = dict(
             [
                 ("num_of_words", num_of_words),
-                ("timestamp_start", float(msg["Start_time"]) / 1000),
-                ("timestamp_stop", float(msg["End_time"]) / 1000),
+                ("timestamp_start", float(msg["start_time"]) / 1000),
+                ("timestamp_stop", float(msg["end_time"]) / 1000),
             ]
         )
         wordMessage = SimpleNamespace(**wordMessage)
@@ -73,11 +73,11 @@ class NLP_lib_engagement(object):
             self.spokenMsgsClientInTimeWindow[meeting_id].append(wordMessage2)
 
         self.spokenMsgsClientInTimeWindow[meeting_id] = self._cleanListForTimeWindow(
-            self.spokenMsgsClientInTimeWindow[meeting_id], float(msg["End_time"]) / 1000.0
+            self.spokenMsgsClientInTimeWindow[meeting_id], float(msg["end_time"]) / 1000.0
         )
 
         self.spokenMsgsAdvisorInTimeWindow[meeting_id] = self._cleanListForTimeWindow(
-            self.spokenMsgsAdvisorInTimeWindow[meeting_id], float(msg["End_time"]) / 1000.0
+            self.spokenMsgsAdvisorInTimeWindow[meeting_id], float(msg["end_time"]) / 1000.0
         )
 
         for item in self.spokenMsgsClientInTimeWindow[meeting_id]:

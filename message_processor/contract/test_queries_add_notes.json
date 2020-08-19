@@ -15,9 +15,7 @@
         "data": {
             "note":{
                 "content": "Note",
-                "type": "text",
-                "start_time":"",
-                "end_time":""
+                "type": "text"
             }
         },
         "version": ""
