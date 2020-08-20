@@ -14,7 +14,8 @@ $(document).ready(function(){
         BookmarkIcon,
         CaptureTab,
         SettingsIcon,
-        RecordIcon
+        RecordIcon,
+        PowerModeIcon
     ];
 
     var icons_events_registered = [];
