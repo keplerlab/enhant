@@ -1,4 +1,6 @@
 import typer
+from typing import List
+
 import config
 from db_handler import MongoDBClient
 
@@ -12,26 +14,32 @@ app = typer.Typer()
 
 
 @app.command()
-def analyze(conv_id: str):
+def analyze(conv_ids: List[str]):
     """
     Analyzes a full conversation.
     """
+    for conv_id in conv_ids:
 
-    typer.echo(f"Your conv ID is {conv_id}")
-    # Get all the analyzers
-    analyzers = config.settings.data_analyzers
-    # map is a lazy operation and hence needs to be called explicitly
-    results = map(methodcaller("process", conv_id), analyzers)
-    list(results)
+        typer.echo(f"Analyzing conv ID {conv_id}")
+        
+        # Get all the analyzers
+        analyzers = config.settings.data_analyzers
+        
+        # map is a lazy operation and hence needs to be called explicitly
+        results = map(methodcaller("process", conv_id), analyzers)
+        
+        list(results)
 
 
 @app.command()
-def delete(conv_id: str):
+def delete(conv_ids: List[str]):
     """
     Deletes a full conversation.
     """
-    typer.echo("You called delete")
-    typer.echo(f"Your conv ID is {conv_id}")
+
+    for conv_id in conv_ids:
+        typer.echo("You called delete")
+        typer.echo(f"Your conv ID is {conv_id}")
 
 
 if __name__ == "__main__":
