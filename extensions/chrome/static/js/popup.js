@@ -23,18 +23,20 @@ $(document).ready(function(){
 
     hideIcons();
 
-    // get data from local storage if start is active or not
-    chrome.storage.local.get(["start", "stop"], function(result){
+    window.addEventListener("hideIcons", function(event){
+        hideIcons();
+    });
 
-        if (result.start){
+    window.addEventListener("showIcons", function(event){
+        showIcons();
+    });
+
+    // check local storage if start is true
+    chrome.storage.local.get(["meeting_in_progress"], function(results){
+        if (results["meeting_in_progress"]){
             showIcons();
         }
-
-        if (result.stop){
-           hideIcons();
-        }
     })
-    
 
     registered_classes.forEach(function(cl){
 
@@ -44,9 +46,10 @@ $(document).ready(function(){
         // get state from local storage
         obj.getLocalStorage(cl.name, function(value){
             
-            // if active toggle the state, and the container as well
-            if (value == "active"){
-                obj.handleClick();
+            // if active toggle the state - and call statehandler
+            if (value == ICONSTATE.ACTIVE){
+                obj.toggleState();
+                obj.stateHandler();
             }
         });
 
@@ -58,9 +61,11 @@ $(document).ready(function(){
         for (const prop in icons_object_mapping){
             if (!(prop == icon_type)){
                 var icon_obj = icons_object_mapping[prop];
-                if (icon_obj.state == "active"){
-                    icon_obj.hideContainer();
+                
+                // Record Icon state will  only be set to inactive when the record icon is clicked
+                if ((icon_obj.state == ICONSTATE.ACTIVE) && (prop !== RecordIcon.name)){
                     icon_obj.toggleState();
+                    icon_obj.stateHandler();
 
                 }
             }

@@ -1,23 +1,31 @@
+const ICONSTATE = {
+    ACTIVE : "active",
+    INACTIVE : "inactive"
+}
+
 class Icon{
     constructor(){
-        this.state = "inactive";
+        this.state = ICONSTATE.INACTIVE;
         this.data_container_id = "data-container";
         this.container_id = null;
     }
 
     toggleState(){
-        if (this.state == "inactive"){
-            this.state = "active";
+        if (this.state == ICONSTATE.INACTIVE){
+            this.state = ICONSTATE.ACTIVE;
         }
-        else {
-            this.state = "inactive";
+        else if(this.state == ICONSTATE.ACTIVE) {
+            this.state = ICONSTATE.INACTIVE;
         }
-
-        this.setLocalStorage();
 
     }
 
+    stateHandler(){
+        this.toggleContainer();
+    }
+
     hideContainer(){
+        console.log(" hiding container ", this.container_id);
         var _this = this;
         if (!(_this.container_id == null)){
             $('#' + _this.container_id).hide();
@@ -46,11 +54,11 @@ class Icon{
         var _this = this;
         
         if (!(_this.container_id == null)){
-            if (_this.state == "active"){
+            if (_this.state == ICONSTATE.ACTIVE){
                 $('#' + _this.container_id).show();
                 
             }
-            if (_this.state == "inactive"){
+            if (_this.state == ICONSTATE.INACTIVE){
                 $('#' + _this.container_id).hide();
             }
         }
@@ -58,7 +66,8 @@ class Icon{
 
     handleClick(){
         this.toggleState();
-        this.toggleContainer();
+        this.setLocalStorage();
+        this.stateHandler();
     }
 
     getCurrentTime(unix_timestamp){
@@ -134,6 +143,9 @@ class BookmarkIcon extends Icon{
     }
 
     handleClick(){
+        this.toggleState();
+        this.stateHandler();
+        this.setLocalStorage();
         this.addBookMark();
     }
 }
@@ -167,6 +179,9 @@ class CaptureTab extends Icon{
     }
 
     handleClick(){
+        this.toggleState();
+        this.stateHandler();
+        this.setLocalStorage();
         this.capture();
     }
 }
@@ -255,7 +270,8 @@ class ExpandIcon extends Icon{
 
     handleClick(){
         this.toggleState();
-        this.toggleContainer();
+        this.stateHandler();
+        this.setLocalStorage();
         this.populateDataContainer();
     }
 }
@@ -305,7 +321,6 @@ class SettingsIcon extends Icon{
             
         });
     }
-
 
 }
 
@@ -359,10 +374,8 @@ class RecordIcon extends Icon{
     }
 
     meeting_started(){
-        chrome.storage.local.set({"start": true}, function(){
+        chrome.storage.local.set({"meeting_in_progress": true}, function(){
             console.log("meeting started flag set in storage .");
-
-            showIcons();
 
             chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
                 var currTab = tabs[0];
@@ -374,16 +387,12 @@ class RecordIcon extends Icon{
 
                 }
             });
-
-            
         })
     }
 
     meeting_stopped(){
-        chrome.storage.local.set({"stop": true}, function(){
+        chrome.storage.local.set({"meeting_in_progress": false}, function(){
             console.log("meeting stopped flag set in storage .");
-
-            hideIcons();
 
             chrome.runtime.sendMessage({msg: "stop"}, function(response){
                 // console.log(response.status);
@@ -404,11 +413,27 @@ class RecordIcon extends Icon{
         // this.stopCapturingTabAudio();
     }
 
+
+    stateHandler(){
+        this.toggleContainer();
+
+        if (this.state == ICONSTATE.ACTIVE){
+            var event = new CustomEvent("showIcons", {});
+			window.dispatchEvent(event);
+        }
+        else if (this.state == ICONSTATE.INACTIVE){
+            var event = new CustomEvent("hideIcons", {});
+			window.dispatchEvent(event);
+        }
+    }
+
     handleClick(){
         this.toggleState();
 
+        this.stateHandler();
+
         // set the recording state based on icon state
-        if (this.state == "active"){
+        if (this.state == ICONSTATE.ACTIVE){
             this.recording = true;
             this.start();
         }

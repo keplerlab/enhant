@@ -197,4 +197,3 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 })
 
 console.log("Content Script Loaded from extension - [enhan(t)]");
-

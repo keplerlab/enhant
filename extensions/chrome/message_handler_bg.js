@@ -309,11 +309,22 @@ chrome.tabs.onRemoved.addListener(function(tabId, info) {
 
         console.log(" tab id matching ", result["tab_id"], tabId);
 
-        if (result["tab_id"] == tabId){
-            downloadZip(function(){
-                console.log("Zip extracted");
-            });
+        if (result["tab_id"]){
+
+            if (result["tab_id"] == tabId){
+                downloadZip(function(){
+                
+                    // clear all the data
+                    enhant_local_storage_obj.deleteAll();
+                });
+            }
+
         }
+        else {
+            // clear all the data
+            enhant_local_storage_obj.deleteAll();
+        }
+
     })
 
 });
