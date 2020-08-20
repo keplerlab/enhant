@@ -34,3 +34,35 @@ cd /path/to/enahant-repo
 docker-compose run cli
 python  main.py analyze 111 
 ```
+
+
+# Building documentation using sphinx 
+
+
+1. Start Docker containers:
+
+```
+cd /path/to/enahant-repo/
+docker-compose up
+```
+
+2. Invoke cli for conversation id :
+
+```
+cd /path/to/enahant-repo
+docker-compose run cli
+```
+
+3. Goto docs folder: 
+
+```
+cd ../docs
+```
+
+4. Issue build command: 
+
+```
+make html
+```
+
+Documentation will be available outside container at path <enhant-repo/docs/build/html> folder
