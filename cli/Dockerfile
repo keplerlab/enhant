@@ -44,6 +44,9 @@ RUN eval "$(conda shell.bash hook)" && conda activate enhant && \
 RUN eval "$(conda shell.bash hook)" && conda activate enhant && \
     pip install tensorflow_hub nltk
 
+RUN eval "$(conda shell.bash hook)" && conda activate enhant && \
+    pip install sphinx_rtd_theme sphinx_js 
+
 # Download nltk model 
 RUN eval "$(conda shell.bash hook)" && conda activate enhant && \
     (echo "import nltk" ; echo "nltk.download('punkt')") | python
@@ -51,6 +54,19 @@ RUN eval "$(conda shell.bash hook)" && conda activate enhant && \
 RUN eval "$(conda shell.bash hook)" && conda activate enhant && \
     (echo "import flair" ; echo "flair_sentiment = flair.models.TextClassifier.load('en-sentiment')" ) | python
 
+
+RUN  apt-get install -y --no-install-recommends \
+    gpg-agent
+
+RUN  curl -sL https://deb.nodesource.com/setup_12.x | bash - \
+    && \
+    apt-get install -y nodejs \
+    && \
+    apt-get clean && \
+
+rm -rf /var/lib/apt/lists/*
+
+RUN npm install -g jsdoc
 
 # RUN eval "$(conda shell.bash hook)" && conda activate enhant && \
 #     pip install motor fastapi_contrib[mongo] pytz
