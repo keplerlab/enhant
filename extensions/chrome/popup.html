@@ -47,43 +47,49 @@
             color: #1E90FF !important;
         }
 
+        @media (min-width: 200px){
+            .seven-cols .col-md-1,
+            .seven-cols .col-sm-1,
+            .seven-cols .col-lg-1, 
+            .seven-cols .col-xs-1 {
+                width: 14.285714285714285714285714285714%;
+                *width: 14.285714285714285714285714285714%;
+            }
+        }
+
      </style>
     </head>
     <body>
         <div class="container-fluid" id="main" style="width:376px;height:40px;">
-            <ul class="list-inline row icon-list align-self-center"> 
-                <li class="col-xs-3">
-                    <div class="col-xs-6 icon">
-                        <icon type="BookmarkIcon" state="inactive"><img height=24 width=24  src="/static/images/bookmark.svg"></icon>
+            <ul class="list-inline row icon-list align-self-center">
+                <li class="col-xs-12 seven-cols">
+                    <div class="col-xs-1 icon">
+                        <icon type="BookmarkIcon" state="inactive" hidden><img height=24 width=24  src="/static/images/bookmark.svg"></icon>
                     </div>
-                    <div class="col-xs-6 icon">
-                        <icon type="CaptureTab" state="inactive"><img height=24 width=24 src="/static/images/capture.svg"></icon>
+                    <div class="col-xs-1 icon">
+                        <icon type="CaptureTab" state="inactive" hidden><img height=24 width=24 src="/static/images/capture.svg"></icon>
                     </div>
-                </li>
-                <li class="col-xs-3">
-                    <div class="col-xs-6 icon">
-                        <icon type="NotesIcon" state="inactive"><img height=24 width=24 src="/static/images/notes.svg"></icon>
+                    <div class="col-xs-1 icon">
+                        <icon type="NotesIcon" state="inactive" hidden><img height=24 width=24 src="/static/images/notes.svg"></icon>
                     </div>
-                    <div class="col-xs-6 icon">
+
+                    <div class="col-xs-1 icon">
                         <icon type="RecordIcon" state="inactive"><img height=24 width=24 src="/static/images/record.svg"></icon>
                     </div>
-                </li>
-                <li class="col-xs-3">
-                    <div class="col-xs-6 icon">
-                        <icon type="orientation" state="inactive"><img height=24 width=24 src="/static/images/orientation.svg"></icon>
-                    </div>
-                    <div class="col-xs-6 icon">
+
+                    <div class="col-xs-1 icon">
                         <icon type="powermode" state="inactive"><img height=24 width=24 src="/static/images/powermode.svg"></icon>
                     </div>
-                </li>
-                <li class="col-xs-3">
-                    <div class="col-xs-6 icon">
+
+                    <div class="col-xs-1 icon">
                         <icon type="SettingsIcon" state="inactive"><img height=24 width=24 src="/static/images/settings.svg"></icon>
                     </div>
-                    <div class="col-xs-6 icon">
+
+                    <div class="col-xs-1 icon">
                         <icon type="ExpandIcon" state="inactive"><img  height=24 width=24 src="/static/images/down_arrow.svg"></icon>
                     </div>
                 </li>
+
             </ul> 
         </div>
 

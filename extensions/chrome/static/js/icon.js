@@ -2,7 +2,7 @@ class Icon{
     constructor(){
         this.state = "inactive";
         this.data_container_id = "data-container";
-        this.container_id = null
+        this.container_id = null;
     }
 
     toggleState(){
@@ -12,6 +12,9 @@ class Icon{
         else {
             this.state = "inactive";
         }
+
+        this.setLocalStorage();
+
     }
 
     hideContainer(){
@@ -21,9 +24,27 @@ class Icon{
         }
     }
 
-    toggleContainer(){
-        var _this = this;
+    setLocalStorage(){
+        var className = this.constructor.name;
+        var state = this.state;
+        var local_storage_data = {};
+        local_storage_data[className] = state;
 
+        chrome.storage.local.set(local_storage_data, function() {
+            console.log("State value set for : ", local_storage_data);
+        });
+    }
+
+    getLocalStorage(key, cb){
+        chrome.storage.local.get([key], function(result) {
+            cb(result[key]);
+        });
+    }
+
+    toggleContainer(){
+
+        var _this = this;
+        
         if (!(_this.container_id == null)){
             if (_this.state == "active"){
                 $('#' + _this.container_id).show();
@@ -40,9 +61,15 @@ class Icon{
         this.toggleContainer();
     }
 
-    getCurrentTime(){
-        var date = new Date();
+    getCurrentTime(unix_timestamp){
+        var date = new Date(unix_timestamp * 1000);
         return date.getHours() + " : " + date.getMinutes();
+    }
+
+    sendMessageToBackground(request, cb){
+        chrome.runtime.sendMessage({msg: request.msg, data: request.data}, function(response) {
+            cb(response);
+        });
     }
 
     registerEvents(){}
@@ -63,13 +90,12 @@ class NotesIcon extends Icon{
         });
     }
 
-    generateNote(){
-        var note = $('textarea').val();
+    generateNote(obj){
 
         return "<div class='parent-data row' style='margin-left:10%;padding-top:2%;padding-bottom:2%;align-items:center;display:flex;'>" + 
         "<div class='col-xs-1'><img src='static/images/notes.svg'></div>" +
-        "<div class='col-xs-7'><p style='margin-top:auto;margin-bottom:auto;'>" + note + "</p>" + "</div>" +
-        "<div class='col-xs-3 align-self-center' style='color:#808080b5;'>" + this.getCurrentTime() + "</div>" +
+        "<div class='col-xs-7'><p style='margin-top:auto;margin-bottom:auto;'>" + obj.content + "</p>" + "</div>" +
+        "<div class='col-xs-3 align-self-center' style='color:#808080b5;'>" + this.getCurrentTime(obj.time) + "</div>" +
         "<div>";
     }
 
@@ -77,24 +103,34 @@ class NotesIcon extends Icon{
         var _this = this;
         // get the notes here
 
-        // add it to the data container
-        $('#'+_this.data_container_id).prepend(_this.generateNote());
+        var note = $('textarea').val();
+
+        _this.sendMessageToBackground({"msg": "save_notes", "data": note}, function(response){
+            // add it to the data container
+            $('#'+_this.data_container_id).prepend(_this.generateNote(response.data));
+        });
     }
 }
 
 class BookmarkIcon extends Icon{
 
-    generateBookmark(){
+    generateBookmark(obj){
         return "<div class='parent-data row' style='margin-left:10%;padding-top:2%;padding-bottom:2%;align-items:center;display:flex;'>" + 
         "<div class='col-xs-1'><img src='static/images/bookmark.svg'></div>" +
         "<div class='col-xs-7'><p style='margin-top:auto;margin-bottom:auto;'>Moment Bookmarked</p>" + "</div>" +
-        "<div class='col-xs-3 align-self-center' style='color:#808080b5;'>" + this.getCurrentTime() + "</div>" +
+        "<div class='col-xs-3 align-self-center' style='color:#808080b5;'>" + this.getCurrentTime(obj.time) + "</div>" +
         "<div>";
     }
 
     addBookMark(){
         var _this = this;
-        $('#'+_this.data_container_id).prepend(_this.generateBookmark());
+
+        _this.sendMessageToBackground({"msg": "save_bookmark", "data": "Bookmarked Moment"}, function(response){
+
+            // add it to the data container
+            $('#'+_this.data_container_id).prepend(_this.generateBookmark(response.data));
+        });
+        
     }
 
     handleClick(){
@@ -104,21 +140,34 @@ class BookmarkIcon extends Icon{
 
 class CaptureTab extends Icon{
 
-    generateCapture(){
+    capture(){
+        var _this = this;
+        this.sendMessageToBackground({"msg": "capture_tab", "data": null}, function(response){
+
+            // response.url has the base64 image
+            var html = _this.generateCapture(response.data);
+            _this.addTabCapture(html);
+
+        })
+    }
+
+    // use chrome tabcapture here
+    generateCapture(obj){
+        
         return "<div class='parent-data row' style='margin-left:10%;padding-top:2%;padding-bottom:2%;align-items:center;display:flex;'>" + 
         "<div class='col-xs-1'><img src='static/images/capture.svg'></div>" +
-        "<div class='col-xs-7'><img src='static/images/icon.png'></div>" +
-        "<div class='col-xs-3 align-self-center' style='color:#808080b5;'>" + this.getCurrentTime() + "</div>" +
+        "<div class='col-xs-7'><img width=200px src='" + obj.content + "'></div>" +
+        "<div class='col-xs-3 align-self-center' style='color:#808080b5;'>" + this.getCurrentTime(obj.time) + "</div>" +
         "<div>";
     }
     
-    addTabCapture(){
+    addTabCapture(html){
         var _this = this;
-        $('#'+_this.data_container_id).prepend(_this.generateCapture());
+        $('#'+_this.data_container_id).prepend(html);
     }
 
     handleClick(){
-        this.addTabCapture();
+        this.capture();
     }
 }
 
@@ -127,6 +176,87 @@ class ExpandIcon extends Icon{
     constructor(){
         super();
         this.container_id = "data-container";
+        this.valid_data_types = ["notes", "bookmark", "image"]
+    }
+
+    reset(){
+        $('#' +this.data_container_id).html("");
+    }
+
+    generateHTMLContainerData(data){
+
+        var d_type = data["type"];
+        var icon_html = "";
+        var content_html = "";
+
+        if (d_type == this.valid_data_types[0]){
+            icon_html = "<div class='col-xs-1'><img src='static/images/notes.svg'></div>";
+            content_html = "<div class='col-xs-7'><p style='margin-top:auto;margin-bottom:auto;'>" + data.content + "</p>" + "</div>"
+        }
+        else if (d_type == this.valid_data_types[1]){
+            icon_html = "<div class='col-xs-1'><img src='static/images/bookmark.svg'></div>";
+            content_html = "<div class='col-xs-7'><p style='margin-top:auto;margin-bottom:auto;'>Moment Bookmarked</p>" + "</div>";
+        }
+        else{
+            icon_html = "<div class='col-xs-1'><img src='static/images/capture.svg'></div>";
+            content_html =  "<div class='col-xs-7'><img width=200px src='" + data.content + "'></div>";
+        }
+        
+        return "<div class='parent-data row' style='margin-left:10%;padding-top:2%;padding-bottom:2%;align-items:center;display:flex;'>" + 
+        icon_html +
+        content_html +
+        "<div class='col-xs-3 align-self-center' style='color:#808080b5;'>" + this.getCurrentTime(data.time) + "</div>" +
+        "<div>";
+    }
+
+    populateDataContainer(){
+        var _this = this;
+
+        _this.reset();
+
+        chrome.storage.local.get(_this.valid_data_types, function(result){
+
+            var combined_data_arr = [];
+
+            var arr_notes = result[_this.valid_data_types[0]] || [];
+            arr_notes.forEach(function(obj){
+                obj["type"] = _this.valid_data_types[0];
+                combined_data_arr.push(obj);
+            })
+
+            var arr_bookmark =  result[_this.valid_data_types[1]] || [];
+            arr_bookmark.forEach(function(obj){
+                obj["type"] = _this.valid_data_types[1];
+                combined_data_arr.push(obj);
+            })
+
+            var arr_images = result[_this.valid_data_types[2]] || [];
+            arr_images.forEach(function(obj){
+                obj["type"] = _this.valid_data_types[2];
+                combined_data_arr.push(obj);
+            })
+
+            // sort combined array in descending order
+            combined_data_arr.sort(function(a, b){
+                var keyA = new Date(a.time*1000);
+                var keyB = new Date(b.time*1000);
+                if (keyA < keyB) return -1;
+                if (keyA > keyB) return 1;
+                return 0;
+            })
+
+            combined_data_arr.forEach(function(data){
+                $('#'+_this.data_container_id).prepend(_this.generateHTMLContainerData(data));
+            })
+
+            
+        })
+    }
+
+    handleClick(){
+        this.toggleState();
+        this.toggleContainer();
+        this.populateDataContainer();
     }
 }
 
@@ -223,20 +353,55 @@ class RecordIcon extends Icon{
     stopCapturingTabAudio(){
 
         // stop the tab recording
-        chrome.runtime.sendMessage({action: "capture_screen_stop"}, function(response){
-            console.log("Local recording status : ", response.status);
+        // chrome.runtime.sendMessage({action: "capture_screen_stop"}, function(response){
+        //     console.log("Local recording status : ", response.status);
+        // })
+    }
+
+    meeting_started(){
+        chrome.storage.local.set({"start": true}, function(){
+            console.log("meeting started flag set in storage .");
+
+            showIcons();
+
+            chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+                var currTab = tabs[0];
+                if (currTab) { 
+
+                    chrome.runtime.sendMessage({msg: "start", data: currTab.id}, function(response){
+                        // console.log(response.status);
+                    })
+
+                }
+            });
+
+            
+        })
+    }
+
+    meeting_stopped(){
+        chrome.storage.local.set({"stop": true}, function(){
+            console.log("meeting stopped flag set in storage .");
+
+            hideIcons();
+
+            chrome.runtime.sendMessage({msg: "stop"}, function(response){
+                // console.log(response.status);
+            })
         })
     }
 
 
     start(){
-        this.startCapturingMicAudio();
-        this.startCapturingTabAudio();
+        this.meeting_started();
+        // this.startCapturingMicAudio();
+        // this.startCapturingTabAudio();
     }
 
     stop(){
-        this.stopCapturingMicAudio();
-        this.stopCapturingTabAudio();
+        this.meeting_stopped();
+        // this.stopCapturingMicAudio();
+        // this.stopCapturingTabAudio();
     }
 
     handleClick(){

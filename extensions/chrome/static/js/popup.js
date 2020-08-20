@@ -1,3 +1,11 @@
+function hideIcons(){
+    $('icon[hidden]').hide();
+}
+
+function showIcons(){
+    $('icon[hidden]').show();
+}
+
 $(document).ready(function(){
 
     var registered_classes = [
@@ -13,9 +21,36 @@ $(document).ready(function(){
 
     var icons_object_mapping = {};
 
+    hideIcons();
+
+    // get data from local storage if start is active or not
+    chrome.storage.local.get(["start", "stop"], function(result){
+
+        if (result.start){
+            showIcons();
+        }
+
+        if (result.stop){
+           hideIcons();
+        }
+    })
+    
+
     registered_classes.forEach(function(cl){
+
         var obj = new cl();
         icons_object_mapping[cl.name] = obj;
+
+        // get state from local storage
+        obj.getLocalStorage(cl.name, function(value){
+            
+            // if active toggle the state, and the container as well
+            if (value == "active"){
+                obj.handleClick();
+            }
+        });
+
+        // togglecontainer based on storage data
     });
     
     function hideOtherIconWindow(icon_type){
@@ -26,6 +61,7 @@ $(document).ready(function(){
                 if (icon_obj.state == "active"){
                     icon_obj.hideContainer();
                     icon_obj.toggleState();
+
                 }
             }
         }
@@ -48,40 +84,3 @@ $(document).ready(function(){
     
     });
 })
-
-
-// let record_btn = document.getElementById('record');
-// let stop_btn = document.getElementById('stop');
-
-// record_btn.onclick = function(){
-    
-//     chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
-
-//         console.log(" tabs ", tabs[0]);
-
-//         // sends message to content script (main.js)
-//         // chrome.tabs.sendMessage(tabs[0].id, {action: "start_local_recording"}, function(response){
-//         //     console.log("Local recording status : ", response.status);
-//         // })
-
-//         chrome.runtime.sendMessage({action: "start_tab_recording"}, function(response){
-//             console.log("Local recording status : ", response.status);
-//         })
-//     })
-// }
-
-// stop_btn.onclick = function(){
-
-//     chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
-
-//         // sends message to content script (main.js)
-//         // chrome.tabs.sendMessage(tabs[0].id, {action: "stop_local_recording"}, function(response){
-//         //     console.log("Local recording status : ", response.status);
-//         // })
-
-//         // stop the tab recording
-//         chrome.runtime.sendMessage({action: "stop_tab_recording"}, function(response){
-//             console.log("Local recording status : ", response.status);
-//         })
-//     })
-// }
