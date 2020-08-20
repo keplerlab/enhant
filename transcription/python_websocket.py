@@ -184,7 +184,7 @@ async def on_data(websocket, path):
 
     print("\n****New Websocket connection Established ")
     jsonDataString = await websocket.recv()
-    print("\n\n****jsonData:", jsonDataString, flush=True)
+    #print("\n\n****jsonData:", jsonDataString, flush=True)
     jsonData = json.loads(jsonDataString)
     print("\n\n****jsonData:", jsonData, flush=True)
     if jsonData["cmd"] != "start":
@@ -253,7 +253,7 @@ async def on_data(websocket, path):
         print("Stream closed flag set to true")
 
     print("\n\n***Websocket connection closed")
-    websocket.close()
+    
 
     print("Exit from transcription_loop function saving recorded audio")
 
@@ -266,8 +266,9 @@ async def on_data(websocket, path):
     print("\n*** Writing audio data in file:", full_file_name)
 
     helper.write_audio_flac(
-        record_audio, full_file_name, cfg.SAMPLE_RATE, 2, CHANNELS=cfg.CHANNELS,
+        record_audio, full_file_name
     )
+    await websocket.close()
 
 
 ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)

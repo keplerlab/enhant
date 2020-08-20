@@ -3,20 +3,46 @@ import bson
 
 
 def extract_data_from_msg(pkt):
+    """[Extract data part of pkt]
+
+    :param pkt: [description]
+    :type pkt: [type]
+    :return: [description]
+    :rtype: [type]
+    """
     return pkt["msg"]["data"]
 
 
 def create_error_msg(error_msg):
+    """[Generate error msg to be sent back on error]
+
+    :param error_msg: [description]
+    :type error_msg: [type]
+    :return: [description]
+    :rtype: [type]
+    """
     statusJson = {"code": "FAILURE", "message": error_msg}
     return statusJson
 
 
 def create_success_msg():
+    """[Generate success msg to be sent back on success]
+
+    :return: [description]
+    :rtype: [type]
+    """
     statusJson = {"code": "SUCCESS", "message": "OK"}
     return statusJson
 
 
 def isRequestValid(pkt):
+    """[Check if request is valid by checking packet data]
+
+    :param pkt: [description]
+    :type pkt: [type]
+    :return: [description]
+    :rtype: [type]
+    """
     if "msg" not in pkt:
         error_msg = "msg field missing"
         print(error_msg, flush=True)
@@ -107,7 +133,19 @@ def isRequestValid(pkt):
 
 
 def prepare_response(pkt, is_ok, statusPkt, inserted_record_id=0):
-    print("statusPkt", statusPkt, flush=True)
+    """[Prepare response packet]
+
+    :param pkt: [description]
+    :type pkt: [type]
+    :param is_ok: [description]
+    :type is_ok: bool
+    :param statusPkt: [description]
+    :type statusPkt: [type]
+    :param inserted_record_id: [description], defaults to 0
+    :type inserted_record_id: int, optional
+    :return: [description]
+    :rtype: [type]
+    """
     if is_ok:
         response_pkt = pkt
         response_pkt["response"] = {

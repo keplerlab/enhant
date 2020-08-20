@@ -3,6 +3,7 @@
     :platform: Platform Independent
     :synopsis: This module is for handling all functions for a transcription 
 """
+
 import sys
 import os
 
@@ -14,13 +15,31 @@ engagement_lib = NLP_lib_engagement()
 
 
 def timeSortingFunction(tuple):
+    """[summary]
+
+    :param tuple: [description]
+    :type tuple: [type]
+    :return: [description]
+    :rtype: [type]
+    """
     return int(tuple[1]["end_time"])
 
 
 class EngagmentFinder(object):
-    """Client for handling notes"""
+    """[Client for handling notes]
+
+    :param object: [description]
+    :type object: [type]
+    :return: [description]
+    :rtype: [type]
+    """    
 
     def __init__(self, mongo_client):
+        """[init function]
+
+        :param mongo_client: [description]
+        :type mongo_client: [type]
+        """
         self.processed_conversation_collection = "conversations_processed"
         self.collection = "transcriptions"
         self.mongo_client = mongo_client
@@ -28,12 +47,24 @@ class EngagmentFinder(object):
         self.high_sentiment_threshold = 0.7
 
     def _transformTranscription(self, transcriptions_pkt):
+        """[transform Transcription]
+
+        :param transcriptions_pkt: [description]
+        :type transcriptions_pkt: [type]
+        :return: [description]
+        :rtype: [type]
+        """
         return (
             transcriptions_pkt["msg"]["data"]["transcription"],
             transcriptions_pkt["context"]["origin"],
         )
 
     def process(self, conv_id):
+        """[Public function for saving engagement]
+
+        :param conv_id: [description]
+        :type conv_id: [type]
+        """
         # print("inside questions processing code with conversationo id: ", conv_id)
 
         # Connecct to db

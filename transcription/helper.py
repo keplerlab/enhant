@@ -85,7 +85,7 @@ def write_audio(audio_data, filename, RATE, SAMPLE_WIDTH, CHANNELS=1):
     f.close()
 
 
-def write_audio_flac(audio_data, filename, RATE, SAMPLE_WIDTH, CHANNELS=1):
+def write_audio_flac(audio_data, filename):
 
     # arr = numpy.array(audio_data, dtype=numpy.float32)
     # print("arr.dtype", arr.dtype)
