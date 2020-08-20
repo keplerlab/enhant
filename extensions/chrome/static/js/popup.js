@@ -31,13 +31,6 @@ $(document).ready(function(){
         showIcons();
     });
 
-    // check local storage if start is true
-    chrome.storage.local.get(["meeting_in_progress"], function(results){
-        if (results["meeting_in_progress"]){
-            showIcons();
-        }
-    })
-
     registered_classes.forEach(function(cl){
 
         var obj = new cl();
@@ -47,7 +40,7 @@ $(document).ready(function(){
         obj.getLocalStorage(cl.name, function(value){
             
             // if active toggle the state - and call statehandler
-            
+            // console.log(" checking local storage for ", cl.name , value);
             if (value == ICONSTATE.ACTIVE){
                 obj.toggleState();
                 obj.stateHandler();
@@ -66,10 +59,14 @@ $(document).ready(function(){
                 // Record Icon state will  only be set to inactive when the record icon is clicked
                 if ((icon_obj.state == ICONSTATE.ACTIVE) && (prop !== RecordIcon.name)){
                     icon_obj.toggleState();
+                    icon_obj.setLocalStorage();
                     icon_obj.stateHandler();
 
                 }
+
+                // console.log(" icon state after hiding : ", prop, icon_obj.state);
             }
+
         }
     }
 

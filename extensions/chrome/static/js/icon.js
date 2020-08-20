@@ -268,11 +268,16 @@ class ExpandIcon extends Icon{
         })
     }
 
+    stateHandler(){
+        this.toggleContainer();
+        this.populateDataContainer();
+
+    }
+
     handleClick(){
         this.toggleState();
         this.stateHandler();
         this.setLocalStorage();
-        this.populateDataContainer();
     }
 }
 
