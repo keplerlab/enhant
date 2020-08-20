@@ -5,7 +5,8 @@
  * @param {object} config A config object will all the parts of the system
  */
 function mountRoutes (app, config) {
-  app.use('/abc', (config.homeApp.router))  
+  app.use('/abc', (config.homeApp.router))
+  app.use('/query', (config.queryApp.router))  
 }
 
 module.exports = mountRoutes
