@@ -10,7 +10,7 @@
      <script src="static/js/bootstrap.min.js"></script>
      <style>
          ul.icon-list{
-             margin-top: 8px;
+             margin-top: 9px;
          }
          textarea.notes-textarea{
              display: block;
@@ -28,7 +28,16 @@
 
         icon{
             cursor: pointer;
+            margin-top: 8px;
+            margin-bottom: 8px;
+            display: block;
+            padding-left: 15px;
+            padding-right: 15px;
         }    
+
+        .icon{
+            height: 40px;
+        }
 
         .parent-data p{
             color:  #808080b5;
@@ -54,6 +63,28 @@
             .seven-cols .col-xs-1 {
                 width: 14.285714285714285714285714285714%;
                 *width: 14.285714285714285714285714285714%;
+                padding-left: 0px;
+                padding-right: 0px;
+            }
+        }
+
+        .pulse-ring {
+            content: '';
+            border: 10px solid #1E90FF;
+            border-radius: 50%;
+            height:24px;
+            width:24px;
+            animation: pulsate infinite 1s;
+        }
+
+        @-webkit-keyframes pulsate {
+            0% {
+                -webkit-transform: scale(1, 1);
+                opacity: 1;
+            }
+            100% {
+                -webkit-transform: scale(1.2, 1.2);
+                opacity: 0.4;
             }
         }
 
@@ -61,36 +92,34 @@
     </head>
     <body>
         <div class="container-fluid" id="main" style="width:376px;height:40px;">
-            <ul class="list-inline row icon-list align-self-center">
-                <li class="col-xs-12 seven-cols">
-                    <div class="col-xs-1 icon">
-                        <icon type="BookmarkIcon" state="inactive" hidden><img height=24 width=24  src="/static/images/bookmark.svg"></icon>
-                    </div>
-                    <div class="col-xs-1 icon">
-                        <icon type="CaptureTab" state="inactive" hidden><img height=24 width=24 src="/static/images/capture.svg"></icon>
-                    </div>
-                    <div class="col-xs-1 icon">
-                        <icon type="NotesIcon" state="inactive" hidden><img height=24 width=24 src="/static/images/notes.svg"></icon>
-                    </div>
 
-                    <div class="col-xs-1 icon">
-                        <icon type="RecordIcon" state="inactive"><img height=24 width=24 src="/static/images/record.svg"></icon>
-                    </div>
+            <div class="row seven-cols" style="height: 40px;">
+                <div class="col-xs-1 icon">
+                    <icon type="BookmarkIcon" state="inactive" hidden><img height=24 width=24  src="/static/images/bookmark.svg"></icon>
+                </div>
+                <div class="col-xs-1 icon">
+                    <icon type="CaptureTab" state="inactive" hidden><img height=24 width=24 src="/static/images/capture.svg"></icon>
+                </div>
+                <div class="col-xs-1 icon">
+                    <icon type="NotesIcon" state="inactive" hidden><img height=24 width=24 src="/static/images/notes.svg"></icon>
+                </div>
 
-                    <div class="col-xs-1 icon">
-                        <icon type="powermode" state="inactive"><img height=24 width=24 src="/static/images/powermode.svg"></icon>
-                    </div>
+                <div class="col-xs-1 icon">
+                    <icon type="RecordIcon" state="inactive"><img height=24 width=24 src="/static/images/record.svg"></icon>
+                </div>
 
-                    <div class="col-xs-1 icon">
-                        <icon type="SettingsIcon" state="inactive"><img height=24 width=24 src="/static/images/settings.svg"></icon>
-                    </div>
+                <div class="col-xs-1 icon">
+                    <icon type="PowerModeIcon" state="inactive"><img height=24 width=24 src="/static/images/powermode.svg"></icon>
+                </div>
 
-                    <div class="col-xs-1 icon">
-                        <icon type="ExpandIcon" state="inactive"><img  height=24 width=24 src="/static/images/down_arrow.svg"></icon>
-                    </div>
-                </li>
+                <div class="col-xs-1 icon">
+                    <icon type="SettingsIcon" state="inactive"><img height=24 width=24 src="/static/images/settings.svg"></icon>
+                </div>
 
-            </ul> 
+                <div class="col-xs-1 icon">
+                    <icon type="ExpandIcon" state="inactive"><img  height=24 width=24 src="/static/images/down_arrow.svg"></icon>
+                </div>
+            </div>
         </div>
 
         <!-- notes container -->

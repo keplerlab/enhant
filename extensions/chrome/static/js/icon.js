@@ -8,6 +8,32 @@ class Icon{
         this.state = ICONSTATE.INACTIVE;
         this.data_container_id = "data-container";
         this.container_id = null;
+
+        this.active_color = "#1E90FF";
+        this.inactive_color = "white";
+
+        this.active_icon_path = null;
+        this.inactive_icon_path = null;
+    }
+
+    toggleIcon(){
+        
+        if ((this.active_icon_path !== null) && (this.inactive_icon_path !== null)){
+            var icon_type = this.constructor.name;
+            var icon = $('icon[type="' + icon_type +'"]');
+            var icon_img = $('icon[type="' + icon_type +'"] img');
+            var icon_background = icon.parent();
+
+            if (this.state == ICONSTATE.ACTIVE){
+                icon_background.css("background-color", this.active_color);
+                icon_img.attr("src", this.inactive_icon_path);
+            }
+            else if (this.state == ICONSTATE.INACTIVE){
+                icon_background.css("background-color", this.inactive_color);
+                icon_img.attr("src", this.active_icon_path);
+            }
+        }
+        
     }
 
     toggleState(){
@@ -17,6 +43,8 @@ class Icon{
         else if(this.state == ICONSTATE.ACTIVE) {
             this.state = ICONSTATE.INACTIVE;
         }
+
+        this.toggleIcon();
 
     }
 
@@ -90,6 +118,9 @@ class NotesIcon extends Icon{
         this.container_id = "notes-container";
 
         this.submit_btn_id = "notes-submit";
+
+        this.active_icon_path = "static/images/notes.svg";
+        this.inactive_icon_path = "static/images/notes_inactive.svg";
     }
 
     registerEvents(){
@@ -123,6 +154,12 @@ class NotesIcon extends Icon{
 
 class BookmarkIcon extends Icon{
 
+    constructor(){
+        super();
+        this.active_icon_path = "static/images/bookmark.svg";
+        this.inactive_icon_path = "static/images/bookmark_inactive.svg";
+    }
+
     generateBookmark(obj){
         return "<div class='parent-data row' style='margin-left:10%;padding-top:2%;padding-bottom:2%;align-items:center;display:flex;'>" + 
         "<div class='col-xs-1'><img src='static/images/bookmark.svg'></div>" +
@@ -151,6 +188,12 @@ class BookmarkIcon extends Icon{
 }
 
 class CaptureTab extends Icon{
+
+    constructor(){
+        super();
+        this.active_icon_path = "static/images/capture.svg";
+        this.inactive_icon_path = "static/images/capture_inactive.svg";
+    }
 
     capture(){
         var _this = this;
@@ -192,6 +235,9 @@ class ExpandIcon extends Icon{
         super();
         this.container_id = "data-container";
         this.valid_data_types = ["notes", "bookmark", "image"]
+
+        this.active_icon_path = "static/images/down_arrow.svg";
+        this.inactive_icon_path = "static/images/down_arrow_inactive.svg";
     }
 
     reset(){
@@ -293,6 +339,10 @@ class SettingsIcon extends Icon{
         this.input_powermode_setting_id = "setting-enable-powermode";
         this.input_transcription_setting_id = "setting-show-trasncription";
         this.input_server_setting_id = "setting-server-url";
+
+        this.active_icon_path = "static/images/settings.svg";
+        this.inactive_icon_path = "static/images/settings_inactive.svg";
+        
     }
 
     getTranscriptionSetting(){
@@ -334,10 +384,31 @@ class RecordIcon extends Icon{
     constructor(){
         super();
         this.recording = false;
+
+        this.active_icon_path = "static/images/record.svg";
+        this.inactive_icon_path = "static/images/record_inactive.svg";
     }
 
     reset(){
         this.recording = false;
+    }
+
+    toggleIcon(){
+        var icon_type = this.constructor.name;
+        var icon = $('icon[type="' + icon_type +'"]');
+        var icon_img = $('icon[type="' + icon_type +'"] img');
+        var icon_background = icon.parent();
+
+        if (this.state == ICONSTATE.ACTIVE){
+            // run animation switch between two icons
+            icon_img.addClass("pulse-ring");
+        
+        }
+        else if (this.state == ICONSTATE.INACTIVE){
+            icon_img.removeClass("pulse-ring");
+            icon_background.css("background-color", this.inactive_color);
+            icon_img.attr("src", this.active_icon_path);
+        }
     }
 
     startCapturingMicAudio(){
@@ -450,6 +521,15 @@ class RecordIcon extends Icon{
     }
 
 
+}
+
+class PowerModeIcon extends Icon{
+    constructor(){
+        super();
+
+        this.active_icon_path = "static/images/powermode.svg";
+        this.inactive_icon_path = "static/images/powermode_inactive.svg";
+    }
 }
 
 
