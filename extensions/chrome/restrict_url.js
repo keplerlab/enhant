@@ -7,6 +7,9 @@ chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {
       }),
       new chrome.declarativeContent.PageStateMatcher({
         pageUrl: {hostContains: 'zoom.us'},
+      }),
+      new chrome.declarativeContent.PageStateMatcher({
+        pageUrl: {hostPrefix: 'meet.jit.si'},
       })
       ],
           actions: [new chrome.declarativeContent.ShowPageAction()]
