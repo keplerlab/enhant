@@ -1,108 +1,11 @@
-{
-	"context": {
-		"id": "",
-		"origin": "host",
-		"meeting_id": "111",
-		"event_time": "1000"
-	},
-	"msg": {
-		"name": "INIT",
-		"type": "MEETING",
-		"desc": "ADD new meeting",
-		"data": {
-			"conversation": ""
-		},
-		"version": ""
-	}
-}
-
-    
-
-{
-    "context": {
-        "id": "",
-        "origin": "host",
-        "meeting_id": "111",
-        "event_time": "100000"
-    },
-    "msg": {
-        "name": "END",
-        "type": "MEETING",
-        "desc": "END meeting",
-        "data": {
-            "conversation":{ 
-            }
-        },
-        "version": ""
-    },
-    "response": [
-        {
-            "name": "END",
-            "type": "MEETING",
-            "status": true,
-            "id": "inserted_record_id",
-        }
-    ]
-}
-
-
-{
-    "context": {
-        "id": "",
-        "origin": "host",
-        "meeting_id": "",
-        "event_time": ""
-    },
-    "msg": {
-        "name": "DELETE",
-        "type": "MEETING",
-        "desc": "Delete record",
-        "data": {
-            "conversation":{ 
-                "id": "5f3a55be86c360f92e721259"
-            }
-        },
-        "version": ""
-    }
-}
-
 
 
 
 {
     "context": {
-        "id": "",
-        "origin": "host",
-        "meeting_id": "111",
-        "event_time": ""
-    },
-    "msg": {
-        "name": "ADD",
-        "type": "TRANSCRIPTION",
-        "desc": "ADD record",
-        "data": {
-            "transcription":{
-                "content": "Transcription here..",
-                "type": "text",
-                "start_time":"",
-                "end_time":""
-
-            }
-        },
-        "msg_time" : {
-            "start":"",
-            "end":""
-        },
-        "version": ""
-    }
-}
-
-
-{
-    "context": {
-        "id": "",
+        "conv_id": "5f3d14b86e7ca4e0eba5928d",
         "origin": "guest",
-        "meeting_id": "",
+        "meeting_id": "111",
         "event_time": ""
     },
     "msg": {
@@ -112,9 +15,7 @@
         "data": {
             "note":{
                 "content": "Note",
-                "type": "text",
-                "start_time":"",
-                "end_time":""
+                "type": "text"
             }
         },
         "version": ""
@@ -125,7 +26,7 @@
 
 {
     "context": {
-        "id": "",
+        "conv_id": "5f3d14b86e7ca4e0eba5928d",
         "origin": "guest",
         "meeting_id": "",
         "event_time": ""
@@ -149,7 +50,7 @@
 
 {
 	"context": {
-		"id": "",
+		"conv_id": "5f3d14b86e7ca4e0eba5928d",
 		"origin": "host",
 		"meeting_id": "",
 		"event_time": ""

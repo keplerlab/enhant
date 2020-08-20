@@ -1,0 +1,25 @@
+
+
+{
+   "context": {
+       "id": "",
+       "origin": "host",
+       "meeting_id": "111",
+       "event_time": "30000"
+   },
+   "msg": {
+       "name": "ADD",
+       "type": "TRANSCRIPTION",
+       "desc": "ADD record",
+       "data": {
+           "transcription":{
+               "content": "This is the test transcription 2",
+               "type": "text",
+               "start_time":"30000",
+               "end_time":"40000"
+
+           }
+       },
+       "version": ""
+   }
+}

@@ -3,7 +3,7 @@
 
 {
     "context": {
-        "id": "",
+        "conv_id": "",
         "origin": "host / guest",
         "meeting_id": "",
         "event_time": ""
@@ -22,7 +22,7 @@
             "name": "INIT",
             "type": "MEETING",
             "status": true,
-            "id": "inserted_record_id",
+            "id": "conv_id",
         }
     ]
 }
@@ -30,7 +30,7 @@
 ##  Meeting event type
 {
     "context": {
-        "id": "",
+        "conv_id": "",
         "origin": "host / guest",
         "meeting_id": "",
         "event_time": ""
@@ -50,7 +50,7 @@
             "name": "END",
             "type": "MEETING",
             "status": true,
-            "id": "inserted_record_id",
+            "id": "record_id",
         }
     ]
 }
@@ -58,7 +58,7 @@
 ## Deleting a meeting
 {
     "context": {
-        "id": "",
+        "conv_id": "",
         "origin": "host / guest",
         "meeting_id": "",
         "event_time": ""
@@ -69,7 +69,7 @@
         "desc": "Delete record",
         "data": {
             "conversation":{ 
-                "id": "inserted_record_id_to_be_deleted"
+                "conv_id": "inserted_record_id_to_be_deleted"
             }
         },
         "version": ""
@@ -78,8 +78,8 @@
         {
             "name": "DELETE",
             "type": "MEETING",
-            "id": "inserted_record_id_to_be_deleted",
-            "status": true
+            "status": true,
+            "id": "record_id",
         }
     ]
 }
@@ -91,7 +91,7 @@
 
 {
     "context": {
-        "id": "",
+        "conv_id": "",
         "origin": "host / guest",
         "meeting_id": "",
         "event_time": ""
@@ -109,18 +109,17 @@
 
             }
         },
-        "msg_time" : {
-            "start":"",
-            "end":""
-        },
         "version": ""
     },
     "response": [
         {
             "name": "ADD",
             "type": "TRANSCRIPTION",
-            "id": "inserted_record_id",
-            "status": true
+            "record_id": "inserted_record_id",
+            "status": {
+                "code": "SUCCESS/FAILURE",
+                "message": "msg"
+            }
         }
     ]
 }
@@ -129,7 +128,7 @@
 ## Notes event
 {
     "context": {
-        "id": "",
+        "conv_id": "",
         "origin": "host / guest",
         "meeting_id": "",
         "event_time": ""
@@ -141,9 +140,7 @@
         "data": {
             "note":{
                 "content": "Note",
-                "type": "text",
-                "start_time":"",
-                "end_time":""
+                "type": "text"
             }
         },
         "version": ""
@@ -153,7 +150,7 @@
             "name": "ADD",
             "type" : "NOTE",
             "status": true,
-            "id": "inserted_record_id",
+            "id": "record_id",
         }
     ]
 }
@@ -162,7 +159,7 @@
 ## Example request for adding capture moment/bookmark
 {
     "context": {
-        "id": "",
+        "conv_id": "",
         "origin": "host / guest",
         "meeting_id": "",
         "event_time": ""
@@ -183,7 +180,7 @@
         {
             "name": "ADD",
             "type" : "NOTE",
-            
+            "id": "record_id",
             "status": true
         }
     ]
@@ -192,7 +189,7 @@
 ## Example request for adding capture moment without image/bookmark
 {
     "context": {
-        "id": "",
+        "conv_id": "",
         "origin": "host / guest",
         "meeting_id": "",
         "event_time": ""
@@ -214,7 +211,7 @@
             "name": "ADD",
             "type" : "NOTE",
             "status": true,
-            "id": "inserted_record_id",
+            "id": "record_id",
         }
     ]
 }
