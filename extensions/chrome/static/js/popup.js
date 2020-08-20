@@ -47,6 +47,7 @@ $(document).ready(function(){
         obj.getLocalStorage(cl.name, function(value){
             
             // if active toggle the state - and call statehandler
+            
             if (value == ICONSTATE.ACTIVE){
                 obj.toggleState();
                 obj.stateHandler();

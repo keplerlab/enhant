@@ -429,7 +429,7 @@ class RecordIcon extends Icon{
 
     handleClick(){
         this.toggleState();
-
+        this.setLocalStorage();
         this.stateHandler();
 
         // set the recording state based on icon state
