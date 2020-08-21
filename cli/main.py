@@ -1,3 +1,9 @@
+"""
+.. module:: Main file
+    :platform: Platform Independent
+    :synopsis: Main file
+"""
+
 import typer
 from typing import List
 
@@ -15,9 +21,11 @@ app = typer.Typer()
 
 @app.command()
 def analyze(conv_ids: List[str]):
-    """
-    Analyzes a full conversation.
-    """
+    """[Analyzes a full conversation.]
+
+    :param conv_ids: [description]
+    :type conv_ids: List[str]
+    """    
     for conv_id in conv_ids:
 
         typer.echo(f"Analyzing conv ID {conv_id}")
@@ -33,10 +41,11 @@ def analyze(conv_ids: List[str]):
 
 @app.command()
 def delete(conv_ids: List[str]):
-    """
-    Deletes a full conversation.
-    """
+    """[Deletes a full conversation.]
 
+    :param conv_ids: [description]
+    :type conv_ids: List[str]
+    """
     for conv_id in conv_ids:
         typer.echo("You called delete")
         typer.echo(f"Your conv ID is {conv_id}")

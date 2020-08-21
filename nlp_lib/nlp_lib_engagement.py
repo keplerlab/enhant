@@ -1,3 +1,8 @@
+"""
+.. module:: NLP_lib_engagement
+    :platform: Platform Independent
+    :synopsis: This module is for calculating Engagement given text from two sides
+"""
 from os import path
 import json
 from nltk import sent_tokenize
@@ -8,6 +13,8 @@ import copy
 
 class NLP_lib_engagement(object):
     def __init__(self):
+        """[init function]
+        """
         self.expected_multiplier = 2.0
         self.expected_time_window = 120
         self.totalTime = {}
@@ -19,7 +26,18 @@ class NLP_lib_engagement(object):
         self.spokenMsgsAdvisorInTimeWindow = {}
 
     def processMessage(self, meeting_id, origin, msg):
-        """ Returns responses as rules along with score """
+        """[Returns responses as rules along with score]
+
+        :param meeting_id: [description]
+        :type meeting_id: [type]
+        :param origin: [description]
+        :type origin: [type]
+        :param msg: [description]
+        :type msg: [type]
+        :return: [description]
+        :rtype: [type]
+        """       
+
         if meeting_id in self.totalTime:
             pass
         else:
@@ -35,7 +53,10 @@ class NLP_lib_engagement(object):
         return engagementScore
 
     def resetState(self):
-        """ Reset state for all clients """
+        """[Reset state for all clients]
+        """
+        
+
         self.totalTime = {}
         self.totalSpokenWordsClient = {}
         self.totalSpokenWordsAdvisor = {}
@@ -46,8 +67,19 @@ class NLP_lib_engagement(object):
         print("\n\n**********Reset state for engagement detection complete**********\n\n")
 
     def _getEngagement(self, meeting_id, origin, msg):
-        requestData = msg["content"]
+        """[Get engagement score at receiving msg]
 
+        :param meeting_id: [description]
+        :type meeting_id: [type]
+        :param origin: [description]
+        :type origin: [type]
+        :param msg: [description]
+        :type msg: [type]
+        :return: [description]
+        :rtype: [type]
+        """
+
+        requestData = msg["content"]
         num_of_words = len(requestData.split())
 
         wordMessage = dict(
@@ -109,6 +141,13 @@ class NLP_lib_engagement(object):
         return avg_engagement_score
 
     def _relu(self, value):
+        """[Limit value between 0 to 1]
+
+        :param value: [description]
+        :type value: [type]
+        :return: [description]
+        :rtype: [type]
+        """        
         if value > 1.0:
             return 1.0
         elif value < 0.0:
@@ -117,9 +156,26 @@ class NLP_lib_engagement(object):
             return value
 
     def _tokenize_sentences(self, sentences):
+        """[Call nltk sentence tokenizer on given sentences]
+
+        :param sentences: [description]
+        :type sentences: [type]
+        :return: [description]
+        :rtype: [type]
+        """
         return sent_tokenize(sentences)
 
     def _cleanListForTimeWindow(self, msgList, current_endtime):
+        """[Filter out messages from msgList that are older than
+         expected_time_window amount of time]
+
+        :param msgList: [description]
+        :type msgList: [type]
+        :param current_endtime: [description]
+        :type current_endtime: [type]
+        :return: [description]
+        :rtype: [type]
+        """
         updatedList = []
         for item in msgList:
             if (current_endtime - item.timestamp_start) <= self.expected_time_window:

@@ -1,15 +1,19 @@
+"""
+.. module:: message_processor
+    :platform: Platform Independent
+    :synopsis: Main module for processing all messages from websocket client
+"""
+
 import logging
 from fastapi import FastAPI, WebSocket
-
-# from fastapi_contrib.db.utils import setup_mongodb
 
 import json
 import pkt_handler as pkt_handler
 from config import Config
 from db_handler import MongoDBClient
-from note_messages import Note
-from conversation_messages import Conversation
-from transcription_messages import Transcription
+from note_processor import Note
+from conversation_processor import Conversation
+from transcription_processor import Transcription
 
 # Import config
 cfg = Config()
@@ -19,9 +23,14 @@ mongo_client = MongoDBClient(cfg.mongodb_hostname, cfg.mongodb_port, cfg.mongodb
 
 app = FastAPI()
 
-
 @app.websocket("/")
 async def websocket_endpoint(websocket: WebSocket):
+    """[Main websocket endpoint]
+
+    :param websocket: [description]
+    :type websocket: WebSocket
+    :raises Exception: [description]
+    """
     await websocket.accept()
     while True:
         pkt = await websocket.receive_json()
@@ -43,7 +52,7 @@ async def websocket_endpoint(websocket: WebSocket):
                 inserted_record_id = await myTranscription.save_transcription()
             elif "note" in data:
                 myNote = Note(mongo_client, pkt)
-                inserted_record_id = await myNote.save_note()
+                inserted_record_id = await myNote.process_note()
             elif "conversation" in data:
                 myConoversation = Conversation(mongo_client, pkt)
                 inserted_record_id = await myConoversation.save_conversation()
@@ -59,4 +68,6 @@ async def websocket_endpoint(websocket: WebSocket):
 
 @app.on_event("startup")
 async def startup():
+    """[Establish connection with mongodb on websocket startup]
+    """
     await mongo_client.connect()
