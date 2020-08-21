@@ -11,7 +11,7 @@ function createHandlers () {
   }
 }
 
-function createQuery ({ db }) { 
+function createQuery () { 
 
   const handlers = createHandlers()
 
