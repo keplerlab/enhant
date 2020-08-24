@@ -1,17 +1,21 @@
 const camelCaseKeys = require('camelcase-keys') 
 const express = require('express')
 
+
 function createHandlers () { 
   function home (req, res, next) {
+    
+    req.app.locals.db.collection('articles').find({}).toArray()
+    .then(response => res.status(200).json(response))
+    .catch(error => console.error(error));
 
-    res.send("calling from home")
   }
   return {
     home
   }
 }
 
-function createHome ({ db }) { 
+function createHome () { 
 
   const handlers = createHandlers()
 
