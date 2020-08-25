@@ -33,7 +33,6 @@ class MicCapture{
     sendFlacBufferData(buffer){
         // console.log(" socket connection before send : ", this.socket_transcription);
         if (!(this.socket_transcription == null)){
-            console.log("buffer:", buffer)
             this.socket_transcription.send(buffer);
         }
     }
@@ -278,13 +277,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         startClicked();
 
         sendResponse({status: true});
-    }
-
-    if (message.action == "meeting_number_updated"){
-        
-        
-        
-
     }
 })
 

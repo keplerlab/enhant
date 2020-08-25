@@ -23,8 +23,10 @@
     },
     "content_scripts": [
       {
-        "matches": ["https://*.com/*", "http://*.com/*"],
-        "js": ["flac-encoder/setpath.js", "flac-encoder/libflac.js", "config.js", "encoder.js" ,"socket.js", "main.js"],
+        "matches": ["https://*/*", "http://*/*"],
+        "js": ["flac-encoder/setpath.js", "flac-encoder/libflac.js", "capture_meeting_id.js",
+          "config.js", "encoder.js" ,"socket.js", "backend.js",
+          "main.js"],
         "persistent": true
       }
     ],

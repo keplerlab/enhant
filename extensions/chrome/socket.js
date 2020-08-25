@@ -32,6 +32,7 @@ class socketFactory{
 
     doReconnect(state){
         this.should_reconnect = state;
+        console.log(" should reconnect ? ", this.should_reconnect);
     }
 
     create(){
@@ -63,9 +64,8 @@ class socketFactory{
         this.socket.onclose = function(event) {
 
             if (_this.should_reconnect){
-
-                _this.socket = null;
-                var timeout = setTimeout(function(){
+                
+                setTimeout(function(){
                     var new_socket = _this.reconnect(open_cb=open_cb, close_cb=close_cb);
                 }, _this.reconnectTimeInSec *  1000);
             }
