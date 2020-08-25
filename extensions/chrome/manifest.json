@@ -13,11 +13,6 @@
          "128":"static/images/logo.png"
       }
     },
-    "browser_action": {
-      "default_icon": "static/images/logo.png",
-      "default_popup": "popup.html",
-      "default_title": "Open Chrome Audio Capture interface"
-    },
     "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
     "background": {
       "scripts": ["restrict_url.js", "flac-encoder/setpath.js", 
