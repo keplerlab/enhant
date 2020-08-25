@@ -288,15 +288,70 @@ chrome.runtime.onMessage.addListener(
             var obj = {"tab_id": request.data};
 
             enhant_local_storage_obj.save_basic(obj)
+
+            chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+                chrome.tabs.sendMessage(tabs[0].id, {msg: "start"}, function(response) {
+                  console.log(response.status);
+                });
+            });
+
+           
+            sendResponse({status:true});
         }
 
         if (request.msg == "stop"){
             downloadZip(function(){
                 enhant_local_storage_obj.deleteAll();
             });
+
+            chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+                chrome.tabs.sendMessage(tabs[0].id, {msg: "stop"}, function(response) {
+                  console.log(response.status);
+                });
+            });
+        }
+
+        if (request.msg == "meeting_number_info"){
+            var meeting_number = request.data;
+            var obj = {
+                "meeting_number": meeting_number
+            }
+            chrome.storage.local.set(obj, function(){
+                console.log("Meeting number set in local storage ", meeting_number);
+
+                // send a message to upate meeting numbers
+                chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+                    chrome.tabs.sendMessage(tabs[0].id, {action: "meeting_number_updated", data: meeting_number}, function(response) {
+                      console.log(response.status);
+                    });
+                });
+
+                sendResponse({status:true});
+            });
+        }
+
+        if (request.msg == "conv_id_info"){
+
+            var conv_id = request.data;
+            var obj = {
+                "conv_id": conv_id
+            }
+            chrome.storage.local.set(obj, function(){
+                console.log("Converstion ID set in local storage ", conv_id);
+
+                // send a message to upate meeting numbers
+                chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+                    chrome.tabs.sendMessage(tabs[0].id, {action: "update_conv_id", data: conv_id}, function(response) {
+                      console.log(response.status);
+                    });
+                });
+
+                sendResponse({status:true});
+            });
         }
         
         return true;
+        
     }
 );
 

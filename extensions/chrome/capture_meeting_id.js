@@ -1,0 +1,110 @@
+const PLATFORMS = ["ZOOM", "TEAMS",];
+
+// one-to-one maaping with PLATFORMS
+const PLATFORM_DATA = [
+    {
+        "host_url_has" : "zoom.us",
+    },
+    {
+        "host_url_has" : "teams.microsoft.com",
+    }
+];
+
+
+class CaptureMeetingData{
+    constructor(){
+
+        // current platform index (-1 is not supported)
+        this.current_platform_index = -1;
+
+        this.meeting_number = null;
+
+        // defult to 0 means not detected
+        this.SUPPORTED_PLATFORMS = PLATFORMS
+        this.PLATFORM_DATA = PLATFORM_DATA
+    }
+
+    getHostName(){
+        return window.location.hostname;
+    }
+
+    getURL(){
+        return window.location.href
+    }
+
+    resolve_platform(){
+        var _this = this;
+        var hostname = _this.getHostName();
+
+        _this.SUPPORTED_PLATFORMS.forEach(function(platformName, index){
+            if (hostname.includes(_this.PLATFORM_DATA[index]["host_url_has"])){
+                _this.current_platform_index = index;
+            }
+        })
+    }
+
+    generateMeetingNumber(){
+        var _this = this;
+        switch(_this.current_platform_index){
+            case 0: 
+                _this.generateMeetingNumberForZoom();
+            case 1:
+                _this.generateMeetingNumberForTeams();
+        }
+    }
+
+    generateMeetingNumberForTeams(){
+        
+    }
+
+    sendMeetingNumber(){
+        var _this = this;
+
+        chrome.runtime.sendMessage({msg: "meeting_number_info", data: _this.meeting_number}, 
+        function(response){
+            console.log(response.status);
+        })
+    }
+
+    generateMeetingNumberForZoom(){
+
+        var url = this.getURL();
+
+        const regex_pattern = /\d{11}|\d{10}/;
+        var meeting_number_match = url.match(regex_pattern);
+
+        if (meeting_number_match.length == 1){
+            this.meeting_number = meeting_number_match[0];
+        }
+        else if (meeting_number_match.length > 2){
+            console.log("More than one meeting number found for Zoom : ", meeting_number_match);
+        }
+        else if (meeting_number_match.length == 0){
+            console.log("Meeting number not found for Zoom");
+        }
+
+        return this.meeting_number;
+    }
+
+    getInfo(){
+        this.resolve_platform();
+        this.generateMeetingNumber();
+        this.sendMeetingNumber();
+    }
+
+}
+
+console.log(" Loading Capturing Meeting data content script. ")
+
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    console.log(" Received message from popup script [Capturing Meeting Data] : ", message);
+
+    if (message.msg == "start"){
+
+        var meeting_info = new CaptureMeetingData();
+        meeting_info.getInfo();
+
+        sendResponse({status: true});
+    }
+
+})

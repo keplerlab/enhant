@@ -1,3 +1,23 @@
+class SocketPool{
+    constructor(){
+        this.sockets = [];
+    }
+
+    clear(){
+        this.sockets = [];
+    }
+
+    addSocketToPool(socket){
+        this.sockets.push(socket);
+    }
+
+    getPool(){
+        return this.sockets;
+    }
+    
+
+}
+
 class socketFactory{
     
     constructor(ip, port, name){
@@ -7,11 +27,11 @@ class socketFactory{
         this.name = name;
         this.socket = null;
         this.reconnectTimeInSec = 1; 
-        this.reconnect = true;
+        this.should_reconnect = true;
     }
 
     doReconnect(state){
-        this.reconnect = state;
+        this.should_reconnect = state;
     }
 
     create(){
@@ -42,8 +62,10 @@ class socketFactory{
 
         this.socket.onclose = function(event) {
 
-            if (_this.reconnect){
-                setTimeout(function(){
+            if (_this.should_reconnect){
+
+                _this.socket = null;
+                var timeout = setTimeout(function(){
                     var new_socket = _this.reconnect(open_cb=open_cb, close_cb=close_cb);
                 }, _this.reconnectTimeInSec *  1000);
             }

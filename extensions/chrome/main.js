@@ -1,5 +1,5 @@
 class MicCapture{
-    constructor(config){
+    constructor(config, socket_backend){
         this.transcription_ip = config.ip;
         this.transcription_port = config.port;
         this.socket_transcription = null;
@@ -10,6 +10,11 @@ class MicCapture{
         this.encoder = new FlacEncoder(this.EVENT_FLAC_ENCODER);
         this.bufferSize = config.bufferSize;
         this.sampleRate = config.sampleRate;
+        this.socket_backend = socket_backend;
+        this.meeting_info = {};
+
+        this.transcription_start_time = null;
+        this.transcription_end_time = null;
     }
 
     reset(){
@@ -18,6 +23,11 @@ class MicCapture{
         this.socket_transcription = null;
         this.stream = null;
         this.stream_processor = null;
+    }
+
+    generateUnixTime(){
+        var time = Math.round(new Date().getTime());
+        return time;
     }
 
     sendFlacBufferData(buffer){
@@ -51,12 +61,46 @@ class MicCapture{
         this.socket_transcription = new_socket;
     }
 
+    socket_transcription_data_cb(message){
+        
+        var transcription = message.data;
+        // console.log("Transcription data ", message.data);
+
+        // console.log(" meeting info :", this.meeting_info);
+
+        // set transcription end time here
+        this.transcription_end_time = this.generateUnixTime();
+
+        // send data to backend over socket
+        if (this.meeting_info){
+            if (this.meeting_info.hasOwnProperty("meeting_number")){
+                if (this.meeting_info.hasOwnProperty("conv_id")){
+
+                    var meeting_number = this.meeting_info["meeting_number"];
+                    var conv_id = this.meeting_info["conv_id"];
+                    var d = this.socket_backend.createTranscriptionData("host", conv_id, 
+                    meeting_number, transcription, this.transcription_start_time, this.transcription_end_time);
+                    this.socket_backend.sendDataToBackend(d);
+
+
+                }
+            }
+        }
+
+        // set transcription end time
+        this.transcription_start_time = this.transcription_end_time;
+    }
+
     connectToTranscriptionService(){
         var _this = this;
+
+        // set transcription start time
+        _this.transcription_start_time = _this.generateUnixTime();
         this.socket_obj = new socketFactory(_this.transcription_ip, 
             _this.transcription_port, "transcription");
 
         this.socket_transcription = this.socket_obj.generateSocket(function(){
+
             _this.socket_transcription.send(JSON.stringify({
                 "cmd": "start",
                 "origin": "mic",
@@ -64,7 +108,9 @@ class MicCapture{
     
             }));
         },
-            _this.socket_transcription_closed_cb);
+            _this.socket_transcription_closed_cb.bind(_this));
+
+        _this.socket_transcription.onmessage = _this.socket_transcription_data_cb.bind(this);
 
     }
 
@@ -159,28 +205,66 @@ function startClicked(){
 
     console.log(" Configuration for Mic: ", config);
 
-    var mic_capture = new MicCapture(config);
+    var _backend_socket_conn = new BackendHandler();
+    _backend_socket_conn.connectToBackend();
+
+    var mic_capture = new MicCapture(config, _backend_socket_conn);
     mic_capture.start();
+
+    function updateMeetingData(message, sender, sendResponse){
+        
+        if (message.action == "meeting_number_updated"){
+
+            // send message to backend
+            var origin = "host";
+            var create_meeting_data = _backend_socket_conn.createMeetingData(origin, message.data);
+
+            // delay of 2 sec to enable socket connection
+            setTimeout(function(){
+                _backend_socket_conn.sendDataToBackend(create_meeting_data);
+            }, 2000);
+
+            // update meeting info
+            mic_capture.meeting_info["meeting_number"] = message.data;
+        }
+
+        if (message.action == "update_conv_id"){
+            mic_capture.meeting_info["conv_id"] = message.data;
+        }
+
+        sendResponse({status: true});
+    }
 
     function stopClicked(message, sender, sendResponse){
 
+
         if (message.action == "capture_mic_stop"){
 
-            if (!(mic_capture == null)){
+            console.log(" mic capture info ", mic_capture);
+            if (mic_capture !== null){
                 mic_capture.stop();
                 delete mic_capture;
             }
+
+            if (_backend_socket_conn !== null){
+                _backend_socket_conn.socket_obj.doReconnect(false);
+                _backend_socket_conn.socket_backend.close();
+                delete _backend_socket_conn
+                _backend_socket_conn = null;
+            }
+
+            // remove stop listner 
+            chrome.runtime.onMessage.removeListener(stopClicked);
+            chrome.runtime.onMessage.removeListener(updateMeetingData);
           
         }
-
-        // remove stop listner 
-        chrome.runtime.onMessage.removeListener(stopClicked);
 
         sendResponse({status: true});
         
     }
 
     chrome.runtime.onMessage.addListener(stopClicked);
+    chrome.runtime.onMessage.addListener(updateMeetingData);
 }
 
 
@@ -193,6 +277,13 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         startClicked();
 
         sendResponse({status: true});
+    }
+
+    if (message.action == "meeting_number_updated"){
+        
+        
+        
+
     }
 })
 
