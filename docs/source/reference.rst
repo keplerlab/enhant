@@ -5,6 +5,7 @@ Reference
 .. toctree::
     :maxdepth: 4
 
-    AI Service <reference/Idea2life_ai>
-    enhant UI <reference/Idea2life_ui>
+    enhant_nlp_lib <reference/enhant_nlp_lib>
+    cli <reference/cli>
+    message_processor <reference/message_processor>
 

@@ -26,9 +26,7 @@ print("root_for_relative_js_paths", root_for_relative_js_paths)
 
 js_source_path = [
     os.path.join(root_for_relative_js_paths, '.'),
-    os.path.join(root_for_relative_js_paths, 'flac-encoder'),
     os.path.join(root_for_relative_js_paths, 'static'),
-    os.path.join(root_for_relative_js_paths, 'ws-audio')
 ]
 
 # -- Project information -----------------------------------------------------

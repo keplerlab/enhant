@@ -17,7 +17,9 @@ import time
 import json
 import collections
 from array import array
+import soundfile
 
+import numpy as np
 
 def eprint(*args, **kwargs):
     print(*args, file=sys.stderr, **kwargs)
@@ -85,11 +87,14 @@ def write_audio(audio_data, filename, RATE, SAMPLE_WIDTH, CHANNELS=1):
     f.close()
 
 
-def write_audio_flac(audio_data, filename, RATE, SAMPLE_WIDTH, CHANNELS=1):
+def write_audio_flac(audio_data, filename):
 
     # arr = numpy.array(audio_data, dtype=numpy.float32)
     # print("arr.dtype", arr.dtype)
     # bytearray(audio_data)
+
+    mat = np.array(audio_data)
+    print("\n\n***mat.dtype", mat)
 
     if len(audio_data) > 100:
         binary_format = b"".join(audio_data)

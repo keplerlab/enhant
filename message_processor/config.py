@@ -3,12 +3,11 @@
     :platform: Platform Independent
     :synopsis: This module has commonly used config parameters
 """
-
 import os
-
-
 class Config:
     def __init__(self):
+        """[initialize config object by config variables]
+        """
 
         os.environ["PYTHONUNBUFFERED"] = "1"
 

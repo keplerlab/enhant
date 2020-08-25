@@ -12,19 +12,41 @@ from nlp_lib_questions_finder import Questions_finder
 
 question_finder = Questions_finder()
 
-
 class QuestionsFinder(object):
-    """Client for handling notes"""
+    """[Client for handling notes]
+
+    :param object: [description]
+    :type object: [type]
+    :return: [description]
+    :rtype: [type]
+    """    
 
     def __init__(self, mongo_client):
+        """[init function]
+
+        :param mongo_client: [description]
+        :type mongo_client: [type]
+        """
         self.processed_conversation_collection = "conversations_processed"
         self.collection = "transcriptions"
         self.mongo_client = mongo_client
 
     def _transformTranscription(self, transcriptions_pkt):
+        """[transform transcription packet]
+
+        :param transcriptions_pkt: [description]
+        :type transcriptions_pkt: [type]
+        :return: [description]
+        :rtype: [type]
+        """
         return transcriptions_pkt["msg"]["data"]["transcription"]["content"]
 
     def process(self, conv_id):
+        """[Public function for extracting and saving questions]
+
+        :param conv_id: [description]
+        :type conv_id: [type]
+        """
         # print("inside questions processing code with conversationo id: ", conv_id)
 
         # Connecct to db

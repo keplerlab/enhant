@@ -1,0 +1,21 @@
+2020-08-21 02:33:48,820 INFO: Starting up. Logfile path: reencode-flacs-20200821-023348.log
+2020-08-21 02:33:48,821 INFO: Discovered FLAC executable: /usr/local/bin/flac
+2020-08-21 02:33:48,821 INFO: Discovered FLAC files:
+    ./recorded_audio_20-08-2020-04-41-16Z1O1BDAV.flac
+    ./recorded_audio_20-08-2020-04-30-261IUFBQXR.flac
+    ./recorded_audio_20-08-2020-04-39-45QA89EVPN.flac
+    ./recorded_audio_20-08-2020-04-41-294RMR9O7B.flac
+    ./recorded_audio_20-08-2020-04-41-50MFE9B7A4.flac
+    ./recorded_audio_20-08-2020-04-28-5560II0YD2.flac
+    ./recorded_audio_20-08-2020-04-28-56X0O6OKF4.flac
+    ./recorded_audio_20-08-2020-04-28-55KLJW9XSY.flac
+2020-08-21 02:33:48,821 INFO: Process file: ./recorded_audio_20-08-2020-04-41-16Z1O1BDAV.flac
+2020-08-21 02:33:48,821 INFO: Run command: /usr/local/bin/flac --verify --compression-level-0 --decode-through-errors --preserve-modtime --silent -o ./recorded_audio_20-08-2020-04-41-16Z1O1BDAV.flac5WDISL.reenc.flac ./recorded_audio_20-08-2020-04-41-16Z1O1BDAV.flac
+WARNING: ./recorded_audio_20-08-2020-04-41-16Z1O1BDAV.flac is not an Ogg FLAC file; treating as a raw file
+ERROR: for encoding a raw file you must specify a value for --endian, --sign, --channels, --bps, and --sample-rate
+Type "flac" for a usage summary or "flac --help" for all options
+2020-08-21 02:33:48,834 INFO: Command exit code: 1
+2020-08-21 02:33:48,835 ERROR: flac cmd returned non-zero, inspect log file
+2020-08-21 02:33:48,835 INFO: attempt to remove temp file
+2020-08-21 02:33:48,835 ERROR: could not remove: [Errno 2] No such file or directory: './recorded_audio_20-08-2020-04-41-16Z1O1BDAV.flac5WDISL.reenc.flac'
+2020-08-21 02:33:48,835 ERROR: Abort. Please inspect situation, maybe re-run.

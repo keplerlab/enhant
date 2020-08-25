@@ -33,6 +33,7 @@ class MicCapture{
     sendFlacBufferData(buffer){
         // console.log(" socket connection before send : ", this.socket_transcription);
         if (!(this.socket_transcription == null)){
+            console.log("buffer:", buffer)
             this.socket_transcription.send(buffer);
         }
     }

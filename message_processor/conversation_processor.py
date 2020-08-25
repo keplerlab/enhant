@@ -6,9 +6,22 @@
 
 
 class Conversation(object):
-    """Client for handling conversations"""
+    """[Client for handling conversations]
+
+    :param object: [description]
+    :type object: [type]
+    :return: [description]
+    :rtype: [type]
+    """    
 
     def __init__(self, mongo_client, pkt):
+        """[init function for class]
+
+        :param mongo_client: [description]
+        :type mongo_client: [type]
+        :param pkt: [description]
+        :type pkt: [type]
+        """        
         self.conversation_collection = "conversations"
         self.processed_conversation_collection = "conversations_processed"
         self.pkt = pkt
@@ -20,6 +33,12 @@ class Conversation(object):
         # self.time_window = 1000
 
     def _process_init_json(self):
+        """[internal function for generating result after
+         receiving init request json]
+
+        :return: [description]
+        :rtype: [type]
+        """
         result_json = {
             "meeting_id": self.pkt["context"]["meeting_id"],
             "start_time": self.pkt["context"]["event_time"],
@@ -27,6 +46,12 @@ class Conversation(object):
         return result_json
 
     def _process_end_json(self):
+        """[internal function for generating result after
+         receiving END request json]
+
+        :return: [description]
+        :rtype: [type]
+        """
         result_json = {
             "meeting_id": self.pkt["context"]["meeting_id"],
             "end_time": self.pkt["context"]["event_time"],
@@ -34,6 +59,11 @@ class Conversation(object):
         return result_json
 
     async def _insert_new_conv(self):
+        """[This function inserts new conversation into db]
+
+        :return: [description]
+        :rtype: [type]
+        """
         result_json = self._process_init_json()
         result = await self.mongo_client.insert_json(
             result_json, self.processed_conversation_collection
@@ -47,6 +77,13 @@ class Conversation(object):
         return inserted_conv_id
 
     async def _insert_old_conv(self, conv_id):
+        """[This function updates older conversation into db]
+
+        :param conv_id: [description]
+        :type conv_id: [type]
+        :return: [description]
+        :rtype: [type]
+        """
         inserted_conv_id = str(conv_id)
         self.pkt["context"]["conv_id"] = inserted_conv_id
         result = await self.mongo_client.insert_json(
@@ -56,6 +93,13 @@ class Conversation(object):
         return inserted_conv_id
 
     async def _update_end_conv(self, conv_id):
+        """[This function updates end time for existing conversation into db]
+
+        :param conv_id: [description]
+        :type conv_id: [type]
+        :return: [description]
+        :rtype: [type]
+        """
         result_json = self._process_end_json()
 
         result = await self.mongo_client.update_json(
@@ -70,6 +114,13 @@ class Conversation(object):
         return inserted_conv_id
 
     def _check_record_in_time_window(self, list_db_processed_conv):
+        """[Check which conversations are inside time window]
+
+        :param list_db_processed_conv: [description]
+        :type list_db_processed_conv: [type]
+        :return: [description]
+        :rtype: [type]
+        """
         packet_time = int(self.pkt["context"]["event_time"])
         nearest_conv_time = 0
         nearest_conv = None
@@ -91,6 +142,11 @@ class Conversation(object):
             return None
 
     async def save_conversation(self):
+        """[Main public function for saving conversation]
+
+        :return: [description]
+        :rtype: [type]
+        """
         if self.pkt["msg"]["name"] == "INIT":
             meeting_id = self.pkt["context"]["meeting_id"]
 
