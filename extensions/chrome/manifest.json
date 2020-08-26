@@ -23,15 +23,17 @@
     },
     "content_scripts": [
       {
-        "matches": ["https://*/*", "http://*/*"],
-        "js": ["flac-encoder/setpath.js", "flac-encoder/libflac.js", "capture_meeting_id.js",
-          "config.js", "encoder.js" ,"socket.js", "backend.js",
-          "main.js"],
+        "matches": ["https://*.zoom.us/*", "http://*.zoom.us/*", "https://teams.microsoft.com/*", "http://teams.microsoft.com/*"],
+        "js": ["static/js/jquery.min.js", "static/js/jquery-ui.min.js",
+          "static/js/iframeResizer.js", "contentscript.js" , 
+          "capture_meeting_id.js",
+          "socket.js", "backend.js",
+          "mic_capture_webspeech.js"],
+        "css": ["static/css/jquery-ui.css"],
         "persistent": true
       }
     ],
-    "web_accessible_resources": ["ws-audio/libopus.js", "ws-audio/opus.js", "ws-audio/xaudio.js",
-      "ws-audio/ws-audio-api.js", "socket.js", "capture_audio.js", "inject.js"],
+    "web_accessible_resources": ["static/css/jquery-ui.css", "popup.html"],
     "permissions": [
       "declarativeContent",
       "tabs",
