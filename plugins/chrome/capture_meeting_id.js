@@ -45,11 +45,15 @@ class CaptureMeetingData{
 
     generateMeetingNumber(){
         var _this = this;
+        console.log(" current platform index ", _this.current_platform_index, 
+        _this.SUPPORTED_PLATFORMS[_this.current_platform_index])
         switch(_this.current_platform_index){
             case 0: 
                 _this.generateMeetingNumberForZoom();
+                break;
             case 1:
                 _this.generateMeetingNumberForTeams();
+                break;
         }
     }
 
