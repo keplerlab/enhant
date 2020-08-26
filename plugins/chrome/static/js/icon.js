@@ -53,7 +53,6 @@ class Icon{
     }
 
     hideContainer(){
-        console.log(" hiding container ", this.container_id);
         var _this = this;
         if (!(_this.container_id == null)){
             $('#' + _this.container_id).hide();
@@ -87,6 +86,7 @@ class Icon{
                 
             }
             if (_this.state == ICONSTATE.INACTIVE){
+                console.log(" hidding container id");
                 $('#' + _this.container_id).hide();
             }
         }
@@ -444,9 +444,9 @@ class RecordIcon extends Icon{
     stopCapturingTabAudio(){
 
         // stop the tab recording
-        // chrome.runtime.sendMessage({action: "capture_screen_stop"}, function(response){
-        //     console.log("Local recording status : ", response.status);
-        // })
+        chrome.runtime.sendMessage({action: "capture_screen_stop"}, function(response){
+            console.log("Local recording status : ", response.status);
+        })
     }
 
     meeting_started(){
@@ -480,13 +480,13 @@ class RecordIcon extends Icon{
     start(){
         this.meeting_started();
          this.startCapturingMicAudio();
-        // this.startCapturingTabAudio();
+        this.startCapturingTabAudio();
     }
 
     stop(){
         this.meeting_stopped();
-         this.stopCapturingMicAudio();
-        // this.stopCapturingTabAudio();
+        this.stopCapturingMicAudio();
+        this.stopCapturingTabAudio();
     }
 
 
