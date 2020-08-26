@@ -7,9 +7,17 @@ class ScreenCapture{
         this.stream = null;
         this.stream_processor = null;
         this.EVENT_FLAC_ENCODER = "screen_encoder";
-        this.encoder = new FlacEncoder(this.EVENT_FLAC_ENCODER);
+
+        if (config.use_flac_encoder){
+            this.encoder = new FlacEncoder(this.EVENT_FLAC_ENCODER);
+        }
+        else{
+            this.encoder = null;
+        }
+        
         this.bufferSize = config.bufferSize;
         this.sampleRate = config.sampleRate;
+        
     }
 
     reset(){
@@ -20,7 +28,41 @@ class ScreenCapture{
         this.stream_processor = null;
     }
 
-    sendFlacBufferData(buffer){
+    initializeEncoder(){
+        if (!(this.encoder == null)){
+            this.encoder.initialize();
+            this.registerEventListner();
+        }
+    }
+
+    convertFloat32ToInt16(buffer) {
+        var l = buffer.length
+        buf = new Int16Array(l)
+        while (l--) {
+          buf[l] = Math.min(1, buffer[l]) * 0x7fff
+        }
+        return buf.buffer
+      }
+
+    Float32BufferHandler(left){
+        var _this  = this;
+        if (!(this.encoder == null)){
+
+           // encode to flac
+           _this.encoder.encode(left);
+        }
+
+        // send linear 16 if encoder is null;
+        else{
+            var linear16 = _this.convertFloat32ToInt16(left);
+            if ((_this.socket_transcription !== null) && (_this.socket_transcription.readyState == WebSocket.OPEN)){
+                _this.sendBufferData(linear16);
+            }
+
+        }
+    }
+
+    sendBufferData(buffer){
         // console.log(" socket connection before send : ", this.socket_transcription);
         if (!(this.socket_transcription == null)){
             this.socket_transcription.send(buffer);
@@ -34,7 +76,7 @@ class ScreenCapture{
             // console.log("Buffer Data for mic : ", flac_buffer);
 
             if ((_this.socket_transcription !== null) && (_this.socket_transcription.readyState == WebSocket.OPEN)){
-                _this.sendFlacBufferData(flac_buffer);
+                _this.sendBufferData(flac_buffer);
             }
             
         });
@@ -98,8 +140,8 @@ class ScreenCapture{
             // This is left channel (for mono this is sufficient)
             var left = e.inputBuffer.getChannelData(0);
 
-            // encode to flac
-            _this.encoder.encode(left);
+            // encode
+            _this.Float32BufferHandler(left);
         };
         // connect stream to our recorder
         input.connect(recorder);
@@ -119,31 +161,40 @@ class ScreenCapture{
 
     }
 
-    stop(){
+    finishEncoding(){
 
-        // stop teh event listner 
-        this.deregisterEventListner();
+        if (!(this.encoder == null)){
 
-        // stop the encoder
-        this.encoder.finish();
+            // stop the event listner 
+            this.deregisterEventListner();
 
+            // stop the encoder
+            this.encoder.finish();
+        }
+        
+         // stop capturing the stream
+         this.stream_processor.disconnect();
+         delete this.stream_processor;
+
+    }
+
+    disconnectFromTranscriptionService(){
         // disconnect from the transcription service
         this.socket_obj.doReconnect(false);
         this.socket_transcription.close();
+    }
 
-        // stop capturing the stream
-        this.stream_processor.disconnect();
-        delete this.stream_processor;
+    stop(){
 
+        this.finishEncoding();
+        this.disconnectFromTranscriptionService();
         this.reset();
-
         console.log("Screen capture stopped...");
     }
 
     start(){
         console.log("Starting the screen capture process ..");
-        this.encoder.initialize();
-        this.registerEventListner();
+        this.initializeEncoder();
         this.connectToTranscriptionService();
         this.captureStream();
     }
@@ -155,7 +206,8 @@ function startClicked(){
         sampleRate: 44100,
         bufferSize: 4096,
         ip: CONFIG.transcription.ip,
-        port: CONFIG.transcription.port
+        port: CONFIG.transcription.port,
+        use_flac_encoder: false
     }
 
     console.log(" Configuration for Screen: ", config);
