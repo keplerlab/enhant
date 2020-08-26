@@ -24,7 +24,7 @@ def _transformTime(srt_time, start_utc_time=0):
     return milliseconds
 
 
-def transformSrt(srtList, meeting_start_utc, meeting_end_utc):
+def transformSrt(srtList, meeting_start_utc):
     """[transform srt packet]
     :return: [description]
     :rtype: [type]
@@ -32,8 +32,8 @@ def transformSrt(srtList, meeting_start_utc, meeting_end_utc):
 
     transcription_pkt_list = []
     for srt in srtList:
-        print("srt.start.seconds", srt.start.seconds)
-        print("srt.start.milliseconds", srt.start.milliseconds)
+        #print("srt.start.seconds", srt.start.seconds)
+        #print("srt.start.milliseconds", srt.start.milliseconds)
         transcriptions_pkt = {}
         transcriptions_pkt['msg'] = {}
         transcriptions_pkt['msg']['data'] = {}
@@ -42,8 +42,23 @@ def transformSrt(srtList, meeting_start_utc, meeting_end_utc):
         transcriptions_pkt["msg"]["data"]["transcription"]["content"] = srt.text
         transcriptions_pkt["msg"]["data"]["transcription"]["start_time"] = _transformTime(srt.start, meeting_start_utc)
         transcriptions_pkt["msg"]["data"]["transcription"]["end_time"] = _transformTime(srt.end, meeting_start_utc)
-        print("transcriptions_pkt", transcriptions_pkt)
+        #print("transcriptions_pkt", transcriptions_pkt)
         transcription_pkt_list.append(transcriptions_pkt)
 
-    print("transcription_pkt_list", transcription_pkt_list) 
+    #print("transcription_pkt_list", transcription_pkt_list) 
+    return transcription_pkt_list
+
+
+def add_origin(transcription_pkt_list, origin):
+    """[add origin field in transcription packet list]
+
+    :param transcription_pkt_list: [description]
+    :type transcription_pkt_list: [type]
+    :param origin: [description]
+    :type origin: [type]
+    """    
+    for transcriptions_pkt in transcription_pkt_list:
+        transcriptions_pkt['context'] = {}
+        transcriptions_pkt["context"]["origin"] = origin
+
     return transcription_pkt_list
