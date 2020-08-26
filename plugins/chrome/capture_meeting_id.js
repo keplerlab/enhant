@@ -107,4 +107,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         sendResponse({status: true});
     }
 
+    if (message.msg == "stop"){
+
+        sendResponse({status: true});
+    }
+
 })
