@@ -136,7 +136,7 @@ class NLP_lib_engagement(object):
         )
 
         avg_engagement_score = round(avg_engagement_score)
-        print("avg_engagement_score", avg_engagement_score)
+        #print("avg_engagement_score", avg_engagement_score)
 
         return avg_engagement_score
 

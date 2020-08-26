@@ -43,38 +43,58 @@ class SentimentFinder(object):
             transcriptions_pkt["msg"]["data"]["transcription"]["start_time"],
         )
 
-    def process(self, conv_id):
+    def process(self, input_json_data , guest_transcription_list, host_transcription_list):
         """[Public function for extracting and getting sentiments]
 
         :param conv_id: [description]
         :type conv_id: [type]
         """
-        # print("inside questions processing code with conversationo id: ", conv_id)
 
-        # print("\n***conversation_document: ", conversation_document)
-        if conversation_document == None:
-            print(f"No matching conversation for conv ID: {conv_id}")
+        print("\n****Inside SentimentFinder processing code****")
+        if input_json_data == None:
+            print(f"No matching conversation for input_json_data: {input_json_data}")
             return
+        conv_id = input_json_data["meeting_id"]
+
+
+        listOfQuestions = []
 
 
         low_sentiment_scores = []
         high_sentiment_scores = []
-        for transcriptions_pkt in cursor:
-            transcription, start_time = self._transformTranscription(transcriptions_pkt)
-            sentiment_score = sentiment_lib.processMessage(transcription)
-            sentiment_with_time = (start_time, transcription, sentiment_score)
 
-            if sentiment_score < self.low_sentiment_threshold:
-                low_sentiment_scores.append(sentiment_with_time)
-            elif sentiment_score > self.high_sentiment_threshold:
-                high_sentiment_scores.append(sentiment_with_time)
+        if guest_transcription_list is not None:
+            for transcriptions_pkt in guest_transcription_list:
+                transcription, start_time = self._transformTranscription(transcriptions_pkt)
+                sentiment_score = sentiment_lib.processMessage(transcription)
+                sentiment_with_time = (start_time, transcription, sentiment_score)
 
-        print("high_sentiment_scores", high_sentiment_scores)
-        print("low_sentiment_scores", low_sentiment_scores)
+                if sentiment_score < self.low_sentiment_threshold:
+                    low_sentiment_scores.append(sentiment_with_time)
+                elif sentiment_score > self.high_sentiment_threshold:
+                    high_sentiment_scores.append(sentiment_with_time)
+
+        if host_transcription_list is not None:
+            for transcriptions_pkt in host_transcription_list:
+                transcription, start_time = self._transformTranscription(transcriptions_pkt)
+                sentiment_score = sentiment_lib.processMessage(transcription)
+                sentiment_with_time = (start_time, transcription, sentiment_score)
+
+                if sentiment_score < self.low_sentiment_threshold:
+                    low_sentiment_scores.append(sentiment_with_time)
+                elif sentiment_score > self.high_sentiment_threshold:
+                    high_sentiment_scores.append(sentiment_with_time)
+
+        
+        #print("high_sentiment_scores", high_sentiment_scores)
+        #print("low_sentiment_scores", low_sentiment_scores)
 
         if len(high_sentiment_scores) > 0:
             jsonPkt = {"highSentimentSentence": high_sentiment_scores}
+            input_json_data["highSentimentSentence"] = jsonPkt
+            
 
         if len(low_sentiment_scores) > 0:
             jsonPkt = {"lowSentimentSentence": low_sentiment_scores}
+            input_json_data["lowSentimentSentence"] = jsonPkt
 
