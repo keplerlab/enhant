@@ -287,7 +287,7 @@ chrome.runtime.onMessage.addListener(
         if (request.msg == "start"){
             var obj = {"tab_id": request.data};
 
-            enhant_local_storage_obj.save_basic(obj)
+            enhant_local_storage_obj.save_basic(obj);
 
             chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
                 chrome.tabs.sendMessage(tabs[0].id, {msg: "start"}, function(response) {
