@@ -53,8 +53,33 @@ class CaptureMeetingData{
         }
     }
 
+    generateRandomTenDigitNumber(){
+
+        // generate a random string of 10 characters
+        var random10digitnumber = Math.floor(1000000000 + Math.random() * 1000000000);
+        return random10digitnumber.toString();
+    }
+
     generateMeetingNumberForTeams(){
-        
+        var url = this.getURL();
+
+        // assumig the meeting id hash is between these 2 substrings
+        var firstMatch = "meeting_";
+        var secondMatch = "thread.v2";
+
+        var match = url.match(new RegExp(firstMatch + "(.*)" + secondMatch));
+
+        if (match.length == 2){
+            this.meeting_number = match[1];
+        }
+        else{
+
+            this.meeting_number = this.generateRandomTenDigitNumber();
+            
+        }
+
+        return this.meeting_number;
+
     }
 
     sendMeetingNumber(){
@@ -78,9 +103,13 @@ class CaptureMeetingData{
         }
         else if (meeting_number_match.length > 2){
             console.log("More than one meeting number found for Zoom : ", meeting_number_match);
+            this.meeting_number = this.generateRandomTenDigitNumber();
+            console.log("Generatig a 10 digit random number as the meeting number : ", this.meeting_number);
         }
         else if (meeting_number_match.length == 0){
             console.log("Meeting number not found for Zoom");
+            this.meeting_number = this.generateRandomTenDigitNumber();
+            console.log("Generatig a 10 digit random number as the meeting number : ", this.meeting_number);
         }
 
         return this.meeting_number;
