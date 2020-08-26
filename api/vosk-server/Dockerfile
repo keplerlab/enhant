@@ -1,32 +1,7 @@
 
-FROM debian:10.4
+FROM alphacep/kaldi-vosk-server:latest
 
-ARG KALDI_MKL
-
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-        g++ \
-        gfortran \
-        bzip2 \
-        unzip \
-        make \
-        wget \
-        git \
-        python3 \
-        python3-dev \
-        python3-websockets \
-        python3-setuptools \
-        python3-pip \
-        python3-wheel \
-        zlib1g-dev \
-        patch \
-        ca-certificates \
-        swig \
-        cmake \
-        xz-utils \
-    && rm -rf /var/lib/apt/lists/*
-
-#ENV MODEL_VERSION 0.2
+ENV MODEL_VERSION 0.2
 # RUN mkdir /opt/vosk-model-en \
 #    && cd /opt/vosk-model-en \
 #    && wget http://alphacephei.com/kaldi/models/vosk-model-en-us-aspire-${MODEL_VERSION}.zip \
@@ -34,48 +9,6 @@ RUN apt-get update && \
 #    && mv vosk-model-en-us-aspire-${MODEL_VERSION} model \
 #    && rm -rf vosk-model-en-us-aspire-${MODEL_VERSION}.zip
 
-RUN \
-    git clone -b lookahead --single-branch https://github.com/alphacep/kaldi /opt/kaldi \
-    && cd /opt/kaldi/tools \
-    && sed -i 's:status=0:exit 0:g' extras/check_dependencies.sh \
-    && sed -i 's:openfst_add_CXXFLAGS = -g -O2:openfst_add_CXXFLAGS = -g -O3 -msse2:g' Makefile \
-    && sed -i 's:--enable-ngram-fsts:--enable-ngram-fsts --disable-bin:g' Makefile \
-    && make -j $(nproc) openfst cub \
-    && if [ "x$KALDI_MKL" != "x1" ] ; then \
-          sed -i 's:python:python3:g' extras/install_openblas.sh; \
-          sed -i 's:USE_LOCKING=1:DYNAMIC_ARCH=1 USE_LOCKING=1:g' extras/install_openblas.sh; \
-          extras/install_openblas.sh; \
-       else \
-          extras/install_mkl.sh; \
-       fi \
-    \
-    && cd /opt/kaldi/src \
-    && if [ "x$KALDI_MKL" != "x1" ] ; then \
-          ./configure --mathlib=OPENBLAS --shared; \
-       else \
-          ./configure --mathlib=MKL --shared; \
-       fi \
-    && sed -i 's:-msse -msse2:-msse -msse2:g' kaldi.mk \
-    && sed -i 's: -O1 : -O3 :g' kaldi.mk \
-    && make -j $(nproc) online2 lm \
-    \
-    && git clone https://github.com/alphacep/vosk-api /opt/vosk-api \
-    && cd /opt/vosk-api/python \
-    && KALDI_MKL=$KALDI_MKL KALDI_ROOT=/opt/kaldi python3 ./setup.py install --single-version-externally-managed --root=/ \
-    \
-    && git clone https://github.com/alphacep/vosk-server /opt/vosk-server \
-    && pip3 install grpcio-tools \
-    && cd /opt/vosk-server/grpc \
-    && python3 -m grpc_tools.protoc -I. --python_out=. --grpc_python_out=. stt_service.proto \
-    \
-    && rm -rf /opt/vosk-api \
-    && rm -rf /opt/kaldi \
-    && rm -rf /root/.cache \
-    && rm -rf /var/lib/apt/lists/*
-
-
-
-
 EXPOSE 2700
 WORKDIR /opt/vosk-server/websocket
-CMD [ "python3", "./asr_server.py", "/opt/vosk-model-en/model" ]
+CMD [ "python3", "./asr_server.py", "/opt/vosk-server/vosk-model-en/model" ]

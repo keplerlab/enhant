@@ -21,9 +21,10 @@ services:
   transcription_local:
     build: ./api/vosk-server/
     ports:
-    - "1111:1111"
+    - "2700:2700"
     volumes:
-       - ./api/vosk-server/vosk-model-en/:/opt/vosk-model-en/
+       #- ./api/vosk-server/vosk-model-en/:/opt/vosk-server/vosk-model-en/
+       - ./api/vosk-server/:/opt/vosk-server
       # Exclude mount node_modules directory
     #environment:
     #  - GOOGLE_APPLICATION_CREDENTIALS=/home/transcription/project-voicebox-fa7bc2f8fa18.json # Google credential file
