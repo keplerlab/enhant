@@ -21,15 +21,12 @@ class QuestionsFinder(object):
     :rtype: [type]
     """    
 
-    def __init__(self, mongo_client):
+    def __init__(self):
         """[init function]
 
-        :param mongo_client: [description]
-        :type mongo_client: [type]
         """
         self.processed_conversation_collection = "conversations_processed"
         self.collection = "transcriptions"
-        self.mongo_client = mongo_client
 
     def _transformTranscription(self, transcriptions_pkt):
         """[transform transcription packet]
@@ -49,22 +46,12 @@ class QuestionsFinder(object):
         """
         # print("inside questions processing code with conversationo id: ", conv_id)
 
-        # Connecct to db
-        self.mongo_client.connect()
-
-        conversation_document = self.mongo_client.findOneQueryProcessor(
-            self.mongo_client.get_search_by_id_query(conv_id),
-            self.processed_conversation_collection,
-        )
         # print("\n***conversation_document: ", conversation_document)
 
         if conversation_document == None:
             print(f"No matching conversation for conv ID: {conv_id}")
             return
 
-        cursor = self.mongo_client.findQueryProcessor(
-            self.mongo_client.get_search_query_context_conv_id(conv_id), self.collection
-        )
 
         listOfQuestions = []
         for transcriptions_pkt in cursor:
@@ -76,6 +63,4 @@ class QuestionsFinder(object):
         print("listOfQuestions", listOfQuestions)
         if len(listOfQuestions) > 0:
             jsonPkt = {"questionsAsked": listOfQuestions}
-            self.mongo_client.update_json(
-                str(conv_id), jsonPkt, self.processed_conversation_collection
-            )
+

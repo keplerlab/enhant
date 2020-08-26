@@ -9,23 +9,15 @@ services:
       - ./db/:/data/db
 
   transcription:
-    build: ./transcription/
+    build: ./api/transcription_svc/
     ports:
     - "1111:1111"
     volumes:
-      - ./transcription/:/home/transcription/
+      - ./api/transcription_svc/:/home/transcription/
       # Exclude mount node_modules directory
     environment:
       - GOOGLE_APPLICATION_CREDENTIALS=/home/transcription/project-voicebox-fa7bc2f8fa18.json # Google credential file
 
-  message_processor:
-    build: ./message_processor/
-    ports:
-    - "8000:8000"
-    volumes:
-      - ./message_processor/:/home/message_processor/
-      # Exclude mount node_modules directory
-      #- /usr/src/app/node_modules/
 
   cli:
     build: ./cli/
@@ -37,7 +29,7 @@ services:
       - ./message_processor/:/home/message_processor/
       - ./docs/:/home/docs/
       - ./extensions/:/home/extensions/
-      - ./transcription/:/home/transcription/
+      - ./api/transcription_svc/:/home/transcription/
       - ./dashboard/:/home/dashboard/
       # Exclude mount node_modules directory
       #- /usr/src/app/node_modules/

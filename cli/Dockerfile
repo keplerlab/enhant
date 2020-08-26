@@ -29,10 +29,7 @@ RUN mkdir ${PROJECT_DIR}
 RUN conda create --name enhant python=3.7 
 
 RUN eval "$(conda shell.bash hook)" && conda activate enhant && \
-    pip install fastapi[all] typer
-    
-RUN eval "$(conda shell.bash hook)" && conda activate enhant && \
-    pip install motor
+    pip install fastapi[all] typer pysrt
 
 # For autoformatting code for dev use, uncomment for production
 RUN eval "$(conda shell.bash hook)" && conda activate enhant && \

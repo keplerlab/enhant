@@ -12,7 +12,6 @@ from nlp_lib_sentiment import NLP_lib_sentiment
 
 sentiment_lib = NLP_lib_sentiment()
 
-
 class SentimentFinder(object):
     """[Class for extracting sentiments from given text]
 
@@ -22,15 +21,12 @@ class SentimentFinder(object):
     :rtype: [type]
     """
 
-    def __init__(self, mongo_client):
+    def __init__(self):
         """[init function]
 
-        :param mongo_client: [description]
-        :type mongo_client: [type]
         """
         self.processed_conversation_collection = "conversations_processed"
         self.collection = "transcriptions"
-        self.mongo_client = mongo_client
         self.low_sentiment_threshold = 0.3
         self.high_sentiment_threshold = 0.7
 
@@ -55,21 +51,11 @@ class SentimentFinder(object):
         """
         # print("inside questions processing code with conversationo id: ", conv_id)
 
-        # Connecct to db
-        self.mongo_client.connect()
-
-        conversation_document = self.mongo_client.findOneQueryProcessor(
-            self.mongo_client.get_search_by_id_query(conv_id),
-            self.processed_conversation_collection,
-        )
         # print("\n***conversation_document: ", conversation_document)
         if conversation_document == None:
             print(f"No matching conversation for conv ID: {conv_id}")
             return
 
-        cursor = self.mongo_client.findQueryProcessor(
-            self.mongo_client.get_search_query_context_conv_id(conv_id), self.collection
-        )
 
         low_sentiment_scores = []
         high_sentiment_scores = []
@@ -88,11 +74,7 @@ class SentimentFinder(object):
 
         if len(high_sentiment_scores) > 0:
             jsonPkt = {"highSentimentSentence": high_sentiment_scores}
-            self.mongo_client.update_json(
-                str(conv_id), jsonPkt, self.processed_conversation_collection
-            )
+
         if len(low_sentiment_scores) > 0:
             jsonPkt = {"lowSentimentSentence": low_sentiment_scores}
-            self.mongo_client.update_json(
-                str(conv_id), jsonPkt, self.processed_conversation_collection
-            )
+

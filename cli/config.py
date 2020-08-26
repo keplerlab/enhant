@@ -1,34 +1,24 @@
 from pydantic import BaseSettings
 from note import Note
-from db_handler import MongoDBClient
 from questions_finder import QuestionsFinder
 from sentiment_finder import SentimentFinder
 from engagment_finder import EngagmentFinder
 
-
 class Settings(BaseSettings):
 
-    # mongo db parameters
-    mongodb_hostname: str = "mongo"
-    mongodb_port: int = 27018
-    mongodb_dbname: str = "enhant_db"
-    mongo_client = MongoDBClient(mongodb_hostname, mongodb_port, mongodb_dbname)
-
-    # mongo_client: MongoClient = None
-
-    def get_data_analyers(mongo_client):
+    def get_data_analyers():
         """
         Returns the list of analyzers.
         """
         # Add or remove analyzers here. All the analyzers will update the conversation JSON
         return [
-            Note(mongo_client),
-            QuestionsFinder(mongo_client),
-            SentimentFinder(mongo_client),
-            EngagmentFinder(mongo_client),
+            Note(),
+            QuestionsFinder(),
+            SentimentFinder(),
+            EngagmentFinder(),
         ]
 
-    data_analyzers: list = get_data_analyers(mongo_client)
+    data_analyzers: list = get_data_analyers()
 
 
 settings = Settings()

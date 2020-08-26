@@ -14,15 +14,12 @@ class Note(object):
     :rtype: [type]
     """    
 
-    def __init__(self, mongo_client):
+    def __init__(self):
         """[init function]
 
-        :param mongo_client: [description]
-        :type mongo_client: [type]
         """
         self.processed_conversation_collection = "conversations_processed"
         self.collection = "notes"
-        self.mongo_client = mongo_client
 
     def _transformNote(self, note_pkt):
         """[transform Note packet]
@@ -44,20 +41,11 @@ class Note(object):
         """
         # print("inside notes processing code with conversationo id: ", conv_id)
 
-        # Connecct to db
-        self.mongo_client.connect()
-        conversation_document = self.mongo_client.findOneQueryProcessor(
-            self.mongo_client.get_search_by_id_query(conv_id),
-            self.processed_conversation_collection,
-        )
+
         # print("\n***conversation_document: ", conversation_document)
         if conversation_document == None:
             print(f"No matching conversation for conv ID: {conv_id}")
             return
-
-        cursor = self.mongo_client.findQueryProcessor(
-            self.mongo_client.get_search_query_context_conv_id(conv_id), self.collection
-        )
 
         listOfNotes = []
         for note_pkt in cursor:
@@ -69,6 +57,4 @@ class Note(object):
         print("listOfNotes", listOfNotes)
         if len(listOfNotes) > 0:
             jsonPkt = {"notes": listOfNotes}
-            self.mongo_client.update_json(
-                str(conv_id), jsonPkt, self.processed_conversation_collection
-            )
+
