@@ -38,8 +38,8 @@ class QuestionsFinder(object):
         """
         return transcriptions_pkt["msg"]["data"]["transcription"]["content"]
 
-    def process(self, conv_id):
-        """[Public function for extracting and saving questions]
+    def process(self, input_json_data, guest_transcription_list, host_transcription_list):
+        """[Public function for saving engagement]
 
         :param conv_id: [description]
         :type conv_id: [type]
@@ -47,20 +47,30 @@ class QuestionsFinder(object):
         # print("inside questions processing code with conversationo id: ", conv_id)
 
         # print("\n***conversation_document: ", conversation_document)
-
-        if conversation_document == None:
-            print(f"No matching conversation for conv ID: {conv_id}")
+        print("\n****Inside QuestionsFinder processing code****")
+        if input_json_data == None:
+            print(f"No matching conversation for input_json_data: {input_json_data}")
             return
+        conv_id = input_json_data["meeting_id"]
 
 
         listOfQuestions = []
-        for transcriptions_pkt in cursor:
-            transcription = self._transformTranscription(transcriptions_pkt)
-            interrogativeSentences = question_finder.processMessage(transcription)
-            if len(interrogativeSentences) > 0:
-                listOfQuestions.extend(interrogativeSentences)
+        if guest_transcription_list is not None:
+            for transcriptions_pkt in guest_transcription_list:
+                transcription = self._transformTranscription(transcriptions_pkt)
+                interrogativeSentences = question_finder.processMessage(transcription)
+                if len(interrogativeSentences) > 0:
+                    listOfQuestions.extend(interrogativeSentences)
 
-        print("listOfQuestions", listOfQuestions)
+        if host_transcription_list is not None:
+            for transcriptions_pkt in host_transcription_list:
+                transcription = self._transformTranscription(transcriptions_pkt)
+                interrogativeSentences = question_finder.processMessage(transcription)
+                if len(interrogativeSentences) > 0:
+                    listOfQuestions.extend(interrogativeSentences)
+
+        #print("listOfQuestions", listOfQuestions)
         if len(listOfQuestions) > 0:
             jsonPkt = {"questionsAsked": listOfQuestions}
+            input_json_data["questionsAsked"] = jsonPkt
 
