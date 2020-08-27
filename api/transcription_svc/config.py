@@ -14,7 +14,7 @@ class Config:
         #        ] = "project-voicebox-fa7bc2f8fa18.json"
         self.OUT_DIR = "data_dump"
         # self.ENCODING = speech.enums.RecognitionConfig.AudioEncoding.LINEAR16
-        self.ENCODING = "FLAC"
+        self.ENCODING = "LINEAR16"
         self.CHANNELS = 1
         self.SAMPLE_RATE = 44100
         self.STREAMING_LIMIT = 240000

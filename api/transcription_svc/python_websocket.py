@@ -229,6 +229,7 @@ async def on_data(websocket, path):
 
     try:
         async for message in websocket:
+            print("pkt", message)
             audio_buffer.put(message)
 
             # Comment out next two lines if no recording needed
@@ -261,13 +262,15 @@ async def on_data(websocket, path):
 
     os.makedirs(folderName, exist_ok=True)
 
-    fileName = "recorded_audio_" + helper.generate_filename() + ".flac"
+    fileName = "recorded_audio_" + helper.generate_filename() + ".wav"
     full_file_name = os.path.join(folderName, fileName)
     print("\n*** Writing audio data in file:", full_file_name)
 
-    helper.write_audio_flac(
-        record_audio, full_file_name
-    )
+    helpler.write_audio_wave(record_audio, full_file_name, cfg.SAMPLE_RATE, cfg.SAMPLE_WIDTH, cfg.CHANNELS)
+    
+    # helper.write_audio_flac(
+    #     record_audio, full_file_name
+    # )
     await websocket.close()
 
 
