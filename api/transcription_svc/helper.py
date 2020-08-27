@@ -70,12 +70,17 @@ def generate_filename():
 
 
 def write_audio_wave(audio_data, filename, RATE, SAMPLE_WIDTH, CHANNELS=1):
-    wf = wave.open(filename, "wb")
-    wf.setnchannels(CHANNELS)
-    wf.setsampwidth(SAMPLE_WIDTH)
-    wf.setframerate(RATE)
-    wf.writeframes(b"".join(audio_data))
-    wf.close()
+    if len(audio_data) > 100:
+        print("writing wav audio")
+        wf = wave.open(filename, "wb")
+        wf.setnchannels(CHANNELS)
+        wf.setsampwidth(SAMPLE_WIDTH)
+        wf.setframerate(RATE)
+        wf.writeframes(b"".join(audio_data))
+        wf.close()
+    else:
+        print("audio Data is empty, skip save", flush=True)
+
 
 
 def write_audio(audio_data, filename, RATE, SAMPLE_WIDTH, CHANNELS=1):
