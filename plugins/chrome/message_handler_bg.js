@@ -90,9 +90,14 @@ chrome.runtime.onMessage.addListener(
 
         if (request.msg == "start"){
 
-            var obj = {"tab_id": request.data};
+            obj = {} 
+            obj[STORAGE_KEYS.tab_id] = request.data;
+
+            var meeting_start = {};
+            meeting_start[STORAGE_KEYS.meeting_start_time] = enhant_local_storage_obj.generateUnixTimestamp();
 
             enhant_local_storage_obj.save_basic(obj);
+            enhant_local_storage_obj.save_basic(meeting_start)
 
             chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
                 chrome.tabs.sendMessage(tabs[0].id, {msg: "start"}, function(response) {
@@ -145,7 +150,6 @@ chrome.runtime.onMessage.addListener(
                 "origin" : host / guest
             }
             */
-            console.log(" transcription data received via masg ", request.data)
             var transcription_data = request.data;
             transcriptionMessageHandler(transcription_data);
 

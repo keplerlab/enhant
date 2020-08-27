@@ -17,6 +17,90 @@ function imageFileName(obj){
     return date.getHours().toString() + "_" + date.getMinutes().toString() + "_" + date.getSeconds().toString();
 }
 
+function getElapsedTime(start_time, end_time){
+
+    var diff = end_time - start_time;
+    var ms = diff % 1000;
+    diff = (diff - ms) / 1000;
+    var ss = diff % 60;
+    diff = (diff - ss) / 60;
+    var mm = diff % 60;
+    diff = (diff - mm) / 60;
+    var hh = diff % 24;
+    days = (diff - hh) / 24;
+
+    var formatted_hh = ("0" + hh).slice(-2).toString();
+    var formatted_mm = ("0" + mm).slice(-2).toString();
+    var formatted_ss = ("0" + ss).slice(-2).toString();
+    var formatted_ms = ("0" + ms + "0").slice(-3).toString();
+
+    return formatted_hh + ":" + formatted_mm + ":" + formatted_ss + "," + formatted_ms;
+    
+}
+
+function testWhite(x) {
+    var white = new RegExp(/^\s$/);
+    return white.test(x.charAt(0));
+};
+
+function wordWrap(str, maxWidth) {
+    var newLineStr = "\n"; done = false; res = '';
+    while (str.length > maxWidth) {                 
+        found = false;
+        // Inserts new line at first whitespace of the line
+        for (i = maxWidth - 1; i >= 0; i--) {
+            if (testWhite(str.charAt(i))) {
+                res = res + [str.slice(0, i), newLineStr].join('');
+                str = str.slice(i + 1);
+                found = true;
+                break;
+            }
+        }
+        // Inserts new line at maxWidth position, the word is too long to wrap
+        if (!found) {
+            res += [str.slice(0, maxWidth), newLineStr].join('');
+            str = str.slice(maxWidth);
+        }
+
+    }
+
+    return res + str;
+}
+
+function createSRTContent(arr_transcription, meeting_start_time){
+
+    var content = "";
+    var counter = 0;
+
+    // create srt file with name origin.srt
+    arr_transcription.forEach(function(td){
+        content += counter + "\n";
+
+        var start_time = td["start_time"];
+        var end_time = td["end_time"];
+
+        var transcription_start = getElapsedTime(meeting_start_time, start_time);
+        var transcription_end = getElapsedTime(meeting_start_time, end_time);
+
+
+        content += transcription_start + "-->" + transcription_end;
+        content += "\n";
+
+        // srt file titles need to word wrap at 32 character (we are using 30)
+        var transcription = wordWrap(td["transcription"], 30);
+
+        content += transcription;
+        content += "\n\n";
+
+        counter += 1;
+
+    });
+
+
+    return content;
+
+}
+
 function zipFileName(){
     var date = new Date();
     var mm = date.getMonth() + 1; // getMonth() is zero-based
@@ -46,7 +130,7 @@ function urlToPromise(url) {
 function downloadZip(cb){
     var zip = new JSZip();
 
-    var valid_data_types = ["notes", "bookmark", "image"];
+    var valid_data_types = ["notes", "bookmark", "image", "transcription", "meeting_start_time"];
 
     // get the notes, bookmark and image data
     chrome.storage.local.get(valid_data_types, function(result){
@@ -54,6 +138,9 @@ function downloadZip(cb){
         var arr_notes = result[valid_data_types[0]] || [];
         var arr_bookmark = result[valid_data_types[1]] || [];
         var arr_images = result[valid_data_types[2]] || [];
+        var arr_transcription = result[valid_data_types[3]] || [];
+
+        var meeting_start_time = result[valid_data_types[4]];
 
         var combined_data_arr = [];
 
@@ -99,6 +186,21 @@ function downloadZip(cb){
             }
             
         })
+
+        var transcription_data_host = arr_transcription.filter(function(obj){ return obj["origin"] == "host"});
+        var transcription_data_guest = arr_transcription.filter(function(obj){ return obj["origin"] == "guest"});
+
+
+        if (transcription_data_host.length){
+            var srt_content_host = createSRTContent(transcription_data_host, meeting_start_time)
+            zip.file("host.srt", srt_content_host);
+        }
+
+        if (transcription_data_guest.length){
+            var srt_content_host = createSRTContent(transcription_data_host, meeting_start_time)
+            zip.file("guest.srt", srt_content_host);
+        }
+       
 
         // create text file for notes
         zip.file("notes.txt", notes_content);
