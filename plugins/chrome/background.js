@@ -6,6 +6,8 @@ class ScreenCapture{
         this.socket_obj = null;
         this.stream = null;
         this.stream_processor = null;
+        this.audio_context = null;
+        this.input = null
         this.EVENT_FLAC_ENCODER = "screen_encoder";
 
         if (config.use_flac_encoder){
@@ -31,6 +33,7 @@ class ScreenCapture{
         this.socket_transcription = null;
         this.stream = null;
         this.stream_processor = null;
+        this.input = null
 
         this.transcription_start_time = null;
         this.transcription_end_time = null;
@@ -169,8 +172,14 @@ class ScreenCapture{
         var _this = this;
         var audioContext = window.AudioContext;
         var context = new audioContext();
+
+        _this.audio_context = context;
+
         var source = context.createMediaStreamSource(stream);
         var input = context.createGain();
+
+        _this.input = input;
+
         source.connect(input);
 
         var bufferSize = _this.bufferSize;
@@ -216,10 +225,6 @@ class ScreenCapture{
             // stop the encoder
             this.encoder.finish();
         }
-        
-         // stop capturing the stream
-         this.stream_processor.disconnect();
-         delete this.stream_processor;
 
     }
 
@@ -231,7 +236,14 @@ class ScreenCapture{
 
     stop(){
 
-        this.finishEncoding();
+        // stop capturing the stream
+        this.audio_context.close();
+        this.stream.getAudioTracks()[0].stop();
+
+        this.input.disconnect();
+        this.stream_processor.disconnect();
+        delete this.stream_processor;
+
         this.disconnectFromTranscriptionService();
         this.reset();
         console.log("Screen capture stopped...");
@@ -268,11 +280,11 @@ function startClicked(){
                 screen_capture.stop();
                 delete screen_capture;
             }
+
+             // remove stop listner 
+            chrome.runtime.onMessage.removeListener(stopClicked);
           
         }
-
-        // remove stop listner 
-        chrome.runtime.onMessage.removeListener(stopClicked);
 
         sendResponse({status: true});
         

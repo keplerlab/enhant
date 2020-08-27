@@ -147,7 +147,6 @@ function startClicked(){
     }
 
     chrome.runtime.onMessage.addListener(stopClicked);
-    chrome.runtime.onMessage.addListener(updateMeetingData);
 }
 
 

@@ -445,7 +445,7 @@ class RecordIcon extends Icon{
 
         // stop the tab recording
         chrome.runtime.sendMessage({action: "capture_screen_stop"}, function(response){
-            console.log("Local recording status : ", response.status);
+            console.log("Tab recording status : ", response.status);
         })
     }
 
