@@ -182,7 +182,7 @@ def transcription_loop(
 
 async def on_data(websocket, path):
 
-    print("\n****New Websocket connection Established ")
+    print("\n****New Websocket connection Established ", flush=True)
     jsonDataString = await websocket.recv()
     #print("\n\n****jsonData:", jsonDataString, flush=True)
     jsonData = json.loads(jsonDataString)
@@ -199,7 +199,7 @@ async def on_data(websocket, path):
 
     if "conversation_id" not in jsonData:
         print("Error in initial packet conversation_id not found", flush=True)
-        return 0
+        #return 0
 
     conversation_id = jsonData["conversation_id"]
 
@@ -229,7 +229,7 @@ async def on_data(websocket, path):
 
     try:
         async for message in websocket:
-            print("pkt", message)
+            #print("pkt", message, flush=True)
             audio_buffer.put(message)
 
             # Comment out next two lines if no recording needed
@@ -266,7 +266,7 @@ async def on_data(websocket, path):
     full_file_name = os.path.join(folderName, fileName)
     print("\n*** Writing audio data in file:", full_file_name)
 
-    helpler.write_audio_wave(record_audio, full_file_name, cfg.SAMPLE_RATE, cfg.SAMPLE_WIDTH, cfg.CHANNELS)
+    helper.write_audio_wave(record_audio, full_file_name, cfg.SAMPLE_RATE, cfg.SAMPLE_WIDTH, cfg.CHANNELS)
     
     # helper.write_audio_flac(
     #     record_audio, full_file_name
