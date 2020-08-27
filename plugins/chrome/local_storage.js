@@ -37,7 +37,9 @@ const STORAGE_KEYS = {
     capture : "image",
     transcription: "transcription",
     mode: "mode",
-    server_url: "server_url"
+    server_url: "server_url",
+    meeting_start_time: "meeting_start_time",
+    tab_id: "tab_id"
 }
 
 class EnhantLocalStorage{
@@ -56,7 +58,7 @@ class EnhantLocalStorage{
     }
 
     generateUnixTimestamp(){
-        return Math.round(new Date().getTime()/1000);
+        return Math.round(new Date().getTime());
     }
 
     generate_data_obj(data){
