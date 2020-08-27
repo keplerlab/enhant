@@ -81,8 +81,6 @@ class MicCapture{
                     var d = this.socket_backend.createTranscriptionData("host", conv_id, 
                     meeting_number, transcription, this.transcription_start_time, this.transcription_end_time);
                     this.socket_backend.sendDataToBackend(d);
-
-
                 }
             }
         }

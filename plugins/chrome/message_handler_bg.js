@@ -1,237 +1,40 @@
-/*
-Storage wll be of the format
-
-notes: [
-    {
-        time: unixtimestamp
-        content: "Type your notes here ..."
-    },
-    .
-    .
-]
-
-bookmark: [
-    {
-        time: unixtimestamp
-        content: "Bookmark here ..."
-    },
-    .
-    .
-]
-
-image: [
-    {
-        time: unixtimestamp
-        content: "base64 image here ..."
-    },
-    .
-    .
-]
- */
-class EnhantLocalStorage{
-
-    constructor(){
-        this.time = "time";
-        this.content = "content";
-        this.type = "type";
-    }
-
-    generateUnixTimestamp(){
-        return Math.round(new Date().getTime()/1000);
-    }
-
-    generate_data_obj(data){
-        var storage_obj = {};
-        storage_obj[this.time] = this.generateUnixTimestamp();
-        storage_obj[this.content] = data;
-
-        return storage_obj;
-    }
-
-    save_basic(obj){
-        chrome.storage.local.set(obj, function(){
-            console.log("Object saved into local storage: ", obj);
-        })
-    }
-
-    save(d_type, data_obj, cb){
-
-        var get_type = {};
-        get_type[d_type] = [];
-
-        // by passing an object you can define default values e.g.: []
-        chrome.storage.local.get(get_type, function (result) {
-            // the input argument is ALWAYS an object containing the queried keys
-            // so we select the key we need
-            var typeData = result[d_type];
-            typeData.push(data_obj);
-
-            var updated_data = {};
-            updated_data[d_type] = typeData;
-
-            // set the new array value to the same key
-            chrome.storage.local.set(updated_data, function () {
-                cb(data_obj);
-            });
-        });
-    }
-
-    read(d_type, cb){
-
-        var get_type = {};
-        get_type[d_type] = [];
-
-         // by passing an object you can define default values e.g.: []
-         chrome.storage.local.get(get_type, function (result) {
-            cb(result[d_type]);
-        });
-    }
-
-    delete(keyArr){
-        chrome.storage.local.remove(keyArr,function(){
-            var error = chrome.runtime.lastError;
-            if (error) {
-                console.error(error);
-            }
-        })
-    }
-
-    deleteAll(){
-        chrome.storage.local.clear(function(){
-            var error = chrome.runtime.lastError;
-            if (error) {
-                console.error(error);
-            }
-        })
-    }
-}
-
 var enhant_local_storage_obj = new EnhantLocalStorage();
+var backend_obj = new BackendHandler();
 
-function getCurrentTime(unix_timestamp){
-    var date = new Date(unix_timestamp * 1000);
+// TODO: connect to backend (should be moved to power mode);
+// backend_obj.connectToBackend();
 
-    var mm = date.getMonth() + 1; // getMonth() is zero-based
-    var dd = date.getDate();
-    var yy = date.getFullYear();
+function transcriptionMessageHandler(transcription_data){
+    var d_type = STORAGE_KEYS.transcription;
 
-    var HH = date.getHours();
-    var MM = date.getMinutes();
-    var SS = date.getSeconds();
-    return [yy.toString(), mm.toString(), dd.toString()].join("/") + " " + 
-    [HH.toString(), MM.toString(), SS.toString()].join(":")
-}
-
-function imageFileName(obj){
-    var date = new Date(obj.time * 1000);
-    return date.getHours().toString() + "_" + date.getMinutes().toString() + "_" + date.getSeconds().toString();
-}
-
-function zipFileName(){
-    var date = new Date();
-    var mm = date.getMonth() + 1; // getMonth() is zero-based
-    var dd = date.getDate();
-    var yy = date.getFullYear();
-
-    var HH = date.getHours();
-    var MM = date.getMinutes();
-    var SS = date.getSeconds();
-
-    return "enhant_" + [yy.toString(), mm.toString(), dd.toString()].join("") + "_" + 
-    [HH.toString(), MM.toString(), SS.toString()].join("")
-}
-
-function urlToPromise(url) {
-    return new Promise(function(resolve, reject) {
-        JSZipUtils.getBinaryContent(url, function (err, data) {
-            if(err) {
-                reject(err);
-            } else {
-                resolve(data);
-            }
-        });
-    });
-}
-
-function downloadZip(cb){
-    var zip = new JSZip();
-
-    var valid_data_types = ["notes", "bookmark", "image"];
-
-    // get the notes, bookmark and image data
-    chrome.storage.local.get(valid_data_types, function(result){
-
-        var arr_notes = result[valid_data_types[0]] || [];
-        var arr_bookmark = result[valid_data_types[1]] || [];
-        var arr_images = result[valid_data_types[2]] || [];
-
-        var combined_data_arr = [];
-
-        var arr_notes = result[valid_data_types[0]] || [];
-        arr_notes.forEach(function(obj){
-            obj["type"] = valid_data_types[0];
-            combined_data_arr.push(obj);
-        })
-
-        var arr_bookmark =  result[valid_data_types[1]] || [];
-        arr_bookmark.forEach(function(obj){
-            obj["type"] = valid_data_types[1];
-            combined_data_arr.push(obj);
-        })
-
-        var arr_images = result[valid_data_types[2]] || [];
-        arr_images.forEach(function(obj){
-            obj["type"] = valid_data_types[2];
-            combined_data_arr.push(obj);
-        })
-
-        // sort combined array in descending order
-        combined_data_arr.sort(function(a, b){
-            var keyA = new Date(a.time*1000);
-            var keyB = new Date(b.time*1000);
-            if (keyA < keyB) return -1;
-            if (keyA > keyB) return 1;
-            return 0;
-        })
+    enhant_local_storage_obj.save(d_type, transcription_data, function(){
 
 
-        var notes_content = "Datetime\t\t\t" + "Notes\n\n";
-        combined_data_arr.forEach(function(obj){
+        // TODO : should only happen when mode is power
+        // var keys = [STORAGE_KEYS.meeting_number, STORAGE_KEYS.conv_id];
 
-            if (obj["type"] == valid_data_types[0]){
-                notes_content += getCurrentTime(obj.time) + "\t\t" + obj.content + "\n";
-            }
-            else if (obj["type"] == valid_data_types[1]){
-                notes_content += getCurrentTime(obj.time) + "\t\t" + "Bookmarked Moment" + "\n";
-            }
-            else if (obj["type"] == valid_data_types[2]){
-                notes_content += getCurrentTime(obj.time) + "\t\t" + "images/" + imageFileName(obj) +".jpeg" + "\n";
-            }
-            
-        })
+        // enhant_local_storage_obj.read_multiple(keys, function(results){
 
-        // create text file for notes
-        zip.file("notes.txt", notes_content);
 
-        var img = zip.folder("images");
+        //     var meeting_number = results[STORAGE_KEYS.meeting_number];
+        //     var conv_id = results[STORAGE_KEYS.conv_id];
 
-        arr_images.forEach(function(obj){
-            img.file(imageFileName(obj) + ".jpeg", urlToPromise(obj.content), {binary:true});
-        })
+        //     console.log(" results for multiple keys ", meeting_number, conv_id);
 
-        var zipfilename = zipFileName() + ".zip";
+        //     var json = backend_obj.createTranscriptionData(meeting_number, conv_id, transcription_data);
+        //     backend_obj.sendDataToBackend(json);
 
-        zip.generateAsync({type:"blob"})
-        .then(function(content) {
-            // see FileSaver.js
-            saveAs(content, zipfilename);
-
-            // run the callback function
-            cb();
-        });
-
+        // })
+        
+        
     })
+}
 
+function convIDMessageHandler(conv_id){
+
+    var obj = {};
+    obj[STORAGE_KEYS.conv_id] = conv_id;
+    enhant_local_storage_obj.save_basic(obj)
 }
 
 chrome.runtime.onMessage.addListener(
@@ -278,13 +81,15 @@ chrome.runtime.onMessage.addListener(
             enhant_local_storage_obj.save(d_type, obj_to_add, function(data){
                 console.log("Local storage updated with obj : ", obj_to_add);
 
-                // add to local storage
                 sendResponse({data:obj_to_add});
+                
             });
+            
 
         }
 
         if (request.msg == "start"){
+
             var obj = {"tab_id": request.data};
 
             enhant_local_storage_obj.save_basic(obj);
@@ -316,38 +121,34 @@ chrome.runtime.onMessage.addListener(
             var obj = {
                 "meeting_number": meeting_number
             }
-            chrome.storage.local.set(obj, function(){
-                console.log("Meeting number set in local storage ", meeting_number);
 
-                // send a message to upate meeting numbers
-                chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-                    chrome.tabs.sendMessage(tabs[0].id, {action: "meeting_number_updated", data: meeting_number}, function(response) {
-                      console.log(response.status);
-                    });
-                });
+            enhant_local_storage_obj.save_basic(obj, function(d){
 
+                var conv_id = enhant_local_storage_obj.generateRandomConvId();
+                convIDMessageHandler(conv_id);
+
+                // send meeting number to backend after a second so 
+                // var json = backend_obj.createMeetingData(d.meeting_number);
+                // backend_obj.sendDataToBackend(json);
+        
                 sendResponse({status:true});
-            });
+            })
         }
 
-        if (request.msg == "conv_id_info"){
+        if (request.msg == "save_transcription"){
 
-            var conv_id = request.data;
-            var obj = {
-                "conv_id": conv_id
+            /* of the format 
+            {   transcription : text,
+                event_time : unixtime,
+                start_time : unixtime,
+                end_time : unixtime,
+                "origin" : host / guest
             }
-            chrome.storage.local.set(obj, function(){
-                console.log("Converstion ID set in local storage ", conv_id);
+            */
+            console.log(" transcription data received via masg ", request.data)
+            var transcription_data = request.data;
+            transcriptionMessageHandler(transcription_data);
 
-                // send a message to upate meeting numbers
-                chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-                    chrome.tabs.sendMessage(tabs[0].id, {action: "update_conv_id", data: conv_id}, function(response) {
-                      console.log(response.status);
-                    });
-                });
-
-                sendResponse({status:true});
-            });
         }
         
         return true;

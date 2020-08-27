@@ -14,9 +14,14 @@ class ScreenCapture{
         else{
             this.encoder = null;
         }
+
+        this.transcription_start_time = null;
+        this.transcription_end_time = null;
         
         this.bufferSize = config.bufferSize;
         this.sampleRate = config.sampleRate;
+
+        this.origin = "guest";
         
     }
 
@@ -26,6 +31,9 @@ class ScreenCapture{
         this.socket_transcription = null;
         this.stream = null;
         this.stream_processor = null;
+
+        this.transcription_start_time = null;
+        this.transcription_end_time = null;
     }
 
     initializeEncoder(){
@@ -35,9 +43,14 @@ class ScreenCapture{
         }
     }
 
+    generateUnixTime(){
+        var time = Math.round(new Date().getTime());
+        return time;
+    }
+
     convertFloat32ToInt16(buffer) {
         var l = buffer.length
-        buf = new Int16Array(l)
+        var buf = new Int16Array(l)
         while (l--) {
           buf[l] = Math.min(1, buffer[l]) * 0x7fff
         }
@@ -99,8 +112,38 @@ class ScreenCapture{
         this.socket_transcription = new_socket;
     }
 
+    saveTranscription(transcription){
+
+        // set transcription end time here
+        this.transcription_end_time = this.generateUnixTime();
+
+        var transcription_data = {
+            "event_time": this.transcription_end_time,
+            "transcription": transcription,
+            "start_time": this.transcription_start_time,
+            "end_time": this.transcription_end_time,
+            "origin": this.origin
+        }
+
+        transcriptionMessageHandler(transcription_data);
+    }
+
+    socket_transcription_onmessage_cb(message){
+
+        var transcription = message.data;
+        // console.log("Transcription data ", message.data);
+
+        // TODO : add send data when in power mode
+        this.saveTranscription(transcription);
+
+        // set transcription start time
+        this.transcription_start_time = this.transcription_end_time;
+        
+    }
+
     connectToTranscriptionService(){
         var _this = this;
+        _this.transcription_start_time = _this.generateUnixTime();
         this.socket_obj = new socketFactory(_this.transcription_ip, 
             _this.transcription_port, "transcription");
 
@@ -113,6 +156,8 @@ class ScreenCapture{
             }));
         },
             _this.socket_transcription_closed_cb);
+
+        this.socket_transcription.onmessage = this.socket_transcription_onmessage_cb.bind(this);
 
     }
 

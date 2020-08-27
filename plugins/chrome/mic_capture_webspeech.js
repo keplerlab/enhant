@@ -1,13 +1,12 @@
 class WebSpeechMicCapture{
 
-    constructor(config, socket_backend){
+    constructor(config){
 
         this.config = config;
         this.recognition = null;
-        this.socket_backend = socket_backend;
-        this.meeting_info = {};
         this.transcription_start_time = null;
         this.transcription_end_time = null;
+        this.origin = "host";
         
     }
 
@@ -18,33 +17,32 @@ class WebSpeechMicCapture{
 
     reset(){
         this.recognition = null;
-        this.socket_backend = null;
-        this.meeting_info = {};
         this.config = {};
         this.transcription_start_time = null;
         this.transcription_end_time = null;
     }
 
-    sendTranscriptionDataToBackend(transcription){
+    saveTranscription(transcription){
 
         // set transcription end time here
         this.transcription_end_time = this.generateUnixTime();
 
-        if (this.meeting_info){
-            if (this.meeting_info.hasOwnProperty("meeting_number")){
-                if (this.meeting_info.hasOwnProperty("conv_id")){
-                    var meeting_number = this.meeting_info["meeting_number"];
-                    var conv_id = this.meeting_info["conv_id"];
-                    var d = this.socket_backend.createTranscriptionData("host", conv_id, 
-                    meeting_number, transcription, this.transcription_start_time, this.transcription_end_time);
-                    this.socket_backend.sendDataToBackend(d);
-                }
-            }
+        var transcription_data = {
+            "event_time": this.transcription_end_time,
+            "transcription": transcription,
+            "start_time": this.transcription_start_time,
+            "end_time": this.transcription_end_time,
+            "origin": this.origin
         }
 
-        // set transcription end time
-        this.transcription_start_time = this.transcription_end_time;
+        // send a message to background to save transcription
+        chrome.runtime.sendMessage({msg: "save_transcription", data: transcription_data}, 
+        function(response){
+            console.log(response.status);
+        })
 
+        // set transcription start time
+        this.transcription_start_time = this.transcription_end_time;
     }
 
     recognitionOnStart(){
@@ -59,8 +57,8 @@ class WebSpeechMicCapture{
 
                 console.log("Final transcription : ", final_transcript);
 
-                 //send transcription to backend
-                this.sendTranscriptionDataToBackend(final_transcript);
+                 //save transcription
+                this.saveTranscription(final_transcript);
             }
         }
 
@@ -125,35 +123,8 @@ function startClicked(){
 
     console.log(" Configuration for Mic: ", config);
 
-    var _backend_socket_conn = new BackendHandler();
-    _backend_socket_conn.connectToBackend();
-
-    var mic_capture = new WebSpeechMicCapture(config, _backend_socket_conn);
+    var mic_capture = new WebSpeechMicCapture(config);
     mic_capture.start();
-
-    function updateMeetingData(message, sender, sendResponse){
-        
-        if (message.action == "meeting_number_updated"){
-
-            // send message to backend
-            var origin = "host";
-            var create_meeting_data = _backend_socket_conn.createMeetingData(origin, message.data);
-
-            // delay of 2 sec to enable socket connection
-            setTimeout(function(){
-                _backend_socket_conn.sendDataToBackend(create_meeting_data);
-            }, 2000);
-
-            // update meeting info
-            mic_capture.meeting_info["meeting_number"] = message.data;
-        }
-
-        if (message.action == "update_conv_id"){
-            mic_capture.meeting_info["conv_id"] = message.data;
-        }
-
-        sendResponse({status: true});
-    }
 
     function stopClicked(message, sender, sendResponse){
 
@@ -166,16 +137,8 @@ function startClicked(){
                 delete mic_capture;
             }
 
-            if (_backend_socket_conn !== null){
-                _backend_socket_conn.socket_obj.doReconnect(false);
-                _backend_socket_conn.socket_backend.close();
-                delete _backend_socket_conn
-                _backend_socket_conn = null;
-            }
-
             // remove stop listner 
             chrome.runtime.onMessage.removeListener(stopClicked);
-            chrome.runtime.onMessage.removeListener(updateMeetingData);
           
         }
 

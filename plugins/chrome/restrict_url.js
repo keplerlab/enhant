@@ -10,6 +10,9 @@ chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {
       }),
       new chrome.declarativeContent.PageStateMatcher({
         pageUrl: {hostPrefix: 'meet.jit.si'},
+      }),
+      new chrome.declarativeContent.PageStateMatcher({
+        pageUrl: {hostContains: 'youtube.com'},
       })
       ],
           actions: [new chrome.declarativeContent.ShowPageAction()]

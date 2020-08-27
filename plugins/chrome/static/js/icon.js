@@ -479,7 +479,7 @@ class RecordIcon extends Icon{
 
     start(){
         this.meeting_started();
-         this.startCapturingMicAudio();
+        this.startCapturingMicAudio();
         this.startCapturingTabAudio();
     }
 

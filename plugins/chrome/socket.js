@@ -28,6 +28,8 @@ class socketFactory{
         this.socket = null;
         this.reconnectTimeInSec = 1; 
         this.should_reconnect = true;
+
+        this.timeout = null;
     }
 
     doReconnect(state){
@@ -65,9 +67,20 @@ class socketFactory{
 
             if (_this.should_reconnect){
                 
+                // previous socket connection should nullify
+                clearTimeout(_this.timeout);
+                _this.socket = null;
+                
+
                 setTimeout(function(){
-                    var new_socket = _this.reconnect(open_cb=open_cb, close_cb=close_cb);
+                    _this.timeout = _this.reconnect(open_cb=open_cb, close_cb=close_cb);
                 }, _this.reconnectTimeInSec *  1000);
+            }
+            else{
+                
+                clearTimeout(_this.timeout);
+                _this.socket = null;
+
             }
         }
 

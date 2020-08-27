@@ -5,6 +5,8 @@ class BackendHandler{
         this.socket_backend = null;
         this.socket_onopen_cb = null;
         this.socket_obj = null;
+        
+        this.host_origin = "host";
     }
 
     updateIP(ip){
@@ -19,18 +21,19 @@ class BackendHandler{
         this.socket_onopen_cb = cb;
     }
 
+    saveDataToLocalStorage(conv_id){
+        convIDMessageHandler(conv_id);
+    }
+
     socket_backend_data_cb(message){
         console.log(" Message received from backend :", message);
         var json_data = JSON.parse(message.data);
 
         // create a custom event to dispose backend event
         if (json_data["response"]["name"] == "INIT"){
-            
-            // sends a message to update conv id
-            chrome.runtime.sendMessage({msg: "conv_id_info", data: json_data["response"]["id"]}, 
-            function(response){
-                console.log(response.status);
-            })
+
+            var conv_id = json_data["response"]["id"];
+            this.saveDataToLocalStorage(conv_id);
         }
     }
 
@@ -46,7 +49,6 @@ class BackendHandler{
     }
 
     sendDataToBackend(message){
-        console.log(" backend socket state ", this.socket_backend.readyState == WebSocket.OPEN);
         if (this.socket_backend.readyState == WebSocket.OPEN){
             this.socket_backend.send(JSON.stringify(message));
         }
@@ -57,15 +59,14 @@ class BackendHandler{
         return event_time;
     }
 
-    createMeetingData(origin, meeting_number){
-
+    createMeetingData(meeting_number){
        
         var event_time = this.generateEventTime();
 
         var json = {
             "context": {
                 "conv_id": "",
-                "origin": origin,
+                "origin": this.host_origin,
                 "meeting_id": meeting_number,
                 "event_time": event_time
             },
@@ -88,18 +89,15 @@ class BackendHandler{
 
     }
 
-    createTranscriptionData(origin, conv_id , meeting_number , transcription, transcription_start_time,
-        transcription_end_time){
-
-        var event_time = this.generateEventTime();
+    createTranscriptionData(meeting_number, conv_id, transcription_data){
 
         // get the conv id from the local storage
         var json = {
             "context": {
                 "conv_id": conv_id,
-                "origin": origin,
+                "origin": transcription_data["origin"],
                 "meeting_id": meeting_number,
-                "event_time": event_time
+                "event_time": transcription_data["event_time"]
             },
             "msg": {
                 "name": "ADD",
@@ -107,10 +105,10 @@ class BackendHandler{
                 "desc": "ADD record",
                 "data": {
                     "transcription":{
-                        "content": transcription,
+                        "content": transcription_data["transcription"],
                         "type": "text",
-                        "start_time": transcription_start_time,
-                        "end_time": transcription_end_time
+                        "start_time": transcription_data["start_time"],
+                        "end_time": transcription_data["end_time"]
         
                     }
                 },
