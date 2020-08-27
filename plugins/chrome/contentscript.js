@@ -22,6 +22,7 @@ $(document).ready(function(){
     div.style.position = "absolute";
     div.style.zIndex = "9000000";
     div.style.width = "380px";
+    div.style.cursor = "move";
 
     div.style["boxShadow"] = "0 10px 16px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19)";
 
