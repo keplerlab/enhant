@@ -26,7 +26,7 @@ def analyze(folder: str):
     :type conv_ids: List[str]
     """
 
-    typer.echo(f"Analyzing folder {folder}")
+    typer.echo(f"\n ***** Analyzing folder {folder} *****")
 
     guest_transcription_list = None
     host_transcription_list = None
@@ -58,7 +58,7 @@ def analyze(folder: str):
 
     output_json_file_name = os.path.join(folder, "processed.json")
     with open(output_json_file_name, 'w') as json_file:
-        print(f"\n****Writing results in file: {output_json_file_name}")
+        print(f"\n***** Writing results in file: {output_json_file_name} ***** \n")
         json.dump(input_json_data, json_file, indent=4)
 
 

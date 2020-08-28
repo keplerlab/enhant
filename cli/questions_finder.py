@@ -5,6 +5,7 @@
 """
 import sys
 import os
+from typing import NoReturn, Tuple, Dict
 
 sys.path.insert(1, os.path.join(sys.path[0], "..", "nlp_lib"))
 
@@ -28,7 +29,7 @@ class QuestionsFinder(object):
         self.processed_conversation_collection = "conversations_processed"
         self.collection = "transcriptions"
 
-    def _transformTranscription(self, transcriptions_pkt):
+    def _transformTranscription(self, transcriptions_pkt:dict)->Dict:
         """[transform transcription packet]
 
         :param transcriptions_pkt: [description]
@@ -38,16 +39,15 @@ class QuestionsFinder(object):
         """
         return transcriptions_pkt["msg"]["data"]["transcription"]["content"]
 
-    def process(self, input_json_data, guest_transcription_list, host_transcription_list):
+    def process(self, input_json_data, guest_transcription_list:list, host_transcription_list:list) \
+        ->NoReturn:
         """[Public function for saving engagement]
 
         :param conv_id: [description]
         :type conv_id: [type]
         """
-        # print("inside questions processing code with conversationo id: ", conv_id)
 
-        # print("\n***conversation_document: ", conversation_document)
-        print("\n****Inside QuestionsFinder processing code****")
+        print("\n**** Analyzing Questions ****")
         if input_json_data == None:
             print(f"No matching conversation for input_json_data: {input_json_data}")
             return
@@ -73,4 +73,3 @@ class QuestionsFinder(object):
         if len(listOfQuestions) > 0:
             jsonPkt = {"questionsAsked": listOfQuestions}
             input_json_data["questionsAsked"] = jsonPkt
-
