@@ -24,6 +24,9 @@ class Config:
         self.ENABLE_AUTOMATIC_PUNCTUATION = True
         self.SPEECH_CONTEXT_PHRASES = []
         self.TRANSCRIPTION_PROVDER = "Kaldi"
+        self.interface = os.environ.get('ENHANT_SERVER_INTERFACE', '0.0.0.0')
+        self.port = int(os.environ.get('ENHANT_SERVER_PORT', 2700))
+        self.sample_rate = float(os.environ.get('ENHANT_SAMPLE_RATE', 44100))
 
 
 cfg = Config()

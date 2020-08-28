@@ -2,8 +2,8 @@
 FROM alphacep/kaldi-vosk-server:latest
 
 ENV MODEL_VERSION 0.2
-# RUN mkdir /opt/vosk-model-en \
-#    && cd /opt/vosk-model-en \
+# RUN mkdir /opt/vosk-server/vosk-model-en \
+#    && cd /opt/vosk-server/vosk-model-en \
 #    && wget http://alphacephei.com/kaldi/models/vosk-model-en-us-aspire-${MODEL_VERSION}.zip \
 #    && unzip vosk-model-en-us-aspire-${MODEL_VERSION}.zip \
 #    && mv vosk-model-en-us-aspire-${MODEL_VERSION} model \
