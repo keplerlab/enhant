@@ -176,6 +176,18 @@ class BookmarkIcon extends Icon{
         "<div>";
     }
 
+
+    bookMarkAdded(){
+        var _this = this;
+        setTimeout(
+            function(){
+                _this.toggleState();
+                _this.stateHandler();
+                _this.setLocalStorage();
+            }, 50);
+    }
+
+
     addBookMark(){
         var _this = this;
 
@@ -184,6 +196,8 @@ class BookmarkIcon extends Icon{
             // add it to the data container
             $('#'+_this.data_container_id).prepend(_this.generateBookmark(response.data));
         });
+
+        _this.bookMarkAdded();
         
     }
 
@@ -212,6 +226,18 @@ class CaptureTab extends Icon{
             _this.addTabCapture(html);
 
         })
+
+        _this.captureTaken();
+    }
+
+    captureTaken(){
+        var _this = this;
+        setTimeout(
+            function(){
+                _this.toggleState();
+                _this.stateHandler();
+                _this.setLocalStorage();
+            }, 50);
     }
 
     // use chrome tabcapture here
