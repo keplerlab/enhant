@@ -24,6 +24,19 @@ $(document).ready(function(){
 
     hideIcons();
 
+    function activateIcon(data){
+
+        var hideIconClass = data.from;
+        var showIconClass = data.to;
+
+        if (icons_object_mapping.hasOwnProperty(showIconClass)){
+            var icon_obj = icons_object_mapping[showIconClass];
+            hideOtherIconWindow(showIconClass);
+            icon_obj.handleClick();
+        }
+       
+    }
+
     window.addEventListener("hideIcons", function(event){
         hideIcons();
     });
@@ -31,6 +44,11 @@ $(document).ready(function(){
     window.addEventListener("showIcons", function(event){
         showIcons();
     });
+
+    window.addEventListener("activateIcon", function(event){
+        var data = event.detail;
+        activateIcon(data);
+    })
 
     registered_classes.forEach(function(cl){
 

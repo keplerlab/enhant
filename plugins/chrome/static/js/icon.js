@@ -86,7 +86,6 @@ class Icon{
                 
             }
             if (_this.state == ICONSTATE.INACTIVE){
-                console.log(" hidding container id");
                 $('#' + _this.container_id).hide();
             }
         }
@@ -153,6 +152,11 @@ class NotesIcon extends Icon{
 
         // clear the container
         $("textarea").val('');
+
+        var event = new CustomEvent("activateIcon", {
+            detail: {"from": NotesIcon.name, "to": ExpandIcon.name}
+        });
+		window.dispatchEvent(event);
     }
 }
 
