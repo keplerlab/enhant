@@ -276,7 +276,7 @@ async def on_data(websocket, path):
 
 ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
 ssl_context.load_cert_chain(
-    certfile="certificates/cert.pem", keyfile="certificates/key.pem"
+    certfile="certificates/localhost+2.pem", keyfile="certificates/localhost+2-key.pem"
 )
 
 start_server = websockets.serve(

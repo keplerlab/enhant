@@ -1,33 +1,33 @@
 version: '3'
 services:
-  mongo:
-    image: mongo
-    command: mongod --port 27018 --directoryperdb --dbpath=/data/db --bind_ip_all
-    ports:
-    - "27018:27018"
-    volumes:
-      - ./db/:/data/db
+  # mongo:
+  #   image: mongo
+  #   command: mongod --port 27018 --directoryperdb --dbpath=/data/db --bind_ip_all
+  #   ports:
+  #   - "27018:27018"
+  #   volumes:
+  #     - ./db/:/data/db
 
-  transcription:
-    build: ./api/transcription_svc/
-    ports:
-    - "1111:1111"
-    volumes:
-      - ./api/transcription_svc/:/home/transcription/
-      # Exclude mount node_modules directory
-    environment:
-      - GOOGLE_APPLICATION_CREDENTIALS=/home/transcription/project-voicebox-fa7bc2f8fa18.json # Google credential file
+  # transcription:
+  #   build: ./api/transcription_svc/
+  #   ports:
+  #   - "1111:1111"
+  #   volumes:
+  #     - ./api/transcription_svc/:/home/transcription/
+  #     - ./certificates/:/home/transcription/certificates/
+  #     # Exclude mount node_modules directory
+  #   environment:
+  #     - GOOGLE_APPLICATION_CREDENTIALS=/home/transcription/project-voicebox-fa7bc2f8fa18.json # Google credential file
 
   transcription_local:
     build: ./api/vosk-server/
     ports:
-    - "2700:2700"
+    - "1111:1111"
     volumes:
        #- ./api/vosk-server/vosk-model-en/:/opt/vosk-server/vosk-model-en/
        - ./api/vosk-server/:/opt/vosk-server
+       - ./certificates/:/opt/vosk-server/websocket/certificates/
       # Exclude mount node_modules directory
-    #environment:
-    #  - GOOGLE_APPLICATION_CREDENTIALS=/home/transcription/project-voicebox-fa7bc2f8fa18.json # Google credential file
 
 
   cli:

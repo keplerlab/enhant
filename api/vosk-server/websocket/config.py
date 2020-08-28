@@ -23,7 +23,7 @@ class Config:
         self.LANGUAGE_CODE = "en-IN"
         self.ENABLE_AUTOMATIC_PUNCTUATION = True
         self.SPEECH_CONTEXT_PHRASES = []
-        self.TRANSCRIPTION_PROVDER = "Kaldi"
+        self.TRANSCRIPTION_PROVIDER = "Kaldi"
 
 
 cfg = Config()
