@@ -12,7 +12,7 @@ $(document).ready(function(){
         NotesIcon,
         ExpandIcon,
         BookmarkIcon,
-        CaptureTab,
+        CaptureTabIcon,
         SettingsIcon,
         RecordIcon,
         PowerModeIcon
@@ -95,7 +95,25 @@ $(document).ready(function(){
         var icon_type = $(this).attr("type");
 
         var icon_obj = icons_object_mapping[icon_type];
-        hideOtherIconWindow(icon_type);
+
+        if (icon_type == BookmarkIcon.name || icon_type == CaptureTabIcon.name){
+
+            // check if Expand icon is active
+            var expand_icon_class = ExpandIcon.name;
+            if (icons_object_mapping.hasOwnProperty(expand_icon_class)){
+                var expand_icon_obj = icons_object_mapping[expand_icon_class];
+                
+                // if expand is not active then hide other icons
+                if (expand_icon_obj.state == ICONSTATE.INACTIVE){
+                    hideOtherIconWindow(icon_type);
+                }
+            }
+        }
+        else{
+
+            hideOtherIconWindow(icon_type);
+        }
+
         icon_obj.handleClick();
 
         // make sure event is registered only once

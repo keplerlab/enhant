@@ -172,11 +172,22 @@ chrome.tabs.onRemoved.addListener(function(tabId, info) {
         if (result["tab_id"]){
 
             if (result["tab_id"] == tabId){
-                downloadZip(function(){
+
+                try{
+                    downloadZip(function(){
                 
+                        // clear all the data
+                        enhant_local_storage_obj.deleteAll();
+                    });
+                }
+                catch(error){
+                    console.log("Encountered error : ", error);
+                    
                     // clear all the data
                     enhant_local_storage_obj.deleteAll();
-                });
+
+                }
+               
             }
 
         }

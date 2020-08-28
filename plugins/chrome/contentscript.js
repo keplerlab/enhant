@@ -32,8 +32,7 @@ $(document).ready(function(){
 
     // to resize the iframe based on internal contents 
     const resizer = iFrameResize({ log: false, checkOrigin: false, 
-        maxHeight: FRAME_MAX_HEIGHT, maxWidth: FRAME_MAX_WIDTH,
-        heightCalculationMethod : 'max' }, '#' + FRAME_ID);
+        maxHeight: FRAME_MAX_HEIGHT, maxWidth: FRAME_MAX_WIDTH}, '#' + FRAME_ID);
 
     $('#' + DIV_ID).draggable({
         iframeFix: true

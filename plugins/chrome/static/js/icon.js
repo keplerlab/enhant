@@ -209,7 +209,7 @@ class BookmarkIcon extends Icon{
     }
 }
 
-class CaptureTab extends Icon{
+class CaptureTabIcon extends Icon{
 
     constructor(){
         super();
