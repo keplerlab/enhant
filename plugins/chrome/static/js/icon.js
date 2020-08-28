@@ -86,7 +86,6 @@ class Icon{
                 
             }
             if (_this.state == ICONSTATE.INACTIVE){
-                console.log(" hidding container id");
                 $('#' + _this.container_id).hide();
             }
         }
@@ -153,6 +152,11 @@ class NotesIcon extends Icon{
 
         // clear the container
         $("textarea").val('');
+
+        var event = new CustomEvent("activateIcon", {
+            detail: {"from": NotesIcon.name, "to": ExpandIcon.name}
+        });
+		window.dispatchEvent(event);
     }
 }
 
@@ -172,6 +176,18 @@ class BookmarkIcon extends Icon{
         "<div>";
     }
 
+
+    bookMarkAdded(){
+        var _this = this;
+        setTimeout(
+            function(){
+                _this.toggleState();
+                _this.stateHandler();
+                _this.setLocalStorage();
+            }, 50);
+    }
+
+
     addBookMark(){
         var _this = this;
 
@@ -180,6 +196,8 @@ class BookmarkIcon extends Icon{
             // add it to the data container
             $('#'+_this.data_container_id).prepend(_this.generateBookmark(response.data));
         });
+
+        _this.bookMarkAdded();
         
     }
 
@@ -191,7 +209,7 @@ class BookmarkIcon extends Icon{
     }
 }
 
-class CaptureTab extends Icon{
+class CaptureTabIcon extends Icon{
 
     constructor(){
         super();
@@ -208,6 +226,18 @@ class CaptureTab extends Icon{
             _this.addTabCapture(html);
 
         })
+
+        _this.captureTaken();
+    }
+
+    captureTaken(){
+        var _this = this;
+        setTimeout(
+            function(){
+                _this.toggleState();
+                _this.stateHandler();
+                _this.setLocalStorage();
+            }, 50);
     }
 
     // use chrome tabcapture here

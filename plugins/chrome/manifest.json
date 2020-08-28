@@ -40,7 +40,7 @@
       "tabCapture",
       "downloads",
       "storage",
-      "activeTab"
+      "<all_urls>"
     ]
   }
   

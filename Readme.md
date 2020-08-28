@@ -35,6 +35,64 @@ docker-compose run cli
 python  main.py analyze 111 
 ```
 
+# Add certificate for localhost dev
+
+## Install mkcert utility 
+
+### macOS
+
+On macOS, use [Homebrew](https://brew.sh/)
+
+```
+brew install mkcert
+brew install nss # if you use Firefox
+```
+
+or [MacPorts](https://www.macports.org/).
+
+```
+sudo port selfupdate
+sudo port install mkcert
+sudo port install nss # if you use Firefox
+```
+
+### Linux
+
+On Linux, first install `certutil`.
+
+```
+sudo apt install libnss3-tools
+    -or-
+sudo yum install nss-tools
+    -or-
+sudo pacman -S nss
+    -or-
+sudo zypper install mozilla-nss-tools
+```
+
+## Install local certificate authority using mkcert
+
+```
+$ mkcert -install
+Created a new local CA at "/Users/filippo/Library/Application Support/mkcert" 💥
+The local CA is now installed in the system trust store! ⚡️
+The local CA is now installed in the Firefox trust store (requires browser restart)! 🦊
+```
+
+## Create new certificate using mkcert 
+```
+$ cd certificates
+$ mkcert localhost 127.0.0.1 ::1
+Using the local CA at "/Users/******/Library/Application Support/mkcert" ✨
+
+Created a new certificate valid for the following names 📜
+ - "localhost"
+ - "127.0.0.1"
+ - "::1"
+
+The certificate is at "./localhost+2.pem" and the key at "./localhost+2-key.pem" ✅
+```
+
 
 # Building documentation using sphinx 
 
