@@ -148,7 +148,11 @@ class NotesIcon extends Icon{
         _this.sendMessageToBackground({"msg": "save_notes", "data": note}, function(response){
             // add it to the data container
             $('#'+_this.data_container_id).prepend(_this.generateNote(response.data));
+
         });
+
+        // clear the container
+        $("textarea").val('');
     }
 }
 
