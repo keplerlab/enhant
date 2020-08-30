@@ -5,6 +5,7 @@
 """
 import sys
 import os
+from typing import NoReturn, Tuple
 
 sys.path.insert(1, os.path.join(sys.path[0], "..", "nlp_lib"))
 
@@ -30,7 +31,7 @@ class SentimentFinder(object):
         self.low_sentiment_threshold = 0.3
         self.high_sentiment_threshold = 0.7
 
-    def _transformTranscription(self, transcriptions_pkt):
+    def _transformTranscription(self, transcriptions_pkt:dict)-> Tuple[dict]:
         """[summary transcription packet]
 
         :param transcriptions_pkt: [description]
@@ -43,14 +44,15 @@ class SentimentFinder(object):
             transcriptions_pkt["msg"]["data"]["transcription"]["start_time"],
         )
 
-    def process(self, input_json_data , guest_transcription_list, host_transcription_list):
+    def process(self, input_json_data , guest_transcription_list:list, host_transcription_list:list) \
+        ->NoReturn:
         """[Public function for extracting and getting sentiments]
 
         :param conv_id: [description]
         :type conv_id: [type]
         """
 
-        print("\n****Inside SentimentFinder processing code****")
+        print("\n**** Analyzing Sentiment ****")
         if input_json_data == None:
             print(f"No matching conversation for input_json_data: {input_json_data}")
             return

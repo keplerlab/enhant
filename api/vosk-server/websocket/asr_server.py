@@ -49,6 +49,7 @@ def process_chunk(rec, message):
     elif rec.AcceptWaveform(message):
         return rec.Result(), False
     else:
+        #print("Partial Result", rec.PartialResult())
         return rec.PartialResult(), False
 
 async def recognize(websocket, path):
@@ -85,7 +86,7 @@ async def recognize(websocket, path):
         while True:
 
             message = await websocket.recv()
-            print("message", message, flush=True)
+            #print("message", message, flush=True)
             # Create the recognizer, word list is temporary disabled since not every model supports it
             if not rec:
                 if False and word_list:
@@ -94,7 +95,17 @@ async def recognize(websocket, path):
                     rec = KaldiRecognizer(model, sample_rate)
 
             response, stop = await loop.run_in_executor(pool, process_chunk, rec, message)
-            await websocket.send(response)
+            responseJson = json.loads(response)
+            #print("responseJson", responseJson)
+            if "result" in responseJson:
+                resultText = responseJson["text"]
+                print("transcription:", resultText, flush=True)
+                await websocket.send(resultText)
+                #
+                #print("resultText", resultText)
+
+            #print("response", response)
+            
             if stop: break
     
     except (

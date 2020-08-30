@@ -1,5 +1,5 @@
 
-FROM alphacep/kaldi-vosk-server:latest
+FROM mayank10j/kaldi-vosk-server:latest
 
 ENV MODEL_VERSION 0.2
 # RUN mkdir /opt/vosk-server/vosk-model-en \
@@ -9,6 +9,11 @@ ENV MODEL_VERSION 0.2
 #    && mv vosk-model-en-us-aspire-${MODEL_VERSION} model \
 #    && rm -rf vosk-model-en-us-aspire-${MODEL_VERSION}.zip
 
-EXPOSE 2700
+RUN eval  pip install google.cloud.speech websockets
+   
+
+EXPOSE 1111
 WORKDIR /opt/vosk-server/websocket
-CMD [ "python3", "./asr_server.py", "/opt/vosk-server/vosk-model-en/model" ]
+#CMD [ "python", "./python_websocket.py"]
+
+CMD [ "python", "./asr_server.py", "/opt/vosk-server/vosk-model-en/model" ]
