@@ -14,6 +14,6 @@ RUN eval  pip install google.cloud.speech websockets
 
 EXPOSE 1111
 WORKDIR /opt/vosk-server/websocket
-CMD [ "python3", "./python_websocket.py"]
+#CMD [ "python", "./python_websocket.py"]
 
-#CMD [ "python3", "./asr_server.py", "/opt/vosk-server/vosk-model-en/model" ]
+CMD [ "python", "./asr_server.py", "/opt/vosk-server/vosk-model-en/model" ]
