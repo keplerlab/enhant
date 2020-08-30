@@ -64,14 +64,34 @@ chrome.runtime.onMessage.addListener(
         if (request.msg == "save_bookmark"){
             var d_type = "bookmark";
 
-            var obj_to_add = enhant_local_storage_obj.generate_data_obj(request.data);
-            enhant_local_storage_obj.save(d_type, obj_to_add, function(data){
-                console.log("Local storage updated with obj : ", obj_to_add);
-                
-                // add to local storage
-                sendResponse({data:obj_to_add});
-            });
+            var obj_to_add = {};
 
+            // get the last transcription from local storage
+            enhant_local_storage_obj.read_multiple(["transcription"], function(results){
+                var arr_transcription = results.transcription || [];
+                
+                var host_transcription = arr_transcription.filter(function(obj){ return obj["origin"] == "host"});
+                var guest_transcription = arr_transcription.filter(function(obj){ return obj["origin"] == "guest"});
+
+                if (host_transcription.length){
+
+                    var last_obj = host_transcription[host_transcription.length - 1];
+                    var last_transcription = last_obj["transcription"];
+
+                    obj_to_add = enhant_local_storage_obj.generate_data_obj(last_transcription);
+                }
+                else{
+                    obj_to_add = enhant_local_storage_obj.generate_data_obj(request.data);
+                }
+
+                enhant_local_storage_obj.save(d_type, obj_to_add, function(r){
+                    console.log("Local storage updated with obj : ", r);
+
+                    
+                    // add to local storage
+                    sendResponse({data:obj_to_add});
+                });
+            })
         }
 
         if (request.msg == "save_notes"){
@@ -152,7 +172,17 @@ chrome.runtime.onMessage.addListener(
             */
             var transcription_data = request.data;
             transcriptionMessageHandler(transcription_data);
+            sendResponse({status:true});
 
+        }
+
+        if (request.msg == "settings_updated"){
+            var obj = {};
+            obj[STORAGE_KEYS.settings] = request.data;
+            enhant_local_storage_obj.save_basic(obj, function(){
+                // console.log("storage updated in local storage");    
+            })
+            sendResponse({status:true});
         }
         
         return true;
@@ -182,7 +212,7 @@ chrome.tabs.onRemoved.addListener(function(tabId, info) {
                 }
                 catch(error){
                     console.log("Encountered error : ", error);
-                    
+
                     // clear all the data
                     enhant_local_storage_obj.deleteAll();
 

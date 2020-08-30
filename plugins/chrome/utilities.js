@@ -1,5 +1,5 @@
 function getCurrentTime(unix_timestamp){
-    var date = new Date(unix_timestamp * 1000);
+    var date = new Date(unix_timestamp);
 
     var mm = date.getMonth() + 1; // getMonth() is zero-based
     var dd = date.getDate();
@@ -13,7 +13,7 @@ function getCurrentTime(unix_timestamp){
 }
 
 function imageFileName(obj){
-    var date = new Date(obj.time * 1000);
+    var date = new Date(obj.time);
     return date.getHours().toString() + "_" + date.getMinutes().toString() + "_" + date.getSeconds().toString();
 }
 
@@ -179,7 +179,7 @@ function downloadZip(cb){
                 notes_content += getCurrentTime(obj.time) + "\t\t" + obj.content + "\n";
             }
             else if (obj["type"] == valid_data_types[1]){
-                notes_content += getCurrentTime(obj.time) + "\t\t" + "Bookmarked Moment" + "\n";
+                notes_content += getCurrentTime(obj.time) + "\t\t" + obj.content + "\n";
             }
             else if (obj["type"] == valid_data_types[2]){
                 notes_content += getCurrentTime(obj.time) + "\t\t" + "images/" + imageFileName(obj) +".jpeg" + "\n";

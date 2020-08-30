@@ -98,12 +98,13 @@ class Icon{
     }
 
     getCurrentTime(unix_timestamp){
-        var date = new Date(unix_timestamp * 1000);
+        var date = new Date(unix_timestamp);
         return date.getHours() + " : " + date.getMinutes();
     }
 
     sendMessageToBackground(request, cb){
         chrome.runtime.sendMessage({msg: request.msg, data: request.data}, function(response) {
+            console
             cb(response);
         });
     }
@@ -171,7 +172,7 @@ class BookmarkIcon extends Icon{
     generateBookmark(obj){
         return "<div class='parent-data row' style='margin-left:10%;padding-top:2%;padding-bottom:2%;align-items:center;display:flex;'>" + 
         "<div class='col-xs-1'><img src='static/images/bookmark.svg'></div>" +
-        "<div class='col-xs-7'><p style='margin-top:auto;margin-bottom:auto;'>Moment Bookmarked</p>" + "</div>" +
+        "<div class='col-xs-7'><p style='margin-top:auto;margin-bottom:auto;'>" + obj.content + "</p>" + "</div>" +
         "<div class='col-xs-3 align-self-center' style='color:#808080b5;'>" + this.getCurrentTime(obj.time) + "</div>" +
         "<div>";
     }
@@ -194,7 +195,8 @@ class BookmarkIcon extends Icon{
         _this.sendMessageToBackground({"msg": "save_bookmark", "data": "Bookmarked Moment"}, function(response){
 
             // add it to the data container
-            $('#'+_this.data_container_id).prepend(_this.generateBookmark(response.data));
+            var text_to_add = _this.generateBookmark(response.data);
+            $('#'+_this.data_container_id).prepend(text_to_add);
         });
 
         _this.bookMarkAdded();
@@ -290,7 +292,7 @@ class ExpandIcon extends Icon{
         }
         else if (d_type == this.valid_data_types[1]){
             icon_html = "<div class='col-xs-1'><img src='static/images/bookmark.svg'></div>";
-            content_html = "<div class='col-xs-7'><p style='margin-top:auto;margin-bottom:auto;'>Moment Bookmarked</p>" + "</div>";
+            content_html = "<div class='col-xs-7'><p style='margin-top:auto;margin-bottom:auto;'>" +  data.content +"</p>" + "</div>";
         }
         else{
             icon_html = "<div class='col-xs-1'><img src='static/images/capture.svg'></div>";
@@ -308,6 +310,9 @@ class ExpandIcon extends Icon{
         var _this = this;
 
         _this.reset();
+
+        // start the data with the function
+
 
         chrome.storage.local.get(_this.valid_data_types, function(result){
 
@@ -397,6 +402,14 @@ class SettingsIcon extends Icon{
         return input_status;
     }
 
+    powerModeSettingsChanged(active){
+
+        var event = new CustomEvent("powerModeSettingsChanged", {
+            details: active
+        });
+		window.dispatchEvent(event);
+    }
+
     registerEvents(){
         var _this = this;
         $('#' + _this.apply_btn_id).click(function(){
@@ -405,8 +418,17 @@ class SettingsIcon extends Icon{
             _this.enable_transcription_view_for_debug = _this.getTranscriptionSetting();
             _this.server = _this.getServerURL();
 
-            console.log(" setting applied : ", _this.power_mode, _this.enable_transcription_view_for_debug,
-            _this.server);
+            var d = {
+                "power_mode": _this.power_mode,
+                "enable_transcription": _this.enable_transcription_view_for_debug,
+                "server_url": _this.server
+            }
+
+            _this.powerModeSettingsChanged(_this.power_mode);
+
+            chrome.runtime.sendMessage({msg: "settings_updated", data: d}, function(response){
+                console.log("Settings updated status : ", response.status);
+            })
             
         });
     }
@@ -563,6 +585,19 @@ class PowerModeIcon extends Icon{
 
         this.active_icon_path = "static/images/powermode.svg";
         this.inactive_icon_path = "static/images/powermode_inactive.svg";
+    }
+
+    registerEvents(){
+        window.addEventListener("powerModeSettingsChanged", function(event){
+            var state = event.details;
+
+            if (state){
+                // show the icon
+            }
+            else{
+                // hide the icon
+            }
+        })
     }
 }
 

@@ -39,7 +39,8 @@ const STORAGE_KEYS = {
     mode: "mode",
     server_url: "server_url",
     meeting_start_time: "meeting_start_time",
-    tab_id: "tab_id"
+    tab_id: "tab_id",
+    settings: "settings"
 }
 
 class EnhantLocalStorage{
