@@ -26,7 +26,11 @@ services:
     volumes:
        #- ./api/vosk-server/vosk-model-en/:/opt/vosk-server/vosk-model-en/
        - ./api/vosk-server/:/opt/vosk-server
+       - ./api/transcription_svc/:/home/transcription/
        - ./certificates/:/opt/vosk-server/websocket/certificates/
+    environment:
+      - GOOGLE_APPLICATION_CREDENTIALS=/home/transcription/project-voicebox-fa7bc2f8fa18.json # Google credential file
+
       # Exclude mount node_modules directory
 
 

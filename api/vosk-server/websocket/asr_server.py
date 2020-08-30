@@ -86,16 +86,16 @@ async def recognize(websocket, path):
 
             message = await websocket.recv()
             print("message", message, flush=True)
-            # Create the recognizer, word list is temporary disabled since not every model supports it
-            if not rec:
-                if False and word_list:
-                    rec = KaldiRecognizer(model, sample_rate, word_list)
-                else:
-                    rec = KaldiRecognizer(model, sample_rate)
+            # # Create the recognizer, word list is temporary disabled since not every model supports it
+            # if not rec:
+            #     if False and word_list:
+            #         rec = KaldiRecognizer(model, sample_rate, word_list)
+            #     else:
+            #         rec = KaldiRecognizer(model, sample_rate)
 
-            response, stop = await loop.run_in_executor(pool, process_chunk, rec, message)
-            await websocket.send(response)
-            if stop: break
+            # response, stop = await loop.run_in_executor(pool, process_chunk, rec, message)
+            # await websocket.send(response)
+            # if stop: break
     
     except (
         websockets.exceptions.ConnectionClosed,

@@ -1,0 +1,59 @@
+FROM debian:10.4
+
+ARG KALDI_MKL
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        g++ \
+        gfortran \
+        bzip2 \
+        unzip \
+        make \
+        wget \
+        git \
+        zlib1g-dev \
+        patch \
+        ca-certificates \
+        swig \
+        cmake \
+        xz-utils \
+    && rm -rf /var/lib/apt/lists/*
+
+
+#Install MINICONDA
+RUN wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O Miniconda.sh && \
+	/bin/bash Miniconda.sh -b -p /opt/conda && \
+	rm Miniconda.sh
+
+ENV PATH /opt/conda/bin:$PATH
+RUN conda install python=3.7
+
+RUN \
+    git clone -b lookahead --single-branch https://github.com/alphacep/kaldi /opt/kaldi \
+    && cd /opt/kaldi/tools \
+    && sed -i 's:status=0:exit 0:g' extras/check_dependencies.sh \
+    && sed -i 's:openfst_add_CXXFLAGS = -g -O2:openfst_add_CXXFLAGS = -g -O3 -msse2:g' Makefile \
+    && sed -i 's:--enable-ngram-fsts:--enable-ngram-fsts --disable-bin:g' Makefile \
+    && make -j $(nproc) openfst cub \
+    && if [ "x$KALDI_MKL" != "x1" ] ; then \
+          sed -i 's:python:python:g' extras/install_openblas.sh; \
+          sed -i 's:USE_LOCKING=1:DYNAMIC_ARCH=1 USE_LOCKING=1:g' extras/install_openblas.sh; \
+          extras/install_openblas.sh; \
+       else \
+          extras/install_mkl.sh; \
+       fi \
+    \
+    && cd /opt/kaldi/src \
+    && if [ "x$KALDI_MKL" != "x1" ] ; then \
+          ./configure --mathlib=OPENBLAS --shared; \
+       else \
+          ./configure --mathlib=MKL --shared; \
+       fi \
+    && sed -i 's:-msse -msse2:-msse -msse2:g' kaldi.mk \
+    && sed -i 's: -O1 : -O3 :g' kaldi.mk \
+    && make -j $(nproc) online2 lm \
+    \
+    && git clone https://github.com/alphacep/vosk-api /opt/vosk-api \
+    && cd /opt/vosk-api/python \
+    && KALDI_MKL=$KALDI_MKL KALDI_ROOT=/opt/kaldi python ./setup.py install --single-version-externally-managed --root=/ 
+
