@@ -6,6 +6,7 @@
 
 import sys
 import os
+from typing import NoReturn, Tuple
 
 sys.path.insert(1, os.path.join(sys.path[0], "..", "nlp_lib"))
 
@@ -43,7 +44,7 @@ class EngagmentFinder(object):
         self.low_sentiment_threshold = 0.3
         self.high_sentiment_threshold = 0.7
 
-    def _transformTranscription(self, transcriptions_pkt):
+    def _transformTranscription(self, transcriptions_pkt:dict)->Tuple[dict]:
         """[transform Transcription]
 
         :param transcriptions_pkt: [description]
@@ -51,24 +52,26 @@ class EngagmentFinder(object):
         :return: [description]
         :rtype: [type]
         """
+
         return (
             transcriptions_pkt["msg"]["data"]["transcription"],
             transcriptions_pkt["context"]["origin"],
         )
 
-    def process(self, input_json_data, guest_transcription_list, host_transcription_list):
+    def process(self, input_json_data, guest_transcription_list:list, host_transcription_list:list) \
+                -> NoReturn:
         """[Public function for saving engagement]
 
         :param conv_id: [description]
         :type conv_id: [type]
         """
-        # print("inside questions processing code with conversationo id: ", conv_id)
 
-        # print("\n***conversation_document: ", conversation_document)
-        print("\n*****Inside engagement processing code****")
+        print("\n**** Analyzing Engagement ****")
+
         if input_json_data == None:
             print(f"No matching conversation for input_json_data: {input_json_data}")
             return
+        
         conv_id = input_json_data["meeting_id"]
 
         transcriptions_with_time = []
@@ -84,23 +87,20 @@ class EngagmentFinder(object):
                 transcription_with_time = (origin, msg)
                 transcriptions_with_time.append(transcription_with_time)
 
-        #print("transcriptions_with_time", transcriptions_with_time)
         transcriptions_with_time.sort(key=timeSortingFunction)
-        #print("Sorted transcriptions_with_time", transcriptions_with_time)
 
         engagement_scores = []
         for transcriptionTuple in transcriptions_with_time:
-            # print("transcriptionTuple",transcriptionTuple)
-            #print("transcriptionTuple[0]", transcriptionTuple[0])
-            #print("transcriptionTuple[1]", transcriptionTuple[1])
+
             end_time = transcriptionTuple[1]["end_time"]
             engagement_score = engagement_lib.processMessage(
                 conv_id, transcriptionTuple[0], transcriptionTuple[1]
             )
+
             engagement_with_time = (int(end_time), engagement_score)
             engagement_scores.append(engagement_with_time)
 
-        #print("engagement_scores", engagement_scores)
+
         if len(engagement_scores) > 0:
             jsonPkt = {"engagement_scores": engagement_scores}
             input_json_data["engagement_scores"] = jsonPkt
