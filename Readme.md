@@ -20,14 +20,26 @@ Enhant comes with docker and internally creates multiple containers:
 
 # Running Enhant
 
-1. Start Docker containers:
+1. Clone repo 
+```
+git clone https://github.com/keplerlab/enhant.git
+```
+
+#### On **Windows** to prevent line ending issues clone using this command instead
+```
+git clone  https://github.com/keplerlab/enhant.git --config core.autocrlf=false
+```
+
+
+
+2. Start Docker containers:
 
 ```
 cd /path/to/enahant-repo/
 docker-compose up
 ```
 
-2. Invoke cli for conversation id (111 in example below):
+3. Invoke cli for conversation id (111 in example below):
 
 ```
 cd /path/to/enahant-repo
