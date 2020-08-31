@@ -238,7 +238,7 @@ async def on_data(websocket, path):
             if child_conn.poll():
                 msg = child_conn.recv()
                 await websocket.send(msg)
-                print("Received the message: {}".format(msg))
+                print("Received the message: {}".format(msg), flush=True)
 
             if bool(stream_closed_flag.value) == True:
                 websocket.close()
@@ -274,13 +274,17 @@ async def on_data(websocket, path):
     await websocket.close()
 
 
+print("\n\n****Google voice recognizer server is now ready", flush=True)
+print("interface", cfg.INTERFACE, flush=True)
+print("port", cfg.PORT, flush=True)
+
 ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
 ssl_context.load_cert_chain(
-    certfile="certificates/localhost+2.pem", keyfile="certificates/localhost+2-key.pem"
+    certfile=cfg.CERT_FILE_PATH, keyfile=cfg.KEY_FILE_PATH
 )
 
 start_server = websockets.serve(
-    on_data, "0.0.0.0", 1111, ssl=ssl_context, max_queue=None
+    on_data, cfg.INTERFACE, cfg.PORT, ssl=ssl_context, max_queue=None
 )
 
 asyncio.get_event_loop().run_until_complete(start_server)

@@ -536,13 +536,13 @@ class RecordIcon extends Icon{
     start(){
         this.meeting_started();
         this.startCapturingMicAudio();
-        // this.startCapturingTabAudio();
+        this.startCapturingTabAudio();
     }
 
     stop(){
         this.meeting_stopped();
         this.stopCapturingMicAudio();
-        // this.stopCapturingTabAudio();
+        this.stopCapturingTabAudio();
     }
 
 

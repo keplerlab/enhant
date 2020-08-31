@@ -10,6 +10,8 @@ import websockets
 import concurrent.futures
 import logging
 from vosk import Model, KaldiRecognizer
+import helper as helper
+from config import cfg
 
 # Enable loging if needed
 #
@@ -17,16 +19,14 @@ from vosk import Model, KaldiRecognizer
 # logger.setLevel(logging.INFO)
 # logger.addHandler(logging.StreamHandler())
 
-# vosk_interface = os.environ.get('VOSK_SERVER_INTERFACE', '0.0.0.0')
-# vosk_port = int(os.environ.get('VOSK_SERVER_PORT', 2700))
-# vosk_model_path = os.environ.get('VOSK_MODEL_PATH', 'model')
-# vosk_sample_rate = float(os.environ.get('VOSK_SAMPLE_RATE', 8000))
-vosk_interface = '0.0.0.0'
-vosk_port = 1111
-vosk_model_path = 'model'
-vosk_sample_rate = 44100
+# vosk_interface = '0.0.0.0'
+# vosk_port = 1111
+# vosk_model_path = 'model'
+# vosk_sample_rate = 44100
 
 print("Inside asr server", flush=True)
+
+vosk_model_path = cfg.VOSK_MODEL_PATH
 
 if len(sys.argv) > 1:
    vosk_model_path = sys.argv[1]
@@ -56,7 +56,7 @@ async def recognize(websocket, path):
 
     rec = None
     word_list = None
-    sample_rate = vosk_sample_rate
+    sample_rate = cfg.SAMPLE_RATE
 
     print("\n****New Websocket connection Established ", flush=True)
     jsonDataString = await websocket.recv()
@@ -82,10 +82,13 @@ async def recognize(websocket, path):
     print("conversation_id", conversation_id, flush=True)
     print("data_origin", data_origin, flush=True)
 
+    record_audio = []
+
     try:
         while True:
 
             message = await websocket.recv()
+            record_audio.append(message)
             #print("message", message, flush=True)
             # Create the recognizer, word list is temporary disabled since not every model supports it
             if not rec:
@@ -115,16 +118,28 @@ async def recognize(websocket, path):
     ) as error:
         print("Websocket connection closed", error)
 
+    
+    print("Exit from transcription_loop function saving recorded audio", flush=True)
+
+    folderName = os.path.join("recorded_audio", data_origin, conversation_id)
+    os.makedirs(folderName, exist_ok=True)
+    fileName = "recorded_audio_" + helper.generate_filename() + ".wav"
+    full_file_name = os.path.join(folderName, fileName)
+    print("\n*** Writing audio data in file:", full_file_name, flush=True)
+
+    helper.write_audio_wave(record_audio, full_file_name, cfg.SAMPLE_RATE, cfg.SAMPLE_WIDTH, cfg.CHANNELS)
+    
+
 ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
 ssl_context.load_cert_chain(
-    certfile="certificates/localhost+2.pem", keyfile="certificates/localhost+2-key.pem"
+    certfile=cfg.CERT_FILE_PATH, keyfile=cfg.KEY_FILE_PATH
 )
 
 print("\n\n****Vosk Kaldi voice recognizer server is now ready", flush=True)
-print("vosk_interface", vosk_interface, flush=True)
-print("vosk_port", vosk_port, flush=True)
+print("vosk_interface", cfg.INTERFACE, flush=True)
+print("vosk_port", cfg.PORT, flush=True)
 start_server = websockets.serve(
-    recognize, vosk_interface, vosk_port, ssl=ssl_context, max_queue=None)
+    recognize, cfg.INTERFACE, cfg.PORT, ssl=ssl_context, max_queue=None)
 
 loop.run_until_complete(start_server)
 loop.run_forever()

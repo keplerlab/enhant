@@ -1,37 +1,20 @@
 version: '3'
 services:
-  # mongo:
-  #   image: mongo
-  #   command: mongod --port 27018 --directoryperdb --dbpath=/data/db --bind_ip_all
-  #   ports:
-  #   - "27018:27018"
-  #   volumes:
-  #     - ./db/:/data/db
-
-  # transcription:
-  #   build: ./api/transcription_svc/
-  #   ports:
-  #   - "1111:1111"
-  #   volumes:
-  #     - ./api/transcription_svc/:/home/transcription/
-  #     - ./certificates/:/home/transcription/certificates/
-  #     # Exclude mount node_modules directory
-  #   environment:
-  #     - GOOGLE_APPLICATION_CREDENTIALS=/home/transcription/project-voicebox-fa7bc2f8fa18.json # Google credential file
 
   transcription_local:
-    build: ./api/vosk-server/
+    build: ./api/transcription_svc/Docker/
     ports:
     - "1111:1111"
     volumes:
-       #- ./api/vosk-server/vosk-model-en/:/opt/vosk-server/vosk-model-en/
-       - ./api/vosk-server/:/opt/vosk-server
-       - ./api/transcription_svc/:/home/transcription/
-       - ./certificates/:/opt/vosk-server/websocket/certificates/
+       - ./api/transcription_svc/:/opt/transcription_svc/
+       - ./certificates/:/opt/transcription_svc/websocket-server/certificates/
     environment:
-      - GOOGLE_APPLICATION_CREDENTIALS=/home/transcription/project-voicebox-fa7bc2f8fa18.json # Google credential file
-
-      # Exclude mount node_modules directory
+      - USE_GOOGLE_TRANSCRIPTION_SERVICE=True # Set this to True if want to use Cloud Google speech to text service
+      - GOOGLE_APPLICATION_CREDENTIALS=/opt/transcription_svc/websocket-server/project-voicebox-fa7bc2f8fa18.json # Google credential file
+      - SERVER_INTERFACE=0.0.0.0
+      - SERVER_PORT=1111
+      - SAMPLE_RATE=44100
+      - VOSK_MODEL_PATH=model
 
 
   cli:
