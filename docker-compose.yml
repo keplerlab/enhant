@@ -9,7 +9,7 @@ services:
        - ./api/transcription_svc/:/opt/transcription_svc/
        - ./certificates/:/opt/transcription_svc/websocket-server/certificates/
     environment:
-      - USE_GOOGLE_TRANSCRIPTION_SERVICE=True # Set this to True if want to use Cloud Google speech to text service
+      - USE_GOOGLE_TRANSCRIPTION_SERVICE=False # Set this to True if want to use Cloud Google speech to text service
       - GOOGLE_APPLICATION_CREDENTIALS=/opt/transcription_svc/websocket-server/project-voicebox-fa7bc2f8fa18.json # Google credential file
       - SERVER_INTERFACE=0.0.0.0
       - SERVER_PORT=1111
