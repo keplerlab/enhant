@@ -6,6 +6,8 @@
 import sys
 import os
 from typing import NoReturn, Tuple, Dict
+from colorama import init, Fore 
+init(init(autoreset=True))
 
 sys.path.insert(1, os.path.join(sys.path[0], "..", "nlp_lib"))
 
@@ -47,7 +49,7 @@ class QuestionsFinder(object):
         :type conv_id: [type]
         """
 
-        print("\n**** Analyzing Questions ****")
+        print(Fore.GREEN + "\n**** Analyzing Questions ****")
         if input_json_data == None:
             print(f"No matching conversation for input_json_data: {input_json_data}")
             return
