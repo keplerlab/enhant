@@ -82,6 +82,27 @@ sudo pacman -S nss
 sudo zypper install mozilla-nss-tools
 ```
 
+
+### Windows
+
+On Windows, use [Chocolatey](https://chocolatey.org)
+
+```
+choco install mkcert
+```
+
+or use Scoop
+
+```
+scoop bucket add extras
+scoop install mkcert
+```
+
+or build from source (requires Go 1.10+), or use [the pre-built binaries](https://github.com/FiloSottile/mkcert/releases).
+
+If you're running into permission problems try running `mkcert` as an Administrator.
+
+
 ## Install local certificate authority using mkcert
 
 ```
@@ -95,7 +116,10 @@ The local CA is now installed in the Firefox trust store (requires browser resta
 ```
 $ cd certificates
 $ mkcert localhost 127.0.0.1 ::1
-Using the local CA at "/Users/******/Library/Application Support/mkcert" ✨
+```
+You should see following output with last command
+```
+Using the local CA at "/****/******/**/***/mkcert" ✨
 
 Created a new certificate valid for the following names 📜
  - "localhost"

@@ -6,7 +6,7 @@ services:
     ports:
     - "1111:1111"
     volumes:
-       - ./api/transcription_svc/:/opt/transcription_svc/
+       - ./api/transcription_svc/websocket-server/:/opt/transcription_svc/websocket-server/
        - ./certificates/:/opt/transcription_svc/websocket-server/certificates/
     environment:
       - USE_GOOGLE_TRANSCRIPTION_SERVICE=False # Set this to True if want to use Cloud Google speech to text service
