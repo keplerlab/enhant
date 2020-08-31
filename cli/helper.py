@@ -7,6 +7,8 @@ import sys
 import os
 import pysrt
 from typing import List, Optional
+from colorama import init, Fore, Back, Style 
+init(init(autoreset=True))
 
 
 def eprint(*args, **kwargs):
@@ -69,7 +71,7 @@ def transform_Srt_to_list(input_data_folder_path:str, origin:str,
             transcription_pkt_list = add_origin(transcription_pkt_list, meeting_start_utc)
     
     else :
-        print("WARNING: {orgin}.srt file not present")
+        print(f"\n {Fore.YELLOW} WARNING: {origin}.srt file not present")
 
     #print("transcription_pkt_list", transcription_pkt_list) 
     return transcription_pkt_list
