@@ -9,9 +9,13 @@ from typing import List
 import os
 import config
 
+
 from operator import methodcaller
 import helper as helper
 import json
+
+from colorama import init, Fore, Back 
+init(init(autoreset=True))
 
 APP_NAME = "enhant-cli-app"
 
@@ -26,7 +30,7 @@ def analyze(folder: str):
     :type conv_ids: List[str]
     """
 
-    typer.echo(f"\n ***** Analyzing folder {folder} *****")
+    print(Back.GREEN + f"\n ***** Analyzing folder {folder} *****")
 
     guest_transcription_list = None
     host_transcription_list = None
@@ -41,7 +45,8 @@ def analyze(folder: str):
         with open(input_json_file_name) as f:
             input_json_data = json.load(f)
 
-    #print("input_json_data", input_json_data)
+    else:
+        print(Fore.RED + f"\n ERROR: Input JSON file seems to be missing")
 
     # Get all the analyzers
     analyzers = config.settings.data_analyzers
@@ -58,7 +63,7 @@ def analyze(folder: str):
 
     output_json_file_name = os.path.join(folder, "processed.json")
     with open(output_json_file_name, 'w') as json_file:
-        print(f"\n***** Writing results in file: {output_json_file_name} ***** \n")
+        print(Back.GREEN + f"\n***** Writing results in file: {output_json_file_name} ***** \n")
         json.dump(input_json_data, json_file, indent=4)
 
 

@@ -7,6 +7,9 @@ import sys
 import os
 from typing import NoReturn, Tuple
 
+from colorama import init, Fore 
+init(init(autoreset=True))
+
 sys.path.insert(1, os.path.join(sys.path[0], "..", "nlp_lib"))
 
 from nlp_lib_sentiment import NLP_lib_sentiment
@@ -52,7 +55,7 @@ class SentimentFinder(object):
         :type conv_id: [type]
         """
 
-        print("\n**** Analyzing Sentiment ****")
+        print(Fore.GREEN + "\n**** Analyzing Sentiment ****")
         if input_json_data == None:
             print(f"No matching conversation for input_json_data: {input_json_data}")
             return
@@ -88,9 +91,6 @@ class SentimentFinder(object):
                     high_sentiment_scores.append(sentiment_with_time)
 
         
-        #print("high_sentiment_scores", high_sentiment_scores)
-        #print("low_sentiment_scores", low_sentiment_scores)
-
         if len(high_sentiment_scores) > 0:
             jsonPkt = {"highSentimentSentence": high_sentiment_scores}
             input_json_data["highSentimentSentence"] = jsonPkt
