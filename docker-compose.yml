@@ -31,10 +31,3 @@ services:
       - ./dashboard/:/home/dashboard/
       # Exclude mount node_modules directory
       #- /usr/src/app/node_modules/
-
-  # web:
-  #   build: ./web/
-  #   ports:
-  #   - "8000:8000"
-  #   volumes:
-  #     - ./web/:/home/web/

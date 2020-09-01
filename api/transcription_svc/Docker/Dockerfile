@@ -10,9 +10,16 @@ RUN mkdir -p /opt/transcription_svc/vosk-model-en \
    && rm -rf vosk-model-en-us-aspire-${MODEL_VERSION}.zip
 
 RUN eval  pip install google.cloud.speech websockets
+RUN pip install tensorflow keras 
 RUN pip install --upgrade fastpunct
 
-EXPOSE 1111
+# RUN git clone https://github.com/plkmo/NLP_Toolkit.git /opt/transcription_svc/NLP_Toolkit/  \
+# && cd /opt/transcription_svc/NLP_Toolkit/  \
+# && pip install . \
+# python -m spacy download en_core_web_lg
+
 WORKDIR /opt/transcription_svc/websocket-server
+EXPOSE 1111
+
 
 CMD ["bash","run_service.sh"]
