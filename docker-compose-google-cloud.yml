@@ -1,8 +1,8 @@
 version: '3'
 services:
 
-  transcription_local:
-    build: ./api/transcription_svc/Docker/
+  transcription_google_cloud:
+    build: ./api/transcription_svc/Docker-google-cloud/
     ports:
     - "1111:1111"
     volumes:
