@@ -54,7 +54,15 @@ class CaptureMeetingData{
             case 1:
                 _this.generateMeetingNumberForTeams();
                 break;
+            default:
+                _this.generateDefaultMeetingNumber();
+                break;
         }
+    }
+
+    generateDefaultMeetingNumber(){
+        this.meeting_number = this.generateRandomTenDigitNumber();
+        return this.meeting_number;
     }
 
     generateRandomTenDigitNumber(){
