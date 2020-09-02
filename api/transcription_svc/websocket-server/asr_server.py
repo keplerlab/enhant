@@ -13,6 +13,14 @@ from vosk import Model, KaldiRecognizer
 import helper as helper
 from config import cfg
 
+import keras.backend.tensorflow_backend as tb
+from deepsegment import DeepSegment
+
+
+import time
+segmenter = DeepSegment('en')
+
+
 # Enable loging if needed
 #
 # logger = logging.getLogger('websockets')
@@ -44,13 +52,43 @@ pool = concurrent.futures.ThreadPoolExecutor((os.cpu_count() or 1))
 loop = asyncio.get_event_loop()
 
 def process_chunk(rec, message):
+    tb._SYMBOLIC_SCOPE.value = True
+
+    responseJsonStr = ""
+    resultStatus = False
     if message == '{"eof" : 1}':
-        return rec.FinalResult(), True
+        responseJsonStr = rec.FinalResult()
+        resultStatus = True
     elif rec.AcceptWaveform(message):
-        return rec.Result(), False
+        responseJsonStr = rec.Result()
+        resultStatus = False
     else:
         #print("Partial Result", rec.PartialResult())
-        return rec.PartialResult(), False
+        responseJsonStr = rec.PartialResult()
+        resultStatus = False
+
+    responseJson = json.loads(responseJsonStr)
+    #print("responseJson", responseJson)
+    if "result" in responseJson:
+        resultText = responseJson["text"]
+        #print("transcription without punct:", resultText, flush=True)
+        #start = time.time()
+        #result_after_fastpunct = fastpunct.punct([resultText], batch_size=1)
+        #end = time.time()
+        #print("Time for fastpunct", end - start, flush=True)
+        #print("result_after_fastpunct", result_after_fastpunct, flush=True)
+        #start = time.time()
+        deepSegResult = segmenter.segment(resultText)
+        deepSegResultStr = '. '.join(deepSegResult)
+        deepSegResultStr = deepSegResultStr + ". "
+        #end = time.time()
+        #print("Time for deepSegResult", end - start, flush=True)
+        print("deepSegResult", deepSegResultStr, flush=True)
+
+        
+        #print("transcription after punct:", result_after_fastpunct, flush=True)
+        return deepSegResultStr, resultStatus
+    return None, resultStatus
 
 async def recognize(websocket, path):
 
@@ -97,12 +135,9 @@ async def recognize(websocket, path):
                 else:
                     rec = KaldiRecognizer(model, sample_rate)
 
-            response, stop = await loop.run_in_executor(pool, process_chunk, rec, message)
-            responseJson = json.loads(response)
-            #print("responseJson", responseJson)
-            if "result" in responseJson:
-                resultText = responseJson["text"]
-                print("transcription:", resultText, flush=True)
+            resultText, stop = await loop.run_in_executor(pool, process_chunk, rec, message)
+            if resultText is not None:
+                print("resultText", resultText)
                 await websocket.send(resultText)
                 #
                 #print("resultText", resultText)

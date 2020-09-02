@@ -10,8 +10,10 @@ RUN mkdir -p /opt/transcription_svc/vosk-model-en \
    && rm -rf vosk-model-en-us-aspire-${MODEL_VERSION}.zip
 
 RUN eval  pip install google.cloud.speech websockets
-RUN pip install tensorflow keras 
-RUN pip install --upgrade fastpunct
+RUN pip install tensorflow==2.2.0 keras==2.3.1 
+RUN pip install --upgrade deepsegment
+RUN (echo "from deepsegment import DeepSegment" ; echo "segmenter = DeepSegment('en')" ) | python
+
 
 # RUN git clone https://github.com/plkmo/NLP_Toolkit.git /opt/transcription_svc/NLP_Toolkit/  \
 # && cd /opt/transcription_svc/NLP_Toolkit/  \
