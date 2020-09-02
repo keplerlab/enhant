@@ -11,8 +11,9 @@ RUN  apt-get update && apt-get install -y --no-install-recommends \
     git \
     curl \
     software-properties-common \
-	 make \
-    apt-get clean && \
+	make 
+    
+RUN apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
 
