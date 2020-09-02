@@ -63,6 +63,8 @@ RUN (echo "import flair" ; echo "flair_sentiment = flair.models.TextClassifier.l
 
 RUN (echo "from fastpunct import FastPunct" ; echo "fastpunct = FastPunct('en')" ) | python
 
+RUN (echo "import nltk" ; echo "nltk.download('nps_chat')") | python
+
 
 WORKDIR ${PROJECT_DIR}
 CMD ["/bin/bash"]

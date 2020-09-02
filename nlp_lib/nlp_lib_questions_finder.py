@@ -19,7 +19,8 @@ class Questions_finder(object):
     def __init__(self):
         """[init class]
         """
-        nltk.download("nps_chat")
+        # Uncomment next line if nps_chat dataset already not downloaded
+        # nltk.download("nps_chat")
         posts = nltk.corpus.nps_chat.xml_posts()[:10000]
         featuresets = [
             (self._dialogue_act_features(post.text), post.get("class"))
