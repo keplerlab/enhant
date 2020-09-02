@@ -64,9 +64,5 @@ RUN (echo "import flair" ; echo "flair_sentiment = flair.models.TextClassifier.l
 RUN (echo "from fastpunct import FastPunct" ; echo "fastpunct = FastPunct('en')" ) | python
 
 
-COPY activate_env.sh ${PROJECT_DIR}
 WORKDIR ${PROJECT_DIR}
-RUN touch /root/.bashrc \
- && cat ${PROJECT_DIR}/activate_env.sh >> /root/.bashrc
-
 CMD ["/bin/bash"]

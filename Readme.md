@@ -38,6 +38,11 @@ git clone  https://github.com/keplerlab/enhant.git --config core.autocrlf=false
 cd /path/to/enahant-repo/
 docker-compose up
 ```
+If you want to use Google cloud use this instance
+```
+cd /path/to/enahant-repo/
+docker-compose -f docker-compose-google-cloud.yml  up
+```
 
 3. Invoke cli for conversation id (111 in example below):
 
