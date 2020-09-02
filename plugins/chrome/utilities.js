@@ -101,6 +101,24 @@ function createSRTContent(arr_transcription, meeting_start_time){
 
 }
 
+function createInputJSON(combined_arr, meeting_start_time, meeting_id, conv_id){
+    var json = {
+      "meeting_id": meeting_id,
+      "conv_id": conv_id,
+      "start_time": meeting_start_time,
+      "end_time": new Date().getTime(),
+      "notes":  combined_arr.map(function(obj){
+        return {
+            "event_time": obj["time"],
+            "content": obj["content"],
+            "type": obj["type"]
+        }
+      })
+    }
+
+    return json
+}
+
 function zipFileName(){
     var date = new Date();
     var mm = date.getMonth() + 1; // getMonth() is zero-based
@@ -130,7 +148,7 @@ function urlToPromise(url) {
 function downloadZip(cb){
     var zip = new JSZip();
 
-    var valid_data_types = ["notes", "bookmark", "image", "transcription", "meeting_start_time"];
+    var valid_data_types = ["notes", "bookmark", "image", "transcription", "meeting_start_time", "meeting_number" , "conv_id"];
 
     // get the notes, bookmark and image data
     chrome.storage.local.get(valid_data_types, function(result){
@@ -141,6 +159,8 @@ function downloadZip(cb){
         var arr_transcription = result[valid_data_types[3]] || [];
 
         var meeting_start_time = result[valid_data_types[4]];
+        var meeting_number = result[valid_data_types[5]];
+        var conv_id = result[valid_data_types[6]];
 
         var combined_data_arr = [];
 
@@ -197,9 +217,13 @@ function downloadZip(cb){
         }
 
         if (transcription_data_guest.length){
-            var srt_content_host = createSRTContent(transcription_data_host, meeting_start_time)
-            zip.file("guest.srt", srt_content_host);
+            var srt_content_guest = createSRTContent(transcription_data_guest, meeting_start_time)
+            zip.file("guest.srt", srt_content_guest);
         }
+
+        var json_data = createInputJSON(combined_data_arr, meeting_start_time , meeting_number, conv_id);
+
+        zip.file("input.json", JSON.stringify(json_data));
        
 
         // create text file for notes
