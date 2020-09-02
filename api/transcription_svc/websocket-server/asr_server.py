@@ -20,18 +20,6 @@ from deepsegment import DeepSegment
 import time
 segmenter = DeepSegment('en')
 
-
-# Enable loging if needed
-#
-# logger = logging.getLogger('websockets')
-# logger.setLevel(logging.INFO)
-# logger.addHandler(logging.StreamHandler())
-
-# vosk_interface = '0.0.0.0'
-# vosk_port = 1111
-# vosk_model_path = 'model'
-# vosk_sample_rate = 44100
-
 print("Inside asr server", flush=True)
 
 vosk_model_path = cfg.VOSK_MODEL_PATH

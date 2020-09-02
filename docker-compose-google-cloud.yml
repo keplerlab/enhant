@@ -2,18 +2,17 @@ version: '3'
 services:
 
   transcription_local:
-    build: ./api/transcription_svc/Docker-kaldi/
+    build: ./api/transcription_svc/Docker/
     ports:
     - "1111:1111"
     volumes:
        - ./api/transcription_svc/websocket-server/:/opt/transcription_svc/websocket-server/
        - ./certificates/:/opt/transcription_svc/websocket-server/certificates/
     environment:
+      - GOOGLE_APPLICATION_CREDENTIALS=/opt/transcription_svc/websocket-server/project-voicebox-fa7bc2f8fa18.json # Google credential file
       - SERVER_INTERFACE=0.0.0.0
       - SERVER_PORT=1111
       - SAMPLE_RATE=44100
-      - VOSK_MODEL_PATH=model
-
 
   cli:
     build: ./cli/

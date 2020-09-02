@@ -11,8 +11,18 @@ RUN  apt-get update && apt-get install -y --no-install-recommends \
     git \
     curl \
     software-properties-common \
-	make 
+	make \
+    gpg-agent
 
+    
+RUN  curl -sL https://deb.nodesource.com/setup_12.x | bash - \
+    && \
+    apt-get install -y nodejs \
+    && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN npm install -g jsdoc
 
 #Install MINICONDA
 RUN wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O Miniconda.sh && \
@@ -25,49 +35,34 @@ ARG PROJECT_DIR=/home/cli/
 RUN mkdir ${PROJECT_DIR}
 
 #COPY environment_docker.yml .
+RUN conda install python=3.7
 
-RUN conda create --name enhant python=3.7 
-
-RUN eval "$(conda shell.bash hook)" && conda activate enhant && \
-    pip install fastapi[all] typer pysrt
+RUN pip install fastapi[all] typer pysrt
 
 # For color coding console prints
-RUN eval "$(conda shell.bash hook)" && conda activate enhant && \
-    pip install colorama
+RUN pip install colorama
 
 # For autoformatting code for dev use, uncomment for production
 # RUN eval "$(conda shell.bash hook)" && conda activate enhant && \
 #     pip install black
 
-RUN eval "$(conda shell.bash hook)" && conda activate enhant && \
-    pip install flair
+RUN pip install  --no-cache-dir transformers==3.0.2 flair
 
-RUN eval "$(conda shell.bash hook)" && conda activate enhant && \
-    pip install tensorflow_hub nltk
+RUN pip install tensorflow_hub nltk
 
-RUN eval "$(conda shell.bash hook)" && conda activate enhant && \
-    pip install sphinx_rtd_theme sphinx_js  
+RUN pip install sphinx_rtd_theme sphinx_js
+
+#RUN pip install tensorflow==2.2.0 keras==2.3.1 
+
+#RUN pip install --upgrade fastpunct
 
 # Download nltk model 
-RUN eval "$(conda shell.bash hook)" && conda activate enhant && \
-    (echo "import nltk" ; echo "nltk.download('punkt')") | python
+RUN (echo "import nltk" ; echo "nltk.download('punkt')") | python
 
-RUN eval "$(conda shell.bash hook)" && conda activate enhant && \
-    (echo "import flair" ; echo "flair_sentiment = flair.models.TextClassifier.load('en-sentiment')" ) | python
+RUN (echo "import flair" ; echo "flair_sentiment = flair.models.TextClassifier.load('en-sentiment')" ) | python
 
+#RUN (echo "from fastpunct import FastPunct" ; echo "fastpunct = FastPunct('en')" ) | python
 
-RUN  apt-get install -y --no-install-recommends \
-    gpg-agent
-
-RUN  curl -sL https://deb.nodesource.com/setup_12.x | bash - \
-    && \
-    apt-get install -y nodejs \
-    && \
-    apt-get clean && \
-
-rm -rf /var/lib/apt/lists/*
-
-RUN npm install -g jsdoc
 
 # RUN eval "$(conda shell.bash hook)" && conda activate enhant && \
 #     pip install motor fastapi_contrib[mongo] pytz

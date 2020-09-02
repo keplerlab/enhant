@@ -9,7 +9,7 @@ RUN mkdir -p /opt/transcription_svc/vosk-model-en \
    && mv vosk-model-en-us-aspire-${MODEL_VERSION} model \
    && rm -rf vosk-model-en-us-aspire-${MODEL_VERSION}.zip
 
-RUN eval  pip install google.cloud.speech websockets
+RUN eval  pip install websockets
 RUN pip install tensorflow==2.2.0 keras==2.3.1 
 RUN pip install --upgrade deepsegment
 RUN (echo "from deepsegment import DeepSegment" ; echo "segmenter = DeepSegment('en')" ) | python
@@ -23,5 +23,4 @@ RUN (echo "from deepsegment import DeepSegment" ; echo "segmenter = DeepSegment(
 WORKDIR /opt/transcription_svc/websocket-server
 EXPOSE 1111
 
-
-CMD ["bash","run_service.sh"]
+CMD ["bash","start_transcription_kaldi_offline.sh"]
