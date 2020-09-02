@@ -52,22 +52,17 @@ RUN pip install tensorflow_hub nltk
 
 RUN pip install sphinx_rtd_theme sphinx_js
 
-#RUN pip install tensorflow==2.2.0 keras==2.3.1 
+RUN pip install tensorflow==2.2.0 keras==2.3.1 
 
-#RUN pip install --upgrade fastpunct
+RUN pip install --upgrade fastpunct
 
 # Download nltk model 
 RUN (echo "import nltk" ; echo "nltk.download('punkt')") | python
 
 RUN (echo "import flair" ; echo "flair_sentiment = flair.models.TextClassifier.load('en-sentiment')" ) | python
 
-#RUN (echo "from fastpunct import FastPunct" ; echo "fastpunct = FastPunct('en')" ) | python
+RUN (echo "from fastpunct import FastPunct" ; echo "fastpunct = FastPunct('en')" ) | python
 
-
-# RUN eval "$(conda shell.bash hook)" && conda activate enhant && \
-#     pip install motor fastapi_contrib[mongo] pytz
-
-#RUN eval "$(conda shell.bash hook)" && conda activate pecunia-nlp && pip install fuzzywuzzy
 
 COPY activate_env.sh ${PROJECT_DIR}
 WORKDIR ${PROJECT_DIR}
