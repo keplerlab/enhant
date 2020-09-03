@@ -306,4 +306,23 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     }
 })
 
+chrome.browserAction.onClicked.addListener(function(tab) {
+
+    var obj = {
+        "plugin_activated": true
+    }
+
+    chrome.storage.local.set(obj, function(){
+        console.log("Object saved into local storage: ", obj);
+
+        // add to storage that plugin is activated
+        chrome.tabs.sendMessage(tab.id, {cmd: "activate_plugin"}, function(result) {
+            console.log("Plugin activated : ", result.status);
+        });
+
+    });
+
+    
+  });
+
 console.log("Backround Script Loaded from extension - [enhan(t)]");

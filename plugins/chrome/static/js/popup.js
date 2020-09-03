@@ -1,14 +1,30 @@
-function hideIcons(){
-    $('icon[hidden]').hide();
+function hideNotification(){
+    $('#notification').hide();
 }
 
-function showIcons(){
-    $('icon[hidden]').show();
+function showNotification(html){
+    $('#notification').hide();
+    $('#notification-content').html(html);
+}
+
+function powermodeIconHandler(data){
+    if (data.powermode){
+
+        // show the powermode
+        $('icon[type="PowerModeIcon"]').removeAttr("should_disable");
+    }
+    else{
+
+        // disable the powermode
+        $('icon[type="PowerModeIcon"]').attr("should_disable", true);
+    }
 }
 
 $(document).ready(function(){
 
     var registered_classes = [
+        LogoIcon,
+        SeparatorIcon,
         NotesIcon,
         ExpandIcon,
         BookmarkIcon,
@@ -22,53 +38,43 @@ $(document).ready(function(){
 
     var icons_object_mapping = {};
 
-    hideIcons();
-
-    function activateIcon(data){
-
-        var hideIconClass = data.from;
-        var showIconClass = data.to;
-
-        if (icons_object_mapping.hasOwnProperty(showIconClass)){
-            var icon_obj = icons_object_mapping[showIconClass];
-            hideOtherIconWindow(showIconClass);
-            icon_obj.handleClick();
-        }
-       
-    }
-
-    window.addEventListener("hideIcons", function(event){
-        hideIcons();
-    });
-
-    window.addEventListener("showIcons", function(event){
-        showIcons();
-    });
-
-    window.addEventListener("activateIcon", function(event){
-        var data = event.detail;
-        activateIcon(data);
-    })
-
+    // register the classes and events
     registered_classes.forEach(function(cl){
 
         var obj = new cl();
         icons_object_mapping[cl.name] = obj;
 
-        // get state from local storage
-        obj.getLocalStorage(cl.name, function(value){
-            
-            // if active toggle the state - and call statehandler
-            // console.log(" checking local storage for ", cl.name , value);
-            if (value == ICONSTATE.ACTIVE){
-                obj.toggleState();
-                obj.stateHandler();
-            }
-        });
+        obj.disableIcon();
 
-        // togglecontainer based on storage data
     });
+
+    chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+        console.log(" Received message from browser action [Activate plugin] : ", message);
     
+        if (message.cmd == "activate_plugin"){
+
+            // enable these icons
+            var iconsToEnable = [
+                LogoIcon,
+                SeparatorIcon,
+                RecordIcon,
+                SettingsIcon,
+                ExpandIcon
+            ];
+            
+            hideNotification();
+
+            iconsToEnable.forEach(function(cl){
+                var icon_obj = icons_object_mapping[cl.name];
+                icon_obj.enableIcon();
+            });
+    
+            sendResponse({status: true});
+    
+        }
+
+    });
+
     function hideOtherIconWindow(icon_type){
 
         for (const prop in icons_object_mapping){
@@ -89,42 +95,112 @@ $(document).ready(function(){
         }
     }
 
+    function switchToIcon(data){
+
+        var hideIconClass = data.from;
+        var showIconClass = data.to;
+
+        if (icons_object_mapping.hasOwnProperty(showIconClass)){
+            var icon_obj = icons_object_mapping[showIconClass];
+            hideOtherIconWindow(showIconClass);
+            icon_obj.handleClick();
+        }
+       
+    }
+
+    // set click handler
     $('icon').click(function(){
 
-        // get the icon type
-        var icon_type = $(this).attr("type");
+        var is_icon_clickable = $(this).attr("clickable");
 
-        var icon_obj = icons_object_mapping[icon_type];
+        if (is_icon_clickable !== undefined){
 
-        if (icon_type == BookmarkIcon.name || icon_type == CaptureTabIcon.name){
+             // get the icon type
+            var icon_type = $(this).attr("type");
 
-            // check if Expand icon is active
-            var expand_icon_class = ExpandIcon.name;
-            if (icons_object_mapping.hasOwnProperty(expand_icon_class)){
-                var expand_icon_obj = icons_object_mapping[expand_icon_class];
-                
-                // if expand is not active then hide other icons
-                if (expand_icon_obj.state == ICONSTATE.INACTIVE){
-                    hideOtherIconWindow(icon_type);
-                }
+            var icon_obj = icons_object_mapping[icon_type];
 
-                else{
-                    expand_icon_obj.populateDataContainer();
+            if (icon_type == BookmarkIcon.name || icon_type == CaptureTabIcon.name){
+
+                icon_obj.handleClick();
+
+                // check if Expand icon is active
+                var expand_icon_class = ExpandIcon.name;
+                if (icons_object_mapping.hasOwnProperty(expand_icon_class)){
+                    var expand_icon_obj = icons_object_mapping[expand_icon_class];
+                    
+                    // if expand is not active then hide other icons
+                    if (expand_icon_obj.state == ICONSTATE.INACTIVE){
+                        hideOtherIconWindow(icon_type);
+                    }
+
+                    else{
+
+                        console.log(" populating data container ", expand_icon_obj);
+
+                        expand_icon_obj.populateDataContainer();
+                    }
                 }
             }
-        }
-        else{
+            else{
 
-            hideOtherIconWindow(icon_type);
-        }
+                hideOtherIconWindow(icon_type);
+                icon_obj.handleClick();
+            }
 
-        icon_obj.handleClick();
+            
+            // make sure event is registered only once
+            if (icons_events_registered.indexOf(icon_type) == -1){
+                icon_obj.registerEvents();
+                icons_events_registered.push(icon_type);
+            }
 
-        // make sure event is registered only once
-        if (icons_events_registered.indexOf(icon_type) == -1){
-            icon_obj.registerEvents();
-            icons_events_registered.push(icon_type);
         }
     
     });
+
+    window.addEventListener("recordingStoppedHideIcons", function(event){
+       var iconsToEnable = [
+           BookmarkIcon,
+           CaptureTabIcon,
+           NotesIcon
+       ];
+
+       iconsToEnable.forEach(function(cl){
+            var icon_obj = icons_object_mapping[cl.name];
+            icon_obj.disableIcon();
+        });
+    });
+
+    window.addEventListener("recordingActiveShowIcons", function(event){
+        var iconsToEnable = [
+            BookmarkIcon,
+            CaptureTabIcon,
+            NotesIcon
+        ];
+ 
+        iconsToEnable.forEach(function(cl){
+             var icon_obj = icons_object_mapping[cl.name];
+             icon_obj.enableIcon();
+         });
+
+    });
+
+    window.addEventListener("switchToIcon", function(event){
+        var data = event.detail;
+        switchToIcon(data);
+    });
+
+    window.addEventListener("enhant-stop", function(event){
+        var iconsToDisable = [
+            BookmarkIcon,
+            CaptureTabIcon,
+            NotesIcon
+        ]
+        iconsToDisable.forEach(function(cl){
+            var icon_obj = icons_object_mapping[cl.name];
+            icon_obj.disableIcon();
+        });
+    })
+
 })
