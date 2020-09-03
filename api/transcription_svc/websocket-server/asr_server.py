@@ -71,7 +71,7 @@ def process_chunk(rec, message):
         deepSegResultStr = deepSegResultStr + ". "
         #end = time.time()
         #print("Time for deepSegResult", end - start, flush=True)
-        print("deepSegResult", deepSegResultStr, flush=True)
+        #print("deepSegResult", deepSegResultStr, flush=True)
 
         
         #print("transcription after punct:", result_after_fastpunct, flush=True)
@@ -125,7 +125,7 @@ async def recognize(websocket, path):
 
             resultText, stop = await loop.run_in_executor(pool, process_chunk, rec, message)
             if resultText is not None:
-                print("resultText", resultText)
+                print("Transcription: ", resultText, flush=True)
                 await websocket.send(resultText)
                 #
                 #print("resultText", resultText)

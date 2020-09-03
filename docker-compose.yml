@@ -22,10 +22,8 @@ services:
     volumes:
       - ./cli/:/home/cli/
       - ./nlp_lib/:/home/nlp_lib/
-      - ./message_processor/:/home/message_processor/
       - ./docs/:/home/docs/
-      - ./extensions/:/home/extensions/
-      - ./api/transcription_svc/:/home/transcription/
+      - ./api/transcription_svc/:/home/api/transcription_svc/
       - ./dashboard/:/home/dashboard/
       # Exclude mount node_modules directory
       #- /usr/src/app/node_modules/
