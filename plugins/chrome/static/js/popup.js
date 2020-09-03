@@ -107,6 +107,10 @@ $(document).ready(function(){
                 if (expand_icon_obj.state == ICONSTATE.INACTIVE){
                     hideOtherIconWindow(icon_type);
                 }
+
+                else{
+                    expand_icon_obj.populateDataContainer();
+                }
             }
         }
         else{

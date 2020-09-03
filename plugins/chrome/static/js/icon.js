@@ -104,7 +104,6 @@ class Icon{
 
     sendMessageToBackground(request, cb){
         chrome.runtime.sendMessage({msg: request.msg, data: request.data}, function(response) {
-            console
             cb(response);
         });
     }
@@ -149,15 +148,16 @@ class NotesIcon extends Icon{
             // add it to the data container
             $('#'+_this.data_container_id).prepend(_this.generateNote(response.data));
 
+            // clear the container
+            $("textarea").val('');
+
+            var event = new CustomEvent("activateIcon", {
+                detail: {"from": NotesIcon.name, "to": ExpandIcon.name}
+            });
+            window.dispatchEvent(event);
+
         });
 
-        // clear the container
-        $("textarea").val('');
-
-        var event = new CustomEvent("activateIcon", {
-            detail: {"from": NotesIcon.name, "to": ExpandIcon.name}
-        });
-		window.dispatchEvent(event);
     }
 }
 
