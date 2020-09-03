@@ -7,6 +7,8 @@ class WebSpeechMicCapture{
         this.transcription_start_time = null;
         this.transcription_end_time = null;
         this.origin = "host";
+
+        this.restart = true;
         
     }
 
@@ -20,6 +22,10 @@ class WebSpeechMicCapture{
         this.config = {};
         this.transcription_start_time = null;
         this.transcription_end_time = null;
+    }
+
+    set_restart(state){
+        this.restart = state;   
     }
 
     saveTranscription(transcription){
@@ -64,12 +70,23 @@ class WebSpeechMicCapture{
 
     }
 
+    restart_service(){
+        if (this.restart){
+            this.recognition.start();
+        }
+    }
+
     recognitionOnError(event){
         console.log("Got recognition error : ", event);
+
+        this.restart_service();
+        
     }
 
     recognitionOnEnd(){
-        console.log("Recongition stopped.")
+        console.log("Recongition stopped.");
+
+        this.restart_service();
     }
 
     checkWebSpeechAvailibilty(){
@@ -80,6 +97,7 @@ class WebSpeechMicCapture{
             return true
         }
     }
+    
 
     initialize(){
         if (!this.checkWebSpeechAvailibilty()){
@@ -108,6 +126,7 @@ class WebSpeechMicCapture{
     }
 
     stop(){
+        this.set_restart(false);
         this.recognition.stop();
         this.reset();
     }
