@@ -19,6 +19,8 @@ class Icon{
         this.inactive_icon_path = null;
 
         this.icon_disable_path = null;
+
+        this.info_svg_path = "static/images/info.svg";
     }
 
     disableIcon(){
@@ -224,7 +226,17 @@ class BookmarkIcon extends Icon{
                 _this.setLocalStorage();
             }, 50);
 
-        showNotification("<div clas='col-xs-10' style='margin-left:20px'><span>Bookmark added</span></div>");
+        var notification_html = "<div class='col-xs-2'>" +
+            "<img title='Info' height=24 width=24 src='static/images/info.svg'>" +
+        "</div>" + 
+        "<div class='col-xs-10'>"+
+            "<span>Bookmark Added.</span>" +
+        "</div>";
+
+        var event = new CustomEvent("showNotification", {
+            detail: notification_html
+        });
+        window.dispatchEvent(event);
     }
 
 
@@ -284,6 +296,18 @@ class CaptureTabIcon extends Icon{
                 _this.stateHandler();
                 _this.setLocalStorage();
             }, 50);
+
+        var notification_html = "<div class='col-xs-2'>" +
+            "<img title='Info' height=24 width=24 src='static/images/info.svg'>" +
+            "</div>" + 
+            "<div class='col-xs-10'><span>Capture Added.</span>" +
+            "</div>";
+
+        var event = new CustomEvent("showNotification", {
+            detail: notification_html
+        });
+
+        window.dispatchEvent(event);
     }
 
     // use chrome tabcapture here
@@ -453,7 +477,7 @@ class SettingsIcon extends Icon{
     powerModeSettingsChanged(active){
 
         var event = new CustomEvent("powerModeSettingsChanged", {
-            details: active
+            detail: active
         });
 		window.dispatchEvent(event);
     }
@@ -644,7 +668,7 @@ class PowerModeIcon extends Icon{
 
     registerEvents(){
         window.addEventListener("powerModeSettingsChanged", function(event){
-            var state = event.details;
+            var state = event.detail;
 
             if (state){
                 // show the icon

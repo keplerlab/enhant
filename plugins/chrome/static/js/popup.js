@@ -139,9 +139,7 @@ $(document).ready(function(){
 
                     else{
 
-                        setTimeout(function(){
-                            expand_icon_obj.populateDataContainer();
-                        }, 1000);
+                        expand_icon_obj.populateDataContainer();
                        
                     }
                 }
@@ -193,6 +191,11 @@ $(document).ready(function(){
     window.addEventListener("switchToIcon", function(event){
         var data = event.detail;
         switchToIcon(data);
+    });
+
+    window.addEventListener("showNotification", function(event){
+        var html = event.detail;
+        showNotification(html);
     });
 
     window.addEventListener("enhant-stop", function(event){
