@@ -9,6 +9,28 @@
       <script src="static/js/jquery.min.js"></script>
      <script src="static/js/bootstrap.min.js"></script>
      <style>
+
+        @font-face {
+            font-family: "Inter-Regular";
+            src: url('static/fonts/Inter-Regular.otf') format("opentype");
+        }
+        @font-face {
+            font-family: "Inter-Bold";
+            src: url('static/fonts/Inter-Bold.otf') format("opentype");
+        }
+
+        #notification{
+            font-family: "Inter-Regular" ;
+            font-size: 14px;
+            border-top: 1px dashed #8080803b;
+            
+        }
+
+        #notification-content{
+            padding: 3%;
+        }
+
+
          ul.icon-list{
              margin-top: 9px;
          }
@@ -27,13 +49,16 @@
         }    
 
         icon{
-            cursor: pointer;
             margin-top: 8px;
             margin-bottom: 8px;
             display: block;
             padding-left: 15px;
             padding-right: 15px;
-        }    
+        }
+
+        icon[clickable]{
+            cursor: pointer;
+        }
 
         .icon{
             height: 40px;
@@ -61,8 +86,8 @@
             .seven-cols .col-sm-1,
             .seven-cols .col-lg-1, 
             .seven-cols .col-xs-1 {
-                width: 14.285714285714285714285714285714%;
-                *width: 14.285714285714285714285714285714%;
+                width: 11.1111111111111%;
+                *width: 11.1111111111111%;
                 padding-left: 0px;
                 padding-right: 0px;
             }
@@ -95,29 +120,36 @@
 
             <div class="row seven-cols" style="height: 40px;">
                 <div class="col-xs-1 icon">
-                    <icon type="BookmarkIcon" state="inactive" hidden><img title="Capture Moment" height=24 width=24  src="/static/images/bookmark.svg"></icon>
+                    <icon type="LogoIcon"><img title="Logo" height=24 width=24  src="/static/images/logo_24.svg"></icon>
                 </div>
                 <div class="col-xs-1 icon">
-                    <icon type="CaptureTabIcon" state="inactive" hidden><img title="Take Screenshot" height=24 width=24 src="/static/images/capture.svg"></icon>
-                </div>
-                <div class="col-xs-1 icon">
-                    <icon type="NotesIcon" state="inactive" hidden><img title="Add Note" height=24 width=24 src="/static/images/notes.svg"></icon>
+                    <icon type="SeparatorIcon"><img title="Separator" height=24 width=24  src="/static/images/seperator_line.svg"></icon>
                 </div>
 
                 <div class="col-xs-1 icon">
-                    <icon type="RecordIcon" state="inactive"><img title="Start/Stop Enhant" height=24 width=24 src="/static/images/record.svg"></icon>
+                    <icon type="BookmarkIcon" available_when_recording><img title="Capture Moment" height=18 width=14  src="/static/images/bookmark.svg"></icon>
+                </div>
+                <div class="col-xs-1 icon">
+                    <icon type="CaptureTabIcon" available_when_recording><img title="Take Screenshot" height=18 width=20 src="/static/images/capture.svg"></icon>
+                </div>
+                <div class="col-xs-1 icon">
+                    <icon type="NotesIcon" available_when_recording><img title="Add Note" height=20 width=16 src="/static/images/notes.svg"></icon>
                 </div>
 
                 <div class="col-xs-1 icon">
-                    <icon type="PowerModeIcon" state="inactive"><img title="PowerMode" height=24 width=24 src="/static/images/powermode.svg"></icon>
+                    <icon type="RecordIcon"><img title="Start/Stop Enhant" height=20 width=20 src="/static/images/record.svg"></icon>
                 </div>
 
                 <div class="col-xs-1 icon">
-                    <icon type="SettingsIcon" state="inactive"><img title="Settings" height=24 width=24 src="/static/images/settings.svg"></icon>
+                    <icon type="PowerModeIcon"><img title="PowerMode" height=22 width=16 src="/static/images/powermode.svg"></icon>
                 </div>
 
                 <div class="col-xs-1 icon">
-                    <icon type="ExpandIcon" state="inactive"><img title="View/Hide Data" height=24 width=24 src="/static/images/down_arrow.svg"></icon>
+                    <icon type="SettingsIcon"><img title="Settings" height=20 width=20 src="/static/images/settings.svg" style="margin-left: -4px;"></icon>
+                </div>
+
+                <div class="col-xs-1 icon">
+                    <icon type="ExpandIcon"><img title="View/Hide Data" height=7 width=11 src="/static/images/down_arrow.svg"></icon>
                 </div>
             </div>
         </div>
@@ -130,6 +162,18 @@
 
                     <button style="margin-left:70%;margin-top:2%" class="btn btn-custom" id="notes-submit">Add Note</button>
     
+                </div>
+            </div>
+        </div>
+
+        <!-- Notification data -->
+        <div class="row" id="notification">
+            <div id="notification-content" class="col-xs-12">
+                <div class="col-xs-2" style="margin-top:8px">
+                    <img title="Info" height=24 width=24 src="static/images/alert.svg">
+                </div>
+                <div class="col-xs-10">
+                    <span>Pin the enhant extension (if not pinned already) and click the icon in the toolbar to enable plugin.</span>
                 </div>
             </div>
         </div>

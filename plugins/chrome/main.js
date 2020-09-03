@@ -224,13 +224,17 @@ function startClicked(){
 
             // update meeting info
             mic_capture.meeting_info["meeting_number"] = message.data;
+
+            sendResponse({status: true});
         }
 
         if (message.action == "update_conv_id"){
             mic_capture.meeting_info["conv_id"] = message.data;
+
+            sendResponse({status: true});
         }
 
-        sendResponse({status: true});
+        
     }
 
     function stopClicked(message, sender, sendResponse){
@@ -254,10 +258,10 @@ function startClicked(){
             // remove stop listner 
             chrome.runtime.onMessage.removeListener(stopClicked);
             chrome.runtime.onMessage.removeListener(updateMeetingData);
+
+            sendResponse({status: true});
           
         }
-
-        sendResponse({status: true});
         
     }
 

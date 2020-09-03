@@ -7,12 +7,7 @@
     "icons": {
       "128":"static/images/logo.png"
     },
-    "page_action": {
-      "default_popup": "popup.html",
-      "default_icon": {
-         "128":"static/images/logo.png"
-      }
-    },
+    "browser_action": {},
     "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
     "background": {
       "scripts": ["restrict_url.js", "config.js", 

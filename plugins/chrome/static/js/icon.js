@@ -4,7 +4,10 @@ const ICONSTATE = {
 }
 
 class Icon{
+
     constructor(){
+
+        this.clickable = true;
         this.state = ICONSTATE.INACTIVE;
         this.data_container_id = "data-container";
         this.container_id = null;
@@ -14,6 +17,34 @@ class Icon{
 
         this.active_icon_path = null;
         this.inactive_icon_path = null;
+
+        this.icon_disable_path = null;
+
+        this.info_svg_path = "static/images/info.svg";
+    }
+
+    disableIcon(){
+        var icon_type = this.constructor.name;
+        var icon = $('icon[type="' + icon_type +'"]');
+        var icon_img = $('icon[type="' + icon_type +'"] img');
+
+        icon_img.attr("src", this.icon_disable_path);
+
+        icon.removeAttr("clickable");
+
+    }
+
+    enableIcon(){
+        var icon_type = this.constructor.name;
+        var icon = $('icon[type="' + icon_type +'"]');
+        var icon_img = $('icon[type="' + icon_type +'"] img');
+
+        icon_img.attr("src", this.active_icon_path);
+
+        if (this.clickable){
+            icon.attr("clickable", true);
+        }
+        
     }
 
     toggleIcon(){
@@ -103,8 +134,10 @@ class Icon{
     }
 
     sendMessageToBackground(request, cb){
+
         chrome.runtime.sendMessage({msg: request.msg, data: request.data}, function(response) {
-            console
+
+            // console.log(" resquest | response ", request, response);
             cb(response);
         });
     }
@@ -121,6 +154,8 @@ class NotesIcon extends Icon{
 
         this.active_icon_path = "static/images/notes.svg";
         this.inactive_icon_path = "static/images/notes_inactive.svg";
+
+        this.icon_disable_path = "static/images/notes_disabled.svg";
     }
 
     registerEvents(){
@@ -146,18 +181,20 @@ class NotesIcon extends Icon{
         var note = $('textarea').val();
 
         _this.sendMessageToBackground({"msg": "save_notes", "data": note}, function(response){
+            
             // add it to the data container
             $('#'+_this.data_container_id).prepend(_this.generateNote(response.data));
 
+            // clear the container
+            $("textarea").val('');
+
+            var event = new CustomEvent("switchToIcon", {
+                detail: {"from": NotesIcon.name, "to": ExpandIcon.name}
+            });
+            window.dispatchEvent(event);
+
         });
 
-        // clear the container
-        $("textarea").val('');
-
-        var event = new CustomEvent("activateIcon", {
-            detail: {"from": NotesIcon.name, "to": ExpandIcon.name}
-        });
-		window.dispatchEvent(event);
     }
 }
 
@@ -167,6 +204,8 @@ class BookmarkIcon extends Icon{
         super();
         this.active_icon_path = "static/images/bookmark.svg";
         this.inactive_icon_path = "static/images/bookmark_inactive.svg";
+
+        this.icon_disable_path = "static/images/bookmark_disabled.svg";
     }
 
     generateBookmark(obj){
@@ -186,6 +225,18 @@ class BookmarkIcon extends Icon{
                 _this.stateHandler();
                 _this.setLocalStorage();
             }, 50);
+
+        var notification_html = "<div class='col-xs-2'>" +
+            "<img title='Info' height=24 width=24 src='static/images/info.svg'>" +
+        "</div>" + 
+        "<div class='col-xs-10'>"+
+            "<span>Bookmark Added.</span>" +
+        "</div>";
+
+        var event = new CustomEvent("showNotification", {
+            detail: notification_html
+        });
+        window.dispatchEvent(event);
     }
 
 
@@ -194,9 +245,11 @@ class BookmarkIcon extends Icon{
 
         _this.sendMessageToBackground({"msg": "save_bookmark", "data": "Bookmarked Moment"}, function(response){
 
-            // add it to the data container
-            var text_to_add = _this.generateBookmark(response.data);
-            $('#'+_this.data_container_id).prepend(text_to_add);
+            if (response.data){
+                // add it to the data container
+                var text_to_add = _this.generateBookmark(response.data);
+                $('#'+_this.data_container_id).prepend(text_to_add);
+            }
         });
 
         _this.bookMarkAdded();
@@ -217,11 +270,14 @@ class CaptureTabIcon extends Icon{
         super();
         this.active_icon_path = "static/images/capture.svg";
         this.inactive_icon_path = "static/images/capture_inactive.svg";
+
+        this.icon_disable_path = "static/images/capture_disabled.svg";
     }
 
     capture(){
         var _this = this;
         this.sendMessageToBackground({"msg": "capture_tab", "data": null}, function(response){
+            
 
             // response.url has the base64 image
             var html = _this.generateCapture(response.data);
@@ -240,6 +296,18 @@ class CaptureTabIcon extends Icon{
                 _this.stateHandler();
                 _this.setLocalStorage();
             }, 50);
+
+        var notification_html = "<div class='col-xs-2'>" +
+            "<img title='Info' height=24 width=24 src='static/images/info.svg'>" +
+            "</div>" + 
+            "<div class='col-xs-10'><span>Capture Added.</span>" +
+            "</div>";
+
+        var event = new CustomEvent("showNotification", {
+            detail: notification_html
+        });
+
+        window.dispatchEvent(event);
     }
 
     // use chrome tabcapture here
@@ -274,6 +342,8 @@ class ExpandIcon extends Icon{
 
         this.active_icon_path = "static/images/down_arrow.svg";
         this.inactive_icon_path = "static/images/down_arrow_inactive.svg";
+
+        this.icon_disable_path = "static/images/down_arrow_disabled.svg";
     }
 
     reset(){
@@ -381,6 +451,8 @@ class SettingsIcon extends Icon{
 
         this.active_icon_path = "static/images/settings.svg";
         this.inactive_icon_path = "static/images/settings_inactive.svg";
+
+        this.icon_disable_path = "static/images/settings_disabled.svg";
         
     }
 
@@ -405,7 +477,7 @@ class SettingsIcon extends Icon{
     powerModeSettingsChanged(active){
 
         var event = new CustomEvent("powerModeSettingsChanged", {
-            details: active
+            detail: active
         });
 		window.dispatchEvent(event);
     }
@@ -443,6 +515,8 @@ class RecordIcon extends Icon{
 
         this.active_icon_path = "static/images/record.svg";
         this.inactive_icon_path = "static/images/record_inactive.svg";
+
+        this.icon_disable_path = "static/images/record_disabled.svg";
     }
 
     reset(){
@@ -488,13 +562,13 @@ class RecordIcon extends Icon{
             chrome.tabs.sendMessage(tabs[0].id, {action: "capture_mic_stop"}, function(response){
                 console.log("Local recording status : ", response.status);
             })
-        })
+        });
     }
 
     startCapturingTabAudio(){
         chrome.runtime.sendMessage({action: "capture_screen_start"}, function(response){
             console.log("Tab recording status : ", response.status);
-        })
+        });
     }
 
     stopCapturingTabAudio(){
@@ -502,7 +576,7 @@ class RecordIcon extends Icon{
         // stop the tab recording
         chrome.runtime.sendMessage({action: "capture_screen_stop"}, function(response){
             console.log("Tab recording status : ", response.status);
-        })
+        });
     }
 
     meeting_started(){
@@ -529,7 +603,7 @@ class RecordIcon extends Icon{
             chrome.runtime.sendMessage({msg: "stop"}, function(response){
                 // console.log(response.status);
             })
-        })
+        });
     }
 
 
@@ -543,6 +617,9 @@ class RecordIcon extends Icon{
         this.meeting_stopped();
         this.stopCapturingMicAudio();
         this.stopCapturingTabAudio();
+
+        var event = new CustomEvent("enhant-stop", {});
+        window.dispatchEvent(event);
     }
 
 
@@ -550,11 +627,11 @@ class RecordIcon extends Icon{
         this.toggleContainer();
 
         if (this.state == ICONSTATE.ACTIVE){
-            var event = new CustomEvent("showIcons", {});
+            var event = new CustomEvent("recordingActiveShowIcons", {});
 			window.dispatchEvent(event);
         }
         else if (this.state == ICONSTATE.INACTIVE){
-            var event = new CustomEvent("hideIcons", {});
+            var event = new CustomEvent("recordingStoppedHideIcons", {});
 			window.dispatchEvent(event);
         }
     }
@@ -585,11 +662,13 @@ class PowerModeIcon extends Icon{
 
         this.active_icon_path = "static/images/powermode.svg";
         this.inactive_icon_path = "static/images/powermode_inactive.svg";
+
+        this.icon_disable_path = "static/images/powermode_disabled.svg";
     }
 
     registerEvents(){
         window.addEventListener("powerModeSettingsChanged", function(event){
-            var state = event.details;
+            var state = event.detail;
 
             if (state){
                 // show the icon
@@ -598,6 +677,26 @@ class PowerModeIcon extends Icon{
                 // hide the icon
             }
         })
+    }
+}
+
+class LogoIcon extends Icon{
+    constructor(){
+        super();
+        this.clickable = false;
+
+        this.active_icon_path = "static/images/logo_24.svg";
+        this.icon_disable_path = "static/images/logo_24_disabled.svg";
+    }
+}
+
+class SeparatorIcon extends Icon{
+    constructor(){
+        super();
+        this.clickable = false;
+
+        this.active_icon_path = "static/images/seperator_line.svg";
+        this.icon_disable_path = "static/images/seperator_line_disabled.svg";
     }
 }
 

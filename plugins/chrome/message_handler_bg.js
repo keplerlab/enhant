@@ -53,10 +53,10 @@ chrome.runtime.onMessage.addListener(
                     var obj_to_add = enhant_local_storage_obj.generate_data_obj(dataUrl);
                     enhant_local_storage_obj.save(d_type, obj_to_add, function(data){
                         console.log("Local storage updated with obj : ", obj_to_add);
-                    })
+                    });
 
                     // add to local storage
-                    sendResponse({data:obj_to_add});
+                    sendResponse({data:obj_to_add, status: true});
                 }
             );
         }
@@ -87,10 +87,12 @@ chrome.runtime.onMessage.addListener(
                 enhant_local_storage_obj.save(d_type, obj_to_add, function(r){
                     console.log("Local storage updated with obj : ", r);
 
-                    
                     // add to local storage
-                    sendResponse({data:obj_to_add});
+                    sendResponse({data:obj_to_add, status: true});
+
                 });
+
+                
             })
         }
 
@@ -101,11 +103,14 @@ chrome.runtime.onMessage.addListener(
             enhant_local_storage_obj.save(d_type, obj_to_add, function(data){
                 console.log("Local storage updated with obj : ", obj_to_add);
 
-                sendResponse({data:obj_to_add});
+                var response = {data:obj_to_add, status: true}
+
+                sendResponse(response);
                 
             });
-            
 
+           
+        
         }
 
         if (request.msg == "start"){
@@ -139,6 +144,8 @@ chrome.runtime.onMessage.addListener(
                   console.log(response.status);
                 });
             });
+
+            sendResponse({status:true})
         }
 
         if (request.msg == "meeting_number_info"){
@@ -155,9 +162,9 @@ chrome.runtime.onMessage.addListener(
                 // send meeting number to backend after a second so 
                 // var json = backend_obj.createMeetingData(d.meeting_number);
                 // backend_obj.sendDataToBackend(json);
-        
-                sendResponse({status:true});
-            })
+            });
+
+            sendResponse({status:true});
         }
 
         if (request.msg == "save_transcription"){
@@ -184,7 +191,7 @@ chrome.runtime.onMessage.addListener(
             })
             sendResponse({status:true});
         }
-        
+
         return true;
         
     }
