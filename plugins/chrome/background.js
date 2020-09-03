@@ -283,10 +283,10 @@ function startClicked(){
 
              // remove stop listner 
             chrome.runtime.onMessage.removeListener(stopClicked);
+
+            sendResponse({status: true});
           
         }
-
-        sendResponse({status: true});
         
     }
 

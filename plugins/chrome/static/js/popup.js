@@ -3,8 +3,11 @@ function hideNotification(){
 }
 
 function showNotification(html){
-    $('#notification').hide();
+    $('#notification').show();
     $('#notification-content').html(html);
+    setTimeout(function(){
+        hideNotification();
+    }, 1000);
 }
 
 function powermodeIconHandler(data){
@@ -136,9 +139,10 @@ $(document).ready(function(){
 
                     else{
 
-                        console.log(" populating data container ", expand_icon_obj);
-
-                        expand_icon_obj.populateDataContainer();
+                        setTimeout(function(){
+                            expand_icon_obj.populateDataContainer();
+                        }, 1000);
+                       
                     }
                 }
             }

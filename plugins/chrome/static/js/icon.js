@@ -135,7 +135,7 @@ class Icon{
 
         chrome.runtime.sendMessage({msg: request.msg, data: request.data}, function(response) {
 
-            console.log(" resquest | response ", request, response);
+            // console.log(" resquest | response ", request, response);
             cb(response);
         });
     }
@@ -223,6 +223,8 @@ class BookmarkIcon extends Icon{
                 _this.stateHandler();
                 _this.setLocalStorage();
             }, 50);
+
+        showNotification("<div clas='col-xs-10' style='margin-left:20px'><span>Bookmark added</span></div>");
     }
 
 
@@ -231,9 +233,11 @@ class BookmarkIcon extends Icon{
 
         _this.sendMessageToBackground({"msg": "save_bookmark", "data": "Bookmarked Moment"}, function(response){
 
-            // add it to the data container
-            var text_to_add = _this.generateBookmark(response.data);
-            $('#'+_this.data_container_id).prepend(text_to_add);
+            if (response.data){
+                // add it to the data container
+                var text_to_add = _this.generateBookmark(response.data);
+                $('#'+_this.data_container_id).prepend(text_to_add);
+            }
         });
 
         _this.bookMarkAdded();
@@ -261,6 +265,7 @@ class CaptureTabIcon extends Icon{
     capture(){
         var _this = this;
         this.sendMessageToBackground({"msg": "capture_tab", "data": null}, function(response){
+            
 
             // response.url has the base64 image
             var html = _this.generateCapture(response.data);
@@ -533,13 +538,13 @@ class RecordIcon extends Icon{
             chrome.tabs.sendMessage(tabs[0].id, {action: "capture_mic_stop"}, function(response){
                 console.log("Local recording status : ", response.status);
             })
-        })
+        });
     }
 
     startCapturingTabAudio(){
         chrome.runtime.sendMessage({action: "capture_screen_start"}, function(response){
             console.log("Tab recording status : ", response.status);
-        })
+        });
     }
 
     stopCapturingTabAudio(){
@@ -547,7 +552,7 @@ class RecordIcon extends Icon{
         // stop the tab recording
         chrome.runtime.sendMessage({action: "capture_screen_stop"}, function(response){
             console.log("Tab recording status : ", response.status);
-        })
+        });
     }
 
     meeting_started(){
@@ -574,7 +579,7 @@ class RecordIcon extends Icon{
             chrome.runtime.sendMessage({msg: "stop"}, function(response){
                 // console.log(response.status);
             })
-        })
+        });
     }
 
 
