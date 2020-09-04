@@ -116,7 +116,7 @@ function createInputJSON(combined_arr, meeting_start_time, meeting_id, conv_id){
       })
     }
 
-    return json
+    return json;
 }
 
 function zipFileName(){
@@ -192,17 +192,52 @@ function downloadZip(cb){
         })
 
 
-        var notes_content = "Datetime\t\t\t" + "Notes\n\n";
+        var notes_content = "";
         combined_data_arr.forEach(function(obj){
 
             if (obj["type"] == valid_data_types[0]){
-                notes_content += getCurrentTime(obj.time) + "\t\t" + obj.content + "\n";
+                notes_content += getCurrentTime(obj.time) + "\n" + obj.content + "\n\n";
             }
             else if (obj["type"] == valid_data_types[1]){
-                notes_content += getCurrentTime(obj.time) + "\t\t" + obj.content + "\n";
+
+                // filter for host
+                var host_bookmark = obj.content.filter(function(obj){
+                    return obj["origin"] == "host";
+                });
+
+                var guest_bookmark = obj.content.filter(function(obj){
+                    return obj["origin"] == "guest";
+                });
+
+                if (!host_bookmark.length && !guest_bookmark.length){
+                    notes_content += getCurrentTime(obj.time) + "\n" +obj.content[0].content + "\n\n";
+                }
+                else {
+                    
+                    notes_content += getCurrentTime(obj.time) + "\n";
+
+                    if (host_bookmark.length){
+                        notes_content +=  "Host :" ;
+                        host_bookmark.forEach(function(d){
+                            notes_content += d.content;
+                        });
+                    }
+
+                    if (guest_bookmark.length){
+                        notes_content += "\n";
+                        notes_content += "Guest :" ;
+                        guest_bookmark.forEach(function(d){
+                            notes_content += d.content;
+                        });
+                    }
+
+                    notes_content += "\n\n";
+
+                }
+                
             }
             else if (obj["type"] == valid_data_types[2]){
-                notes_content += getCurrentTime(obj.time) + "\t\t" + "images/" + imageFileName(obj) +".jpeg" + "\n";
+                notes_content += getCurrentTime(obj.time) + "\n" + "images/" + imageFileName(obj) +".jpeg" + "\n\n";
             }
             
         })

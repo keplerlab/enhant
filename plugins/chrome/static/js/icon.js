@@ -209,9 +209,53 @@ class BookmarkIcon extends Icon{
     }
 
     generateBookmark(obj){
+
+        // obj.content is array
+        var p_html = "<p style='margin-top:auto;margin-bottom:auto;'>";
+
+        console.log(" received data obj ", obj);
+
+        var host_transcription = obj.content.filter(function(d){
+            return d["origin"] == "host";
+        });
+
+        var guest_transcription = obj.content.filter(function(d){
+            return d["origin"] == "guest";
+        });
+
+        // console.log(" host and guest transcription ", host_transcription, guest_transcription);
+
+        if (!host_transcription.length && !guest_transcription.length){
+            p_html += obj.content[0].content;
+        }
+        else{
+
+            if (host_transcription.length){
+                p_html += "Host : ";
+
+                host_transcription.forEach(function(d){
+                    p_html += d["content"];
+                });
+            }
+
+            if (guest_transcription.length){
+                p_html += "<br>";
+                p_html += "Guest : ";
+
+                guest_transcription.forEach(function(d){
+                    p_html += d["content"];
+                });
+            }
+
+        }
+
+        p_html += "</p>";
+
+        console.log(" p html ", p_html);
+
         return "<div class='parent-data row' style='margin-left:10%;padding-top:2%;padding-bottom:2%;align-items:center;display:flex;'>" + 
         "<div class='col-xs-1'><img src='static/images/bookmark.svg'></div>" +
-        "<div class='col-xs-7'><p style='margin-top:auto;margin-bottom:auto;'>" + obj.content + "</p>" + "</div>" +
+        "<div class='col-xs-7'>" + p_html + "</div>" +
         "<div class='col-xs-3 align-self-center' style='color:#808080b5;'>" + this.getCurrentTime(obj.time) + "</div>" +
         "<div>";
     }
@@ -361,8 +405,46 @@ class ExpandIcon extends Icon{
             content_html = "<div class='col-xs-7'><p style='margin-top:auto;margin-bottom:auto;'>" + data.content + "</p>" + "</div>"
         }
         else if (d_type == this.valid_data_types[1]){
+            var p_html = "<p style='margin-top:auto;margin-bottom:auto;'>";
+
+            var host_transcription = data.content.filter(function(d){
+                return d["origin"] == "host";
+            });
+
+            var guest_transcription = data.content.filter(function(d){
+                return d["origin"] == "guest";
+            });
+
+            // console.log(" host and guest transcription ", host_transcription, guest_transcription);
+
+            if (!host_transcription.length && !guest_transcription.length){
+                p_html += data.content[0].content;
+            }
+            else{
+
+                if (host_transcription.length){
+                    p_html += "Host : ";
+
+                    host_transcription.forEach(function(d){
+                        p_html += d["content"];
+                    });
+                }
+
+                if (guest_transcription.length){
+                    p_html += "<br>";
+                    p_html += "Guest : ";
+
+                    guest_transcription.forEach(function(d){
+                        p_html += d["content"];
+                    });
+                }
+
+            }
+
+            p_html += "</p>";
             icon_html = "<div class='col-xs-1'><img src='static/images/bookmark.svg'></div>";
-            content_html = "<div class='col-xs-7'><p style='margin-top:auto;margin-bottom:auto;'>" +  data.content +"</p>" + "</div>";
+
+            content_html = "<div class='col-xs-7'>" + p_html + "</div>";
         }
         else{
             icon_html = "<div class='col-xs-1'><img src='static/images/capture.svg'></div>";
@@ -712,6 +794,7 @@ class PowerModeIcon extends Icon{
 
         if (!(this.recording)){
             this.startCapturingTabAudio();
+
             this.recording = true;
         }
     }
