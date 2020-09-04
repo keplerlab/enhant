@@ -144,11 +144,26 @@ class EnhantLocalStorage{
     }
 
     deleteAll(){
-        chrome.storage.local.clear(function(){
-            var error = chrome.runtime.lastError;
-            if (error) {
-                console.error(error);
-            }
+
+        var _this = this;
+
+        // settings should persist
+        chrome.storage.local.get([STORAGE_KEYS.settings], function(r){
+            var settings_data = r[STORAGE_KEYS.settings];
+
+            chrome.storage.local.clear(function(){
+                var error = chrome.runtime.lastError;
+                if (error) {
+                    console.error(error);
+                }
+            });
+
+            var obj = {};
+            obj[STORAGE_KEYS.settings] = settings_data;
+
+            _this.save_basic(obj);
+
         })
+        
     }
 }
