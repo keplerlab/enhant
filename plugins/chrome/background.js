@@ -8,6 +8,7 @@ class ScreenCapture{
         this.stream_processor = null;
         this.audio_context = null;
         this.input = null
+        this.meeting_number = config.meeting_number || null;
         this.EVENT_FLAC_ENCODER = "screen_encoder";
 
         if (config.use_flac_encoder){
@@ -30,6 +31,7 @@ class ScreenCapture{
     reset(){
         this.encoder = null;
         this.socket_obj = null;
+        this.meeting_number = null;
         this.socket_transcription = null;
         this.stream = null;
         this.stream_processor = null;
@@ -154,7 +156,7 @@ class ScreenCapture{
             _this.socket_transcription.send(JSON.stringify({
                 "cmd": "start",
                 "origin": "speaker",
-                "conversation_id": "test"
+                "conversation_id": _this.meeting_number
     
             }));
         },
@@ -259,41 +261,51 @@ class ScreenCapture{
 
 function startClicked(){
 
-    var config = {
-        sampleRate: 44100,
-        bufferSize: 4096,
-        ip: CONFIG.transcription.ip,
-        port: CONFIG.transcription.port,
-        use_flac_encoder: false
-    }
+    // start after a second
+    setTimeout(function(){
 
-    console.log(" Configuration for Screen: ", config);
-
-    var screen_capture = new ScreenCapture(config);
-    screen_capture.start();
-
-    function stopClicked(message, sender, sendResponse){
-
-        if (message.action == "capture_screen_stop"){
-
-            if (!(screen_capture == null)){
-                screen_capture.stop();
-                delete screen_capture;
+        chrome.storage.local.get(["meeting_number"], function(result){
+            var meeting_number = result.meeting_number;
+    
+            var config = {
+                sampleRate: 44100,
+                bufferSize: 4096,
+                ip: CONFIG.transcription.ip,
+                port: CONFIG.transcription.port,
+                use_flac_encoder: false,
+                meeting_number: meeting_number
             }
+    
+            console.log(" Configuration for Screen: ", config);
+    
+            var screen_capture = new ScreenCapture(config);
+            screen_capture.start();
+    
+            chrome.runtime.onMessage.addListener(stopClicked);
 
-             // remove stop listner 
-            chrome.runtime.onMessage.removeListener(stopClicked);
+            function stopClicked(message, sender, sendResponse){
 
-            sendResponse({status: true});
-          
-        }
+                if (message.action == "capture_screen_stop"){
         
-    }
-
-    chrome.runtime.onMessage.addListener(stopClicked);
+                    if (!(screen_capture == null)){
+                        screen_capture.stop();
+                        delete screen_capture;
+                    }
+        
+                     // remove stop listner 
+                    chrome.runtime.onMessage.removeListener(stopClicked);
+        
+                    sendResponse({status: true});
+                  
+                }
+                
+            }
+    
+        });
+        
+    }, 1000);
+    
 }
-
-
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     console.log(" Received message from popup script : ", message);

@@ -69,34 +69,56 @@ chrome.runtime.onMessage.addListener(
             // get the last transcription from local storage
             enhant_local_storage_obj.read_multiple(["transcription"], function(results){
                 var arr_transcription = results.transcription || [];
+
+                var current_time = enhant_local_storage_obj.generateUnixTimestamp();
+                var time_threshold_in_ms = CONFIG.bookmark.transcription_time_in_sec * 1000;
+
+                var time_filtered_transcription = arr_transcription.filter(function(obj){ 
+                    return obj["event_time"] > (current_time - time_threshold_in_ms);
+                });
                 
-                var host_transcription = arr_transcription.filter(function(obj){ return obj["origin"] == "host"});
-                var guest_transcription = arr_transcription.filter(function(obj){ return obj["origin"] == "guest"});
+                var host_transcription = time_filtered_transcription.filter(function(obj){ 
+                    return obj["origin"] == "host";
+                });
+                var guest_transcription = time_filtered_transcription.filter(function(obj){ 
+                    return obj["origin"] == "guest";
+                });
 
                 if ((!host_transcription.length) && (!guest_transcription.length)){
-                    var obj_to_add = enhant_local_storage_obj.generate_data_obj(request.data);
+                    obj_to_add = enhant_local_storage_obj.generate_data_obj([request.data], current_time);
                 }
 
                 else {
-                    var bookmark_data = "";
+                    
+                    var bookmark_data = [];
 
                     if (host_transcription.length){
 
-                        var last_obj = host_transcription[host_transcription.length - 1];
-                        var last_transcription = last_obj["transcription"];
-
-                        bookmark_data += "Host : " + last_transcription + " | ";
-
+                        host_transcription.forEach(data => {
+                            var obj = {
+                                origin: "host", 
+                                content: data["transcription"],
+                                time: data["event_time"]
+            
+                            }
+                            bookmark_data.push(obj);
+                        });
                     }
 
                     if (guest_transcription.length){
-                        var last_obj = guest_transcription[guest_transcription.length - 1];
-                        var last_transcription = last_obj["transcription"];
 
-                        bookmark_data += "Guest : " + last_transcription;
+                        guest_transcription.forEach(data => {
+                            var obj = {
+                                origin: "guest", 
+                                content: data["transcription"],
+                                time: data["event_time"]
+            
+                            }
+                            bookmark_data.push(obj);
+                        });
                     }
 
-                    var obj_to_add = enhant_local_storage_obj.generate_data_obj(bookmark_data);
+                    obj_to_add = enhant_local_storage_obj.generate_data_obj(bookmark_data, current_time);
 
                 }
 
@@ -255,8 +277,6 @@ chrome.tabs.onRemoved.addListener(function(tabId, info) {
     // });
 
     chrome.storage.local.get(["tab_id"], function(result){
-
-        console.log(" tab id matching ", result["tab_id"], tabId);
 
         if (result["tab_id"]){
 

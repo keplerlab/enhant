@@ -62,9 +62,16 @@ class EnhantLocalStorage{
         return Math.round(new Date().getTime());
     }
 
-    generate_data_obj(data){
+    generate_data_obj(data, time){
         var storage_obj = {};
-        storage_obj[this.time] = this.generateUnixTimestamp();
+
+        if (time){
+            storage_obj[this.time] = time;
+        }
+        else{
+            storage_obj[this.time] = this.generateUnixTimestamp();
+        }
+        
         storage_obj[this.content] = data;
 
         return storage_obj;
