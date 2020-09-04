@@ -1,8 +1,7 @@
 FROM ubuntu:18.04
 
-
 # Identify the maintainer of an image
-LABEL maintainer="mjain28@sapient.com"
+LABEL maintainer="Kepler Lab <keplerwaasi@gmail.com>"
 ARG DEBIAN_FRONTEND=noninteractive
 
 RUN  apt-get update && apt-get install -y --no-install-recommends \
@@ -37,24 +36,7 @@ RUN mkdir ${PROJECT_DIR}
 #COPY environment_docker.yml .
 RUN conda install python=3.7
 
-RUN pip install fastapi[all] typer pysrt
-
-# For color coding console prints
-RUN pip install colorama
-
-# For autoformatting code for dev use, uncomment for production
-# RUN eval "$(conda shell.bash hook)" && conda activate enhant && \
-#     pip install black
-
-RUN pip install  --no-cache-dir transformers==3.0.2 flair
-
-RUN pip install tensorflow_hub nltk
-
-RUN pip install sphinx_rtd_theme sphinx_js
-
-RUN pip install tensorflow==2.2.0 keras==2.3.1 
-
-RUN pip install --upgrade fastpunct
+RUN pip install --no-cache-dir colorama typer pydantic pysrt transformers==3.0.2 flair tensorflow_hub nltk sphinx_rtd_theme sphinx_js tensorflow==2.2.0 keras==2.3.1 fastpunct
 
 # Download nltk model 
 RUN (echo "import nltk" ; echo "nltk.download('punkt')") | python

@@ -61,7 +61,7 @@ class EngagmentFinder(object):
         )
 
     def process(self, input_json_data, guest_transcription_list:list, host_transcription_list:list) \
-                -> NoReturn:
+                -> NoReturn:              
         """[Public function for saving engagement]
 
         :param conv_id: [description]
