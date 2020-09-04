@@ -83,9 +83,11 @@ $(document).ready(function(){
         for (const prop in icons_object_mapping){
             if (!(prop == icon_type)){
                 var icon_obj = icons_object_mapping[prop];
+
+                var exception_classes = [RecordIcon.name, PowerModeIcon.name];
                 
-                // Record Icon state will  only be set to inactive when the record icon is clicked
-                if ((icon_obj.state == ICONSTATE.ACTIVE) && (prop !== RecordIcon.name)){
+                // Record Icon and powermode icon state will  only be set to inactive when the record icon is clicked
+                if ((icon_obj.state == ICONSTATE.ACTIVE) && (exception_classes.indexOf(prop) == -1)){
                     icon_obj.toggleState();
                     icon_obj.setLocalStorage();
                     icon_obj.stateHandler();
