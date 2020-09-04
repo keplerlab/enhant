@@ -73,15 +73,31 @@ chrome.runtime.onMessage.addListener(
                 var host_transcription = arr_transcription.filter(function(obj){ return obj["origin"] == "host"});
                 var guest_transcription = arr_transcription.filter(function(obj){ return obj["origin"] == "guest"});
 
-                if (host_transcription.length){
-
-                    var last_obj = host_transcription[host_transcription.length - 1];
-                    var last_transcription = last_obj["transcription"];
-
-                    obj_to_add = enhant_local_storage_obj.generate_data_obj(last_transcription);
+                if ((!host_transcription.length) && (!guest_transcription.length)){
+                    var obj_to_add = enhant_local_storage_obj.generate_data_obj(request.data);
                 }
-                else{
-                    obj_to_add = enhant_local_storage_obj.generate_data_obj(request.data);
+
+                else {
+                    var bookmark_data = "";
+
+                    if (host_transcription.length){
+
+                        var last_obj = host_transcription[host_transcription.length - 1];
+                        var last_transcription = last_obj["transcription"];
+
+                        bookmark_data += "Host : " + last_transcription + " | ";
+
+                    }
+
+                    if (guest_transcription.length){
+                        var last_obj = guest_transcription[guest_transcription.length - 1];
+                        var last_transcription = last_obj["transcription"];
+
+                        bookmark_data += "Guest : " + last_transcription;
+                    }
+
+                    var obj_to_add = enhant_local_storage_obj.generate_data_obj(bookmark_data);
+
                 }
 
                 enhant_local_storage_obj.save(d_type, obj_to_add, function(r){
