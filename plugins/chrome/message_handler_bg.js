@@ -130,8 +130,25 @@ chrome.runtime.onMessage.addListener(
                 });
             });
 
-           
-            sendResponse({status:true});
+            // checkthe settings
+            enhant_local_storage_obj.read_multiple([STORAGE_KEYS.settings], function(result){
+
+                var settings_data = result[STORAGE_KEYS.settings];
+                if (settings_data){
+                   sendResponse({
+                       status: true,
+                       settings: settings_data
+                   });
+                }
+                else{
+                    sendResponse({
+                        status: true,
+                        settings: {}
+                    });
+                }
+                
+            });
+
         }
 
         if (request.msg == "stop"){
@@ -145,7 +162,24 @@ chrome.runtime.onMessage.addListener(
                 });
             });
 
-            sendResponse({status:true})
+            // checkthe settings
+            enhant_local_storage_obj.read_multiple([STORAGE_KEYS.settings], function(result){
+
+                var settings_data = result[STORAGE_KEYS.settings];
+                if (settings_data){
+                   sendResponse({
+                       status: true,
+                       settings: settings_data
+                   });
+                }
+                else{
+                    sendResponse({
+                        status: true,
+                        settings: {}
+                    });
+                }
+                
+            });
         }
 
         if (request.msg == "meeting_number_info"){
@@ -187,9 +221,11 @@ chrome.runtime.onMessage.addListener(
             var obj = {};
             obj[STORAGE_KEYS.settings] = request.data;
             enhant_local_storage_obj.save_basic(obj, function(){
-                // console.log("storage updated in local storage");    
-            })
-            sendResponse({status:true});
+                // console.log("storage updated in local storage"); 
+                sendResponse({status:true, data: obj});
+
+            });
+            
         }
 
         return true;

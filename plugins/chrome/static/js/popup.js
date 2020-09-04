@@ -106,6 +106,7 @@ $(document).ready(function(){
         if (icons_object_mapping.hasOwnProperty(showIconClass)){
             var icon_obj = icons_object_mapping[showIconClass];
             hideOtherIconWindow(showIconClass);
+            icon_obj.enableIcon();
             icon_obj.handleClick();
         }
        
@@ -191,6 +192,39 @@ $(document).ready(function(){
     window.addEventListener("switchToIcon", function(event){
         var data = event.detail;
         switchToIcon(data);
+    });
+
+    window.addEventListener("settingsUpdateHandler", function(event){
+
+        var settings_data = event.detail;
+        var icon_obj = icons_object_mapping[PowerModeIcon.name];
+
+        hideOtherIconWindow(PowerModeIcon.name);
+
+        // check if recorder in active state
+        var recorder_obj = icons_object_mapping[RecordIcon.name];
+
+        if (settings_data.power_mode){
+            icon_obj.enableIcon();
+            icon_obj.set_active();
+
+            if (recorder_obj.state == ICONSTATE.ACTIVE){
+                icon_obj.start();
+            }
+            else{
+                icon_obj.stop();
+            }
+           
+        }
+        else{
+
+            icon_obj.disableIcon();
+            icon_obj.set_inactive();
+
+            if (recorder_obj.state == ICONSTATE.ACTIVE){
+                icon_obj.stop();
+            }
+        }
     });
 
     window.addEventListener("showNotification", function(event){

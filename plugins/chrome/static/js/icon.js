@@ -474,10 +474,10 @@ class SettingsIcon extends Icon{
         return input_status;
     }
 
-    powerModeSettingsChanged(active){
+    settingsUpdateHandler(settings){
 
-        var event = new CustomEvent("powerModeSettingsChanged", {
-            detail: active
+        var event = new CustomEvent("settingsUpdateHandler", {
+            detail: settings
         });
 		window.dispatchEvent(event);
     }
@@ -496,11 +496,13 @@ class SettingsIcon extends Icon{
                 "server_url": _this.server
             }
 
-            _this.powerModeSettingsChanged(_this.power_mode);
-
             chrome.runtime.sendMessage({msg: "settings_updated", data: d}, function(response){
-                console.log("Settings updated status : ", response.status);
-            })
+                console.log("Settings updated status : ", response);
+
+                var settings = response.data.settings;
+                _this.settingsUpdateHandler(settings);
+
+            });
             
         });
     }
@@ -565,20 +567,6 @@ class RecordIcon extends Icon{
         });
     }
 
-    startCapturingTabAudio(){
-        chrome.runtime.sendMessage({action: "capture_screen_start"}, function(response){
-            console.log("Tab recording status : ", response.status);
-        });
-    }
-
-    stopCapturingTabAudio(){
-
-        // stop the tab recording
-        chrome.runtime.sendMessage({action: "capture_screen_stop"}, function(response){
-            console.log("Tab recording status : ", response.status);
-        });
-    }
-
     meeting_started(){
         chrome.storage.local.set({"meeting_in_progress": true}, function(){
             console.log("meeting started flag set in storage .");
@@ -588,8 +576,16 @@ class RecordIcon extends Icon{
                 if (currTab) { 
 
                     chrome.runtime.sendMessage({msg: "start", data: currTab.id}, function(response){
-                        // console.log(response.status);
-                    })
+                       
+                        if (response.settings){
+
+                            // fire setting handler event
+                            var event = new CustomEvent("settingsUpdateHandler", {
+                                detail: response.settings
+                            });
+                            window.dispatchEvent(event);
+                        }
+                    });
 
                 }
             });
@@ -602,6 +598,15 @@ class RecordIcon extends Icon{
 
             chrome.runtime.sendMessage({msg: "stop"}, function(response){
                 // console.log(response.status);
+
+                if (response.settings){
+
+                    // fire setting handler event
+                    var event = new CustomEvent("settingsUpdateHandler", {
+                        detail: response.settings
+                    });
+                    window.dispatchEvent(event);
+                }
             })
         });
     }
@@ -610,13 +615,11 @@ class RecordIcon extends Icon{
     start(){
         this.meeting_started();
         this.startCapturingMicAudio();
-        this.startCapturingTabAudio();
     }
 
     stop(){
         this.meeting_stopped();
         this.stopCapturingMicAudio();
-        this.stopCapturingTabAudio();
 
         var event = new CustomEvent("enhant-stop", {});
         window.dispatchEvent(event);
@@ -664,19 +667,53 @@ class PowerModeIcon extends Icon{
         this.inactive_icon_path = "static/images/powermode_inactive.svg";
 
         this.icon_disable_path = "static/images/powermode_disabled.svg";
+
+        // powermode icon is not clickable
+        this.clickable = false;
+
+        this.recording = false;
     }
 
-    registerEvents(){
-        window.addEventListener("powerModeSettingsChanged", function(event){
-            var state = event.detail;
+    // dont toggle icon for powermode
+    toggleIcon(){
+    }
 
-            if (state){
-                // show the icon
-            }
-            else{
-                // hide the icon
-            }
-        })
+    startCapturingTabAudio(){
+        chrome.runtime.sendMessage({action: "capture_screen_start"}, function(response){
+            console.log("Tab recording status for start : ", response.status);
+        });
+    }
+
+    stopCapturingTabAudio(){
+
+        // stop the tab recording
+        chrome.runtime.sendMessage({action: "capture_screen_stop"}, function(response){
+            console.log("Tab recording status for stop : ", response.status);
+        });
+    }
+
+
+    set_active(){
+        this.state = ICONSTATE.ACTIVE;
+    }
+
+    set_inactive(){
+        this.state = ICONSTATE.INACTIVE;
+    }
+
+    stop(){
+        if (this.recording){
+            this.stopCapturingTabAudio();
+            this.recording = false;
+        }
+    }
+
+    start(){
+
+        if (!(this.recording)){
+            this.startCapturingTabAudio();
+            this.recording = true;
+        }
     }
 }
 
