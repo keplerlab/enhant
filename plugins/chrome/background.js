@@ -318,7 +318,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     }
 })
 
-chrome.browserAction.onClicked.addListener(function(tab) {
+chrome.pageAction.onClicked.addListener(function(tab) {
 
     var obj = {
         "plugin_activated": true
