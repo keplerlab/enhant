@@ -84,8 +84,13 @@ chrome.runtime.onMessage.addListener(
                     return obj["origin"] == "guest";
                 });
 
-                if ((!host_transcription.length) && (!guest_transcription.length)){
-                    obj_to_add = enhant_local_storage_obj.generate_data_obj([request.data], current_time);
+                if ((!host_transcription.length) && (!guest_transcription.length)){ 
+                    var item = {
+                        origin: "None",
+                        content: request.data,
+                        time: current_time
+                    }
+                    obj_to_add = enhant_local_storage_obj.generate_data_obj([item], current_time);
                 }
 
                 else {

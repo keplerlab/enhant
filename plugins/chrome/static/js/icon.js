@@ -287,7 +287,7 @@ class BookmarkIcon extends Icon{
     addBookMark(){
         var _this = this;
 
-        _this.sendMessageToBackground({"msg": "save_bookmark", "data": "Bookmarked Moment"}, function(response){
+        _this.sendMessageToBackground({"msg": "save_bookmark", "data": "Moment Bookmarked."}, function(response){
 
             if (response.data){
                 // add it to the data container
