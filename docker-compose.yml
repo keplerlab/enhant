@@ -2,9 +2,10 @@ version: '3'
 services:
 
   transcription_local:
-    build: ./api/transcription_svc/Docker-kaldi/
+    image: keplerlab/kaldi-vosk-wesocket-server:latest
     ports:
     - "1111:1111"
+    - "1112:1112"
     volumes:
        - ./api/transcription_svc/websocket-server/:/opt/transcription_svc/websocket-server/
        - ./certificates/:/opt/transcription_svc/websocket-server/certificates/
