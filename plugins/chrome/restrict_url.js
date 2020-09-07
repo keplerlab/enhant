@@ -13,6 +13,9 @@ chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {
       }),
       new chrome.declarativeContent.PageStateMatcher({
         pageUrl: {hostContains: 'youtube.com'},
+      }),
+      new chrome.declarativeContent.PageStateMatcher({
+        pageUrl: {hostContains: '0.0.0.0'},
       })
       ],
           actions: [new chrome.declarativeContent.ShowPageAction()]

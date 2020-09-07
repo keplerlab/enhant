@@ -24,7 +24,7 @@
     "content_scripts": [
       {
         "matches": ["https://*.zoom.us/*", "http://*.zoom.us/*", "https://teams.microsoft.com/*",
-           "http://teams.microsoft.com/*", "https://*.youtube.com/*", "http://*.youtube.com/*"],
+           "http://teams.microsoft.com/*", "https://*.youtube.com/*", "http://*.youtube.com/*", "http://0.0.0.0:8000/*"],
         "js": ["static/js/jquery.min.js", "static/js/jquery-ui.min.js",
           "static/js/iframeResizer.js", "contentscript.js" , 
           "capture_meeting_id.js", "mic_capture_webspeech.js"],
