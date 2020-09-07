@@ -110,6 +110,16 @@ async def recognize(websocket, path):
 
     record_audio = []
 
+    folderName = os.path.join("recorded_audio", data_origin, conversation_id)
+    os.makedirs(folderName, exist_ok=True)
+    fileName = "recorded_audio_" + helper.generate_filename() 
+    fileNameWav = fileName + ".wav"
+    fileNameTxt = fileName + ".txt"
+    full_file_name_Wav = os.path.join(folderName, fileNameWav)
+    full_file_name_Txt = os.path.join(folderName, fileNameTxt)
+
+
+
     try:
         while True:
 
@@ -126,7 +136,12 @@ async def recognize(websocket, path):
             resultText, stop = await loop.run_in_executor(pool, process_chunk, rec, message)
             if resultText is not None:
                 print("Transcription: ", resultText, flush=True)
+                output_file = open(full_file_name_Txt, "a")
+                output_file.write(resultText+"\n")
+                output_file.close()
                 await websocket.send(resultText)
+            #else:
+            #    await  websocket.send("")
                 #
                 #print("resultText", resultText)
 
@@ -143,14 +158,9 @@ async def recognize(websocket, path):
 
     
     print("Exit from transcription_loop function saving recorded audio", flush=True)
+    print("\n*** Writing audio data in file:", full_file_name_Wav, flush=True)
 
-    folderName = os.path.join("recorded_audio", data_origin, conversation_id)
-    os.makedirs(folderName, exist_ok=True)
-    fileName = "recorded_audio_" + helper.generate_filename() + ".wav"
-    full_file_name = os.path.join(folderName, fileName)
-    print("\n*** Writing audio data in file:", full_file_name, flush=True)
-
-    helper.write_audio_wave(record_audio, full_file_name, cfg.SAMPLE_RATE, cfg.SAMPLE_WIDTH, cfg.CHANNELS)
+    helper.write_audio_wave(record_audio, full_file_name_Wav, cfg.SAMPLE_RATE, cfg.SAMPLE_WIDTH, cfg.CHANNELS)
     
 
 ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
@@ -164,5 +174,10 @@ print("vosk_port", cfg.PORT, flush=True)
 start_server = websockets.serve(
     recognize, cfg.INTERFACE, cfg.PORT, ssl=ssl_context, max_queue=None)
 
+start_server_http = websockets.serve(
+    recognize, cfg.INTERFACE, 1112, max_queue=None)
+
+
 loop.run_until_complete(start_server)
+loop.run_until_complete(start_server_http)
 loop.run_forever()

@@ -66,4 +66,7 @@ RUN pip --no-cache-dir install websockets tensorflow==2.2.0 keras==2.3.1 deepseg
    && mv vosk-model-en-us-aspire-${MODEL_VERSION} model \
    && rm -rf vosk-model-en-us-aspire-${MODEL_VERSION}.zip
 
+WORKDIR /opt/transcription_svc/websocket-server
+EXPOSE 1111
 
+CMD ["bash","start_transcription_kaldi_offline.sh"]
