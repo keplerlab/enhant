@@ -106,7 +106,7 @@ class EngagmentFinder(object):
 
             engagement_with_time = (int(end_time), engagement_score)
             engagement_scores.append(engagement_with_time)
-            total_of_engagement_scores += engagement_with_time
+            total_of_engagement_scores += engagement_score
             number_of_engagement_scores += 1
         if number_of_engagement_scores > 0:
             avg_engagement_score = (
