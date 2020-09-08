@@ -69,6 +69,13 @@ class SentimentFinder(object):
         high_sentiment_scores_guest = []
         low_sentiment_scores_host = []
         high_sentiment_scores_host = []
+        total_of_sentiment_scores_host = 0.0
+        number_of_sentiment_scores_host = 0
+        total_of_sentiment_scores_guest = 0.0
+        number_of_sentiment_scores_guest = 0
+        avg_sentiment_score_guest = 0.0
+        avg_sentiment_score_host = 0.0
+
 
         if guest_transcription_list is not None:
             for transcriptions_pkt in guest_transcription_list:
@@ -77,6 +84,8 @@ class SentimentFinder(object):
                 )
                 sentiment_score = sentiment_lib.processMessage(transcription)
                 sentiment_with_time = (start_time, transcription, sentiment_score)
+                total_of_sentiment_scores_guest += float(sentiment_score)
+                number_of_sentiment_scores_guest += 1
 
                 if sentiment_score < self.low_sentiment_threshold:
                     low_sentiment_scores_guest.append(sentiment_with_time)
@@ -90,11 +99,16 @@ class SentimentFinder(object):
                 )
                 sentiment_score = sentiment_lib.processMessage(transcription)
                 sentiment_with_time = (start_time, transcription, sentiment_score)
+                total_of_sentiment_scores_host += sentiment_score
+                number_of_sentiment_scores_host += 1
+
+
 
                 if sentiment_score < self.low_sentiment_threshold:
                     low_sentiment_scores_host.append(sentiment_with_time)
                 elif sentiment_score > self.high_sentiment_threshold:
                     high_sentiment_scores_host.append(sentiment_with_time)
+
 
         if len(high_sentiment_scores_host) > 0 or len(high_sentiment_scores_guest) > 0:
             jsonPkt = {
@@ -109,3 +123,12 @@ class SentimentFinder(object):
                 "lowSentimentSentencesGuest": low_sentiment_scores_guest,
             }
             input_json_data["lowSentimentSentences"] = jsonPkt
+
+        if number_of_sentiment_scores_guest > 0:
+            avg_sentiment_score_guest = total_of_sentiment_scores_guest / number_of_sentiment_scores_guest
+            input_json_data["avgSentimentScoreGuest"] = str(avg_sentiment_score_guest)
+        
+        if number_of_sentiment_scores_host > 0:
+            avg_sentiment_score_host = total_of_sentiment_scores_host / number_of_sentiment_scores_host
+            input_json_data["avgSentimentScoreHost"] = str(avg_sentiment_score_host)
+
