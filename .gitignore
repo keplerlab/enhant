@@ -7,7 +7,7 @@ package-lock.json
 test/*.log
 
 # Input zip files for cli
-.zip 
+*.zip 
 
 # VS Code config
 .vscode
