@@ -2,7 +2,7 @@ version: '3'
 services:
 
   transcription_local:
-    image: keplerlab/kaldi-vosk-wesocket-server:latest
+    image: keplerlab/kaldi-vosk-wesocket-server:0.1.1
     ports:
     - "1111:1111"
     - "1112:1112"
@@ -18,7 +18,7 @@ services:
 
 
   cli:
-    build: ./cli/
+    image: keplerlab/enhant-cli:0.1.1
     stdin_open: true # docker run -i
     tty: true        # docker run -t
     volumes:

@@ -2,7 +2,7 @@ FROM ubuntu:18.04
 
 
 # Identify the maintainer of an image
-LABEL maintainer="mjain28@sapient.com"
+LABEL maintainer="Kepler Lab <keplerwaasi@gmail.com>"
 ARG DEBIAN_FRONTEND=noninteractive
 
 RUN  apt-get update && apt-get install -y --no-install-recommends \
