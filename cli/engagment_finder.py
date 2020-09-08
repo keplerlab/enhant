@@ -7,7 +7,8 @@
 import sys
 import os
 from typing import NoReturn, Tuple
-from colorama import init, Fore 
+from colorama import init, Fore
+
 init(init(autoreset=True))
 
 sys.path.insert(1, os.path.join(sys.path[0], "..", "nlp_lib"))
@@ -35,7 +36,7 @@ class EngagmentFinder(object):
     :type object: [type]
     :return: [description]
     :rtype: [type]
-    """    
+    """
 
     def __init__(self):
         """[init function]
@@ -43,10 +44,8 @@ class EngagmentFinder(object):
         """
         self.processed_conversation_collection = "conversations_processed"
         self.collection = "transcriptions"
-        self.low_sentiment_threshold = 0.3
-        self.high_sentiment_threshold = 0.7
 
-    def _transformTranscription(self, transcriptions_pkt:dict)->Tuple[dict]:
+    def _transformTranscription(self, transcriptions_pkt: dict) -> Tuple[dict]:
         """[transform Transcription]
 
         :param transcriptions_pkt: [description]
@@ -60,8 +59,12 @@ class EngagmentFinder(object):
             transcriptions_pkt["context"]["origin"],
         )
 
-    def process(self, input_json_data, guest_transcription_list:list, host_transcription_list:list) \
-                -> NoReturn:              
+    def process(
+        self,
+        input_json_data,
+        guest_transcription_list: list,
+        host_transcription_list: list,
+    ) -> NoReturn:
         """[Public function for saving engagement]
 
         :param conv_id: [description]
@@ -73,7 +76,7 @@ class EngagmentFinder(object):
         if input_json_data == None:
             print(f"No matching conversation for input_json_data: {input_json_data}")
             return
-        
+
         conv_id = input_json_data["meeting_id"]
 
         transcriptions_with_time = []
@@ -92,6 +95,8 @@ class EngagmentFinder(object):
         transcriptions_with_time.sort(key=timeSortingFunction)
 
         engagement_scores = []
+        total_of_engagement_scores = 0
+        number_of_engagement_scores = 0
         for transcriptionTuple in transcriptions_with_time:
 
             end_time = transcriptionTuple[1]["end_time"]
@@ -101,8 +106,19 @@ class EngagmentFinder(object):
 
             engagement_with_time = (int(end_time), engagement_score)
             engagement_scores.append(engagement_with_time)
-
+            total_of_engagement_scores += engagement_with_time
+            number_of_engagement_scores += 1
+        if number_of_engagement_scores > 0:
+            avg_engagement_score = (
+                total_of_engagement_scores / number_of_engagement_scores
+            )
+        else:
+            avg_engagement_score = 0
 
         if len(engagement_scores) > 0:
-            jsonPkt = {"engagement_scores": engagement_scores}
+
+            jsonPkt = {
+                "engagement_scores": engagement_scores,
+                "avg_engagement_score": avg_engagement_score,
+            }
             input_json_data["engagement_scores"] = jsonPkt
