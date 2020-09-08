@@ -13,7 +13,7 @@ import copy
 
 class NLP_lib_engagement(object):
     def __init__(self):
-        """[init function]
+        """init function
         """
         self.expected_multiplier = 2.0
         self.expected_time_window = 120
@@ -25,19 +25,18 @@ class NLP_lib_engagement(object):
         self.spokenMsgsClientInTimeWindow = {}
         self.spokenMsgsAdvisorInTimeWindow = {}
 
-    def processMessage(self, meeting_id, origin, msg):
-        """[Returns responses as rules along with score]
+    def processMessage(self, meeting_id: str, origin: str, msg: dict) -> float:
+        """Returns responses as rules along with score
 
         :param meeting_id: [description]
-        :type meeting_id: [type]
+        :type meeting_id: str
         :param origin: [description]
-        :type origin: [type]
+        :type origin: str
         :param msg: [description]
-        :type msg: [type]
+        :type msg: dict
         :return: [description]
-        :rtype: [type]
-        """       
-
+        :rtype: float
+        """          
         if meeting_id in self.totalTime:
             pass
         else:
@@ -53,10 +52,8 @@ class NLP_lib_engagement(object):
         return engagementScore
 
     def resetState(self):
-        """[Reset state for all clients]
+        """Reset state for all clients
         """
-        
-
         self.totalTime = {}
         self.totalSpokenWordsClient = {}
         self.totalSpokenWordsAdvisor = {}
@@ -66,19 +63,18 @@ class NLP_lib_engagement(object):
         self.spokenMsgsAdvisorInTimeWindow = {}
         print("\n\n**********Reset state for engagement detection complete**********\n\n")
 
-    def _getEngagement(self, meeting_id, origin, msg):
-        """[Get engagement score at receiving msg]
+    def _getEngagement(self, meeting_id: str, origin: str, msg: dict) -> float:
+        """Get engagement score at receiving msg
 
         :param meeting_id: [description]
-        :type meeting_id: [type]
+        :type meeting_id: str
         :param origin: [description]
-        :type origin: [type]
+        :type origin: str
         :param msg: [description]
-        :type msg: [type]
+        :type msg: dict
         :return: [description]
-        :rtype: [type]
+        :rtype: float
         """
-
         requestData = msg["content"]
         num_of_words = len(requestData.split())
 
@@ -140,14 +136,14 @@ class NLP_lib_engagement(object):
 
         return avg_engagement_score
 
-    def _relu(self, value):
-        """[Limit value between 0 to 1]
+    def _relu(self, value: float) -> float:
+        """Limit value between 0 to 1
 
         :param value: [description]
-        :type value: [type]
+        :type value: float
         :return: [description]
-        :rtype: [type]
-        """        
+        :rtype: float
+        """          
         if value > 1.0:
             return 1.0
         elif value < 0.0:
@@ -155,26 +151,26 @@ class NLP_lib_engagement(object):
         else:
             return value
 
-    def _tokenize_sentences(self, sentences):
-        """[Call nltk sentence tokenizer on given sentences]
+    def _tokenize_sentences(self, sentences: list) -> list:
+        """Call nltk sentence tokenizer on given sentences
 
         :param sentences: [description]
-        :type sentences: [type]
+        :type sentences: list
         :return: [description]
-        :rtype: [type]
+        :rtype: list
         """
         return sent_tokenize(sentences)
 
-    def _cleanListForTimeWindow(self, msgList, current_endtime):
-        """[Filter out messages from msgList that are older than
-         expected_time_window amount of time]
+    def _cleanListForTimeWindow(self, msgList: list, current_endtime: float) -> list:
+        """Filter out messages from msgList that are older than
+         expected_time_window amount of time
 
         :param msgList: [description]
-        :type msgList: [type]
+        :type msgList: list
         :param current_endtime: [description]
-        :type current_endtime: [type]
+        :type current_endtime: float
         :return: [description]
-        :rtype: [type]
+        :rtype: list
         """
         updatedList = []
         for item in msgList:
