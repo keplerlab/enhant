@@ -2,7 +2,7 @@ version: '3'
 services:
 
   transcription_local:
-    image: keplerlab/kaldi-vosk-wesocket-server:0.1.1
+    image: keplerlab/kaldi-vosk-wesocket-server:0.1.2
     ports:
     - "1111:1111"
     - "1112:1112"
