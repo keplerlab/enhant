@@ -6,8 +6,9 @@ npm-debug.log
 package-lock.json
 test/*.log
 
-# Input zip files for cli
+# Input zip files and folders for cli
 *.zip 
+cli/enhant_*
 
 # VS Code config
 .vscode

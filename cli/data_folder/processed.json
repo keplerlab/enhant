@@ -1,7 +1,4 @@
 {
-    "_id": {
-        "$oid": "5f3d14b86e7ca4e0eba5928d"
-    },
     "meeting_id": "111",
     "start_time": "15000",
     "end_time": "122000",
