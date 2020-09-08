@@ -13,6 +13,8 @@ import config
 from operator import methodcaller
 import helper as helper
 import json
+import zipfile
+import shutil
 
 from colorama import init, Fore, Back 
 init(init(autoreset=True))
@@ -23,12 +25,23 @@ app = typer.Typer()
 
 
 @app.command()
-def analyze(folder: str):
+def analyze(input: str):
     """[Analyzes a full conversation.]
 
     :param conv_ids: [description]
     :type conv_ids: List[str]
     """
+    folder = ""
+    if input.endswith(".zip"):
+        with zipfile.ZipFile(input, 'r') as zip_ref:
+            folder = os.path.splitext(input)[0]
+            zip_ref.extractall(folder)
+    elif os.path.isdir(input):
+        folder = input 
+    else: 
+        print(Fore.RED + f"\n ERROR: Invalid zip file or folder")
+        return 0
+
 
     print(Back.GREEN + f"\n ***** Analyzing folder {folder} *****")
 
@@ -65,7 +78,9 @@ def analyze(folder: str):
     with open(output_json_file_name, 'w') as json_file:
         print(Back.GREEN + f"\n***** Writing results in file: {output_json_file_name} ***** \n")
         json.dump(input_json_data, json_file, indent=4)
-
+        result_zip_name = folder+"_result"
+        print(Back.GREEN + f"\n***** Making zip for result: {result_zip_name}.zip ***** \n")
+        shutil.make_archive(result_zip_name, 'zip', folder)
 
 @app.command()
 def delete(folder: str):
