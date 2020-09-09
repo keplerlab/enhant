@@ -5,6 +5,7 @@
 """
 import sys
 import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' 
 import pysrt
 from typing import List, Optional
 from colorama import init, Fore, Back, Style 
@@ -57,10 +58,11 @@ def transform_Srt_and_correct_punct(input_data_folder_path:str, origin:str,
 
         transcription_list = []
         for srt in srtList:
-            transcription_list.append(srt.text)
+            srt_with_newline_corrected = srt.text.replace('\n', ' ')
+            transcription_list.append(srt_with_newline_corrected)
 
         #print("transcription_list", transcription_list)
-        corrected_transcription_list = fastpunct.punct(transcription_list, batch_size=32)
+        corrected_transcription_list = fastpunct.punct(transcription_list, batch_size=16)
         #print("corrected_transcription_list", corrected_transcription_list)
         for idx , srt in enumerate(srtList):
 

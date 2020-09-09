@@ -30,7 +30,6 @@ class Questions_finder(object):
         train_set, test_set = featuresets[size:], featuresets[:size]
 
         self.classifier = nltk.NaiveBayesClassifier.train(train_set)
-        print("Question Answer classifer model ready for inference")
 
     def _dialogue_act_features(self, post: list) -> dict:
         """tokenize and convert to lower case posts

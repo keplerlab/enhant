@@ -21,200 +21,254 @@
     ],
     "questionsAsked": {
         "questionsAsked": [
-            "It's\ndependent on how much money is involved.",
-            "And it's also dependent upon\nhow much time is involved.",
-            "It's\ndependent on how much money is involved.",
-            "And it's also dependent upon\nhow much time is involved."
+            "When I go to a bank or some other lending institution?",
+            "Going to be paying the bank for the privilege of using their money and that?",
+            "Now, what makes Bank's profitable is the rate?",
+            "That they charge people to use the bank's money is higher than the rate that they?",
+            "Lending institution that charges a lower interest rate on the other hand, if I?",
+            "Want to earn more interest on my investment?",
+            "When I go to a bank or some other lending institution?",
+            "Going to be paying the bank for the privilege of using their money and that?",
+            "Now, what makes Bank's profitable is the rate?",
+            "That they charge people to use the bank's money is higher than the rate that they?",
+            "Lending institution that charges a lower interest rate on the other hand, if I?",
+            "Want to earn more interest on my investment?"
         ]
     },
-    "highSentimentSentence": {
-        "highSentimentSentence": [
+    "highSentimentSentences": {
+        "highSentimentSentencesHost": [
+            [
+                3400,
+                "In this lesson, we're going to be talking about finance and.",
+                0.9469185173511505
+            ],
             [
                 6177,
-                "one of the most important aspects\nof finance is interest.",
+                "One of the most important aspects of finance is interest.",
                 0.9982729852199554
             ],
             [
                 10009,
-                "When I go to a bank or some\nother lending institution",
-                0.9881390929222107
-            ],
-            [
-                13655,
-                "to borrow money, the bank is happy\nto give me that money. But then I'm",
-                0.8388045877218246
+                "When I go to a bank or some other lending institution?",
+                0.9237989187240601
             ],
             [
                 31300,
-                "doesn't put my money in a little box\nand leave it there until later. They take",
-                0.9302512258291245
+                "Doesn't put my money in a little box and leave it there until later they take.",
+                0.8816211819648743
             ],
             [
                 44400,
-                "Now what makes banks\nprofitable is the rate",
-                0.9980193972587585
+                "Now, what makes Bank's profitable is the rate?",
+                0.9840783774852753
             ],
             [
                 92600,
-                "lending institution that charges a lower\ninterest rate. On the other hand, if I",
-                0.8707998543977737
+                "Lending institution that charges a lower interest rate on the other hand, if I?",
+                0.8567189872264862
+            ]
+        ],
+        "highSentimentSentencesGuest": [
+            [
+                3400,
+                "In this lesson, we're going to be talking about finance and.",
+                0.9469185173511505
             ],
             [
                 6177,
-                "one of the most important aspects\nof finance is interest.",
+                "One of the most important aspects of finance is interest.",
                 0.9982729852199554
             ],
             [
                 10009,
-                "When I go to a bank or some\nother lending institution",
-                0.9881390929222107
-            ],
-            [
-                13655,
-                "to borrow money, the bank is happy\nto give me that money. But then I'm",
-                0.8388045877218246
+                "When I go to a bank or some other lending institution?",
+                0.9237989187240601
             ],
             [
                 31300,
-                "doesn't put my money in a little box\nand leave it there until later. They take",
-                0.9302512258291245
+                "Doesn't put my money in a little box and leave it there until later they take.",
+                0.8816211819648743
             ],
             [
                 44400,
-                "Now what makes banks\nprofitable is the rate",
-                0.9980193972587585
+                "Now, what makes Bank's profitable is the rate?",
+                0.9840783774852753
             ],
             [
                 92600,
-                "lending institution that charges a lower\ninterest rate. On the other hand, if I",
-                0.8707998543977737
+                "Lending institution that charges a lower interest rate on the other hand, if I?",
+                0.8567189872264862
             ]
         ]
     },
-    "lowSentimentSentence": {
-        "lowSentimentSentence": [
+    "lowSentimentSentences": {
+        "lowSentimentSentencesHost": [
+            [
+                13655,
+                "To borrow money, the bank is happy to give me that money, but then I'm.",
+                0.004940778017044067
+            ],
+            [
+                17900,
+                "Going to be paying the bank for the privilege of using their money and that?",
+                0.004678815603256226
+            ],
             [
                 21660,
-                "amount of money that I pay the bank is\ncalled interest. Likewise, if I put money",
-                0.0131930410861969
+                "Amount of money that I pay the bank is called interest likewise if I put money.",
+                0.00170859694480896
             ],
             [
                 26620,
-                "in a savings account or I purchase a\ncertificate of deposit, the bank just",
-                0.08785480260848999
+                "In a savings account or I purchase a certificate of deposit the bank just.",
+                0.025615155696868896
             ],
             [
                 35800,
-                "my money and lend it to someone\nelse. So they are using my money.",
-                0.0005612820386886597
+                "My money and lend it to someone else, so they are using my money.",
+                0.00021085143089294434
             ],
             [
                 40822,
-                "The bank has to pay me for the privilege\nof using my money.",
-                0.07758140563964844
+                "The bank has to pay me for the privilege of using my money!",
+                0.01872190833091736
             ],
             [
                 48700,
-                "that they charge people to use the bank's\nmoney is higher than the rate that they",
-                0.004829496145248413
+                "That they charge people to use the bank's money is higher than the rate that they?",
+                0.0006277561187744141
+            ],
+            [
+                60800,
+                "Earns is dependent on three things, it's dependent on how much money is involved.",
+                0.13321435451507568
             ],
             [
                 66820,
-                "It's dependent upon the rate of interest\nbeing paid or the rate of interest being",
-                0.0017612874507904053
+                "It's dependent upon the rate of interest being paid or the rate of interest being.",
+                0.0016318261623382568
+            ],
+            [
+                71480,
+                "Charged and it's also dependent upon how much time is involved if I have.",
+                0.06583687663078308
             ],
             [
                 77898,
-                "a loan and I want to decrease the amount\nof interest that I'm going to pay, then",
-                0.026393204927444458
+                "A loan and I want to decrease the amount of interest that I'm going to pay then.",
+                0.024420708417892456
             ],
             [
                 82800,
-                "I'm either going to have to decrease how\nmuch money I borrow, I'm going to have",
-                0.0026489198207855225
+                "I'm either going to have to decrease how much money I borrow I'm going to have.",
+                0.0021080076694488525
             ],
             [
                 88220,
-                "to borrow the money over a shorter period\nof time, or I'm going to have to find a",
-                0.0005733966827392578
+                "To borrow the money over a shorter period of time or I'm going to have to find a.",
+                0.0047588348388671875
             ],
             [
                 97279,
-                "want to earn more interest on my\ninvestment, I'm going to have to invest",
-                0.0005993247032165527
+                "Want to earn more interest on my investment? I'm going to have to invest.",
+                0.004685848951339722
             ],
             [
                 101480,
-                "more money, leave the money in the\naccount for a longer period of time, or",
-                0.019365131855010986
+                "More money leave the money in the account for a longer period of time or.",
+                0.0004006922245025635
             ],
             [
                 106860,
-                "find an institution that will pay\nme a higher interest rate.",
+                "Find an institution that will pay me a higher interest rate.",
                 0.12110912799835205
+            ]
+        ],
+        "lowSentimentSentencesGuest": [
+            [
+                13655,
+                "To borrow money, the bank is happy to give me that money, but then I'm.",
+                0.004940778017044067
+            ],
+            [
+                17900,
+                "Going to be paying the bank for the privilege of using their money and that?",
+                0.004678815603256226
             ],
             [
                 21660,
-                "amount of money that I pay the bank is\ncalled interest. Likewise, if I put money",
-                0.0131930410861969
+                "Amount of money that I pay the bank is called interest likewise if I put money.",
+                0.00170859694480896
             ],
             [
                 26620,
-                "in a savings account or I purchase a\ncertificate of deposit, the bank just",
-                0.08785480260848999
+                "In a savings account or I purchase a certificate of deposit the bank just.",
+                0.025615155696868896
             ],
             [
                 35800,
-                "my money and lend it to someone\nelse. So they are using my money.",
-                0.0005612820386886597
+                "My money and lend it to someone else, so they are using my money.",
+                0.00021085143089294434
             ],
             [
                 40822,
-                "The bank has to pay me for the privilege\nof using my money.",
-                0.07758140563964844
+                "The bank has to pay me for the privilege of using my money!",
+                0.01872190833091736
             ],
             [
                 48700,
-                "that they charge people to use the bank's\nmoney is higher than the rate that they",
-                0.004829496145248413
+                "That they charge people to use the bank's money is higher than the rate that they?",
+                0.0006277561187744141
+            ],
+            [
+                60800,
+                "Earns is dependent on three things, it's dependent on how much money is involved.",
+                0.13321435451507568
             ],
             [
                 66820,
-                "It's dependent upon the rate of interest\nbeing paid or the rate of interest being",
-                0.0017612874507904053
+                "It's dependent upon the rate of interest being paid or the rate of interest being.",
+                0.0016318261623382568
+            ],
+            [
+                71480,
+                "Charged and it's also dependent upon how much time is involved if I have.",
+                0.06583687663078308
             ],
             [
                 77898,
-                "a loan and I want to decrease the amount\nof interest that I'm going to pay, then",
-                0.026393204927444458
+                "A loan and I want to decrease the amount of interest that I'm going to pay then.",
+                0.024420708417892456
             ],
             [
                 82800,
-                "I'm either going to have to decrease how\nmuch money I borrow, I'm going to have",
-                0.0026489198207855225
+                "I'm either going to have to decrease how much money I borrow I'm going to have.",
+                0.0021080076694488525
             ],
             [
                 88220,
-                "to borrow the money over a shorter period\nof time, or I'm going to have to find a",
-                0.0005733966827392578
+                "To borrow the money over a shorter period of time or I'm going to have to find a.",
+                0.0047588348388671875
             ],
             [
                 97279,
-                "want to earn more interest on my\ninvestment, I'm going to have to invest",
-                0.0005993247032165527
+                "Want to earn more interest on my investment? I'm going to have to invest.",
+                0.004685848951339722
             ],
             [
                 101480,
-                "more money, leave the money in the\naccount for a longer period of time, or",
-                0.019365131855010986
+                "More money leave the money in the account for a longer period of time or.",
+                0.0004006922245025635
             ],
             [
                 106860,
-                "find an institution that will pay\nme a higher interest rate.",
+                "Find an institution that will pay me a higher interest rate.",
                 0.12110912799835205
             ]
         ]
     },
+    "avgSentimentScoreGuest": "0.2880263607139173",
+    "avgSentimentScoreHost": "0.2880263607139173",
     "engagement_scores": {
         "engagement_scores": [
             [
@@ -401,6 +455,7 @@
                 109970,
                 100
             ]
-        ]
+        ],
+        "avg_engagement_score": 100.0
     }
 }
