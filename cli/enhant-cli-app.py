@@ -48,9 +48,8 @@ def analyze(input: str):
     guest_transcription_list = None
     host_transcription_list = None
 
-    guest_transcription_list = helper.transform_Srt_to_list(folder, "guest")
-    host_transcription_list = helper.transform_Srt_to_list(folder, "host")
-
+    guest_transcription_list = helper.transform_Srt_and_correct_punct(folder, "guest")
+    host_transcription_list = helper.transform_Srt_and_correct_punct(folder, "host")
 
     input_json_file_name = os.path.join(folder, "input.json")
     input_json_data = None

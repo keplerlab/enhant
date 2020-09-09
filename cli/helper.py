@@ -9,7 +9,8 @@ import pysrt
 from typing import List, Optional
 from colorama import init, Fore, Back, Style 
 init(init(autoreset=True))
-
+from fastpunct import FastPunct
+fastpunct = FastPunct('en')
 
 def eprint(*args, **kwargs):
     print(*args, file=sys.stderr, **kwargs)
@@ -39,6 +40,50 @@ def add_origin(transcription_pkt_list, origin:str):
         transcriptions_pkt["context"]["origin"] = origin
 
     return transcription_pkt_list
+
+def transform_Srt_and_correct_punct(input_data_folder_path:str, origin:str,
+                         meeting_start_utc : Optional[int] = 0): 
+    """[transform srt packet to list]
+    :return: [description]
+    :rtype: [type]
+    """    
+
+    srt_file_name = os.path.join(input_data_folder_path, origin + ".srt")
+    
+    transcription_pkt_list = []
+
+    if os.path.isfile(srt_file_name):
+        srtList = pysrt.open(srt_file_name)        
+
+        transcription_list = []
+        for srt in srtList:
+            transcription_list.append(srt.text)
+
+        #print("transcription_list", transcription_list)
+        corrected_transcription_list = fastpunct.punct(transcription_list, batch_size=32)
+        #print("corrected_transcription_list", corrected_transcription_list)
+        for idx , srt in enumerate(srtList):
+
+            transcriptions_pkt = {}
+            transcriptions_pkt['msg'] = {}
+
+            transcriptions_pkt['msg']['data'] = {}
+            transcriptions_pkt['msg']['data']['transcription'] = {}
+
+            transcriptions_pkt["msg"]["data"]["transcription"]["content"] = corrected_transcription_list[idx]
+            transcriptions_pkt["msg"]["data"]["transcription"]["start_time"] = _transformTime(srt.start, meeting_start_utc)
+
+            transcriptions_pkt["msg"]["data"]["transcription"]["end_time"] = _transformTime(srt.end, meeting_start_utc)
+
+            transcription_pkt_list.append(transcriptions_pkt)
+            transcription_pkt_list = add_origin(transcription_pkt_list, meeting_start_utc)
+    
+    else :
+        print(f"\n {Fore.YELLOW} WARNING: {origin}.srt file not present")
+
+    #print("transcription_pkt_list", transcription_pkt_list) 
+    return transcription_pkt_list
+
 
 def transform_Srt_to_list(input_data_folder_path:str, origin:str,
                          meeting_start_utc : Optional[int] = 0): 
