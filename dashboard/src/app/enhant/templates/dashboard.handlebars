@@ -1,7 +1,7 @@
 <style>
     .card{
         height: 296px;
-        margin-left: 2%;
+        margin-left: 6%;
     }
 
     .card-cell{
@@ -16,7 +16,7 @@
         margin-top: 2%;
     }
 
-    .meeting-data-container{
+    .has-padding{
         padding: 2%;
     }
 </style>
@@ -31,7 +31,7 @@
         </div>
 
          <div class="row card-cell">
-            <span class="cell-text" id="call-duration">35 min</span>
+            <span class="cell-text" id="call-duration">45 sec</span>
         </div>
     </div>
     <div class="col-xs-3 has-shadow card text-center">
@@ -58,8 +58,8 @@
 
 </div>
 
-<div class="row section has-shadow">
-    <div class="meeting-data-container">
+<div class="clearfix section has-shadow">
+    <div class="col-xs-12 meeting-data-container has-padding">
         <div class="meeting-info">
             <div class="row">
                 <div class="col-xs-3">
@@ -69,16 +69,16 @@
 
             <div class="row" style="margin-top: 2%;">
                 <div class="col-xs-3">
-                    <span class="cell-text">ID: 189698629</span>
+                    <span class="cell-text" id="meeting-id">ID: </span>
                 </div>
                 <div class="col-xs-3">
-                    <span class="cell-text">Date: 2020/09/08</span>
+                    <span class="cell-text" id="meeting-date">Date: </span>
                 </div>
                 <div class="col-xs-3">
-                    <span class="cell-text">Start Time: 14:01</span>
+                    <span class="cell-text" id="meeting-time">Start Time: </span>
                 </div>
                 <div class="col-xs-3">
-                    <span class="cell-text">Duration: 00:35:09</span>
+                    <span class="cell-text" id="meeting-duration">Duration: </span>
                 </div>
             </div>
         </div>
@@ -91,12 +91,18 @@
         {{#if context.bookmark}}
         <div class="section bookmark has-shadow">
             <div class="row">
-                <div class="col-xs-10 offset-xs-1">
+                <div class="col-xs-12 has-padding">
                     <div class="row heading">
                         <div class="col-xs-3">
-                             <span class="cell-text">Bookmark</span>
+                             <span class="cell-text">Bookmarks</span>
                         </div>
-                       
+                    </div>
+
+                    <div class="table-responsive" style="margin-top:2%;">
+                        <table class="table table-striped">
+                        <tbody class="bookmark-data-tbody">
+                        </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -106,11 +112,13 @@
         {{#if context.images}}
        <div class="section images has-shadow">
             <div class="row">
-                <div class="col-xs-10 offset-xs-1">
+                <div class="col-xs-12 has-padding">
                     <div class="row heading">
                         <div class="col-xs-3">
-                             <span class="cell-text">Captured Moment</span>
+                             <span class="cell-text">Captured Moments</span>
                         </div>
+                    </div>
+                    <div class="clearfix capture-moments-data" style="margin-top:2%;">
                     </div>
                 </div>
             </div>
@@ -120,19 +128,35 @@
     
         {{#CheckIfbothTrue context.notes context.questions}}
         <div class="section">
-            <div class="row">
-                <div class="col-xs-5 notes has-shadow">
-                    <div class="row heading"></div>
-                        <div class="col-xs-3">
-                             <span class="cell-text">Notes</span>
+            <div class="clearfix">
+                <div class="col-xs-6 notes has-shadow" style="height:196px;">
+                    <div class="data-container has-padding">
+                        <div class="row heading">
+                            <div class="col-xs-3">
+                                <span class="cell-text">Notes</span>
+                            </div>
                         </div>
+                        <div class="table-responsive" style="margin-top:2%;">
+                        <table class="table table-striped">
+                        <tbody class="notes-data-tbody">
+                        </tbody>
+                        </table>
+                    </div>
                     </div>
                 </div>
-                <div class="col-xs-5 questions has-shadow">
-                    <div class="row heading">
-                        <div class="col-xs-3">
-                             <span class="cell-text">Questions</span>
+                <div class="col-xs-6 questions has-shadow" style="height:196px;">
+                    <div class="data-container has-padding">
+                        <div class="row heading">
+                            <div class="col-xs-3">
+                                <span class="cell-text">Questions</span>
+                            </div>
                         </div>
+                        <div class="table-responsive" style="margin-top:2%;">
+                        <table class="table table-striped">
+                        <tbody class="questions-data-tbody">
+                        </tbody>
+                        </table>
+                    </div>
                     </div>
                 </div>
             </div>
@@ -141,11 +165,17 @@
         {{#if context.notes}}
         <div class="section notes has-shadow">
             <div class="row">
-                <div class="col-xs-10 offset-xs-1">
+                <div class="col-xs-12 has-padding">
                     <div class="row heading">
-                       <div class="col-xs-3">
+                        <div class="col-xs-3">
                              <span class="cell-text">Notes</span>
                         </div>
+                    </div>
+                    <div class="table-responsive" style="margin-top:2%;">
+                        <table class="table table-striped">
+                        <tbody class="notes-data-tbody">
+                        </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -154,11 +184,17 @@
         {{#if context.questions}}
         <div class="section questions has-shadow">
             <div class="row">
-                <div class="col-xs-10 offset-xs-1">
+                <div class="col-xs-12 has-padding">
                     <div class="row heading">
                         <div class="col-xs-3">
                              <span class="cell-text">Questions</span>
                         </div>
+                    </div>
+                    <div class="table-responsive" style="margin-top:2%;">
+                        <table class="table table-striped">
+                        <tbody class="questions-data-tbody">
+                        </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -169,11 +205,17 @@
         {{#if context.sentiment_outliers}}
         <div class="section outliers has-shadow">
             <div class="row">
-                <div class="col-xs-10 offset-xs-1">
+                <div class="col-xs-12 has-padding">
                     <div class="row heading">
-                       <div class="col-xs-3">
-                             <span class="cell-text">Sentiment Outliers</span>
+                        <div class="col-xs-3">
+                             <span class="cell-text">Sentiment Outliers
                         </div>
+                    </div>
+                    <div class="table-responsive" style="margin-top:2%;">
+                        <table class="table table-striped">
+                        <tbody class="outliers-data-tbody">
+                        </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -185,8 +227,176 @@
 
 <script>
 
-    function calculateCallDurationInMinutes(){
+    function generateMeetingDate(start_time){
+        var date = new Date(start_time);
+        var formatted_months = ("0" + (date.getMonth()+1)).slice(-2).toString();
+        var formatted_yy = ("0" + date.getFullYear()).slice(-4).toString();
+        var formatted_dd = ("0" + date.getDate()).slice(-2).toString();
 
+        var formatted_hh = ("0" + date.getHours()).slice(-2).toString();
+        var formatted_mm = ("0" + date.getMinutes()).slice(-2).toString();
+
+        return {
+            "date" : formatted_yy + "/" + formatted_months + "/" + formatted_dd,
+            "time": formatted_hh + ":" + formatted_mm
+        }
+    }
+
+    function getMeetingDuration(start_time, end_time){
+        var diff = end_time - start_time;
+        var ms = diff % 1000;
+        diff = (diff - ms) / 1000;
+        var ss = diff % 60;
+        diff = (diff - ss) / 60;
+        var mm = diff % 60;
+        diff = (diff - mm) / 60;
+        var hh = diff % 24;
+        days = (diff - hh) / 24;
+
+        var formatted_hh = ("0" + hh).slice(-2).toString();
+        var formatted_mm = ("0" + mm).slice(-2).toString();
+        var formatted_ss = ("0" + ss).slice(-2).toString();
+        var formatted_ms = ("0" + ms + "0").slice(-3).toString();
+
+        return formatted_hh + ":" + formatted_mm + ":" + formatted_ss;
+    }
+
+    function updateMeetingData(zip){
+        var meeting_id = zip.meeting_id;
+        var start_time_data = generateMeetingDate(zip.start_time);
+        var meeting_date = start_time_data.date;
+        var meeting_start_time = start_time_data.time;
+        var meeting_duration = getMeetingDuration(zip.start_time, zip.end_time);
+
+        $('#meeting-id').text("ID: " + meeting_id);
+        $('#meeting-date').text("Date: " + meeting_date);
+        $('#meeting-time').text("Start Time: " + meeting_start_time);
+        $('#meeting-duration').text("Duration: " + meeting_duration);
+    }
+
+    function updateBookmarks(zip){
+        var data = zip.notes.filter(function(obj){return obj["type"] == "bookmark"});
+
+        var bookmark_html = "";
+        data.forEach(function(obj){
+
+            var bookmark_arr = obj.content;
+            var row_html = "";
+
+            var host_transcription = bookmark_arr.filter(function(d){return d["origin"] == "host"});
+            var guest_transcription = bookmark_arr.filter(function(d){return d["origin"] == "guest"});
+
+            if (!host_transcription.length && !guest_transcription.length){
+
+                var row_data = bookmark_arr[0];
+
+                row_html = "<tr>" +
+                    "<td>" + row_data.content + "</td>" +
+                    "<td>" + getMeetingDuration(zip.start_time, obj.event_time)+ "</td></tr>"; 
+                
+                bookmark_html += row_html;
+            
+            }
+            else{
+
+                var host_final = "Host: "; 
+                var guest_final = "Guest: ";
+
+                host_transcription.forEach(function(hd){
+                    host_final += hd.content;
+                });
+
+                guest_transcription.forEach(function(gd){
+                   guest_final += gd.content;
+                });
+
+                var final_bookmark_text = "";
+
+                if (host_transcription.length){
+                    final_bookmark_text += host_final;
+                    final_bookmark_text += "<br>";
+                }
+                if (guest_transcription.length){
+                    final_bookmark_text += guest_final;
+                }
+
+                row_html += "<tr>" +
+                    "<td>" + final_bookmark_text + "</td>" +
+                    "<td>" + getMeetingDuration(zip.start_time, obj.event_time)+ "</td></tr>";
+
+                bookmark_html += row_html;
+
+            }
+        });
+
+        $('.bookmark-data-tbody').html(bookmark_html);
+
+    }
+
+    function updateNotes(zip){
+        var data = zip.notes.filter(function(obj){return obj["type"] == "notes"});
+
+        data.forEach(function(d){
+            var row_html = "<tr>" +
+                    "<td>" + d.content + "</td>" +
+                    "<td>" + getMeetingDuration(zip.start_time, d.event_time)+ "</td></tr>";
+            
+            $('.notes-data-tbody').html(row_html);
+        });
+    }
+
+    function updateCapturedImages(zip){
+        var data = zip.notes.filter(function(obj){return obj["type"] == "image"});
+
+        data.forEach(function(d){
+            var html = "<div class='col-md-3 has-shadow' style='margin-left:5%'>" +
+                "<div><img style='max-width:100%;max-height:100%' src='" + d.content + "'>" +
+                "</div>" +
+                "<div class='text-center has-padding' style='margin-top:5%'>" + getMeetingDuration(zip.start_time, d.event_time) +
+                "</div>"; 
+
+            $('.capture-moments-data').append(html);
+        });
+    }
+
+    function updateQuestions(zip){
+        var data = zip.questionsAsked.questionsAsked;
+
+        data.forEach(function(d){
+            var row_html = "<tr>" +
+                    "<td>" + d + "</td>" + 
+                    "</tr>";
+            
+            $('.questions-data-tbody').append(row_html);
+                
+        });
+    }
+
+    function updateSentimentOutliers(zip){
+        var highSentimentOutliers = zip.highSentimentSentence.highSentimentSentence;
+        var lowSentimentOutliers = zip.lowSentimentSentence.lowSentimentSentence;
+
+        var sentiment_outlier_html = "";
+
+        lowSentimentOutliers.forEach(function(d){
+
+            var row_html = "<tr>" +
+                    "<td>" + d[1] + "</td>" + 
+                    "</tr>";
+            
+            $('.outliers-data-tbody').append(row_html);
+
+        });
+
+        highSentimentOutliers.forEach(function(d){
+
+            var row_html = "<tr>" +
+                    "<td>" + d[1] + "</td>" + 
+                    "</tr>";
+            
+            $('.outliers-data-tbody').append(row_html);
+
+        });
     }
 
     window.addEventListener("dashboard-data", function(evt){
@@ -198,7 +408,12 @@
         var recording_data = data.recording;
 
         if (zip_data){
-
+            updateMeetingData(zip_data);
+            updateBookmarks(zip_data);
+            updateCapturedImages(zip_data);
+            updateNotes(zip_data);
+            updateQuestions(zip_data);
+            updateSentimentOutliers(zip_data);
         }
 
     });
