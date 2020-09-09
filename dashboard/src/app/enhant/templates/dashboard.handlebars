@@ -1,0 +1,205 @@
+<style>
+    .card{
+        height: 296px;
+        margin-left: 2%;
+    }
+
+    .card-cell{
+        margin-top: 32px;
+    }
+
+    .cell-text{
+        font-size: 20px;
+    }
+
+    .section{
+        margin-top: 2%;
+    }
+
+    .meeting-data-container{
+        padding: 2%;
+    }
+</style>
+
+<div class="row section">
+    <div class="col-xs-3 has-shadow card text-center">
+        <div class="row card-cell">
+            <span class="cell-text">Call Duration</span>
+        </div>
+        <div class="row card-cell">
+            <img width="112" height="112" src="public/img/clock.svg">
+        </div>
+
+         <div class="row card-cell">
+            <span class="cell-text" id="call-duration">35 min</span>
+        </div>
+    </div>
+    <div class="col-xs-3 has-shadow card text-center">
+        <div class="row card-cell">
+            <span class="cell-text">Average Sentiment</span>
+        </div>
+        <div class="row card-cell">
+            <img width="112" height="112" src="public/img/satisfied.svg">
+        </div>
+    </div>
+    <div class="col-xs-3 has-shadow card text-center">
+        <div class="row card-cell">
+            <span class="cell-text">Average Engagement</span>
+        </div>
+        <div class="row card-cell">
+            <img width="112" height="112" src="public/img/engagement.svg">
+        </div>
+
+         <div class="row card-cell">
+            <span class="cell-text" id="call-duration">80%</span>
+        </div>
+    </div>
+
+
+</div>
+
+<div class="row section has-shadow">
+    <div class="meeting-data-container">
+        <div class="meeting-info">
+            <div class="row">
+                <div class="col-xs-3">
+                    <span class="cell-text">Meeting</span>
+                </div>
+            </div>
+
+            <div class="row" style="margin-top: 2%;">
+                <div class="col-xs-3">
+                    <span class="cell-text">ID: 189698629</span>
+                </div>
+                <div class="col-xs-3">
+                    <span class="cell-text">Date: 2020/09/08</span>
+                </div>
+                <div class="col-xs-3">
+                    <span class="cell-text">Start Time: 14:01</span>
+                </div>
+                <div class="col-xs-3">
+                    <span class="cell-text">Duration: 00:35:09</span>
+                </div>
+            </div>
+        </div>
+
+        {{#if context.recording}}
+        <div class="section recording"></div>
+
+        {{/if}}
+
+        {{#if context.bookmark}}
+        <div class="section bookmark has-shadow">
+            <div class="row">
+                <div class="col-xs-10 offset-xs-1">
+                    <div class="row heading">
+                        <div class="col-xs-3">
+                             <span class="cell-text">Bookmark</span>
+                        </div>
+                       
+                    </div>
+                </div>
+            </div>
+        </div>
+        {{/if}}
+
+        {{#if context.images}}
+       <div class="section images has-shadow">
+            <div class="row">
+                <div class="col-xs-10 offset-xs-1">
+                    <div class="row heading">
+                        <div class="col-xs-3">
+                             <span class="cell-text">Captured Moment</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {{/if}}
+    
+    
+        {{#CheckIfbothTrue context.notes context.questions}}
+        <div class="section">
+            <div class="row">
+                <div class="col-xs-5 notes has-shadow">
+                    <div class="row heading"></div>
+                        <div class="col-xs-3">
+                             <span class="cell-text">Notes</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-5 questions has-shadow">
+                    <div class="row heading">
+                        <div class="col-xs-3">
+                             <span class="cell-text">Questions</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {{else}}
+        {{#if context.notes}}
+        <div class="section notes has-shadow">
+            <div class="row">
+                <div class="col-xs-10 offset-xs-1">
+                    <div class="row heading">
+                       <div class="col-xs-3">
+                             <span class="cell-text">Notes</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {{/if}}
+        {{#if context.questions}}
+        <div class="section questions has-shadow">
+            <div class="row">
+                <div class="col-xs-10 offset-xs-1">
+                    <div class="row heading">
+                        <div class="col-xs-3">
+                             <span class="cell-text">Questions</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {{/if}}
+        {{/CheckIfbothTrue}}
+
+        {{#if context.sentiment_outliers}}
+        <div class="section outliers has-shadow">
+            <div class="row">
+                <div class="col-xs-10 offset-xs-1">
+                    <div class="row heading">
+                       <div class="col-xs-3">
+                             <span class="cell-text">Sentiment Outliers</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {{/if}}
+    </div>
+</div>
+
+
+<script>
+
+    function calculateCallDurationInMinutes(){
+
+    }
+
+    window.addEventListener("dashboard-data", function(evt){
+        var data = evt.detail;
+
+        console.log(" dashboard data : ", data);
+
+        var zip_data = data.zip;
+        var recording_data = data.recording;
+
+        if (zip_data){
+
+        }
+
+    });
+</script>

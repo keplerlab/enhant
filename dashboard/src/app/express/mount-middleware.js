@@ -7,9 +7,6 @@ const lastResortErrorHandler = require('./last-resort-error-handler')
 const primeRequestContext = require('./prime-request-context')
 const attachLocals = require('./attach-locals')
 
-var MongoClient = require('mongodb').MongoClient;
-var db;
-
 // Initialize connection once
 
 
@@ -21,21 +18,12 @@ var db;
 function mountMiddleware(app, env) {
 
   app.use(lastResortErrorHandler)
-  app.use(primeRequestContext)
+  // app.use(primeRequestContext)
   app.use(attachLocals)
   app.use(bodyParser.urlencoded({ extended: true }));
-  app.use(
-    express.static(join(__dirname, '..', 'public'), { maxAge: 86400000 }))
+  app.use("/public/",
+    express.static(join(__dirname, '..', env.public_folder_name)))
 
-  MongoClient.connect(env.databaseUrl,
-    { useNewUrlParser: true, useUnifiedTopology: true },
-    function (err, client) {
-
-      if (err) throw err;      
-      db = client.db(env.dbName);
-      app.locals.db = db
-
-    });
 
 }
 
