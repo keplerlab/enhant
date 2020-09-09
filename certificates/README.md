@@ -1,0 +1,1 @@
+Certificates should be committed at this location before starting service. 
