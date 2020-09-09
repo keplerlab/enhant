@@ -28,9 +28,9 @@ function requireFromEnv (key) {
 
 module.exports = {
   appName: requireFromEnv('APP_NAME'),
-  databaseUrl: requireFromEnv('DATABASE_URL'),
-  dbName: requireFromEnv('DB_NAME'),
   env: requireFromEnv('NODE_ENV'),
   port: parseInt(requireFromEnv('PORT'), 10),
+  public_folder_name: requireFromEnv('PUBLIC_FOLDER_NAME'),
+  scripts_folder_name: requireFromEnv('SCRIPTS_FOLDER_NAME'),
   version: packageJson.version
 }

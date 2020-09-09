@@ -1,9 +1,9 @@
 
 const createExpressApp = require('./app/express')
-const createConfig = require('./config')
+const loadApps = require('./load_apps')
 const env = require('./env')
 
-const config = createConfig({ env }) 
+const config = loadApps({ env }) 
 const app = createExpressApp({ config, env })
 
 function start () { 
