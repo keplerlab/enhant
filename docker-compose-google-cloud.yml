@@ -16,7 +16,7 @@ services:
       - SAMPLE_RATE=44100
 
   cli:
-    build: keplerlab/enhant-cli:0.1.1
+    image: keplerlab/enhant-cli:0.1.1
     stdin_open: true # docker run -i
     tty: true        # docker run -t
     volumes:
