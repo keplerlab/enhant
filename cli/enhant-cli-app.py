@@ -81,7 +81,7 @@ def analyze(input: str):
         result_zip_name = folder+"_result"
         print(Back.GREEN + f"\n***** Making zip for result: {result_zip_name}.zip ***** \n")
         shutil.make_archive(result_zip_name, 'zip', folder)
-        print(Back.GREEN + f"\n***** View the results on this <url>: {result_zip_name}.zip ***** \n")
+        print(Back.GREEN + f"\n***** Upload this zip and view the results on this url: https://keplerlab.github.io/enhant-dashboard-viewer/***** \n")
 
 
 @app.command()
