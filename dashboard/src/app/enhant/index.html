@@ -36,17 +36,17 @@
             </div>
 
             <div class="row">
-                <div class="col-xs-1 sidenav has-shadow">
+                <div class="sidenav has-shadow">
                      <!--Side Nav-->
                     <div>
                         <ul></ul>
                     </div>
 
                 </div>
-                <div class="col-xs-11 col-xs-offset-1 content">
+                <div class="col-xs-10 col-xs-offset-1 content">
                     <!--app-->
                     <!--Contents will render inside this-->
-                    <div id="app"></div>
+                    <div id="app" class="row"></div>
                 </div>
             </div>
             
@@ -158,6 +158,7 @@
     window.addEventListener("dashboard", function(evt){
 
         var data = evt.detail;
+        
         var context = generateContextForDashboardTemplate(data);
         loadDashboardTemplateIntoApp(data, context);
 
