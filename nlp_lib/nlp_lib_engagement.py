@@ -11,6 +11,7 @@ import flair
 from types import SimpleNamespace
 import copy
 
+
 class NLP_lib_engagement(object):
     def __init__(self):
         """init function
@@ -36,7 +37,7 @@ class NLP_lib_engagement(object):
         :type msg: dict
         :return: [description]
         :rtype: float
-        """          
+        """
         if meeting_id in self.totalTime:
             pass
         else:
@@ -61,7 +62,9 @@ class NLP_lib_engagement(object):
         self.avgWordsPerMinuteAdvisor = {}
         self.spokenMsgsClientInTimeWindow = {}
         self.spokenMsgsAdvisorInTimeWindow = {}
-        print("\n\n**********Reset state for engagement detection complete**********\n\n")
+        print(
+            "\n\n**********Reset state for engagement detection complete**********\n\n"
+        )
 
     def _getEngagement(self, meeting_id: str, origin: str, msg: dict) -> float:
         """Get engagement score at receiving msg
@@ -101,16 +104,18 @@ class NLP_lib_engagement(object):
             self.spokenMsgsClientInTimeWindow[meeting_id].append(wordMessage2)
 
         self.spokenMsgsClientInTimeWindow[meeting_id] = self._cleanListForTimeWindow(
-            self.spokenMsgsClientInTimeWindow[meeting_id], float(msg["end_time"]) / 1000.0
+            self.spokenMsgsClientInTimeWindow[meeting_id],
+            float(msg["end_time"]) / 1000.0,
         )
 
         self.spokenMsgsAdvisorInTimeWindow[meeting_id] = self._cleanListForTimeWindow(
-            self.spokenMsgsAdvisorInTimeWindow[meeting_id], float(msg["end_time"]) / 1000.0
+            self.spokenMsgsAdvisorInTimeWindow[meeting_id],
+            float(msg["end_time"]) / 1000.0,
         )
 
         for item in self.spokenMsgsClientInTimeWindow[meeting_id]:
             self.totalSpokenWordsClient[meeting_id] += item.num_of_words
-            self.totalTime[meeting_id] += (item.timestamp_stop - item.timestamp_start)
+            self.totalTime[meeting_id] += item.timestamp_stop - item.timestamp_start
 
         for item in self.spokenMsgsAdvisorInTimeWindow[meeting_id]:
             self.totalSpokenWordsAdvisor[meeting_id] += item.num_of_words
@@ -132,7 +137,7 @@ class NLP_lib_engagement(object):
         )
 
         avg_engagement_score = round(avg_engagement_score)
-        #print("avg_engagement_score", avg_engagement_score)
+        # print("avg_engagement_score", avg_engagement_score)
 
         return avg_engagement_score
 
@@ -143,7 +148,7 @@ class NLP_lib_engagement(object):
         :type value: float
         :return: [description]
         :rtype: float
-        """          
+        """
         if value > 1.0:
             return 1.0
         elif value < 0.0:

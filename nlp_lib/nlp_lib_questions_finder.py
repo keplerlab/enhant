@@ -9,15 +9,15 @@ import json
 from nltk import sent_tokenize
 import nltk
 
-
 class Questions_finder(object):
-    """[Class for extracting interrogative sentences (Questions) from given text]
+    """Class for extracting interrogative sentences (Questions) from given text
 
     :param object: [description]
     :type object: [type]
     """
+
     def __init__(self):
-        """[init class]
+        """init class
         """
         # Uncomment next line if nps_chat dataset already not downloaded
         # nltk.download("nps_chat")
@@ -32,38 +32,38 @@ class Questions_finder(object):
         self.classifier = nltk.NaiveBayesClassifier.train(train_set)
         print("Question Answer classifer model ready for inference")
 
-    def _dialogue_act_features(self, post):
-        """[tokenize and convert to lower case posts]
+    def _dialogue_act_features(self, post: list) -> dict:
+        """tokenize and convert to lower case posts
 
         :param post: [description]
-        :type post: [type]
+        :type post: list
         :return: [description]
-        :rtype: [type]
+        :rtype: dict
         """
         features = {}
         for word in nltk.word_tokenize(post):
             features["contains({})".format(word.lower())] = True
         return features
 
-    def processMessage(self, requestData):
-        """[Main public function, Returns responses as rules along with score]
+    def processMessage(self, requestData: dict) -> list:
+        """Main public function, Returns responses as rules along with score
 
         :param requestData: [description]
-        :type requestData: [type]
+        :type requestData: dict
         :return: [description]
-        :rtype: [type]
-        """        
+        :rtype: list
+        """
         interrogativeSentences = self._extract_questions(requestData)
 
         return interrogativeSentences
 
-    def _extract_questions(self, requestData):
-        """[Function for classifying data into question or not]
+    def _extract_questions(self, requestData: dict) -> list:
+        """Function for classifying data into question or not
 
         :param requestData: [description]
-        :type requestData: [type]
+        :type requestData: dict
         :return: [description]
-        :rtype: [type]
+        :rtype: list
         """
         sentences = self._tokenize_sentences(requestData)
         sentences = [x.strip() for x in sentences]
@@ -80,5 +80,12 @@ class Questions_finder(object):
                 questions.append(sentence)
         return questions
 
-    def _tokenize_sentences(self, sentences):
+    def _tokenize_sentences(self, sentences: list) -> list:
+        """Call nltk sentence tokenizer
+
+        :param sentences: [description]
+        :type sentences: list
+        :return: [description]
+        :rtype: list
+        """
         return sent_tokenize(sentences)

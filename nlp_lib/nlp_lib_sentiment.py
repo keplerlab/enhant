@@ -12,31 +12,32 @@ import flair
 
 
 class NLP_lib_sentiment(object):
-    """[This Class is for extracting sentiments score from given text ]
+    """This Class is for extracting sentiments score from given text
 
     :param object: [description]
     :type object: [type]
     """
+
     def __init__(self):
         """[init function]
         """
         self.flair_sentiment = flair.models.TextClassifier.load("en-sentiment")
 
-    def processMessage(self, requestData):
-        """[Returns responses as rules along with score]
+    def processMessage(self, requestData: dict) -> float:
+        """Returns responses as rules along with score
 
         :param requestData: [description]
-        :type requestData: [type]
+        :type requestData: dict
         :return: [description]
-        :rtype: [type]
-        """        
+        :rtype: float
+        """
         sentimentScore = self._getSentiment(requestData)
 
         return sentimentScore
 
-    def _getSentiment(self, requestData):
-        """[primary internal function for classifying sentiment using pretrained flair
-        sentiment classifier model]
+    def _getSentiment(self, requestData: dict) -> float:
+        """primary internal function for classifying sentiment using pretrained flair
+        sentiment classifier model
 
         :param requestData: [description]
         :type requestData: [type]
@@ -56,21 +57,21 @@ class NLP_lib_sentiment(object):
                 total_sentiment = total_sentiment - (sentiment_sentence[0].score)
             else:
                 total_sentiment = total_sentiment + (sentiment_sentence[0].score)
-            
+
         if len(sentences) > 0:
             avg_sentiment = total_sentiment / len(sentences)
-            avg_sentiment = (avg_sentiment + 1.0)/2.0
+            avg_sentiment = (avg_sentiment + 1.0) / 2.0
         else:
             avg_sentiment = 0.5
 
         return avg_sentiment
 
-    def _tokenize_sentences(self, sentences):
-        """[Tokenize given sentences using nltk]
+    def _tokenize_sentences(self, sentences: list) -> list:
+        """Tokenize given sentences using nltk
 
         :param sentences: [description]
-        :type sentences: [type]
+        :type sentences: list
         :return: [description]
-        :rtype: [type]
+        :rtype: list
         """
         return sent_tokenize(sentences)
