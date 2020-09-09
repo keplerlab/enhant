@@ -6,7 +6,8 @@
 import sys
 import os
 from typing import NoReturn, Tuple, Dict
-from colorama import init, Fore 
+from colorama import init, Fore
+
 init(init(autoreset=True))
 
 sys.path.insert(1, os.path.join(sys.path[0], "..", "nlp_lib"))
@@ -15,6 +16,7 @@ from nlp_lib_questions_finder import Questions_finder
 
 question_finder = Questions_finder()
 
+
 class QuestionsFinder(object):
     """[Client for handling notes]
 
@@ -22,7 +24,7 @@ class QuestionsFinder(object):
     :type object: [type]
     :return: [description]
     :rtype: [type]
-    """    
+    """
 
     def __init__(self):
         """[init function]
@@ -31,7 +33,7 @@ class QuestionsFinder(object):
         self.processed_conversation_collection = "conversations_processed"
         self.collection = "transcriptions"
 
-    def _transformTranscription(self, transcriptions_pkt:dict)->Dict:
+    def _transformTranscription(self, transcriptions_pkt: dict) -> Dict:
         """[transform transcription packet]
 
         :param transcriptions_pkt: [description]
@@ -41,8 +43,12 @@ class QuestionsFinder(object):
         """
         return transcriptions_pkt["msg"]["data"]["transcription"]["content"]
 
-    def process(self, input_json_data, guest_transcription_list:list, host_transcription_list:list) \
-        ->NoReturn:
+    def process(
+        self,
+        input_json_data: dict,
+        guest_transcription_list: list,
+        host_transcription_list: list,
+    ) -> NoReturn:
         """[Public function for saving engagement]
 
         :param conv_id: [description]
@@ -54,7 +60,6 @@ class QuestionsFinder(object):
             print(f"No matching conversation for input_json_data: {input_json_data}")
             return
         conv_id = input_json_data["meeting_id"]
-
 
         listOfQuestions = []
         if guest_transcription_list is not None:
@@ -71,7 +76,7 @@ class QuestionsFinder(object):
                 if len(interrogativeSentences) > 0:
                     listOfQuestions.extend(interrogativeSentences)
 
-        #print("listOfQuestions", listOfQuestions)
+        # print("listOfQuestions", listOfQuestions)
         if len(listOfQuestions) > 0:
             jsonPkt = {"questionsAsked": listOfQuestions}
             input_json_data["questionsAsked"] = jsonPkt

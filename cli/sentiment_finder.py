@@ -49,7 +49,7 @@ class SentimentFinder(object):
 
     def process(
         self,
-        input_json_data,
+        input_json_data: dict,
         guest_transcription_list: list,
         host_transcription_list: list,
     ) -> NoReturn:

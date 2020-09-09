@@ -81,6 +81,8 @@ def analyze(input: str):
         result_zip_name = folder+"_result"
         print(Back.GREEN + f"\n***** Making zip for result: {result_zip_name}.zip ***** \n")
         shutil.make_archive(result_zip_name, 'zip', folder)
+        print(Back.GREEN + f"\n***** View the results on this <url>: {result_zip_name}.zip ***** \n")
+
 
 @app.command()
 def delete(folder: str):
