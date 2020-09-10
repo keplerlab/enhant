@@ -86,7 +86,7 @@
             zip.forEach(function(file){
 
                 var name_arr = file.split("/");
-                if (name_arr.length > 1){
+                if (name_arr.length >= 1){
                     var fileName = name_arr[name_arr.length - 1];
                     if (fileName == "processed.json"){
 

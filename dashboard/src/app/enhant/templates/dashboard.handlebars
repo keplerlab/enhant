@@ -17,26 +17,46 @@
     }
 
     .has-padding{
-        padding: 2%;
+        padding: 5%;
+    }
+
+    .table-responsive{
+        overflow-y: scroll;
+        height: 200px;
+    }
+
+    .inter-regular-16{
+        font-family: "Inter-Regular";
+        font-size: 16px;
+    }
+
+    .inter-bold-21{
+        font-family: "Inter-Bold";
+        font-size: 21px;
+    }
+
+    .inter-bold-16{
+        font-family: "Inter-Bold";
+        font-size: 16px;
     }
 </style>
 
 <div class="row section">
     <div class="col-xs-3 has-shadow card text-center">
         <div class="row card-cell">
-            <span class="cell-text">Call Duration</span>
+            <span class="cell-text inter-bold-21">Call Duration</span>
         </div>
         <div class="row card-cell">
             <img width="112" height="112" src="public/img/clock.svg">
         </div>
 
          <div class="row card-cell">
-            <span class="cell-text" id="call-duration">45 sec</span>
+            <span class="cell-text inter-bold-21" id="call-duration">45 sec</span>
         </div>
     </div>
     <div class="col-xs-3 has-shadow card text-center">
         <div class="row card-cell">
-            <span class="cell-text">Average Sentiment</span>
+            <span class="cell-text inter-bold-21">Average Sentiment</span>
         </div>
         <div class="row card-cell">
             <img width="112" height="112" src="public/img/satisfied.svg">
@@ -44,14 +64,14 @@
     </div>
     <div class="col-xs-3 has-shadow card text-center">
         <div class="row card-cell">
-            <span class="cell-text">Average Engagement</span>
+            <span class="cell-text inter-bold-21">Average Engagement</span>
         </div>
         <div class="row card-cell">
             <img width="112" height="112" src="public/img/engagement.svg">
         </div>
 
          <div class="row card-cell">
-            <span class="cell-text" id="call-duration">80%</span>
+            <span class="cell-text inter-bold-21" id="call-duration">80%</span>
         </div>
     </div>
 
@@ -62,23 +82,23 @@
     <div class="col-xs-12 meeting-data-container has-padding">
         <div class="meeting-info">
             <div class="row">
-                <div class="col-xs-3">
-                    <span class="cell-text">Meeting</span>
+                <div class="col-xs-4">
+                    <span class="cell-text inter-bold-21">Meeting</span>
                 </div>
             </div>
 
             <div class="row" style="margin-top: 2%;">
                 <div class="col-xs-3">
-                    <span class="cell-text" id="meeting-id">ID: </span>
+                    <span class="cell-text inter-bold-16" id="meeting-id">ID: </span>
                 </div>
                 <div class="col-xs-3">
-                    <span class="cell-text" id="meeting-date">Date: </span>
+                    <span class="cell-text inter-bold-16" id="meeting-date">Date: </span>
                 </div>
                 <div class="col-xs-3">
-                    <span class="cell-text" id="meeting-time">Start Time: </span>
+                    <span class="cell-text inter-bold-16" id="meeting-time">Start Time: </span>
                 </div>
                 <div class="col-xs-3">
-                    <span class="cell-text" id="meeting-duration">Duration: </span>
+                    <span class="cell-text inter-bold-16" id="meeting-duration">Duration: </span>
                 </div>
             </div>
         </div>
@@ -93,14 +113,14 @@
             <div class="row">
                 <div class="col-xs-12 has-padding">
                     <div class="row heading">
-                        <div class="col-xs-3">
-                             <span class="cell-text">Bookmarks</span>
+                        <div class="col-xs-4">
+                             <span class="cell-text inter-bold-21">Bookmarks</span>
                         </div>
                     </div>
 
-                    <div class="table-responsive" style="margin-top:2%;">
+                    <div class="table-responsive" style="margin-top:5%;">
                         <table class="table table-striped">
-                        <tbody class="bookmark-data-tbody">
+                        <tbody class="bookmark-data-tbody inter-regular-16">
                         </tbody>
                         </table>
                     </div>
@@ -114,11 +134,11 @@
             <div class="row">
                 <div class="col-xs-12 has-padding">
                     <div class="row heading">
-                        <div class="col-xs-3">
-                             <span class="cell-text">Captured Moments</span>
+                        <div class="col-xs-4">
+                             <span class="cell-text inter-bold-21">Captured Moments</span>
                         </div>
                     </div>
-                    <div class="clearfix capture-moments-data" style="margin-top:2%;">
+                    <div class="clearfix capture-moments-data" style="margin-top:5%;">
                     </div>
                 </div>
             </div>
@@ -129,31 +149,31 @@
         {{#CheckIfbothTrue context.notes context.questions}}
         <div class="section">
             <div class="clearfix">
-                <div class="col-xs-6 notes has-shadow" style="height:196px;">
+                <div class="col-xs-6 notes has-shadow">
                     <div class="data-container has-padding">
                         <div class="row heading">
-                            <div class="col-xs-3">
-                                <span class="cell-text">Notes</span>
+                            <div class="col-xs-4">
+                                <span class="cell-text inter-bold-21">Notes</span>
                             </div>
                         </div>
-                        <div class="table-responsive" style="margin-top:2%;">
+                        <div class="table-responsive" style="margin-top:5%;">
                         <table class="table table-striped">
-                        <tbody class="notes-data-tbody">
+                        <tbody class="notes-data-tbody inter-regular-16">
                         </tbody>
                         </table>
                     </div>
                     </div>
                 </div>
-                <div class="col-xs-6 questions has-shadow" style="height:196px;">
+                <div class="col-xs-6 questions has-shadow">
                     <div class="data-container has-padding">
                         <div class="row heading">
-                            <div class="col-xs-3">
-                                <span class="cell-text">Questions</span>
+                            <div class="col-xs-4">
+                                <span class="cell-text inter-bold-21">Questions</span>
                             </div>
                         </div>
-                        <div class="table-responsive" style="margin-top:2%;">
+                        <div class="table-responsive" style="margin-top:5%;">
                         <table class="table table-striped">
-                        <tbody class="questions-data-tbody">
+                        <tbody class="questions-data-tbody inter-regular-16">
                         </tbody>
                         </table>
                     </div>
@@ -167,13 +187,13 @@
             <div class="row">
                 <div class="col-xs-12 has-padding">
                     <div class="row heading">
-                        <div class="col-xs-3">
-                             <span class="cell-text">Notes</span>
+                        <div class="col-xs-4">
+                             <span class="cell-text inter-bold-21">Notes</span>
                         </div>
                     </div>
-                    <div class="table-responsive" style="margin-top:2%;">
+                    <div class="table-responsive" style="margin-top:5%;">
                         <table class="table table-striped">
-                        <tbody class="notes-data-tbody">
+                        <tbody class="notes-data-tbody inter-regular-16">
                         </tbody>
                         </table>
                     </div>
@@ -186,13 +206,13 @@
             <div class="row">
                 <div class="col-xs-12 has-padding">
                     <div class="row heading">
-                        <div class="col-xs-3">
-                             <span class="cell-text">Questions</span>
+                        <div class="col-xs-4">
+                             <span class="cell-text inter-bold-21">Questions</span>
                         </div>
                     </div>
-                    <div class="table-responsive" style="margin-top:2%;">
+                    <div class="table-responsive" style="margin-top:5%;">
                         <table class="table table-striped">
-                        <tbody class="questions-data-tbody">
+                        <tbody class="questions-data-tbody inter-regular-16">
                         </tbody>
                         </table>
                     </div>
@@ -207,13 +227,13 @@
             <div class="row">
                 <div class="col-xs-12 has-padding">
                     <div class="row heading">
-                        <div class="col-xs-3">
-                             <span class="cell-text">Sentiment Outliers
+                        <div class="col-xs-4">
+                             <span class="cell-text inter-bold-21">Sentiment Outliers
                         </div>
                     </div>
-                    <div class="table-responsive" style="margin-top:2%;">
+                    <div class="table-responsive" style="margin-top:5%;">
                         <table class="table table-striped">
-                        <tbody class="outliers-data-tbody">
+                        <tbody class="outliers-data-tbody inter-regular-16">
                         </tbody>
                         </table>
                     </div>
@@ -352,7 +372,7 @@
             var html = "<div class='col-md-3 has-shadow' style='margin-left:5%'>" +
                 "<div><img style='max-width:100%;max-height:100%' src='" + d.content + "'>" +
                 "</div>" +
-                "<div class='text-center has-padding' style='margin-top:5%'>" + getMeetingDuration(zip.start_time, d.event_time) +
+                "<div class='text-center has-padding inter-regular-16' style='margin-top:5%'>" + getMeetingDuration(zip.start_time, d.event_time) +
                 "</div>"; 
 
             $('.capture-moments-data').append(html);
@@ -399,6 +419,14 @@
         });
     }
 
+    function reset(){
+        $('.outliers-data-tbody').html("");
+        $('.questions-data-tbody').html("");
+        $('.notes-data-tbody').html("");
+         $('.bookmark-data-tbody').html("");
+          $('.capture-moments-data').html("");
+    }
+
     window.addEventListener("dashboard-data", function(evt){
         var data = evt.detail;
 
@@ -406,6 +434,8 @@
 
         var zip_data = data.zip;
         var recording_data = data.recording;
+
+        reset();
 
         if (zip_data){
             updateMeetingData(zip_data);
