@@ -151,12 +151,14 @@
 
     function loadUploadTemplateIntoApp(){
         const el = $('#app');
+        homeSelected();
         var html = getUploadTemplate();
         el.html(html);
     }
 
     function loadDashboardTemplateIntoApp(data, context){
         const el = $('#app');
+        dashboardSelected();
         var html = getDashboardTemplate(data, context);
         el.html(html);
     }
@@ -172,7 +174,6 @@
 
     function regsiterEvents(){
         $('#sidenav-home-icon').click(function(){
-            homeSelected();
             loadUploadTemplateIntoApp();
         });
     }
@@ -220,7 +221,6 @@
         var data = evt.detail;
         
         var context = generateContextForDashboardTemplate(data);
-        dashboardSelected();
         loadDashboardTemplateIntoApp(data, context);
 
         // forward message to dashboard
