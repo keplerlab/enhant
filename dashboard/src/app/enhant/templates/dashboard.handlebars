@@ -10,6 +10,7 @@
 
     .cell-text{
         font-size: 20px;
+        word-break: break-all;
     }
 
     .section{
@@ -41,6 +42,48 @@
     }
 </style>
 
+<style>
+    .GaugeMeter{
+	Position:        Relative;
+	Text-Align:      Center;
+	Overflow:        Hidden;
+	Cursor:          Default;
+}
+
+.GaugeMeter SPAN,
+    .GaugeMeter B{
+    	Margin:          0 23%;
+    	Width:           54%;
+    	Position:        Absolute;
+    	Text-align:      Center;
+    	Display:         Inline-Block;
+    	Color:           RGBa(0,0,0,.8);
+    	Font-Weight:     100;
+    	Font-Family:     "Open Sans", Arial;
+    	Overflow:        Hidden;
+    	White-Space:     NoWrap;
+    	Text-Overflow:   Ellipsis;
+}
+.GaugeMeter[data-style="Semi"] B{
+	Margin:          0 10%;
+	Width:           80%;
+}
+
+.GaugeMeter S,
+    .GaugeMeter U{
+    	Text-Decoration: None;
+    	Font-Size:       .5em;
+    	Opacity:         .5;
+}
+
+.GaugeMeter B{
+	Color:           Black;
+	Font-Weight:     300;
+	Font-Size:       .5em;
+	Opacity:         .8;
+}
+</style>
+
 <div class="row section">
     <div class="col-xs-3 has-shadow card text-center">
         <div class="row card-cell">
@@ -51,7 +94,7 @@
         </div>
 
          <div class="row card-cell">
-            <span class="cell-text inter-bold-21" id="call-duration">45 sec</span>
+            <span class="cell-text inter-bold-21" id="call-duration"></span>
         </div>
     </div>
     <div class="col-xs-3 has-shadow card text-center">
@@ -59,7 +102,7 @@
             <span class="cell-text inter-bold-21">Average Sentiment</span>
         </div>
         <div class="row card-cell">
-            <img width="112" height="112" src="public/img/satisfied.svg">
+            <img width="112" height="112" id="average-sentiment" src="public/img/dissatisfied_sentiment.svg">
         </div>
     </div>
     <div class="col-xs-3 has-shadow card text-center">
@@ -67,11 +110,11 @@
             <span class="cell-text inter-bold-21">Average Engagement</span>
         </div>
         <div class="row card-cell">
-            <img width="112" height="112" src="public/img/engagement.svg">
+            <div class="GaugeMeter" style="margin: auto"></div>
         </div>
 
          <div class="row card-cell">
-            <span class="cell-text inter-bold-21" id="call-duration">80%</span>
+            <span class="cell-text inter-bold-21" id="average-engagement"></span>
         </div>
     </div>
 
@@ -104,8 +147,13 @@
         </div>
 
         {{#if context.recording}}
-        <div class="section recording"></div>
-
+        <div class="section recording">
+            <div class="row">
+                <div class="col-xs-12">
+                    <video width="100%" height="100%" id="recording-video" src="" controls></video>
+                </div>
+            </div>
+        </div>
         {{/if}}
 
         {{#if context.bookmark}}
@@ -244,7 +292,7 @@
     </div>
 </div>
 
-
+<script src="public/scripts/GaugeMeter.js"></script>
 <script>
 
     function generateMeetingDate(start_time){
@@ -393,38 +441,126 @@
     }
 
     function updateSentimentOutliers(zip){
-        var highSentimentOutliers = zip.highSentimentSentence.highSentimentSentence;
-        var lowSentimentOutliers = zip.lowSentimentSentence.lowSentimentSentence;
+        var highSentimentOutliers = zip.highSentimentSentences.highSentimentSentencesGuest;
+        var lowSentimentOutliers = zip.lowSentimentSentences.lowSentimentSentencesGuest;
+
+        var final_arr = [];
+        final_arr.push(...highSentimentOutliers);
+        final_arr.push(...lowSentimentOutliers);
+
+        // sort the final array
+        final_arr.sort(function(a, b){
+            var et_a = zip.start_time + a[0];
+            var et_b = zip.start_time + b[0];
+
+            return et_a > et_b;
+        })
 
         var sentiment_outlier_html = "";
 
-        lowSentimentOutliers.forEach(function(d){
+        final_arr.forEach(function(d){
+
+            // add number of milliseconds to the start time
+            var end_time = zip.start_time + d[0];
+            var elapsed_time = getMeetingDuration(zip.start_time, end_time);
 
             var row_html = "<tr>" +
-                    "<td>" + d[1] + "</td>" + 
-                    "</tr>";
-            
-            $('.outliers-data-tbody').append(row_html);
-
-        });
-
-        highSentimentOutliers.forEach(function(d){
-
-            var row_html = "<tr>" +
-                    "<td>" + d[1] + "</td>" + 
-                    "</tr>";
+                    "<td>" + d[1] + "</td>" +
+                    "<td>" + elapsed_time + "</td></tr>";
             
             $('.outliers-data-tbody').append(row_html);
 
         });
     }
 
+    function updateCallDuration(zip){
+        var duration = getMeetingDuration(zip.start_time,zip.end_time);
+        var duration_arr = duration.split(":");
+
+        var hh = duration_arr[0];
+        var mm = duration_arr[1];
+        var ss = duration_arr[2];
+
+        // check if hours is 0
+        if (hh == "00"){
+
+            // check if min is 0
+            if (mm == "00"){
+                var text = ss + " " + "sec";
+                $('#call-duration').text(text);
+            }
+            else{
+                var text = mm + " " +"min" + " " + ss + " " +"sec";
+                $('#call-duration').text(text);
+            }
+        }
+        else{
+
+            if (mm == "00"){
+                var text = hh + " " +"hrs";
+                $('#call-duration').text(text);
+            }
+            else{
+                var text = hh + " " +"hrs" + " " + mm + " " +"min";
+                $('#call-duration').text(text);
+            }
+        }
+    }
+
+    function updateAverageEngagementScore(zip){
+
+        var averageScore = zip.engagement_scores.avg_engagement_score;
+
+        $(".GaugeMeter").gaugeMeter({
+           "percent": averageScore,
+            "text": null,
+            "text_size": 0.0,
+            "prepend": null,
+            "append": "%",
+            "size": "112",
+            "width": "12",
+            "style": "Full",
+            "color": "#1E90FF",
+            "back": "#E6E6E6",
+            "theme": null,
+            "animate_gauge_colors": false,
+            "animate_text_colors":  false,
+            "label": null,
+            "label_color": null,
+            "stripe": null
+        });
+
+        // this is to remove the text within gauge meter
+        $(".GaugeMeter span").remove();
+
+        $('#average-engagement').text(averageScore + " %");
+
+    }
+
+    function updateAverageSentiment(zip){
+        var sentiment = Number(zip.avgSentimentScoreGuest);
+        if (sentiment <= 0.2){
+            $('#average-sentiment').attr("src", "public/img/dissatisfied_sentiment.svg");
+        }
+        else if (sentiment > 0.2 && sentiment < 0.7){
+            $('#average-sentiment').attr("src", "public/img/neutral_sentiment.svg");
+        }
+        else{
+            $('#average-sentiment').attr("src", "public/img/satisfied_sentiment.svg");
+        }
+    }
+
+    function startVideoPlayback(recording){
+        var url = recording.url;
+        $('#recording-video').attr("src", url);
+    }
+
     function reset(){
         $('.outliers-data-tbody').html("");
         $('.questions-data-tbody').html("");
         $('.notes-data-tbody').html("");
-         $('.bookmark-data-tbody').html("");
-          $('.capture-moments-data').html("");
+        $('.bookmark-data-tbody').html("");
+        $('.capture-moments-data').html("");
     }
 
     window.addEventListener("dashboard-data", function(evt){
@@ -444,6 +580,14 @@
             updateNotes(zip_data);
             updateQuestions(zip_data);
             updateSentimentOutliers(zip_data);
+
+            updateCallDuration(zip_data);
+            updateAverageEngagementScore(zip_data);
+            updateAverageSentiment(zip_data);
+        }
+
+        if (recording_data){
+            startVideoPlayback(recording_data);
         }
 
     });
