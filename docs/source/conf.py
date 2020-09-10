@@ -17,10 +17,8 @@ import sphinx_rtd_theme
 
 sys.path.insert(0, os.path.abspath(os.path.join('..','..','cli')))
 sys.path.insert(0, os.path.abspath(os.path.join('..','..','nlp_lib')))
-sys.path.insert(0, os.path.abspath(os.path.join('..','..','message_processor')))
 
-
-root_for_relative_js_paths = os.path.abspath((os.path.join('..','..','extensions','chrome')))
+root_for_relative_js_paths = os.path.abspath((os.path.join('..','..','plugins','chrome')))
 
 print("root_for_relative_js_paths", root_for_relative_js_paths)
 
