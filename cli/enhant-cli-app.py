@@ -82,16 +82,17 @@ def analyze(input: str):
             + f"\n***** Writing results in file: {output_json_file_name} ***** \n"
         )
         json.dump(input_json_data, json_file, indent=4)
-        result_zip_name = folder + "_result"
-        print(
-            Back.GREEN
-            + f"\n***** Making zip for result: {result_zip_name}.zip ***** \n"
-        )
-        shutil.make_archive(result_zip_name, "zip", folder)
-        print(
-            Back.GREEN
-            + f"\n***** Upload this zip and view the results on this url: https://keplerlab.github.io/enhant-dashboard-viewer/***** \n"
-        )
+        
+    result_zip_name = folder + "_result"
+    print(
+        Back.GREEN
+        + f"\n***** Making zip for result: {result_zip_name}.zip ***** \n"
+    )
+    shutil.make_archive(result_zip_name, "zip", folder)
+    print(
+        Back.GREEN
+        + f"\n***** Upload this zip and view the results on this url: https://keplerlab.github.io/enhant-dashboard-viewer/***** \n"
+    )
 
 
 @app.command()
