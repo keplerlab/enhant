@@ -49,7 +49,18 @@
                 <div class="sidenav has-shadow">
                      <!--Side Nav-->
                     <div>
-                        <ul></ul>
+                        <ul style="list-style: none;padding:0px">
+                            <li class="home-icon" style="width:100%">
+                                <div id="sidenav-home-icon" style="text-align:center;padding: 20%;background-color:#1E90FF;cursor: pointer;">
+                                    <img src="public/img/home_selected.svg">
+                                </div>
+                            </li>
+                            <li class="dashboard-icon" style="width:100%">
+                                <div id="sidenav-dashboard-icon" style="text-align:center;padding: 20%;cursor: pointer;">
+                                    <img src="public/img/dashboard_unselected.svg">
+                                </div>
+                            </li>
+                        </ul>
                     </div>
 
                 </div>
@@ -159,10 +170,49 @@
         });
     }
 
+    function regsiterEvents(){
+        $('#sidenav-home-icon').click(function(){
+            homeSelected();
+            loadUploadTemplateIntoApp();
+        });
+    }
+
     $(document).ready(function(){
         registerHelperFunctions();
         loadUploadTemplateIntoApp();
+
+        regsiterEvents();
     });
+
+    function homeSelected(){
+
+        var img_dashboard = $('#sidenav-dashboard-icon img');
+        var dashboard_div = $('#sidenav-dashboard-icon');
+
+        var img_home = $('#sidenav-home-icon img');
+        var home_div = $('#sidenav-home-icon');
+
+        home_div.css("background-color", "#1E90FF");
+        img_home.attr("src", "public/img/home_selected.svg");
+
+        dashboard_div.css("background-color", "white");
+        img_dashboard.attr("src", "public/img/dashboard_unselected.svg");
+
+    }
+
+    function dashboardSelected(){
+        var img_dashboard = $('#sidenav-dashboard-icon img');
+        var dashboard_div = $('#sidenav-dashboard-icon');
+
+        var img_home = $('#sidenav-home-icon img');
+        var home_div = $('#sidenav-home-icon');
+
+        home_div.css("background-color", "white");
+        img_home.attr("src", "public/img/home_unselected.svg");
+
+        dashboard_div.css("background-color", "#1E90FF");
+        img_dashboard.attr("src", "public/img/dashboard_selected.svg");
+    }
 
 
     window.addEventListener("dashboard", function(evt){
@@ -170,6 +220,7 @@
         var data = evt.detail;
         
         var context = generateContextForDashboardTemplate(data);
+        dashboardSelected();
         loadDashboardTemplateIntoApp(data, context);
 
         // forward message to dashboard
