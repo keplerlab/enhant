@@ -271,6 +271,27 @@ chrome.runtime.onMessage.addListener(
             
         }
 
+        if (request.msg == "get-settings"){
+            enhant_local_storage_obj.read_multiple([STORAGE_KEYS.settings], function(result){
+
+                var settings_data = result[STORAGE_KEYS.settings];
+                if (settings_data){
+                   sendResponse({
+                       status: true,
+                       settings: settings_data
+                   });
+                }
+                else{
+                    sendResponse({
+                        status: true,
+                        settings: {}
+                    });
+                }
+                
+            });
+            
+        }
+
         return true;
         
     }

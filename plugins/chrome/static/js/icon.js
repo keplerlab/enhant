@@ -563,6 +563,10 @@ class SettingsIcon extends Icon{
         return input_status;
     }
 
+    updatePowerModeCheckbox(state){
+       $('#'+ this.input_powermode_setting_id).prop("checked", state);
+    }
+
     settingsUpdateHandler(settings){
 
         var event = new CustomEvent("settingsUpdateHandler", {
@@ -593,6 +597,15 @@ class SettingsIcon extends Icon{
 
             });
             
+        });
+
+        // send request to get data
+        chrome.runtime.sendMessage({msg: "get-settings"}, function(response){
+                       
+            if (response.settings){
+                var powermode_state = response.settings.power_mode;
+                _this.updatePowerModeCheckbox(powermode_state);
+            }
         });
     }
 
