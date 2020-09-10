@@ -417,7 +417,15 @@
             $('.outliers-data-tbody').append(row_html);
 
         });
-    }196
+    }
+
+    function reset(){
+        $('.outliers-data-tbody').html("");
+        $('.questions-data-tbody').html("");
+        $('.notes-data-tbody').html("");
+         $('.bookmark-data-tbody').html("");
+          $('.capture-moments-data').html("");
+    }
 
     window.addEventListener("dashboard-data", function(evt){
         var data = evt.detail;
@@ -426,6 +434,8 @@
 
         var zip_data = data.zip;
         var recording_data = data.recording;
+
+        reset();
 
         if (zip_data){
             updateMeetingData(zip_data);
