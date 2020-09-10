@@ -81,13 +81,20 @@ class CaptureMeetingData{
 
         var match = url.match(new RegExp(firstMatch + "(.*)" + secondMatch));
 
-        if (match.length == 2){
-            this.meeting_number = match[1];
-        }
-        else{
+        console.log(" match is : ", match);
 
+        try {
+            if (match.length == 2){
+                this.meeting_number = match[1];
+            }
+            else{
+                this.meeting_number = this.generateRandomTenDigitNumber();
+            }
+        }
+        catch(err){
+            console.log("Received error: ", err);
             this.meeting_number = this.generateRandomTenDigitNumber();
-            
+            console.log("Generatig a 10 digit random number as the meeting number : ", this.meeting_number);
         }
 
         return this.meeting_number;
@@ -110,16 +117,16 @@ class CaptureMeetingData{
         const regex_pattern = /\d{11}|\d{10}/;
         var meeting_number_match = url.match(regex_pattern);
 
-        if (meeting_number_match.length == 1){
-            this.meeting_number = meeting_number_match[0];
+        try {
+            if (meeting_number_match.length == 1){
+                this.meeting_number = meeting_number_match[0];
+            }
+            else{
+                this.meeting_number = this.generateRandomTenDigitNumber();
+            }
         }
-        else if (meeting_number_match.length > 2){
-            console.log("More than one meeting number found for Zoom : ", meeting_number_match);
-            this.meeting_number = this.generateRandomTenDigitNumber();
-            console.log("Generatig a 10 digit random number as the meeting number : ", this.meeting_number);
-        }
-        else if (meeting_number_match.length == 0){
-            console.log("Meeting number not found for Zoom");
+        catch(err){
+            console.log("Received error: ", err);
             this.meeting_number = this.generateRandomTenDigitNumber();
             console.log("Generatig a 10 digit random number as the meeting number : ", this.meeting_number);
         }
