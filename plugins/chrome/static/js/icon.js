@@ -34,6 +34,13 @@ class Icon{
 
     }
 
+    changeTooltipText(text){
+        var icon_type = this.constructor.name;
+        var icon_img = $('icon[type="' + icon_type +'"] img');
+
+        icon_img.attr("title", text);
+    }
+
     enableIcon(){
         var icon_type = this.constructor.name;
         var icon = $('icon[type="' + icon_type +'"]');
@@ -695,11 +702,17 @@ class RecordIcon extends Icon{
 
 
     start(){
+
+        this.changeTooltipText("Stop Enhant");
         this.meeting_started();
         this.startCapturingMicAudio();
+
+        var event = new CustomEvent("enhant-start", {});
+        window.dispatchEvent(event);
     }
 
     stop(){
+        this.changeTooltipText("Start Enhant");
         this.meeting_stopped();
         this.stopCapturingMicAudio();
 
@@ -777,10 +790,12 @@ class PowerModeIcon extends Icon{
 
     set_active(){
         this.state = ICONSTATE.ACTIVE;
+        this.changeTooltipText("PowerMode ON");
     }
 
     set_inactive(){
         this.state = ICONSTATE.INACTIVE;
+        this.changeTooltipText("PowerMode OFF");
     }
 
     stop(){
