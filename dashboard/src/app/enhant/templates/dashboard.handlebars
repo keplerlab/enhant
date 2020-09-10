@@ -147,8 +147,13 @@
         </div>
 
         {{#if context.recording}}
-        <div class="section recording"></div>
-
+        <div class="section recording">
+            <div class="row">
+                <div class="col-xs-12">
+                    <video width="100%" height="100%" id="recording-video" src="" controls></video>
+                </div>
+            </div>
+        </div>
         {{/if}}
 
         {{#if context.bookmark}}
@@ -545,6 +550,11 @@
         }
     }
 
+    function startVideoPlayback(recording){
+        var url = recording.url;
+        $('#recording-video').attr("src", url);
+    }
+
     function reset(){
         $('.outliers-data-tbody').html("");
         $('.questions-data-tbody').html("");
@@ -574,6 +584,10 @@
             updateCallDuration(zip_data);
             updateAverageEngagementScore(zip_data);
             updateAverageSentiment(zip_data);
+        }
+
+        if (recording_data){
+            startVideoPlayback(recording_data);
         }
 
     });
