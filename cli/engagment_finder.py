@@ -79,6 +79,9 @@ class EngagmentFinder(object):
 
         conv_id = input_json_data["meeting_id"]
 
+        if guest_transcription_list is None or len(guest_transcription_list) == 0:
+            return
+
         transcriptions_with_time = []
         if guest_transcription_list is not None:
             for transcriptions_pkt in guest_transcription_list:
