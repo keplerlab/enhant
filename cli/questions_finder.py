@@ -41,7 +41,11 @@ class QuestionsFinder(object):
         :return: [description]
         :rtype: [type]
         """
-        return transcriptions_pkt["msg"]["data"]["transcription"]["content"]
+        return (
+            transcriptions_pkt["msg"]["data"]["transcription"]["content"],
+            transcriptions_pkt["msg"]["data"]["transcription"]["start_time"],
+        )
+
 
     def process(
         self,
@@ -64,19 +68,29 @@ class QuestionsFinder(object):
         listOfQuestions = []
         if guest_transcription_list is not None:
             for transcriptions_pkt in guest_transcription_list:
-                transcription = self._transformTranscription(transcriptions_pkt)
+                transcription, start_time = self._transformTranscription(transcriptions_pkt)
                 interrogativeSentences = question_finder.processMessage(transcription)
                 if len(interrogativeSentences) > 0:
-                    listOfQuestions.extend(interrogativeSentences)
+                    for interrogativeSentence in interrogativeSentences:
+                        originKey = dict()
+                        originKey["origin"] = "guest" 
+                        originKey["time"] = start_time
+                        originKey["question"] = interrogativeSentence
+                        listOfQuestions.append(originKey)
+                        
 
         if host_transcription_list is not None:
             for transcriptions_pkt in host_transcription_list:
-                transcription = self._transformTranscription(transcriptions_pkt)
+                transcription, start_time = self._transformTranscription(transcriptions_pkt)
                 interrogativeSentences = question_finder.processMessage(transcription)
                 if len(interrogativeSentences) > 0:
-                    listOfQuestions.extend(interrogativeSentences)
-
-        # print("listOfQuestions", listOfQuestions)
+                    for interrogativeSentence in interrogativeSentences:
+                        originKey = dict()
+                        originKey["origin"] = "host" 
+                        originKey["time"] = start_time
+                        originKey["question"] = interrogativeSentence
+                        listOfQuestions.append(originKey)
+                        
         if len(listOfQuestions) > 0:
-            jsonPkt = {"questionsAsked": listOfQuestions}
-            input_json_data["questionsAsked"] = jsonPkt
+            #jsonPkt = {"questionsAsked": listOfQuestions}
+            input_json_data["questionsAsked"] = listOfQuestions
