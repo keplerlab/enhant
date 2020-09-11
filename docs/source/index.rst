@@ -74,6 +74,8 @@ The enhan(t) Meeting Data Viewer where a user can view a downloaded meeting data
 <Meeting Data Viewer screenshot basic mode>
 
 Once a basic mode meeting data zip file is loaded locally, the user can view the following details along with the time:
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
 *	Meeting duration
 *	Meeting ID
 *	Bookmarks
@@ -84,6 +86,8 @@ Once a basic mode meeting data zip file is loaded locally, the user can view the
 <Meeting Data Viewer screenshot power mode>
 
 If a power mode meeting data zip file is loaded, along with the basic mode details, one can also view:
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
 *	Average engagement
 *	Average sentiment
 *	Sentiment and engagement overlay graph on the audio or video recording
@@ -109,8 +113,8 @@ Knowing the document organization will help you find and use features effectivel
    :maxdepth: 1
 
    
-   Getting Started <getting_started>
-   How to guides <how_to_guides>
+   Installation <getting_started>
+   Chrome Extension Usage <chrome_extension_usage>
    Developer guides <developer_guides>
    Topic guides <topic_guides>
    Troubleshooting and FAQ <troubleshooting>
