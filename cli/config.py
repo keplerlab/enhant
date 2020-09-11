@@ -12,7 +12,6 @@ class Settings(BaseSettings):
         """
         # Add or remove analyzers here. All the analyzers will update the conversation JSON
         return [
-            # Note(),
             QuestionsFinder(),
             SentimentFinder(),
             EngagmentFinder(),

@@ -1,7 +1,7 @@
 """
-.. module:: srtHelper
+.. module:: Helper
     :platform: Platform Independent
-    :synopsis: This module is for handling all functions for easing up processing of srt files 
+    :synopsis: This module is for handling all misc utility functions 
 """
 import sys
 import os
