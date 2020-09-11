@@ -25,6 +25,7 @@ services:
       - ./cli/:/home/cli/
       - ./nlp_lib/:/home/nlp_lib/
       - ./docs/:/home/docs/
+      - ./plugins/:/home/plugins/
       - ./api/transcription_svc/:/home/api/transcription_svc/
       - ./dashboard/:/home/dashboard/
       # Exclude mount node_modules directory
