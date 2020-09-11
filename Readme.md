@@ -64,12 +64,12 @@ cd /path/to/enhant-repo/
 docker-compose -f docker-compose-google-cloud.yml  up
 ```
 
-3. Invoke cli for conversation id (111 in example below):
+3. Invoke cli for input zip file from plugin (input.zip in example below):
 
 ```
 cd /path/to/enhant-repo
 docker-compose run cli
-python  main.py analyze 111 
+python enhant_cli_app analyze input.zip
 ```
 
 # Add certificate for localhost dev
@@ -140,7 +140,7 @@ The local CA is now installed in the Firefox trust store (requires browser resta
 ## Create new certificate using mkcert 
 ```
 $ cd certificates
-$ mkcert localhost 127.0.0.1 ::1
+$ mkcert -key-file key.pem -cert-file cert.pem localhost 127.0.0.1 ::1
 ```
 You should see following output with last command
 ```
@@ -150,8 +150,8 @@ Created a new certificate valid for the following names 📜
  - "localhost"
  - "127.0.0.1"
  - "::1"
-
-The certificate is at "./localhost+2.pem" and the key at "./localhost+2-key.pem" ✅
+ 
+The certificate is at "cert.pem" and the key at "key.pem" ✅
 ```
 
 
