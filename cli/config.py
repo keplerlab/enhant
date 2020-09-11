@@ -1,5 +1,4 @@
 from pydantic import BaseSettings
-from note import Note
 from questions_finder import QuestionsFinder
 from sentiment_finder import SentimentFinder
 from engagment_finder import EngagmentFinder
