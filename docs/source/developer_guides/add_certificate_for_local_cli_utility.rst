@@ -1,4 +1,6 @@
 
+.. _certificate_for_localhost:
+
 ###############################################
 Add certificate for localhost for cli utility
 ###############################################

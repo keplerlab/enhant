@@ -25,6 +25,12 @@ To restart the application, open terminal and run the following commands::
 
 enhant will start again
 
+Error:- certfile=cfg.CERT_FILE_PATH, keyfile=cfg.KEY_FILE_PATH FileNotFoundError: [Errno 2] No such file or directory
+------------------------------------------------------------------------------------------------------------------------------------
+Make sure you have installed local ssl certificate before starting service using 
+docker-compose up.
+Refer :ref:`certificate_for_localhost` for instructions
+
 
 Remove all Dangling Docker images
 -----------------------------------
