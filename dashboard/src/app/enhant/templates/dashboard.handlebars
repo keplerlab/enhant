@@ -97,7 +97,9 @@
             <span class="cell-text inter-bold-21" id="call-duration"></span>
         </div>
     </div>
-    <div class="col-xs-3 has-shadow card text-center average-sentiment-card">
+
+     {{#if context.avg_sentiment}}
+    <div class="col-xs-3 has-shadow card text-center">
         <div class="row card-cell">
             <span class="cell-text inter-bold-21">Average Sentiment</span>
         </div>
@@ -105,7 +107,10 @@
             <img width="112" height="112" id="average-sentiment" src="public/img/dissatisfied_sentiment.svg">
         </div>
     </div>
-    <div class="col-xs-3 has-shadow card text-center average-engagement-card">
+    {{/if}}
+
+    {{#if context.avg_engagement}}
+    <div class="col-xs-3 has-shadow card text-center">
         <div class="row card-cell">
             <span class="cell-text inter-bold-21">Average Engagement</span>
         </div>
@@ -117,6 +122,7 @@
             <span class="cell-text inter-bold-21" id="average-engagement"></span>
         </div>
     </div>
+    {{/if}}
 
 
 </div>
@@ -423,54 +429,61 @@
     }
 
     function updateQuestions(zip){
-        var data = zip.questionsAsked;
 
-        data.forEach(function(d){
+        if (zip.hasOwnProperty("questionsAsked")){
+            var data = zip.questionsAsked;
 
-            // add number of milliseconds to the start time
-            var end_time = zip.start_time + d.time;
-            var elapsed_time = getMeetingDuration(zip.start_time, end_time);
+            data.forEach(function(d){
 
-             var row_html = "<tr>" +
-                    "<td>" + d.question + "</td>" +
-                    "<td>" + elapsed_time + "</td></tr>";
-            
-            $('.questions-data-tbody').append(row_html);
+                // add number of milliseconds to the start time
+                var end_time = zip.start_time + d.time;
+                var elapsed_time = getMeetingDuration(zip.start_time, end_time);
+
+                var row_html = "<tr>" +
+                        "<td>" + d.question + "</td>" +
+                        "<td>" + elapsed_time + "</td></tr>";
                 
-        });
+                $('.questions-data-tbody').append(row_html);
+                    
+            });
+        }
     }
 
     function updateSentimentOutliers(zip){
-        var highSentimentOutliers = zip.highSentimentSentences.highSentimentSentencesGuest;
-        var lowSentimentOutliers = zip.lowSentimentSentences.lowSentimentSentencesGuest;
 
-        var final_arr = [];
-        final_arr.push(...highSentimentOutliers);
-        final_arr.push(...lowSentimentOutliers);
+        if (zip.hasOwnProperty("highSentimentSentences")){
+            var highSentimentOutliers = zip.highSentimentSentences.highSentimentSentencesGuest;
+            var lowSentimentOutliers = zip.lowSentimentSentences.lowSentimentSentencesGuest;
 
-        // sort the final array
-        final_arr.sort(function(a, b){
-            var et_a = zip.start_time + a[0];
-            var et_b = zip.start_time + b[0];
+            var final_arr = [];
+            final_arr.push(...highSentimentOutliers);
+            final_arr.push(...lowSentimentOutliers);
 
-            return et_a > et_b;
-        })
+            // sort the final array
+            final_arr.sort(function(a, b){
+                var et_a = zip.start_time + a[0];
+                var et_b = zip.start_time + b[0];
 
-        var sentiment_outlier_html = "";
+                return et_a > et_b;
+            })
 
-        final_arr.forEach(function(d){
+            var sentiment_outlier_html = "";
 
-            // add number of milliseconds to the start time
-            var end_time = zip.start_time + d[0];
-            var elapsed_time = getMeetingDuration(zip.start_time, end_time);
+            final_arr.forEach(function(d){
 
-            var row_html = "<tr>" +
-                    "<td>" + d[1] + "</td>" +
-                    "<td>" + elapsed_time + "</td></tr>";
-            
-            $('.outliers-data-tbody').append(row_html);
+                // add number of milliseconds to the start time
+                var end_time = zip.start_time + d[0];
+                var elapsed_time = getMeetingDuration(zip.start_time, end_time);
 
-        });
+                var row_html = "<tr>" +
+                        "<td>" + d[1] + "</td>" +
+                        "<td>" + elapsed_time + "</td></tr>";
+                
+                $('.outliers-data-tbody').append(row_html);
+
+            });
+        }
+        
     }
 
     function updateCallDuration(zip){
@@ -511,7 +524,6 @@
 
         if (zip.hasOwnProperty("engagement_scores")){
 
-            $('.average-engagement-card').show();
             var averageScore = zip.engagement_scores.avg_engagement_score;
 
             $(".GaugeMeter").gaugeMeter({
@@ -538,17 +550,12 @@
 
             $('#average-engagement').text(averageScore + " %");
         }
-        else{
-            $('.average-engagement-card').hide();
-        }
 
     }
 
     function updateAverageSentiment(zip){
 
         if (zip.hasOwnProperty("avgSentimentScoreGuest")){
-
-            $('.average-sentiment-card').show();
 
             var sentiment = Number(zip.avgSentimentScoreGuest);
             if (sentiment <= 0.2){
@@ -561,10 +568,6 @@
                 $('#average-sentiment').attr("src", "public/img/satisfied_sentiment.svg");
             }
 
-        }
-        else
-        {
-            $('.average-sentiment-card').hide();
         }
     }
 
@@ -581,6 +584,19 @@
         $('.capture-moments-data').html("");
     }
 
+    function processData(data){
+        updateMeetingData(data);
+        updateBookmarks(data);
+        updateCapturedImages(data);
+        updateNotes(data);
+        updateQuestions(data);
+        updateSentimentOutliers(data);
+
+        updateCallDuration(data);
+        updateAverageEngagementScore(data);
+        updateAverageSentiment(data);
+    }
+
     window.addEventListener("dashboard-data", function(evt){
         var data = evt.detail;
 
@@ -588,20 +604,15 @@
 
         var zip_data = data.zip;
         var recording_data = data.recording;
+        var notes_data = data.notes;
 
         reset();
 
-        if (zip_data){
-            updateMeetingData(zip_data);
-            updateBookmarks(zip_data);
-            updateCapturedImages(zip_data);
-            updateNotes(zip_data);
-            updateQuestions(zip_data);
-            updateSentimentOutliers(zip_data);
-
-            updateCallDuration(zip_data);
-            updateAverageEngagementScore(zip_data);
-            updateAverageSentiment(zip_data);
+        if (!isEmpty(zip_data)){
+            processData(zip_data);
+        }
+        else if (!isEmpty(notes_data)){
+            processData(notes_data);
         }
 
         if (recording_data){
