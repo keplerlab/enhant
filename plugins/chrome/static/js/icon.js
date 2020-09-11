@@ -749,7 +749,7 @@ class RecordIcon extends Icon{
 
     start(){
 
-        this.changeTooltipText("Stop Enhant");
+        this.changeTooltipText("Stop enhan(t)");
         this.meeting_started();
 
         var event = new CustomEvent("enhant-start", {});
@@ -771,7 +771,7 @@ class RecordIcon extends Icon{
     }
 
     stop(){
-        this.changeTooltipText("Start Enhant");
+        this.changeTooltipText("Start enhan(t)");
         this.meeting_stopped();
         this.showZipDownloadNotification();
 
@@ -850,12 +850,12 @@ class PowerModeIcon extends Icon{
 
     set_active(){
         this.state = ICONSTATE.ACTIVE;
-        this.changeTooltipText("PowerMode ON");
+        this.changeTooltipText("Power Mode ON");
     }
 
     set_inactive(){
         this.state = ICONSTATE.INACTIVE;
-        this.changeTooltipText("PowerMode OFF");
+        this.changeTooltipText("Power Mode OFF");
     }
 
     stop(){
