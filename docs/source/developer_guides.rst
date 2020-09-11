@@ -8,8 +8,8 @@ enhant Developer Guides
    :maxdepth: 2
 
         How to build documentation from source <developer_guides/build_docs_from_source>
-        Install enhant without Docker <developer_guides/install_idea2life_without_docker>
-        how to call ai service <developer_guides/how_to_call_ai_service>
-        Debugging enhant <developer_guides/debugging_idea2life>
-        Idea2life architecture <developer_guides/idea2life_architecture>
+        How to add or subtract nlp analyzer  <developer_guides/how_to_add_nlp analyzer.rst>
+        Architecture of nlp analyzer  <developer_guides/architecture_nlp_analyzer>
+        How to use custom transcription service <developer_guides/how_to_use_custom_transcription_service>
+        How to install enhant without docker <developer_guides/install_enhant_without_docker>
 
