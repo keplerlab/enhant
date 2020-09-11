@@ -8,7 +8,7 @@
 Overview
 #######################
 
-enhan(t) is an open source toolkit which enables you to enhance the web experience of existing video conferencing solutions like Zoom, MS Teams and Jitsi. It allows normal users to get an enhanced meeting experience by allowing one to bookmark moments, capture screenshots and take notes and view them in context with the meeting recording. It also enables power users to get NLP (Natural Language Processing) powered real-time meeting metrics like engagement and sentiment. Moreover, it can provide extract questions which were asked during the meeting and when.
+enhan(t) is an open source toolkit which enables you to enhance the web experience of existing video conferencing solutions like Zoom, MS Teams and Jitsi. It allows normal users to get an enhanced meeting experience by allowing one to bookmark moments, capture screenshots and take notes and view them in context with the meeting recording. It also enables power users to get NLP (Natural Language Processing) powered meeting metrics like engagement and sentiment. Moreover, it can provide extract questions which were asked during the meeting and when.
 
 ==============
 **Etymology**

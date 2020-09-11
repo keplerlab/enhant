@@ -132,10 +132,26 @@ class WebSpeechMicCapture{
     }
 }
 
-function startClicked(){
+function isEmpty(obj){
+    for(var prop in obj) {
+        if(obj.hasOwnProperty(prop)) {
+            return false;
+        }
+    }
+
+    return JSON.stringify(obj) === JSON.stringify({});
+}
+
+function startClicked(settings_data){
+
+    // send a message to fetch the settings
+
+    if (isEmpty(settings_data)){
+        settings_data["lang"] = CONFIG.transcription.lang_default;
+    }
 
     var config = {
-        lang : "en-IN",
+        lang : settings_data.lang,
         interimResults : true,
         continuous: true
     }
@@ -176,7 +192,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
     if (message.action == "capture_mic_start"){
 
-        startClicked();
+        startClicked(message.data);
 
         sendResponse({status: true});
     }

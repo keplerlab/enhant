@@ -164,30 +164,48 @@ $(document).ready(function(){
     
     });
 
-    window.addEventListener("recordingStoppedHideIcons", function(event){
-       var iconsToEnable = [
+    window.addEventListener("recordingStopped", function(event){
+       var iconsToDisable = [
            BookmarkIcon,
            CaptureTabIcon,
            NotesIcon
        ];
 
-       iconsToEnable.forEach(function(cl){
+       var iconsToEnable = [
+           SettingsIcon
+       ]
+
+        iconsToDisable.forEach(function(cl){
             var icon_obj = icons_object_mapping[cl.name];
             icon_obj.disableIcon();
         });
+
+        iconsToEnable.forEach(function(cl){
+            var icon_obj = icons_object_mapping[cl.name];
+            icon_obj.enableIcon();
+        });
     });
 
-    window.addEventListener("recordingActiveShowIcons", function(event){
+    window.addEventListener("recordingStarted", function(event){
         var iconsToEnable = [
             BookmarkIcon,
             CaptureTabIcon,
             NotesIcon
         ];
+
+        var iconsToDisable = [
+            SettingsIcon
+        ]
  
         iconsToEnable.forEach(function(cl){
              var icon_obj = icons_object_mapping[cl.name];
              icon_obj.enableIcon();
-         });
+        });
+
+        iconsToDisable.forEach(function(cl){
+            var icon_obj = icons_object_mapping[cl.name];
+            icon_obj.disableIcon();
+        })
 
     });
 
@@ -239,7 +257,8 @@ $(document).ready(function(){
             BookmarkIcon,
             CaptureTabIcon,
             NotesIcon
-        ]
+        ];
+        
         iconsToDisable.forEach(function(cl){
             var icon_obj = icons_object_mapping[cl.name];
             icon_obj.disableIcon();
