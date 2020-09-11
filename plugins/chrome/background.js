@@ -261,50 +261,44 @@ class ScreenCapture{
 
 function startClicked(){
 
-    // start after a second
-    setTimeout(function(){
+    chrome.storage.local.get(["meeting_number"], function(result){
+        var meeting_number = result.meeting_number;
 
-        chrome.storage.local.get(["meeting_number"], function(result){
-            var meeting_number = result.meeting_number;
-    
-            var config = {
-                sampleRate: 44100,
-                bufferSize: 4096,
-                ip: CONFIG.transcription.ip,
-                port: CONFIG.transcription.port,
-                use_flac_encoder: false,
-                meeting_number: meeting_number
-            }
-    
-            console.log(" Configuration for Screen: ", config);
-    
-            var screen_capture = new ScreenCapture(config);
-            screen_capture.start();
-    
-            chrome.runtime.onMessage.addListener(stopClicked);
+        var config = {
+            sampleRate: 44100,
+            bufferSize: 4096,
+            ip: CONFIG.transcription.ip,
+            port: CONFIG.transcription.port,
+            use_flac_encoder: false,
+            meeting_number: meeting_number
+        }
 
-            function stopClicked(message, sender, sendResponse){
+        console.log(" Configuration for Screen: ", config);
 
-                if (message.action == "capture_screen_stop"){
-        
-                    if (!(screen_capture == null)){
-                        screen_capture.stop();
-                        delete screen_capture;
-                    }
-        
-                     // remove stop listner 
-                    chrome.runtime.onMessage.removeListener(stopClicked);
-        
-                    sendResponse({status: true});
-                  
+        var screen_capture = new ScreenCapture(config);
+        screen_capture.start();
+
+        chrome.runtime.onMessage.addListener(stopClicked);
+
+        function stopClicked(message, sender, sendResponse){
+
+            if (message.action == "capture_screen_stop"){
+    
+                if (!(screen_capture == null)){
+                    screen_capture.stop();
+                    delete screen_capture;
                 }
-                
+    
+                 // remove stop listner 
+                chrome.runtime.onMessage.removeListener(stopClicked);
+    
+                sendResponse({status: true});
+              
             }
-    
-        });
-        
-    }, 1000);
-    
+            
+        }
+
+    });
 }
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
@@ -327,14 +321,32 @@ chrome.pageAction.onClicked.addListener(function(tab) {
     chrome.storage.local.set(obj, function(){
         console.log("Object saved into local storage: ", obj);
 
-        // add to storage that plugin is activated
-        chrome.tabs.sendMessage(tab.id, {cmd: "activate_plugin"}, function(result) {
-            console.log("Plugin activated : ", result.status);
+        chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+            // add to storage that plugin is activated
+            chrome.tabs.sendMessage(tabs[0].id, {cmd: "activate_plugin"}, function(result) {
+                console.log("Plugin activated : ", result.status);
+            });
+    
         });
-
+        
     });
 
     
   });
+
+chrome.commands.onCommand.addListener((command) => {
+    if (command === "take-note") {
+
+        // add to storage that plugin is activated
+        chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+
+            // add to storage that plugin is activated
+            chrome.tabs.sendMessage(tabs[0].id, {cmd: "take-note"}, function(result) {
+                console.log("Plugin activated : ", result.status);
+            });
+    
+        });
+    }
+});
 
 console.log("Backround Script Loaded from extension - [enhan(t)]");

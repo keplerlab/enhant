@@ -169,11 +169,16 @@
         <!-- Notification data -->
         <div class="row" id="notification">
             <div id="notification-content" class="col-xs-12">
-                <div class="col-xs-2" style="margin-top:8px">
-                    <img title="Info" height=24 width=24 src="static/images/alert.svg">
+                <div class="col-xs-1" style="margin-top:8px">
+                    <img src="static/images/jigsaw.svg" width="24" height="24">
                 </div>
-                <div class="col-xs-10">
-                    <span>Pin the enhant extension (if not pinned already) and click the icon in the toolbar to enable plugin.</span>
+                <div class="col-xs-11">
+                    <div class="clearfix">
+                        <span>Can't find enhan(t)? Click on the chrome jigsaw button to pin it.</span>
+                    </div>
+                    <div class="clearfix" style="margin-top:10px;">
+                        <span style="color: red;">Click on <img style="margin-top:-10px" src="static/images/logo_24.svg" width="24" height="24"> icon in the toolbar to enable it</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -198,13 +203,12 @@
                     </div>
                       
                     <div class="form-group row" style="margin-top:4%;margin-bottom:4%;">
-                        <div class="col-xs-10">
-                            <div class="form-check">
-                              <input class="form-check-input" type="checkbox" id="setting-show-trasncription">
-                              <label class="form-check-label" for="setting-show-trasncription">
-                                Show transcription in timeline (Debug)
-                              </label>
-                            </div>
+                        <label class="col-xs-3 col-form-label" for="lang">Language: </label>
+                        <div class="col-xs-7">
+                            <select class="form-control" id="lang">
+                                <option selected value="en-US">English (US)</option>
+                                <option value="en-IN">English (India)</option>
+                            </select>
                         </div>
                     </div>
 

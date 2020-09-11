@@ -37,6 +37,20 @@ function convIDMessageHandler(conv_id){
     enhant_local_storage_obj.save_basic(obj)
 }
 
+function saveMeetingNumber(meeting_number, cb){
+    var obj = {
+        "meeting_number": meeting_number
+    }
+
+    enhant_local_storage_obj.save_basic(obj, function(d){
+
+        var conv_id = enhant_local_storage_obj.generateRandomConvId();
+        convIDMessageHandler(conv_id);
+
+        cb();
+    });
+}
+
 chrome.runtime.onMessage.addListener(
     function(request, sender, sendResponse) {
         
@@ -168,28 +182,30 @@ chrome.runtime.onMessage.addListener(
             enhant_local_storage_obj.save_basic(meeting_start)
 
             chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-                chrome.tabs.sendMessage(tabs[0].id, {msg: "start"}, function(response) {
+                chrome.tabs.sendMessage(tabs[0].id, {msg: "capture-meeting-info"}, function(response) {
                   console.log(response.status);
-                });
-            });
 
-            // checkthe settings
-            enhant_local_storage_obj.read_multiple([STORAGE_KEYS.settings], function(result){
+                  saveMeetingNumber(response.data, function(){
+                        // checkthe settings
+                        enhant_local_storage_obj.read_multiple([STORAGE_KEYS.settings], function(result){
 
-                var settings_data = result[STORAGE_KEYS.settings];
-                if (settings_data){
-                   sendResponse({
-                       status: true,
-                       settings: settings_data
-                   });
-                }
-                else{
-                    sendResponse({
-                        status: true,
-                        settings: {}
+                            var settings_data = result[STORAGE_KEYS.settings];
+                            if (settings_data){
+                            sendResponse({
+                                status: true,
+                                settings: settings_data
+                            });
+                            }
+                            else{
+                                sendResponse({
+                                    status: true,
+                                    settings: {}
+                                });
+                            }
+                            
+                        });
                     });
-                }
-                
+                });
             });
 
         }
@@ -197,12 +213,6 @@ chrome.runtime.onMessage.addListener(
         if (request.msg == "stop"){
             downloadZip(function(){
                 enhant_local_storage_obj.deleteAll();
-            });
-
-            chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-                chrome.tabs.sendMessage(tabs[0].id, {msg: "stop"}, function(response) {
-                  console.log(response.status);
-                });
             });
 
             // checkthe settings

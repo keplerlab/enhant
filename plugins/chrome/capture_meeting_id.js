@@ -101,15 +101,6 @@ class CaptureMeetingData{
 
     }
 
-    sendMeetingNumber(){
-        var _this = this;
-
-        chrome.runtime.sendMessage({msg: "meeting_number_info", data: _this.meeting_number}, 
-        function(response){
-            console.log(response.status);
-        })
-    }
-
     generateMeetingNumberForZoom(){
 
         var url = this.getURL();
@@ -137,7 +128,6 @@ class CaptureMeetingData{
     getInfo(){
         this.resolve_platform();
         this.generateMeetingNumber();
-        this.sendMeetingNumber();
     }
 
 }
@@ -147,17 +137,12 @@ console.log(" Loading Capturing Meeting data content script. ")
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     console.log(" Received message from popup script [Capturing Meeting Data] : ", message);
 
-    if (message.msg == "start"){
+    if (message.msg == "capture-meeting-info"){
 
         var meeting_info = new CaptureMeetingData();
         meeting_info.getInfo();
 
-        sendResponse({status: true});
-    }
-
-    if (message.msg == "stop"){
-
-        sendResponse({status: true});
+        sendResponse({status: true, data: meeting_info.meeting_number});
     }
 
 })

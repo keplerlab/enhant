@@ -170,6 +170,26 @@ class NotesIcon extends Icon{
         $('#' + _this.submit_btn_id).click(function(){
             _this.addNotes();
         });
+
+        chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+        
+            if (message.cmd == "take-note"){
+        
+                // check if note is active
+                if (_this.state == ICONSTATE.ACTIVE){
+                    _this.addNotes();
+
+                    sendResponse({status: true});
+                }
+
+                else{
+                    sendResponse({status: false});
+                }
+                
+                
+            }
+        
+        });
     }
 
     generateNote(obj){
@@ -281,7 +301,7 @@ class BookmarkIcon extends Icon{
             "<img title='Info' height=24 width=24 src='static/images/info.svg'>" +
         "</div>" + 
         "<div class='col-xs-10'>"+
-            "<span>Bookmark Added.</span>" +
+            "<span>Moment bookmarked</span>" +
         "</div>";
 
         var event = new CustomEvent("showNotification", {
@@ -351,7 +371,7 @@ class CaptureTabIcon extends Icon{
         var notification_html = "<div class='col-xs-2'>" +
             "<img title='Info' height=24 width=24 src='static/images/info.svg'>" +
             "</div>" + 
-            "<div class='col-xs-10'><span>Capture Added.</span>" +
+            "<div class='col-xs-10'><span>Screenshot captured</span>" +
             "</div>";
 
         var event = new CustomEvent("showNotification", {
@@ -535,8 +555,10 @@ class SettingsIcon extends Icon{
         this.container_id = "settings-container";
 
         this.input_powermode_setting_id = "setting-enable-powermode";
-        this.input_transcription_setting_id = "setting-show-trasncription";
         this.input_server_setting_id = "setting-server-url";
+        this.langauge_id = "lang";
+
+        this.language_code = "en-US";
 
         this.active_icon_path = "static/images/settings.svg";
         this.inactive_icon_path = "static/images/settings_inactive.svg";
@@ -545,10 +567,10 @@ class SettingsIcon extends Icon{
         
     }
 
-    getTranscriptionSetting(){
-        var _this = this;
-        var input_status = $('#'+ _this.input_transcription_setting_id + ":checkbox:checked").length > 0;
-        return input_status;
+
+    getLanguageCode(){
+        var language = $('#'+ this.langauge_id + " option:selected").val();
+        return language
     }
 
     getServerURL(){
@@ -580,12 +602,12 @@ class SettingsIcon extends Icon{
         $('#' + _this.apply_btn_id).click(function(){
 
             _this.power_mode = _this.getPowerModeSetting();
-            _this.enable_transcription_view_for_debug = _this.getTranscriptionSetting();
             _this.server = _this.getServerURL();
+            _this.language_code = _this.getLanguageCode();
 
             var d = {
                 "power_mode": _this.power_mode,
-                "enable_transcription": _this.enable_transcription_view_for_debug,
+                "language": _this.language_code,
                 "server_url": _this.server
             }
 
@@ -724,13 +746,29 @@ class RecordIcon extends Icon{
         window.dispatchEvent(event);
     }
 
+    showZipDownloadNotification(){
+        var notification_html = "<div class='col-xs-2'>" +
+        "<img title='Info' height=24 width=24 src='static/images/info.svg'>" +
+        "</div>" + 
+        "<div class='col-xs-10'>"+
+            "<span>Zip Downloaded</span>" +
+        "</div>";
+
+        var event = new CustomEvent("showNotification", {
+            detail: notification_html
+        });
+        window.dispatchEvent(event);
+    }
+
     stop(){
         this.changeTooltipText("Start Enhant");
         this.meeting_stopped();
         this.stopCapturingMicAudio();
+        this.showZipDownloadNotification();
 
         var event = new CustomEvent("enhant-stop", {});
         window.dispatchEvent(event);
+
     }
 
 

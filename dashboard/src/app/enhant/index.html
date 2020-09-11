@@ -84,6 +84,16 @@
         return html;
     }
 
+    function isEmpty(obj){
+        for(var prop in obj) {
+            if(obj.hasOwnProperty(prop)) {
+                return false;
+            }
+        }
+
+        return JSON.stringify(obj) === JSON.stringify({});
+    }
+
     function generateContextForDashboardTemplate(data){
 
         var context = {
@@ -92,49 +102,71 @@
             "images": false,
             "notes": false,
             "sentiment_outliers": false,
-            "questions": false
+            "questions": false,
+            "avg_engagement": false,
+            "avg_sentiment": false
         };
 
         var recording_data = data.recording;
-        var zip_data = data.zip;
+        var zip_data = {};
 
-        var videoNode = document.getElementById('video-type-check');
-        var canPlay = videoNode.canPlayType(recording_data.type);  
-
-        canPlay = (canPlay === '' ? false : true);
-
-        // set context recording
-        context.recording = canPlay;
-
-        var all_notes = zip_data.notes;
-        if (all_notes.length){
-            
-            var bookmarks = all_notes.filter(function(obj){ return obj.type == "bookmark"});
-            var images = all_notes.filter(function(obj){ return obj.type == "image"});
-            var notes = all_notes.filter(function(obj){ return obj.type == "notes"});
-
-            if (bookmarks.length){
-                context.bookmark = true;
-            }
-
-            if (images.length){
-                context.images = true;
-            }
-
-            if (notes.length){
-                context.notes = true;
-            }
+        if (!isEmpty(data.zip)){
+            zip_data = data.zip;
+        }
+        else if (!isEmpty(data.notes)){
+            zip_data = data.notes;
         }
 
-        if (zip_data.highSentimentSentences.highSentimentSentencesGuest.length || zip_data.lowSentimentSentences.lowSentimentSentencesGuest.length){
-            context.sentiment_outliers = true;
-        }
+        // if zip data is empty
+        if (!isEmpty(zip_data)){
+            var videoNode = document.getElementById('video-type-check');
+            var canPlay = videoNode.canPlayType(recording_data.type);  
 
-        if (zip_data.questionsAsked.questionsAsked.length){
-            context.questions = true;
-        }
+            canPlay = (canPlay === '' ? false : true);
 
-        // console.log(" context ", context);
+            // set context recording
+            context.recording = canPlay;
+
+            var all_notes = zip_data.notes;
+            if (all_notes.length){
+                
+                var bookmarks = all_notes.filter(function(obj){ return obj.type == "bookmark"});
+                var images = all_notes.filter(function(obj){ return obj.type == "image"});
+                var notes = all_notes.filter(function(obj){ return obj.type == "notes"});
+
+                if (bookmarks.length){
+                    context.bookmark = true;
+                }
+
+                if (images.length){
+                    context.images = true;
+                }
+
+                if (notes.length){
+                    context.notes = true;
+                }
+            }
+
+            if (zip_data.hasOwnProperty("highSentimentSentences")){
+                if (zip_data.highSentimentSentences.highSentimentSentencesGuest.length || zip_data.lowSentimentSentences.lowSentimentSentencesGuest.length){
+                    context.sentiment_outliers = true;
+                }
+            }
+
+            if (zip_data.hasOwnProperty("questionsAsked")){
+                if (zip_data.questionsAsked.length){
+                    context.questions = true;
+                }
+            }
+
+            if (zip_data.hasOwnProperty("avgSentimentScoreGuest")){
+                context.avg_sentiment = true;
+            }
+
+            if (zip_data.hasOwnProperty("engagement_scores")){
+                context.avg_engagement = true;
+            }
+        }
 
         return context;
 

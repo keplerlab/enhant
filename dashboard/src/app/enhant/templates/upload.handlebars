@@ -74,6 +74,7 @@
 <script>
 
     var ZIP_DATA = {};
+    var NOTES_DATA = {};
     var RECORDING_DATA = {
         url: null,
         type: null
@@ -93,6 +94,14 @@
                         zip.file(file).async("text").then(function(data){
                             var json = JSON.parse(data);
                             ZIP_DATA = json;
+                        });
+                    }
+
+                    if (fileName == "input.json"){
+
+                        zip.file(file).async("text").then(function(data){
+                            var json = JSON.parse(data);
+                            NOTES_DATA = json;
                         });
                     }
                 }
@@ -130,7 +139,7 @@
 
         // file to dashboard handlebar
         var event = new CustomEvent("dashboard", {
-            detail: {zip: ZIP_DATA, recording: RECORDING_DATA}
+            detail: {zip: ZIP_DATA, recording: RECORDING_DATA, notes: NOTES_DATA}
         });
 
         window.dispatchEvent(event);
