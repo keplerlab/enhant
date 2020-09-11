@@ -41,6 +41,15 @@
       "downloads",
       "storage",
       "<all_urls>"
-    ]
+    ],
+    "commands": {
+      "take-note": {
+        "suggested_key": {
+          "default": "Ctrl+Shift+I",
+          "mac": "Command+Shift+I"
+        },
+        "description": "Take Note"
+      }
+    }
   }
   
