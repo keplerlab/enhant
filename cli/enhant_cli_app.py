@@ -8,6 +8,7 @@ import typer
 from typing import List
 import os
 import config
+from typing import NoReturn, Tuple
 
 
 from operator import methodcaller
