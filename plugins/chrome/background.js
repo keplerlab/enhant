@@ -9,6 +9,7 @@ class ScreenCapture{
         this.audio_context = null;
         this.input = null
         this.meeting_number = config.meeting_number || null;
+        this.lang = config.lang;
         this.EVENT_FLAC_ENCODER = "screen_encoder";
 
         if (config.use_flac_encoder){
@@ -156,8 +157,8 @@ class ScreenCapture{
             _this.socket_transcription.send(JSON.stringify({
                 "cmd": "start",
                 "origin": "speaker",
-                "conversation_id": _this.meeting_number
-    
+                "conversation_id": _this.meeting_number,
+                "lang": _this.lang
             }));
         },
             _this.socket_transcription_closed_cb);
@@ -259,10 +260,25 @@ class ScreenCapture{
     }
 }
 
+function isEmpty(obj){
+    for(var prop in obj) {
+        if(obj.hasOwnProperty(prop)) {
+            return false;
+        }
+    }
+
+    return JSON.stringify(obj) === JSON.stringify({});
+}
+
 function startClicked(){
 
-    chrome.storage.local.get(["meeting_number"], function(result){
+    chrome.storage.local.get(["meeting_number", "settings"], function(result){
         var meeting_number = result.meeting_number;
+        var settings = result.settings;
+
+        if (isEmpty(settings)){
+            settings["lang"] = CONFIG.transcription.lang_default;
+        }
 
         var config = {
             sampleRate: 44100,
@@ -270,7 +286,8 @@ function startClicked(){
             ip: CONFIG.transcription.ip,
             port: CONFIG.transcription.port,
             use_flac_encoder: false,
-            meeting_number: meeting_number
+            meeting_number: meeting_number,
+            lang: settings.lang
         }
 
         console.log(" Configuration for Screen: ", config);

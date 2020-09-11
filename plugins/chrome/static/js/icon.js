@@ -548,7 +548,7 @@ class ExpandIcon extends Icon{
 class SettingsIcon extends Icon{
     constructor(){
         super();
-        this.server = "https://12.0.0.1";
+        this.server = "http://" + CONFIG.transcription.ip;
         this.enable_transcription_view_for_debug = false;
         this.power_mode = false;
         this.apply_btn_id = "settings-apply-btn";
@@ -558,7 +558,7 @@ class SettingsIcon extends Icon{
         this.input_server_setting_id = "setting-server-url";
         this.langauge_id = "lang";
 
-        this.language_code = "en-US";
+        this.language_code = CONFIG.transcription.lang_default;
 
         this.active_icon_path = "static/images/settings.svg";
         this.inactive_icon_path = "static/images/settings_inactive.svg";
@@ -589,6 +589,10 @@ class SettingsIcon extends Icon{
        $('#'+ this.input_powermode_setting_id).prop("checked", state);
     }
 
+    updateLanguage(lang){
+        $('#' + this.langauge_id + ' option[value="' + lang +'"]').prop('selected', 'selected').change();
+    }
+
     settingsUpdateHandler(settings){
 
         var event = new CustomEvent("settingsUpdateHandler", {
@@ -607,7 +611,7 @@ class SettingsIcon extends Icon{
 
             var d = {
                 "power_mode": _this.power_mode,
-                "language": _this.language_code,
+                "lang": _this.language_code,
                 "server_url": _this.server
             }
 
@@ -627,6 +631,7 @@ class SettingsIcon extends Icon{
             if (response.settings){
                 var powermode_state = response.settings.power_mode;
                 _this.updatePowerModeCheckbox(powermode_state);
+                _this.updateLanguage(response.settings.lang);
             }
         });
     }
@@ -667,13 +672,13 @@ class RecordIcon extends Icon{
         }
     }
 
-    startCapturingMicAudio(){
+    startCapturingMicAudio(settings){
 
         //sends a message to the content page to capture the mic audio
         chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
     
             // sends message to content script (main.js)
-            chrome.tabs.sendMessage(tabs[0].id, {action: "capture_mic_start"}, function(response){
+            chrome.tabs.sendMessage(tabs[0].id, {action: "capture_mic_start", data: settings}, function(response){
                 console.log("Mic recording status : ", response.status);
             });
     
@@ -692,6 +697,7 @@ class RecordIcon extends Icon{
     }
 
     meeting_started(){
+        var _this = this;
         chrome.storage.local.set({"meeting_in_progress": true}, function(){
             console.log("meeting started flag set in storage .");
 
@@ -700,6 +706,8 @@ class RecordIcon extends Icon{
                 if (currTab) { 
 
                     chrome.runtime.sendMessage({msg: "start", data: currTab.id}, function(response){
+
+                        _this.startCapturingMicAudio(response.settings);
                        
                         if (response.settings){
 
@@ -717,11 +725,14 @@ class RecordIcon extends Icon{
     }
 
     meeting_stopped(){
+        var _this = this;
         chrome.storage.local.set({"meeting_in_progress": false}, function(){
             console.log("meeting stopped flag set in storage .");
 
             chrome.runtime.sendMessage({msg: "stop"}, function(response){
                 // console.log(response.status);
+
+                _this.stopCapturingMicAudio();
 
                 if (response.settings){
 
@@ -740,7 +751,6 @@ class RecordIcon extends Icon{
 
         this.changeTooltipText("Stop Enhant");
         this.meeting_started();
-        this.startCapturingMicAudio();
 
         var event = new CustomEvent("enhant-start", {});
         window.dispatchEvent(event);
@@ -763,7 +773,6 @@ class RecordIcon extends Icon{
     stop(){
         this.changeTooltipText("Start Enhant");
         this.meeting_stopped();
-        this.stopCapturingMicAudio();
         this.showZipDownloadNotification();
 
         var event = new CustomEvent("enhant-stop", {});
@@ -776,11 +785,11 @@ class RecordIcon extends Icon{
         this.toggleContainer();
 
         if (this.state == ICONSTATE.ACTIVE){
-            var event = new CustomEvent("recordingActiveShowIcons", {});
+            var event = new CustomEvent("recordingStarted", {});
 			window.dispatchEvent(event);
         }
         else if (this.state == ICONSTATE.INACTIVE){
-            var event = new CustomEvent("recordingStoppedHideIcons", {});
+            var event = new CustomEvent("recordingStopped", {});
 			window.dispatchEvent(event);
         }
     }
