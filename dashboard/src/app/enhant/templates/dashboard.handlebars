@@ -409,7 +409,7 @@
                     "<td>" + d.content + "</td>" +
                     "<td>" + getMeetingDuration(zip.start_time, d.event_time)+ "</td></tr>";
             
-            $('.notes-data-tbody').html(row_html);
+            $('.notes-data-tbody').append(row_html);
         });
     }
 
@@ -428,12 +428,17 @@
     }
 
     function updateQuestions(zip){
-        var data = zip.questionsAsked.questionsAsked;
+        var data = zip.questionsAsked;
 
         data.forEach(function(d){
-            var row_html = "<tr>" +
-                    "<td>" + d + "</td>" + 
-                    "</tr>";
+
+            // add number of milliseconds to the start time
+            var end_time = zip.start_time + d.time;
+            var elapsed_time = getMeetingDuration(zip.start_time, end_time);
+
+             var row_html = "<tr>" +
+                    "<td>" + d.question + "</td>" +
+                    "<td>" + elapsed_time + "</td></tr>";
             
             $('.questions-data-tbody').append(row_html);
                 
@@ -509,7 +514,11 @@
 
     function updateAverageEngagementScore(zip){
 
-        var averageScore = zip.engagement_scores.avg_engagement_score;
+        var averageScore = 0
+
+        if (zip.hasOwnProperty("engagement_scores")){
+            averageScore = zip.engagement_scores.avg_engagement_score;
+        }
 
         $(".GaugeMeter").gaugeMeter({
            "percent": averageScore,
@@ -538,15 +547,26 @@
     }
 
     function updateAverageSentiment(zip){
-        var sentiment = Number(zip.avgSentimentScoreGuest);
-        if (sentiment <= 0.2){
-            $('#average-sentiment').attr("src", "public/img/dissatisfied_sentiment.svg");
+
+        if (zip.hasOwnProperty("avgSentimentScoreGuest")){
+
+            $('#average-sentiment').show();
+
+            var sentiment = Number(zip.avgSentimentScoreGuest);
+            if (sentiment <= 0.2){
+                $('#average-sentiment').attr("src", "public/img/dissatisfied_sentiment.svg");
+            }
+            else if (sentiment > 0.2 && sentiment < 0.7){
+                $('#average-sentiment').attr("src", "public/img/neutral_sentiment.svg");
+            }
+            else{
+                $('#average-sentiment').attr("src", "public/img/satisfied_sentiment.svg");
+            }
+
         }
-        else if (sentiment > 0.2 && sentiment < 0.7){
-            $('#average-sentiment').attr("src", "public/img/neutral_sentiment.svg");
-        }
-        else{
-            $('#average-sentiment').attr("src", "public/img/satisfied_sentiment.svg");
+        else
+        {
+            $('#average-sentiment').hide();
         }
     }
 
