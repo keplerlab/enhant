@@ -24,9 +24,12 @@ To install the enhan(t) extension::
 Settings::
 ''''''''''''''''
 
-For Basic mode users, you can leave the settings alone.
+For Basic mode users, you can leave the settings alone.::
 
-<Show settings screenshot>
+
+        <Show settings screenshot>
+
+
 
 For Power mode users, you need to install and run the companion Docker application (installation guide here <link to the installation guide>) and then check the ‘Enable Power Mode’ checkbox and hit ‘Apply’. A lightning icon will now appear in the toolbar once the record icon is pressed. The lightning icon can be used to show the real-time engagement and sentiment.
 
@@ -36,39 +39,46 @@ For advanced developers, who want to change ports during local deployment or hos
 
 Transcription Service and CLI (Command Line Interface)
 The transcription service and CLI enables the Power mode in the Chrome extension to work. It enables guest side transcription, provides engagement, sentiment and interrogatives.
-The transcription service and CLI can be installed as a Docker compose application:
+The transcription service and CLI can be installed as a Docker compose application.
+To install both as application using docker application follow these instructions:
 
-#.      Make sure you have Docker installed on your system. If not,follow the instructions there to get started with Docker.
-        link `docker-desktop <https://www.docker.com/products/docker-desktop>`_.
-        and for linux using this link
-        `docker-desktop on linux <https://docs.docker.com/install/linux/docker-ce/ubuntu/>`_
+#.  Make sure you have Docker installed on your system. If not,follow the instructions there to get started with Docker. link `docker-desktop <https://www.docker.com/products/docker-desktop>`_. and for linux using this link `docker-desktop on linux <https://docs.docker.com/install/linux/docker-ce/ubuntu/>`_
 
-#.	Make sure you have Git installed. If not, go to https://www.atlassian.com/git/tutorials/install-git and follow the instructions there.
+#.  Make sure you have Git installed. If not, go to https://www.atlassian.com/git/tutorials/install-git and follow the instructions there.
 
-#.      You can find the enhan(t) project on Github at https://github.com/keplerlab/enhant. Clone the repository by running the following git clone command on your terminal::
+#.  You can find the enhan(t) project on Github at https://github.com/keplerlab/enhant. Clone the repository by running the following git clone command on your terminal::
+
 
         git clone https://github.com/keplerlab/enhant.git
 
+    On **Windows** to prevent line ending issues clone using this command instead::
 
-#.	Next, to have locally trusted development certificates we need to install mkcert. Please follow the installation instructions for your particular OS at  <https://github.com/FiloSottile/mkcert> .
-#.	Now go to the cloned ‘enhant’ directory and then run ‘cd certificates’.
-#.	Run ‘mkcert localhost 127.0.0.1 ::1’ to create the certificates.
 
-#.      Change your directory to your cloned repo.
+        git clone  https://github.com/keplerlab/enhant.git --config core.autocrlf=false
 
-#.      Start Docker containers::
+
+
+#.  Next, to have locally trusted development certificates we need to install mkcert. Please follow the installation instructions for your particular OS at  <https://github.com/FiloSottile/mkcert> .
+#.  Now go to the cloned ‘enhant’ directory and then run ‘cd certificates’.
+#.  Run ‘mkcert localhost 127.0.0.1 ::1’ to create the certificates.
+
+#.  Change your directory to your cloned repo.
+
+#.  Start Docker containers::
+
 
         cd /path/to/enahant-repo/
         docker-compose up
 
-#.      To Stop Docker containers, Open terminal and run the following commands::
+
+#.  To Stop Docker containers, Open terminal and run the following commands::
+
 
         cd <path-to-repo> //you need to be in your repo folder
-
         docker-compose down
 
 
-#.      Invoke cli for conversation id (111 in example below)::
+#.  Invoke cli for conversation id (111 in example below)::
 
 
         cd /path/to/enahant-repo

@@ -1,11 +1,19 @@
-Tips and Troubleshooting
-=================================
+####################################
+Tips, Troubleshooting and FAQs
+####################################
 
+FAQ
+=========
+
+What are the supported languages? 
+-------------------------------------------
+   Currently we provide support for English (US).
+ 
 
 Error:- Docker container crashed
---------------------------------
+---------------------------------
 
-If your node server crashes or docker goes down, please raise a issue on github with details.
+If your transcription service crashes or docker goes down, please raise a issue on github with details.
 To restart the application, open terminal and run the following commands::
 
         cd <path-to-repo> //you need to be in your repo folder
@@ -25,3 +33,4 @@ To recover some of this disk space you can remove dangling docker images
 using this command::
  
         docker rmi $(docker images -f 'dangling=true' -q)
+        docker system prune

@@ -7,13 +7,19 @@ This mode of the extension gives additional functionalities to power users when 
 
 Once the Docker application is installed and run, one can click the settings icon in the extension toolbar, check ‘Enable Power Mode’ and hit ‘Apply’ to activate the Power mode.
 
-Now a new flash icon should be visible in the toolbar.
+Now a new flash icon should be visible in the toolbar.::
 
-<Show screenshots of the process>
 
-On clicking the flash icon for Power mode, you get to see the real-time call metrics – engagement and sentiment – from the meeting.
+        <Show screenshots of the process>
 
-<Show screenshot of engagement and sentiment>
+
+
+On clicking the flash icon for Power mode, you get to see the real-time call metrics – engagement and sentiment – from the meeting.::
+
+
+        <Show screenshot of engagement and sentiment>
+
+
 
 The call metrics can be removed by hitting the close button or by clicking the Power mode icon in the toolbar. It can be brought back in the view by clicking the Power mode icon again.
 
