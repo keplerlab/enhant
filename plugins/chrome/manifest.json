@@ -2,7 +2,7 @@
     "manifest_version": 2,
   
     "name": "enhan(t) Conference Power Tool",
-    "description": "Bookmark moments, capture screenshots and take notes during your meetings. Get your meeting transcripts, get sentiment, engagement and extract questions with companion open-source toolkit.",
+    "description": "Bookmark moments, capture screenshots and take notes during your meetings. Get transcripts, sentiment, engagement and questions.",
     "version": "0.1.1",
     "icons": {
       "128":"static/images/logo.png"
