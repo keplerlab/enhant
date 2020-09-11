@@ -1,7 +1,7 @@
 
-enhant architecture
+Architecture of nlp analyzer
 ======================================
 
 
-enhant system architecture
+Architecture of nlp analyzer
 ---------------------------------
