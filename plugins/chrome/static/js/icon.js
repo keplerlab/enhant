@@ -21,6 +21,12 @@ class Icon{
         this.icon_disable_path = null;
 
         this.info_svg_path = "static/images/info.svg";
+
+        this.hover_message_enabled = null;
+        this.hover_message_disabled = null;
+
+        this.disabled = true;
+        
     }
 
     disableIcon(){
@@ -31,6 +37,7 @@ class Icon{
         icon_img.attr("src", this.icon_disable_path);
 
         icon.removeAttr("clickable");
+        this.disabled = true;
 
     }
 
@@ -51,6 +58,8 @@ class Icon{
         if (this.clickable){
             icon.attr("clickable", true);
         }
+
+        this.disabled = false;
         
     }
 
@@ -149,7 +158,35 @@ class Icon{
         });
     }
 
-    registerEvents(){}
+    displayMessageOnIconHover(){
+        var _this = this;
+        var icon_type = this.constructor.name;
+        if (this.hover_message_enabled !== null && this.hover_message_disabled !== null){
+            $('icon[type="' + icon_type + '"]').hover(function(){
+                var hover_message = _this.disabled == true ? _this.hover_message_disabled : _this.hover_message_enabled;
+                var html = "<div class='clearfix'>" + 
+                "<div class='col-xs-2'>" + 
+                "<img width=20 height=20 src='/static/images/info.svg'>" +
+                "</div>" + 
+                "<div class='col-xs-10'>" +
+                "<span>" + hover_message+ "</span>" + 
+                "</div>" +
+                "</div>";
+
+                var event = new CustomEvent("showNotification", {
+                    detail: {html: html, timeout_in_sec: 2}
+                });
+                window.dispatchEvent(event);
+            }, function(){});
+        }
+    }
+
+    registerEvents(){
+        var _this = this;
+        window.addEventListener("pluginActivated", function(evt){
+            _this.displayMessageOnIconHover();
+        });
+    }
 }
 
 class NotesIcon extends Icon{
@@ -163,10 +200,16 @@ class NotesIcon extends Icon{
         this.inactive_icon_path = "static/images/notes_inactive.svg";
 
         this.icon_disable_path = "static/images/notes_disabled.svg";
+
+        this.hover_message_disabled = "You can take notes when recording is ON.";
+        this.hover_message_enabled = "Note taking will disable when you stop the recording.";
+        
     }
 
     registerEvents(){
+        super.registerEvents();
         var _this = this;
+       
         $('#' + _this.submit_btn_id).click(function(){
             _this.addNotes();
         });
@@ -233,6 +276,9 @@ class BookmarkIcon extends Icon{
         this.inactive_icon_path = "static/images/bookmark_inactive.svg";
 
         this.icon_disable_path = "static/images/bookmark_disabled.svg";
+
+        this.hover_message_enabled = "Bookmark will disable when you stop the recording.";
+        this.hover_message_disabled = "You can bookmark when recording is ON.";
     }
 
     generateBookmark(obj){
@@ -305,7 +351,7 @@ class BookmarkIcon extends Icon{
         "</div>";
 
         var event = new CustomEvent("showNotification", {
-            detail: notification_html
+            detail: {html: notification_html, timeout_in_sec: 1}
         });
         window.dispatchEvent(event);
     }
@@ -343,6 +389,9 @@ class CaptureTabIcon extends Icon{
         this.inactive_icon_path = "static/images/capture_inactive.svg";
 
         this.icon_disable_path = "static/images/capture_disabled.svg";
+
+        this.hover_message_enabled = "Screenshot capture will disable when you stop the recording.";
+        this.hover_message_disabled = "You can take screenshot when recording is ON";
     }
 
     capture(){
@@ -375,7 +424,7 @@ class CaptureTabIcon extends Icon{
             "</div>";
 
         var event = new CustomEvent("showNotification", {
-            detail: notification_html
+            detail: {html: notification_html, timeout_in_sec: 1}
         });
 
         window.dispatchEvent(event);
@@ -564,6 +613,9 @@ class SettingsIcon extends Icon{
         this.inactive_icon_path = "static/images/settings_inactive.svg";
 
         this.icon_disable_path = "static/images/settings_disabled.svg";
+
+        this.hover_message_enabled = "Settings will disable when you start the recording. Configure appropriately.";
+        this.hover_message_disabled = "Settings will be available when you stop the recording.";
         
     }
 
@@ -602,7 +654,10 @@ class SettingsIcon extends Icon{
     }
 
     registerEvents(){
+
+        super.registerEvents();
         var _this = this;
+
         $('#' + _this.apply_btn_id).click(function(){
 
             _this.power_mode = _this.getPowerModeSetting();
@@ -765,7 +820,7 @@ class RecordIcon extends Icon{
         "</div>";
 
         var event = new CustomEvent("showNotification", {
-            detail: notification_html
+            detail: {html: notification_html, timeout_in_sec: 1}
         });
         window.dispatchEvent(event);
     }
@@ -827,6 +882,9 @@ class PowerModeIcon extends Icon{
         this.clickable = false;
 
         this.recording = false;
+
+        this.hover_message_enabled = "Power mode is ON. You can disable it from settings.";
+        this.hover_message_disabled = "Power mode is OFF. You can enable it from settings.";
     }
 
     // dont toggle icon for powermode
