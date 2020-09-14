@@ -1,5 +1,5 @@
 """
-.. module:: enhant-cli-app Main file
+.. module:: enhant-cli-app
     :platform: Platform Independent
     :synopsis: Main file
 """
