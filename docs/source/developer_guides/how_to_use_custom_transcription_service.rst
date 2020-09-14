@@ -14,7 +14,7 @@ format::
     sample rate: 44100
     sample width: 2 
 
-additionally transcription service is hosted as an websocket server with https enabled
+additionally transcription service is hosted as an websocket server with **https** enabled
 on port number **1111** 
 
 To communicate some of the configuration parameters are communicated between 
