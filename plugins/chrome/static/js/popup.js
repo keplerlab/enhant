@@ -2,12 +2,13 @@ function hideNotification(){
     $('#notification').hide();
 }
 
-function showNotification(html){
+function showNotification(html, timeout_in_sec){
     $('#notification').show();
     $('#notification-content').html(html);
+
     setTimeout(function(){
         hideNotification();
-    }, 1000);
+    }, timeout_in_sec * 1000);
 }
 
 function powermodeIconHandler(data){
@@ -37,14 +38,13 @@ $(document).ready(function(){
         PowerModeIcon
     ];
 
-    var icons_events_registered = [];
-
     var icons_object_mapping = {};
 
     // register the classes and events
     registered_classes.forEach(function(cl){
 
         var obj = new cl();
+        obj.registerEvents();
         icons_object_mapping[cl.name] = obj;
 
         obj.disableIcon();
@@ -55,6 +55,9 @@ $(document).ready(function(){
         console.log(" Received message from browser action [Activate plugin] : ", message);
     
         if (message.cmd == "activate_plugin"){
+
+            var event = new CustomEvent("pluginActivated", {});
+            window.dispatchEvent(event);
 
             // enable these icons
             var iconsToEnable = [
@@ -152,14 +155,6 @@ $(document).ready(function(){
                 hideOtherIconWindow(icon_type);
                 icon_obj.handleClick();
             }
-
-            
-            // make sure event is registered only once
-            if (icons_events_registered.indexOf(icon_type) == -1){
-                icon_obj.registerEvents();
-                icons_events_registered.push(icon_type);
-            }
-
         }
     
     });
@@ -248,8 +243,8 @@ $(document).ready(function(){
     });
 
     window.addEventListener("showNotification", function(event){
-        var html = event.detail;
-        showNotification(html);
+        var data = event.detail;
+        showNotification(data.html, data.timeout_in_sec);
     });
 
     window.addEventListener("enhant-stop", function(event){
@@ -263,6 +258,5 @@ $(document).ready(function(){
             var icon_obj = icons_object_mapping[cl.name];
             icon_obj.disableIcon();
         });
-    })
-
-})
+    });
+});
