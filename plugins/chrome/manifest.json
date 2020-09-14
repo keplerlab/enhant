@@ -5,11 +5,17 @@
     "description": "Bookmark moments, capture screenshots and take notes during your meetings. Get transcripts, sentiment, engagement and questions.",
     "version": "0.1.0",
     "icons": {
-      "128":"static/images/logo.png"
+      "16": "static/images/logo-16.png",
+      "32": "static/images/logo-32.png",
+      "48": "static/images/logo-48.png",
+      "128":"static/images/logo-128.png"
     },
     "page_action": {
       "default_icon": {
-        "128":"static/images/logo.png"
+        "16": "static/images/logo-16.png",
+        "32": "static/images/logo-32.png",
+        "48": "static/images/logo-48.png",
+        "128":"static/images/logo-128.png"
       }
     },
     "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
