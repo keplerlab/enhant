@@ -1,17 +1,17 @@
 enhant cli
 ******************************************
 
-enhant cli Service is implemented at **/cli** in python language.
-It is further divided into separate modules.
+enhant cli is an python application located, code 
+for which could be found at **enhant-repo/cli**.
 
 
 First one is main module with 
 
-main module
+main enhant-cli-app module
 ----------------------------------------
 
 
-.. automodule:: main
+.. automodule:: enhant_cli_app
    :members:
    :undoc-members:
    :show-inheritance:
@@ -29,17 +29,6 @@ config
    :noindex:
 
 
-db_handler
-----------------------------------
-
-
-.. automodule:: db_handler
-   :members:
-   :undoc-members:
-   :show-inheritance:
-   :noindex:
-
-
 engagment_finder module
 ----------------------------------------
 
@@ -50,17 +39,6 @@ engagment_finder module
    :show-inheritance:
    :noindex:
 
-
-
-note module
-----------------------------------------
-
-
-.. automodule:: note
-   :members:
-   :undoc-members:
-   :show-inheritance:
-   :noindex:
 
 questions_finder module
 ----------------------------------------

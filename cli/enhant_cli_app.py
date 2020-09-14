@@ -1,5 +1,5 @@
 """
-.. module:: Main file
+.. module:: enhant-cli-app Main file
     :platform: Platform Independent
     :synopsis: Main file
 """
@@ -8,6 +8,7 @@ import typer
 from typing import List
 import os
 import config
+from typing import NoReturn, Tuple
 
 
 from operator import methodcaller
@@ -24,13 +25,16 @@ APP_NAME = "enhant-cli-app"
 
 app = typer.Typer()
 
-
 @app.command()
-def analyze(input: str):
-    """[Analyzes a full conversation.]
+def analyze(input: str) -> NoReturn:
+    """Analyzes a full conversation by taking input zip file containing
+    subtitles files host.srt, guest.srt and Input.json Saves a results zip
+    containing precessed json
 
-    :param conv_ids: [description]
-    :type conv_ids: List[str]
+    :param input: Input zip file or folder
+    :type input: str
+    :return: None
+    :rtype: NoReturn
     """
     folder = ""
     if input.endswith(".zip"):
@@ -48,8 +52,8 @@ def analyze(input: str):
     guest_transcription_list = None
     host_transcription_list = None
 
-    guest_transcription_list = helper.transform_Srt_and_correct_punct(folder, "guest")
-    host_transcription_list = helper.transform_Srt_and_correct_punct(folder, "host")
+    guest_transcription_list = helper.transform_Srt_and_correct_punct(folder, "guest", config.settings.use_punct_correction)
+    host_transcription_list = helper.transform_Srt_and_correct_punct(folder, "host", config.settings.use_punct_correction)
 
     input_json_file_name = os.path.join(folder, "input.json")
     input_json_data = None

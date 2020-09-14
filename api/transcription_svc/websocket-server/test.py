@@ -1,33 +1,44 @@
 #!/usr/bin/env python3
 
 import asyncio
-import websocket
+import websockets
 import sys
-import ssl
-import pathlib
+import json 
 
-# ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
-# #localhost_pem = pathlib.Path(__file__).with_name("certificates/cert.pem")
-# ssl_context.load_verify_locations("certificates/cert.pem")
+jsonData = {}
+jsonData["origin"] = "speaker"
+jsonData["cmd"] = "start"
+jsonData["conversation_id"] = "1111"
 
-#ws = websockets.WebSocket(sslopt={"cert_reqs": ssl.CERT_NONE})
-ws = websocket.WebSocket(sslopt={"cert_reqs": ssl.CERT_NONE})
+# convert into JSON:
+jsonDataStr = json.dumps(jsonData)
+
+output_file = open("output_transcription.txt", "w")
 
 async def hello(uri):
+    async with websockets.connect(uri) as websocket:
+        wf = open(sys.argv[1], "rb")
+        await websocket.send(jsonDataStr)
+        while True:
+            data = wf.read(44100)
+            
 
-    ws.connect(uri)
-    wf = open(sys.argv[1], "rb")
-    while True:
-        data = wf.read(44100)
+            if len(data) == 0:
+                break
 
-        if len(data) == 0:
-            break
+            await websocket.send(data)
+            #await asyncio.sleep(0.1)
+            output = await websocket.recv()
+            
+            if output != "":
+                print(output)
+                output_file.write(output)
 
-        ws.send(data)
-        print (ws.recv())
+        await websocket.send('{"eof" : 1}')
+        print (await websocket.recv())
+        output_file.close()
 
-    ws.send('{"eof" : 1}')
-    print (ws.recv())
+
 
 asyncio.get_event_loop().run_until_complete(
-    hello('wss://0.0.0.0:1111'))
+    hello('ws://0.0.0.0:1112'))

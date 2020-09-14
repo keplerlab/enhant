@@ -48,19 +48,20 @@ To install both as application using docker application follow these instruction
 
 #.  You can find the enhan(t) project on Github at https://github.com/keplerlab/enhant. Clone the repository by running the following git clone command on your terminal::
 
-
         git clone https://github.com/keplerlab/enhant.git
 
     On **Windows** to prevent line ending issues clone using this command instead::
 
-
         git clone  https://github.com/keplerlab/enhant.git --config core.autocrlf=false
 
+#.  Next, to have locally trusted development certificates we need to install mkcert. Please follow the installation instructions :ref:`certificate_for_localhost` for detailed instructions
+#.  Now go to the cloned ‘enhant’ directory and then run go to certificates directory.::
 
+        $ cd certificates
 
-#.  Next, to have locally trusted development certificates we need to install mkcert. Please follow the installation instructions for your particular OS at  <https://github.com/FiloSottile/mkcert> .
-#.  Now go to the cloned ‘enhant’ directory and then run ‘cd certificates’.
-#.  Run ‘mkcert localhost 127.0.0.1 ::1’ to create the certificates.
+#.  Run following to create the certificates.::
+
+        $ mkcert -key-file key.pem -cert-file cert.pem localhost 127.0.0.1 ::1
 
 #.  Change your directory to your cloned repo.
 
@@ -78,12 +79,12 @@ To install both as application using docker application follow these instruction
         docker-compose down
 
 
-#.  Invoke cli for conversation id (111 in example below)::
+#.  Invoke cli for input zip file from plugin (input.zip in example below))::
 
 
         cd /path/to/enahant-repo
         docker-compose run cli
-        python  main.py analyze 111 
+        python enhant_cli_app analyze input.zip
 
 
 

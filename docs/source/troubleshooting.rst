@@ -14,6 +14,9 @@ Error:- Docker container crashed
 ---------------------------------
 
 If your transcription service crashes or docker goes down, please raise a issue on github with details.
+Check if you have allocated sufficient RAM to docker container by going to docker 
+dashboard, enhant local transcription service needs at least 4 GB of RAM for it to 
+work without issue, After allocating sufficient memory/RAM restart application. 
 To restart the application, open terminal and run the following commands::
 
         cd <path-to-repo> //you need to be in your repo folder
@@ -21,6 +24,12 @@ To restart the application, open terminal and run the following commands::
         docker-compose up
 
 enhant will start again
+
+Error:- certfile=cfg.CERT_FILE_PATH, keyfile=cfg.KEY_FILE_PATH FileNotFoundError: [Errno 2] No such file or directory
+------------------------------------------------------------------------------------------------------------------------------------
+Make sure you have installed local ssl certificate before starting service using 
+docker-compose up.
+Refer :ref:`certificate_for_localhost` for instructions
 
 
 Remove all Dangling Docker images
