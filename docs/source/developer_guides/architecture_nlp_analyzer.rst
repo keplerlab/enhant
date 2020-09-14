@@ -1,5 +1,5 @@
 
-Architecture of nlp analyzer and how to add or subtract nlp analyzer 
+Architecture nlp analyzer and how to add or subtract nlp analyzer 
 =====================================================================
 
 
