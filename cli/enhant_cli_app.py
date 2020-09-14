@@ -52,8 +52,8 @@ def analyze(input: str) -> NoReturn:
     guest_transcription_list = None
     host_transcription_list = None
 
-    guest_transcription_list = helper.transform_Srt_and_correct_punct(folder, "guest")
-    host_transcription_list = helper.transform_Srt_and_correct_punct(folder, "host")
+    guest_transcription_list = helper.transform_Srt_and_correct_punct(folder, "guest", config.settings.use_punct_correction)
+    host_transcription_list = helper.transform_Srt_and_correct_punct(folder, "host", config.settings.use_punct_correction)
 
     input_json_file_name = os.path.join(folder, "input.json")
     input_json_data = None

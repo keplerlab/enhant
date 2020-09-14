@@ -17,6 +17,7 @@ class Settings(BaseSettings):
         ]
 
     data_analyzers: list = get_data_analyers()
+    use_punct_correction: bool = True
 
 
 settings = Settings()

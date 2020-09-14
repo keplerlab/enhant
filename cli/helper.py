@@ -49,7 +49,7 @@ def add_origin(transcription_pkt_list, origin: str):
     return transcription_pkt_list
 
 
-def truncate_string_to_fixed_size(input_string: str, max_len: int = 395) -> str:
+def truncate_string_to_fixed_size(input_string: str, max_len: int = 350) -> str:
     """truncate string to fix size 
 
     :param input_string: [description]
@@ -66,7 +66,7 @@ def truncate_string_to_fixed_size(input_string: str, max_len: int = 395) -> str:
 
 
 def transform_Srt_and_correct_punct(
-    input_data_folder_path: str, origin: str, meeting_start_utc: Optional[int] = 0
+    input_data_folder_path: str, origin: str, use_punct_correction: bool, meeting_start_utc: Optional[int] = 0, 
 ):
     """[transform srt packet to list]
     :return: [description]
@@ -84,12 +84,17 @@ def transform_Srt_and_correct_punct(
         corrected_transcription_list = []
         for srt in srtList:
             srt_with_newline_corrected = srt.text.replace("\n", " ")
-            truncated_string = truncate_string_to_fixed_size(srt_with_newline_corrected)
-            transcription_list.append(truncated_string)
-
-        corrected_transcription_list = fastpunct.punct(
-           transcription_list, batch_size=16
-        )
+            if use_punct_correction:
+                truncated_string = truncate_string_to_fixed_size(srt_with_newline_corrected)
+                transcription_list.append(truncated_string)
+            else:
+                transcription_list.append(srt_with_newline_corrected)
+            
+        if use_punct_correction:
+            #print("Doing punct correction using fastpunct")
+            corrected_transcription_list = fastpunct.punct(
+            transcription_list, batch_size=32
+            )
         for idx, srt in enumerate(srtList):
 
             transcriptions_pkt = {}
@@ -98,9 +103,14 @@ def transform_Srt_and_correct_punct(
             transcriptions_pkt["msg"]["data"] = {}
             transcriptions_pkt["msg"]["data"]["transcription"] = {}
 
-            transcriptions_pkt["msg"]["data"]["transcription"][
-                "content"
-            ] = corrected_transcription_list[idx]
+            if use_punct_correction:
+                transcriptions_pkt["msg"]["data"]["transcription"][
+                    "content"
+                ] = corrected_transcription_list[idx]
+            else:
+                transcriptions_pkt["msg"]["data"]["transcription"][
+                    "content"
+                ] = transcription_list[idx]                
             transcriptions_pkt["msg"]["data"]["transcription"][
                 "start_time"
             ] = _transformTime(srt.start, meeting_start_utc)
