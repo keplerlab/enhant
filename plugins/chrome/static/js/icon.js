@@ -205,7 +205,7 @@ class NotesIcon extends Icon{
 
         this.icon_disable_path = "static/images/notes_disabled.svg";
 
-        this.hover_message_disabled = "Take note when recording.";
+        this.hover_message_disabled = "Take note enabled when recording.";
         
     }
 
@@ -279,7 +279,7 @@ class BookmarkIcon extends Icon{
         this.inactive_icon_path = "static/images/bookmark_inactive.svg";
 
         this.icon_disable_path = "static/images/bookmark_disabled.svg";
-        this.hover_message_disabled = "Bookmark moment when recording.";
+        this.hover_message_disabled = "Bookmark moment enabled when recording.";
     }
 
     generateBookmark(obj){
@@ -390,7 +390,7 @@ class CaptureTabIcon extends Icon{
         this.inactive_icon_path = "static/images/capture_inactive.svg";
 
         this.icon_disable_path = "static/images/capture_disabled.svg";
-        this.hover_message_disabled = "Capture screenshot when recording.";
+        this.hover_message_disabled = "Capture screenshot enabled when recording.";
     }
 
     capture(){
