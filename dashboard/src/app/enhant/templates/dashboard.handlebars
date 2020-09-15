@@ -151,15 +151,11 @@
 
         {{#if context.recording}}
         <div class="section recording">
-            <div class="row">
-                <div class="col-xs-12">
-                    <video width="100%" height="100%" id="recording-video" src="" controls></video>
-                    <canvas id="chart" height="200px;"></canvas>
-                </div>
-                
-            </div>
+            
         </div>
         {{/if}}
+
+         <canvas id="chart" height="200px;"></canvas>
 
         {{#if context.bookmark}}
         <div class="section bookmark has-shadow">
@@ -575,11 +571,6 @@
         }
     }
 
-    function startVideoPlayback(recording){
-        var url = recording.url;
-        $('#recording-video').attr("src", url);
-    }
-
     function createLineChart(zip){
         var data = [];
         var meeting_start_time = zip.start_time;
@@ -679,14 +670,20 @@
 
         if (!isEmpty(zip_data)){
             processData(zip_data);
+            createLineChart(zip_data);
         }
         else if (!isEmpty(notes_data)){
             processData(notes_data);
         }
 
         if (recording_data.hasOwnProperty("url") !== null){
-            startVideoPlayback(recording_data);
-            createLineChart(zip_data);
+
+            const mediaPlayerTemplate = Handlebars.templates.mediaPlayer;
+            const media_html = mediaPlayerTemplate({
+                "url": recording_data.url
+            });
+            $('.recording').html(media_html);
+
         }
 
     });
