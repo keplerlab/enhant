@@ -12,6 +12,7 @@ from typing import List, Optional
 from colorama import init, Fore, Back, Style
 import textwrap
 from typing import NoReturn, Tuple
+import time
 
 init(init(autoreset=True))
 from fastpunct import FastPunct
