@@ -154,7 +154,9 @@
             <div class="row">
                 <div class="col-xs-12">
                     <video width="100%" height="100%" id="recording-video" src="" controls></video>
+                    <canvas id="chart" height="200px;"></canvas>
                 </div>
+                
             </div>
         </div>
         {{/if}}
@@ -296,6 +298,8 @@
 </div>
 
 <script src="public/scripts/GaugeMeter.js"></script>
+<script src="public/scripts/moment.js"></script>
+<script src="public/scripts/Chart.js"></script>
 <script>
 
     function generateMeetingDate(start_time){
@@ -464,7 +468,7 @@
                 var et_a = zip.start_time + a[0];
                 var et_b = zip.start_time + b[0];
 
-                return et_a > et_b;
+                return et_a - et_b;
             })
 
             var sentiment_outlier_html = "";
@@ -576,6 +580,71 @@
         $('#recording-video').attr("src", url);
     }
 
+    function createLineChart(zip){
+        var data = [];
+        var meeting_start_time = zip.start_time;
+        var meeting_end_time = zip.end_time;
+        var samplingRate_in_ms = 10 * 1000; // 10 seconds
+
+        var  datasets = [];
+        var sentimentData = [];
+
+        var ctx = document.getElementById("chart").getContext('2d');
+
+        if (zip.hasOwnProperty("engagement_scores")){
+
+            var d = zip.engagement_scores.engagement_scores;
+            var ed = d.map(function(r) { return { "x" : new Date(meeting_start_time + r[0]), "y" : r[1]} });
+
+            var engagementData = {
+                label: "Engagement Score",
+                data: ed,
+                borderColor: 'red',
+                fill: false
+            }
+
+            datasets.push(engagementData);
+        }
+
+        if (zip.hasOwnProperty("highSentimentSentences") || zip.hasOwnProperty("highSentimentSentences")){
+            
+            sentimentData.push(...zip.highSentimentSentences.highSentimentSentencesGuest);
+            sentimentData.push(...zip.lowSentimentSentences.lowSentimentSentencesGuest);
+
+            // sort the final array
+            sentimentData.sort(function(a, b){
+                var et_a = meeting_start_time + a[0];
+                var et_b = meeting_start_time + b[0];
+
+                return et_a - et_b;
+            });
+
+            var ed = sentimentData.map(function(r) { return { "x" : new Date(meeting_start_time + r[0]), "y" : Math.round(r[2]*100)} });
+
+            var sentimentData = {
+                label: "Sentiment Score",
+                data: ed,
+                borderColor: '#8FC8FF',
+                fill: false
+            }
+
+            datasets.push(sentimentData);
+
+        }
+
+        var lineChart = new Chart(ctx, {
+            type: 'line',
+            data: { datasets: datasets },
+            options: {
+                scales: {
+                    xAxes: [{
+                        type: 'time'
+                    }]
+                }
+            }
+        });
+    }
+
     function reset(){
         $('.outliers-data-tbody').html("");
         $('.questions-data-tbody').html("");
@@ -615,8 +684,9 @@
             processData(notes_data);
         }
 
-        if (recording_data){
+        if (recording_data.hasOwnProperty("url") !== null){
             startVideoPlayback(recording_data);
+            createLineChart(zip_data);
         }
 
     });
