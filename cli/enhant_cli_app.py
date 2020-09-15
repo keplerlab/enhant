@@ -59,18 +59,15 @@ def analyze(input: str) -> NoReturn:
         helper.save_corrected_srt_file(srtListGuest, folder, "guest")
 
     if srtListHost is not None:
-        srtListHost = helper.correct_punctuation_srt_file(folder, "host", config.settings.use_punct_correction)    
+        srtListHost = helper.correct_punctuation_srt_file(srtListHost, config.settings.use_punct_correction)    
         host_transcription_list = helper.transform_Srt_to_list(srtListHost, config.settings.use_punct_correction)
         helper.save_corrected_srt_file(srtListHost, folder, "host")
-
-
 
     input_json_file_name = os.path.join(folder, "input.json")
     input_json_data = None
     if os.path.isfile(input_json_file_name):
         with open(input_json_file_name) as f:
             input_json_data = json.load(f)
-
     else:
         print(Fore.RED + f"\n ERROR: Input JSON file seems to be missing")
 
