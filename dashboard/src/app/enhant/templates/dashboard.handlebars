@@ -154,12 +154,13 @@
             <div class="row">
                 <div class="col-xs-12">
                     <video width="100%" height="100%" id="recording-video" src="" controls></video>
-                    <canvas id="chart" height="200px;"></canvas>
                 </div>
                 
             </div>
         </div>
         {{/if}}
+
+         <canvas id="chart" height="200px;"></canvas>
 
         {{#if context.bookmark}}
         <div class="section bookmark has-shadow">
@@ -679,6 +680,7 @@
 
         if (!isEmpty(zip_data)){
             processData(zip_data);
+            createLineChart(zip_data);
         }
         else if (!isEmpty(notes_data)){
             processData(notes_data);
@@ -686,7 +688,6 @@
 
         if (recording_data.hasOwnProperty("url") !== null){
             startVideoPlayback(recording_data);
-            createLineChart(zip_data);
         }
 
     });
