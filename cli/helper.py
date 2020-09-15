@@ -130,9 +130,11 @@ def correct_punctuation_srt_file(srtList: dict, use_punct_correction: bool):
 
     start = time.time()
     if use_punct_correction:
-        corrected_transcription_list = fastpunct.punct(
-        transcription_list, batch_size=32
-        )
+        corrected_transcription_list = []
+        for item in transcription_list:
+            corrected_item = fastpunct.punct([item])
+            corrected_transcription_list.append(corrected_item[0])
+
     end = time.time()
     print("Time for fastpunct:", end - start)
 
