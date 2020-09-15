@@ -11,6 +11,7 @@ import pysrt
 from typing import List, Optional
 from colorama import init, Fore, Back, Style
 import textwrap
+from typing import NoReturn, Tuple
 
 init(init(autoreset=True))
 from fastpunct import FastPunct
@@ -131,45 +132,97 @@ def transform_Srt_and_correct_punct(
     return transcription_pkt_list
 
 
+def read_srt_file(input_data_folder_path: str, origin: str) -> dict:
+    """[summary]
+
+    :param input_data_folder_path: [description]
+    :type input_data_folder_path: str
+    :param origin: [description]
+    :type origin: str
+    :return: [description]
+    :rtype: [type]
+    """
+    srt_file_name = os.path.join(input_data_folder_path, origin + ".srt")
+    if os.path.isfile(srt_file_name):
+        srtList = pysrt.open(srt_file_name)
+        return srtList
+    else:
+        print(f"\n {Fore.YELLOW} WARNING: {origin}.srt file not present")
+        return None
+    
+def save_corrected_srt_file(srtList:dict, input_data_folder_path: str, origin: str) -> NoReturn:
+    """[summary]
+
+    :param srtList: [description]
+    :type srtList: dict
+    :param input_data_folder_path: [description]
+    :type input_data_folder_path: str
+    :param origin: [description]
+    :type origin: str
+    :return: [description]
+    :rtype: NoReturn
+    """
+    srt_file_name = os.path.join(input_data_folder_path, origin + "_corrected.srt")
+    srtList.save(srt_file_name, encoding='utf-8')
+
+def correct_punctuation_srt_file(srtList: dict, use_punct_correction: bool):
+    """[transform srt packet to list]
+    :return: [description]
+    :rtype: [type]
+    """
+
+    transcription_list = []
+    corrected_transcription_list = []
+    for srt in srtList:
+        srt.text = srt.text.replace("\n", " ")
+        if use_punct_correction:
+            srt.text = truncate_string_to_fixed_size(srt.text)
+            transcription_list.append(srt.text)
+        else:
+            transcription_list.append(srt.text)
+        
+    corrected_transcription_list = fastpunct.punct(
+    transcription_list, batch_size=32
+    )
+    for idx, srt in enumerate(srtList):
+        if use_punct_correction:
+            srt.text = corrected_transcription_list[idx]
+
+    return srtList
+
+
+
 def transform_Srt_to_list(
-    input_data_folder_path: str, origin: str, meeting_start_utc: Optional[int] = 0
+    srtList: dict , meeting_start_utc: Optional[int] = 0
 ):
     """[transform srt packet to list]
     :return: [description]
     :rtype: [type]
     """
 
-    srt_file_name = os.path.join(input_data_folder_path, origin + ".srt")
-
     transcription_pkt_list = []
+    for srt in srtList:
 
-    if os.path.isfile(srt_file_name):
-        srtList = pysrt.open(srt_file_name)
+        transcriptions_pkt = {}
+        transcriptions_pkt["msg"] = {}
 
-        for srt in srtList:
+        transcriptions_pkt["msg"]["data"] = {}
+        transcriptions_pkt["msg"]["data"]["transcription"] = {}
 
-            transcriptions_pkt = {}
-            transcriptions_pkt["msg"] = {}
+        transcriptions_pkt["msg"]["data"]["transcription"]["content"] = srt.text
+        transcriptions_pkt["msg"]["data"]["transcription"][
+            "start_time"
+        ] = _transformTime(srt.start, meeting_start_utc)
 
-            transcriptions_pkt["msg"]["data"] = {}
-            transcriptions_pkt["msg"]["data"]["transcription"] = {}
+        transcriptions_pkt["msg"]["data"]["transcription"][
+            "end_time"
+        ] = _transformTime(srt.end, meeting_start_utc)
 
-            transcriptions_pkt["msg"]["data"]["transcription"]["content"] = srt.text
-            transcriptions_pkt["msg"]["data"]["transcription"][
-                "start_time"
-            ] = _transformTime(srt.start, meeting_start_utc)
+        transcription_pkt_list.append(transcriptions_pkt)
+        transcription_pkt_list = add_origin(
+            transcription_pkt_list, meeting_start_utc
+        )
 
-            transcriptions_pkt["msg"]["data"]["transcription"][
-                "end_time"
-            ] = _transformTime(srt.end, meeting_start_utc)
-
-            transcription_pkt_list.append(transcriptions_pkt)
-            transcription_pkt_list = add_origin(
-                transcription_pkt_list, meeting_start_utc
-            )
-
-    else:
-        print(f"\n {Fore.YELLOW} WARNING: {origin}.srt file not present")
 
     # print("transcription_pkt_list", transcription_pkt_list)
     return transcription_pkt_list

@@ -51,9 +51,19 @@ def analyze(input: str) -> NoReturn:
 
     guest_transcription_list = None
     host_transcription_list = None
+    srtListGuest = helper.read_srt_file(folder, "guest")
+    srtListHost = helper.read_srt_file(folder, "host")
+    if srtListGuest is not None:
+        srtListGuest = helper.correct_punctuation_srt_file(srtListGuest, config.settings.use_punct_correction)
+        guest_transcription_list = helper.transform_Srt_to_list(srtListGuest, config.settings.use_punct_correction)
+        helper.save_corrected_srt_file(srtListGuest, folder, "guest")
 
-    guest_transcription_list = helper.transform_Srt_and_correct_punct(folder, "guest", config.settings.use_punct_correction)
-    host_transcription_list = helper.transform_Srt_and_correct_punct(folder, "host", config.settings.use_punct_correction)
+    if srtListHost is not None:
+        srtListHost = helper.correct_punctuation_srt_file(folder, "host", config.settings.use_punct_correction)    
+        host_transcription_list = helper.transform_Srt_to_list(srtListHost, config.settings.use_punct_correction)
+        helper.save_corrected_srt_file(srtListHost, folder, "host")
+
+
 
     input_json_file_name = os.path.join(folder, "input.json")
     input_json_data = None
