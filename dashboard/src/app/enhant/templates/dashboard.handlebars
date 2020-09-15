@@ -151,12 +151,7 @@
 
         {{#if context.recording}}
         <div class="section recording">
-            <div class="row">
-                <div class="col-xs-12">
-                    <video width="100%" height="100%" id="recording-video" src="" controls></video>
-                </div>
-                
-            </div>
+            
         </div>
         {{/if}}
 
@@ -576,11 +571,6 @@
         }
     }
 
-    function startVideoPlayback(recording){
-        var url = recording.url;
-        $('#recording-video').attr("src", url);
-    }
-
     function createLineChart(zip){
         var data = [];
         var meeting_start_time = zip.start_time;
@@ -687,7 +677,13 @@
         }
 
         if (recording_data.hasOwnProperty("url") !== null){
-            startVideoPlayback(recording_data);
+
+            const mediaPlayerTemplate = Handlebars.templates.mediaPlayer;
+            const media_html = mediaPlayerTemplate({
+                "url": recording_data.url
+            });
+            $('.recording').html(media_html);
+
         }
 
     });
