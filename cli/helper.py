@@ -110,7 +110,7 @@ def fix_apostrophe(string_to_fix: str) -> str:
     :return: [description]
     :rtype: str
     """
-    if string_to_fix.startswith("` "):
+    if string_to_fix.startswith("` ") or string_to_fix.startswith("'"):
         string_fixed = string_to_fix[2:]
         return string_fixed
     else:
