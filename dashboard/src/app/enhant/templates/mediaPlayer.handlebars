@@ -4,6 +4,8 @@
   position: relative;
   font-size: 0;
   overflow: hidden;
+  padding-right: 0px;
+  padding-left: 0px;
 }
 
 .player__button {
@@ -19,13 +21,13 @@
 }
 
 .player__controls {
-  bottom:0;
+  position: absolute;
   width: 100%;
-  height: 15px;
-  transition:all .3s;
+  height: 40px;
+  transition:all .3s;   
   flex-wrap:wrap;
   background:rgba(0,0,0,0.1);
-  margin-top: -50px;
+  margin-top: -40px;
 }
 
 .progress {
@@ -34,10 +36,15 @@
   display:flex;
   flex-basis:100%;
   margin-bottom: 0px;
-  height:15px;
+  height:16px;
   transition:height 0.3s;
-  background:rgba(0,0,0,0.5);
+  background:white;
+  border-radius:15px;
+  border:2px solid white;
+  padding-left: 0px;
+  padding-right: 0px;
   cursor:pointer;
+  margin-top: 8px;
 }
 
 .progress__filled {
@@ -48,7 +55,7 @@
 }
 
 .markers{
-    margin-top: -50px;
+    margin-top: -40px;
     display: flex;
     height: 20px;
     overflow: hidden;
@@ -61,7 +68,8 @@
         <video width="100%" height="100%" class="viewer" id="recording-video" src="{{url}}"></video>
 
         <div class="player__controls clearfix">
-            <icon style="cursor: pointer;" class="toggle col-xs-1"><img src="public/img/play.svg"></icon>
+            <icon style="cursor: pointer;text-align:center" class="toggle col-xs-1">
+                <img width="32" height="32" src="public/img/play.svg"></icon>
             <div class="progress col-xs-8">
                 <div class="progress__filled"></div>
             </div>
@@ -76,8 +84,8 @@
     class MediaPlayer{
         constructor(conf){
 
-            this.play_icon = "public/img/play.svg";
             this.pause_icon = "public/img/play.svg";
+            this.play_icon = "public/img/stop.svg";
 
             this.conf = conf;
 
@@ -164,11 +172,16 @@
             });
         }
 
+        videoEnded(){
+           $('.' + this.conf.toggle_cls + " img").attr("src", this.pause_icon);
+        }
+
         registerEvents(){
             var _this = this;
             this.video.addEventListener("click", _this.togglePlay.bind(_this));
             this.toggle_icon.addEventListener("click", _this.togglePlay.bind(_this));
             this.video.addEventListener("timeupdate", _this.videoTimeUpdated.bind(_this));
+            this.video.addEventListener("ended", _this.videoEnded.bind(_this));
             this.progress_container.addEventListener("click", _this.progressClickedHandler.bind(_this));
         }
     }
