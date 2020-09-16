@@ -13,6 +13,8 @@ from colorama import init, Fore, Back, Style
 import textwrap
 from typing import NoReturn, Tuple
 import time
+from nltk import sent_tokenize
+
 
 init(init(autoreset=True))
 from fastpunct import FastPunct
@@ -66,73 +68,6 @@ def truncate_string_to_fixed_size(input_string: str, max_len: int = 350) -> str:
     )
     return truncated_string
 
-
-def transform_Srt_and_correct_punct(
-    input_data_folder_path: str, origin: str, use_punct_correction: bool, meeting_start_utc: Optional[int] = 0, 
-):
-    """[transform srt packet to list]
-    :return: [description]
-    :rtype: [type]
-    """
-
-    srt_file_name = os.path.join(input_data_folder_path, origin + ".srt")
-
-    transcription_pkt_list = []
-
-    if os.path.isfile(srt_file_name):
-        srtList = pysrt.open(srt_file_name)
-
-        transcription_list = []
-        corrected_transcription_list = []
-        for srt in srtList:
-            srt_with_newline_corrected = srt.text.replace("\n", " ")
-            if use_punct_correction:
-                truncated_string = truncate_string_to_fixed_size(srt_with_newline_corrected)
-                transcription_list.append(truncated_string)
-            else:
-                transcription_list.append(srt_with_newline_corrected)
-            
-        if use_punct_correction:
-            #print("Doing punct correction using fastpunct")
-            corrected_transcription_list = fastpunct.punct(
-            transcription_list, batch_size=32
-            )
-        for idx, srt in enumerate(srtList):
-
-            transcriptions_pkt = {}
-            transcriptions_pkt["msg"] = {}
-
-            transcriptions_pkt["msg"]["data"] = {}
-            transcriptions_pkt["msg"]["data"]["transcription"] = {}
-
-            if use_punct_correction:
-                transcriptions_pkt["msg"]["data"]["transcription"][
-                    "content"
-                ] = corrected_transcription_list[idx]
-            else:
-                transcriptions_pkt["msg"]["data"]["transcription"][
-                    "content"
-                ] = transcription_list[idx]                
-            transcriptions_pkt["msg"]["data"]["transcription"][
-                "start_time"
-            ] = _transformTime(srt.start, meeting_start_utc)
-
-            transcriptions_pkt["msg"]["data"]["transcription"][
-                "end_time"
-            ] = _transformTime(srt.end, meeting_start_utc)
-
-            transcription_pkt_list.append(transcriptions_pkt)
-            transcription_pkt_list = add_origin(
-                transcription_pkt_list, meeting_start_utc
-            )
-
-    else:
-        print(f"\n {Fore.YELLOW} WARNING: {origin}.srt file not present")
-
-    # print("transcription_pkt_list", transcription_pkt_list)
-    return transcription_pkt_list
-
-
 def read_srt_file(input_data_folder_path: str, origin: str) -> dict:
     """[summary]
 
@@ -150,7 +85,8 @@ def read_srt_file(input_data_folder_path: str, origin: str) -> dict:
     else:
         print(f"\n {Fore.YELLOW} WARNING: {origin}.srt file not present")
         return None
-    
+
+
 def save_corrected_srt_file(srtList:dict, input_data_folder_path: str, origin: str) -> NoReturn:
     """[summary]
 
@@ -166,6 +102,20 @@ def save_corrected_srt_file(srtList:dict, input_data_folder_path: str, origin: s
     srt_file_name = os.path.join(input_data_folder_path, origin + "_corrected.srt")
     srtList.save(srt_file_name, encoding='utf-8')
 
+def fix_apostrophe(string_to_fix: str) -> str:
+    """fix apostrophe issue in string
+
+    :param string_to_fix: [description]
+    :type string_to_fix: str
+    :return: [description]
+    :rtype: str
+    """
+    if string_to_fix.startswith("` ") or string_to_fix.startswith("'"):
+        string_fixed = string_to_fix[2:]
+        return string_fixed
+    else:
+        return string_to_fix
+
 def correct_punctuation_srt_file(srtList: dict, use_punct_correction: bool):
     """[transform srt packet to list]
     :return: [description]
@@ -179,18 +129,44 @@ def correct_punctuation_srt_file(srtList: dict, use_punct_correction: bool):
         if use_punct_correction:
             srt.text = truncate_string_to_fixed_size(srt.text)
             transcription_list.append(srt.text)
-        else:
-            transcription_list.append(srt.text)
-        
-    corrected_transcription_list = fastpunct.punct(
-    transcription_list, batch_size=32
-    )
+
+    start = time.time()
+    if use_punct_correction:
+        tokenized_sentences = []
+        new_counter = 0
+        sentence_mapper = dict()
+        for idx, item in enumerate(transcription_list):
+            tokenized_item = sent_tokenize(item)
+            for broken_sentence in tokenized_item:
+                tokenized_sentences.append(broken_sentence)
+                sentence_mapper[new_counter] = idx
+                new_counter += 1
+
+        #print("transcription_list", transcription_list)
+        #print("tokenized_sentences", tokenized_sentences)
+        #print("sentence_mapper", sentence_mapper)
+        transcription_list_fastpunct = fastpunct.punct(
+        tokenized_sentences, batch_size=32
+        )
+        corrected_transcription_list = []
+        for idx, item in enumerate(transcription_list_fastpunct):
+            if idx == 0:
+                corrected_transcription_list.append(item)
+            elif sentence_mapper[idx] == (len(corrected_transcription_list)-1):
+                corrected_transcription_list[-1] = corrected_transcription_list[-1] + " " +item
+            else:
+                corrected_transcription_list.append(item)
+        #print("corrected_transcription_list", corrected_transcription_list)  
+
+    end = time.time()
+    print("Time for fastpunct:", end - start)
+
     for idx, srt in enumerate(srtList):
         if use_punct_correction:
-            srt.text = corrected_transcription_list[idx]
+            string_text = corrected_transcription_list[idx]
+            srt.text = fix_apostrophe(string_text)
 
     return srtList
-
 
 
 def transform_Srt_to_list(
