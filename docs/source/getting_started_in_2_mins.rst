@@ -5,8 +5,8 @@ To get started with enhan(t) in the time you make your cup noodles, one
 needs to at least have the Chrome extension set up. The easiest way to
 install it is via the Chrome store.
 
-To install the enhan(t) extension:
-----------------------------------
+Installing the enhan(t) extension
+---------------------------------
 
 1. Navigate to Chrome Webstore <add link> via your Chrome browser.
    <Chrome store screenshot>
@@ -17,8 +17,8 @@ To install the enhan(t) extension:
 
 3. Pin the extension for easy access.
 
-Using the enhan(t) extension:
------------------------------
+Using the enhan(t) extension
+----------------------------
 
 1. When you open a Zoom, MS Teams or Jitsi meeting, you will find the
    enhan(t) toolbar on the top right of your tab, with icons all grayed
@@ -42,8 +42,8 @@ Using the enhan(t) extension:
    enhan(t). A zip file containing the meeting data is downloaded in
    your default download location.
 
-Viewing the meeting data:
--------------------------
+Viewing the meeting data
+------------------------
 
 1. To view the meeting details, go to
    https://keplerlab.github.io/enhant-dashboard-viewer/

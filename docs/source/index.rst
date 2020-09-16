@@ -3,7 +3,6 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-
 Overview
 ========
 
@@ -94,6 +93,7 @@ Knowing the document organization will help you find and use features effectivel
 .. toctree::
    :maxdepth: 1
 
+   Getting started in 2 mins <getting_started_in_2_mins>
    Parts of enhan(t) <parts_of_enhant>
    Installation <getting_started>
    Chrome Extension Usage <chrome_extension_usage>
