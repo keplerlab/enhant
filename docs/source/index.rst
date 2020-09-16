@@ -45,7 +45,7 @@ Features
 
 -  Get host side transcription (via microphone) in the Basic mode and
    both host and guest side transcription (via tab audio) in the Power
-   mode (with the companion docker compose application)
+   mode (with the companion transcription service and analysis CLI)
 
 -  View meeting data in a comprehensive dashboard
 
