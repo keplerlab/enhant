@@ -29,7 +29,7 @@ js_source_path = [
 
 # -- Project information -----------------------------------------------------
 
-project = 'enhant'
+project = 'enhan(t)'
 copyright = '2020, Kepler'
 author = 'Kepler'
 
