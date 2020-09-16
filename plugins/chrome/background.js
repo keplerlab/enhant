@@ -116,6 +116,15 @@ class ScreenCapture{
 
     socket_transcription_closed_cb(new_socket){
         this.socket_transcription = new_socket;
+
+        // send a packet with the new parameters
+        this.socket_transcription.send(JSON.stringify({
+            "cmd": "start",
+            "origin": "speaker",
+            "conversation_id": this.meeting_number,
+            "lang": this.lang
+        }));
+
     }
 
     saveTranscription(transcription){
@@ -161,7 +170,7 @@ class ScreenCapture{
                 "lang": _this.lang
             }));
         },
-            _this.socket_transcription_closed_cb);
+            _this.socket_transcription_closed_cb.bind(this));
 
         this.socket_transcription.onmessage = this.socket_transcription_onmessage_cb.bind(this);
 
