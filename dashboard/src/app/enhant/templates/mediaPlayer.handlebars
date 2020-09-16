@@ -1,5 +1,206 @@
+<style>
+
+.player {
+  position: relative;
+  font-size: 0;
+  overflow: hidden;
+}
+
+.player__button {
+  background:none;
+  border:0;
+  line-height:1;
+  color:white;
+  text-align: center;
+  outline:0;
+  padding: 0;
+  cursor:pointer;
+  max-width:50px;
+}
+
+.player__controls {
+  bottom:0;
+  width: 100%;
+  height: 15px;
+  transition:all .3s;
+  flex-wrap:wrap;
+  background:rgba(0,0,0,0.1);
+  margin-top: -50px;
+}
+
+.progress {
+  flex:10;
+  position: relative;
+  display:flex;
+  flex-basis:100%;
+  margin-bottom: 0px;
+  height:15px;
+  transition:height 0.3s;
+  background:rgba(0,0,0,0.5);
+  cursor:pointer;
+}
+
+.progress__filled {
+  width:50%;
+  background:#1E90FF;
+  flex:0;
+  flex-basis:0.5%;
+}
+
+.markers{
+    margin-top: -50px;
+    display: flex;
+    height: 20px;
+    overflow: hidden;
+}
+
+</style>
+
 <div class="row">
-    <div class="col-xs-12">
-        <video width="100%" height="100%" id="recording-video" src="{{url}}" controls></video>
+    <div class="col-xs-12 player">
+        <video width="100%" height="100%" class="viewer" id="recording-video" src="{{url}}"></video>
+
+        <div class="player__controls clearfix">
+            <icon style="cursor: pointer;" class="toggle col-xs-1"><img src="public/img/play.svg"></icon>
+            <div class="progress col-xs-8">
+                <div class="progress__filled"></div>
+            </div>
+
+            <div class="markers col-xs-8"></div>
+        </div>
     </div>
 </div>
+
+<script>
+
+    class MediaPlayer{
+        constructor(conf){
+
+            this.play_icon = "public/img/play.svg";
+            this.pause_icon = "public/img/play.svg";
+
+            this.conf = conf;
+
+            this.player = document.querySelector('.' + this.conf.player_cls);
+            this.video = this.player.querySelector('.' + this.conf.video_cls);
+            this.progress_container = this.player.querySelector('.' + this.conf.progress_container_cls);
+            this.progress_filled_container = this.player.querySelector('.' + this.conf.progress_filled_container_cls);
+            this.toggle_icon = this.player.querySelector('.' + this.conf.toggle_cls); 
+            this.marker_cls = this.player.querySelector('.' + this.conf.marker_cls);
+        }
+
+        getVideo(){
+            return this.video;
+        }
+
+        play(){
+            this.video.play();
+        }
+
+        pause(){
+            this.video.pause();
+        }
+
+        updatePlayPauseButtonIcon(play){
+
+            if (play){
+                $('.' + this.conf.toggle_cls + " img").attr("src", this.play_icon);
+            }
+            else{
+                $('.' + this.conf.toggle_cls + " img").attr("src", this.pause_icon);
+            }
+        }
+
+        togglePlay(){
+
+            if (this.video.paused){
+                this.play();
+                this.updatePlayPauseButtonIcon(true);
+            }
+            else{
+                this.pause();
+                this.updatePlayPauseButtonIcon(false);
+            }
+        }
+
+        progressClickedHandler(e){
+            const scrubTime = (e.offsetX / this.progress_container.offsetWidth) * this.video.duration;
+            this.video.currentTime = scrubTime;
+        }
+
+        videoTimeUpdated(){
+            const percent = (this.video.currentTime / this.video.duration) * 100; 
+            this.progress_filled_container.style.flexBasis = `${percent}%`;
+        }
+
+        addMarkersOnProgressBar(zip){
+            var _this = this;
+            var all_notes = zip.notes;
+            all_notes.forEach(function(note){
+
+                var seconds_elapsed = (note.event_time - zip.start_time) / 1000 ;
+
+                if (seconds_elapsed < zip.end_time){
+                    var positionToPlace = (seconds_elapsed / _this.video.duration) * 100 + '%';
+
+                    var img_src = "public/img/";
+
+                    if (note.type == "bookmark"){
+                        img_src += "bookmark.svg";
+                    }
+                    else if (note.type == "image"){
+                        img_src += "capture.svg";
+                    }
+                    else{
+                        img_src += "notes.svg";
+                    }
+
+                    // create a div
+                    var html = "<div style='position:absolute;left:"+ positionToPlace +"'><img src='" + img_src + "'</div>";
+
+                    var el = $('.' + _this.conf.marker_cls);
+                    el.append(html);
+                }
+            });
+        }
+
+        registerEvents(){
+            var _this = this;
+            this.video.addEventListener("click", _this.togglePlay.bind(_this));
+            this.toggle_icon.addEventListener("click", _this.togglePlay.bind(_this));
+            this.video.addEventListener("timeupdate", _this.videoTimeUpdated.bind(_this));
+            this.progress_container.addEventListener("click", _this.progressClickedHandler.bind(_this));
+        }
+    }
+
+    window.addEventListener("initializePlayer", function(evt){
+        var data = evt.detail;
+
+        var conf = {
+            player_cls: "player",
+            video_cls: "viewer",
+            progress_container_cls: "progress",
+            progress_filled_container_cls: "progress__filled",
+            toggle_cls: "toggle",
+            marker_cls: "markers"
+
+        };
+        
+        const player = new MediaPlayer(conf);
+        player.registerEvents();
+
+        var zip_data = data.zip;
+
+        if (!isEmpty(zip_data)){
+            var video = player.getVideo();
+            video.onloadedmetadata = function(){
+                player.addMarkersOnProgressBar(zip_data);
+                delete player;
+            }
+        }
+        else{
+             delete player;
+        }
+    });
+  
+</script>

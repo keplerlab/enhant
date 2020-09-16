@@ -151,7 +151,6 @@
 
         {{#if context.recording}}
         <div class="section recording">
-            
         </div>
         {{/if}}
 
@@ -676,13 +675,19 @@
             processData(notes_data);
         }
 
-        if (recording_data.hasOwnProperty("url") !== null){
+        if (recording_data.url !== null){
 
             const mediaPlayerTemplate = Handlebars.templates.mediaPlayer;
             const media_html = mediaPlayerTemplate({
                 "url": recording_data.url
             });
             $('.recording').html(media_html);
+
+             // forward message to dashboard
+            var event = new CustomEvent("initializePlayer", {
+                detail: data
+            });
+            window.dispatchEvent(event);
 
         }
 

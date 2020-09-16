@@ -117,8 +117,7 @@
             zip_data = data.notes;
         }
 
-        // if zip data is empty
-        if (!isEmpty(zip_data)){
+        if (recording_data.url !== null){
             var videoNode = document.getElementById('video-type-check');
             var canPlay = videoNode.canPlayType(recording_data.type);  
 
@@ -126,6 +125,10 @@
 
             // set context recording
             context.recording = canPlay;
+        }
+
+        // if zip data is empty
+        if (!isEmpty(zip_data)){
 
             var all_notes = zip_data.notes;
             if (all_notes.length){
