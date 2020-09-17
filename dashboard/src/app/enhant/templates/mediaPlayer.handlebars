@@ -318,6 +318,21 @@
            $('.' + this.conf.toggle_cls + " img").attr("src", this.pause_icon);
         }
 
+        getCallMetricCheckboxStatus(){
+            var status = $("#" + this.conf.settings.metric_id + ":checkbox:checked").length > 0;
+            return status;
+        }
+
+        hideChartsContainer(){
+            $('.' + this.conf.chart_container_cls).hide();
+            $('.' + this.conf.progress__line).hide();
+        }
+
+        showChartsContainer(){
+            $('.' + this.conf.chart_container_cls).show();
+            $('.' + this.conf.progress__line).show();
+        }
+
         registerSettingsEvents(){
             var _this = this;
             this.settings_icon.on("click", function(evt){
@@ -326,6 +341,16 @@
 
             this.settings_apply_icon.on("click", function(evt){
 
+                // get the call metric check
+                var show_metric_status = _this.getCallMetricCheckboxStatus();
+                if (show_metric_status){
+                    _this.showChartsContainer();
+                }
+                else{
+                    _this.hideChartsContainer();
+                }
+
+                // get the timeoffset
             });
         }
 
