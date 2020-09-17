@@ -83,6 +83,7 @@ class EngagmentFinder(object):
             return
 
         transcriptions_with_time = []
+        #print("guest_transcription_list", guest_transcription_list)
         if guest_transcription_list is not None:
             for transcriptions_pkt in guest_transcription_list:
                 msg, origin = self._transformTranscription(transcriptions_pkt)
@@ -103,6 +104,7 @@ class EngagmentFinder(object):
         for transcriptionTuple in transcriptions_with_time:
 
             end_time = transcriptionTuple[1]["end_time"]
+            #print("transcriptionTuple", transcriptionTuple)
             engagement_score = engagement_lib.processMessage(
                 conv_id, transcriptionTuple[0], transcriptionTuple[1]
             )

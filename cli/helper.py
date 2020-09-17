@@ -5,7 +5,7 @@
 """
 import sys
 import os
-
+from deepsegment import DeepSegment
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 import pysrt
 from typing import List, Optional
@@ -14,6 +14,7 @@ import textwrap
 from typing import NoReturn, Tuple
 import time
 from nltk import sent_tokenize
+segmenter = DeepSegment('en')
 
 
 init(init(autoreset=True))
@@ -129,48 +130,62 @@ def correct_punctuation_srt_file(srtList: dict, use_punct_correction: bool):
         if use_punct_correction:
             srt.text = truncate_string_to_fixed_size(srt.text)
             transcription_list.append(srt.text)
+        else:
+            transcription_list.append(srt.text)
 
     start = time.time()
-    if use_punct_correction:
-        tokenized_sentences = []
-        new_counter = 0
-        sentence_mapper = dict()
-        for idx, item in enumerate(transcription_list):
+    tokenized_sentences = []
+    new_counter = 0
+    sentence_mapper = dict()
+    for idx, item in enumerate(transcription_list):
+        if use_punct_correction:
             tokenized_item = sent_tokenize(item)
-            for broken_sentence in tokenized_item:
-                tokenized_sentences.append(broken_sentence)
-                sentence_mapper[new_counter] = idx
-                new_counter += 1
+        else:
+            #print("item", item)
+            deepSegResult = segmenter.segment_long(item)
+            #print("deepSegResult",deepSegResult)
+            tokenized_item = []
+            for item in deepSegResult:
+                item2 = item+"."
+                #print("item2",item2)
+                tokenized_item.append(item2)
+        for broken_sentence in tokenized_item:
+            tokenized_sentences.append(broken_sentence)
+            sentence_mapper[new_counter] = idx
+            new_counter += 1
 
-        #print("transcription_list", transcription_list)
-        #print("tokenized_sentences", tokenized_sentences)
-        #print("sentence_mapper", sentence_mapper)
-        transcription_list_fastpunct = fastpunct.punct(
+    #print("transcription_list", transcription_list)
+    #print("tokenized_sentences", tokenized_sentences)
+    #print("sentence_mapper", sentence_mapper)
+    if use_punct_correction:
+        transcription_list_results = fastpunct.punct(
         tokenized_sentences, batch_size=32
         )
-        corrected_transcription_list = []
-        for idx, item in enumerate(transcription_list_fastpunct):
-            if idx == 0:
-                corrected_transcription_list.append(item)
-            elif sentence_mapper[idx] == (len(corrected_transcription_list)-1):
-                corrected_transcription_list[-1] = corrected_transcription_list[-1] + " " +item
-            else:
-                corrected_transcription_list.append(item)
-        #print("corrected_transcription_list", corrected_transcription_list)  
+    else:
+        transcription_list_results = tokenized_sentences
+    corrected_transcription_list = []
+    #print("transcription_list_results", transcription_list_results)
+    for idx, item in enumerate(transcription_list_results):
+        if idx == 0:
+            corrected_transcription_list.append(item)
+        elif sentence_mapper[idx] == (len(corrected_transcription_list)-1):
+            corrected_transcription_list[-1] = corrected_transcription_list[-1] + " " +item
+        else:
+            corrected_transcription_list.append(item)
+    #print("corrected_transcription_list", corrected_transcription_list)  
 
     end = time.time()
     print("Time for fastpunct:", end - start)
 
     for idx, srt in enumerate(srtList):
-        if use_punct_correction:
-            string_text = corrected_transcription_list[idx]
-            srt.text = fix_apostrophe(string_text)
+        string_text = corrected_transcription_list[idx]
+        srt.text = fix_apostrophe(string_text)
 
     return srtList
 
 
 def transform_Srt_to_list(
-    srtList: dict , meeting_start_utc: Optional[int] = 0
+    srtList: dict , origin, meeting_start_utc: Optional[int] = 0
 ):
     """[transform srt packet to list]
     :return: [description]
@@ -197,7 +212,7 @@ def transform_Srt_to_list(
 
         transcription_pkt_list.append(transcriptions_pkt)
         transcription_pkt_list = add_origin(
-            transcription_pkt_list, meeting_start_utc
+            transcription_pkt_list, origin
         )
 
 

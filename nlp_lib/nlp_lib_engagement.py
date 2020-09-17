@@ -16,8 +16,8 @@ class NLP_lib_engagement(object):
     def __init__(self):
         """init function
         """
-        self.expected_multiplier = 2.0
-        self.expected_time_window = 120
+        self.expected_multiplier = 1.0
+        self.expected_time_window = 20
         self.totalTime = {}
         self.totalSpokenWordsClient = {}
         self.totalSpokenWordsAdvisor = {}
@@ -38,6 +38,9 @@ class NLP_lib_engagement(object):
         :return: [description]
         :rtype: float
         """
+        #print("meeting_id", meeting_id)
+        #print("origin", origin)
+
         if meeting_id in self.totalTime:
             pass
         else:
@@ -90,14 +93,13 @@ class NLP_lib_engagement(object):
         )
         wordMessage = SimpleNamespace(**wordMessage)
         avg_engagement_score = 1.0
-
-        if origin == "client2":
+        if origin == "host":
             self.spokenMsgsClientInTimeWindow[meeting_id].append(wordMessage)
             wordMessage2 = copy.deepcopy(wordMessage)
             wordMessage2.num_of_words = 0
             self.spokenMsgsAdvisorInTimeWindow[meeting_id].append(wordMessage2)
 
-        elif origin == "client1":
+        elif origin == "guest":
             self.spokenMsgsAdvisorInTimeWindow[meeting_id].append(wordMessage)
             wordMessage2 = copy.deepcopy(wordMessage)
             wordMessage2.num_of_words = 0
@@ -137,7 +139,7 @@ class NLP_lib_engagement(object):
         )
 
         avg_engagement_score = round(avg_engagement_score)
-        # print("avg_engagement_score", avg_engagement_score)
+        #print("avg_engagement_score", avg_engagement_score)
 
         return avg_engagement_score
 
