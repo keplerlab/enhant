@@ -101,11 +101,13 @@ function createSRTContent(arr_transcription, meeting_start_time){
 
 }
 
-function createInputJSON(combined_arr, meeting_start_time, meeting_id, conv_id){
+function createInputJSON(combined_arr, meeting_start_time, meeting_id, conv_id, host_data, guest_data){
     var json = {
       "meeting_id": meeting_id,
       "conv_id": conv_id,
       "start_time": meeting_start_time,
+      "host": host_data,
+      "guest": guest_data,
       "end_time": new Date().getTime(),
       "notes":  combined_arr.map(function(obj){
         return {
@@ -148,7 +150,8 @@ function urlToPromise(url) {
 function downloadZip(cb){
     var zip = new JSZip();
 
-    var valid_data_types = ["notes", "bookmark", "image", "transcription", "meeting_start_time", "meeting_number" , "conv_id"];
+    var valid_data_types = ["notes", "bookmark", "image", "transcription", 
+    "meeting_start_time", "meeting_number" , "conv_id", "host", "guest"];
 
     // get the notes, bookmark and image data
     chrome.storage.local.get(valid_data_types, function(result){
@@ -161,6 +164,9 @@ function downloadZip(cb){
         var meeting_start_time = result[valid_data_types[4]];
         var meeting_number = result[valid_data_types[5]];
         var conv_id = result[valid_data_types[6]];
+
+        var host_data = result[valid_data_types[7]] || {};
+        var guest_data = result[valid_data_types[8]] || {};
 
         var combined_data_arr = [];
 
@@ -256,7 +262,8 @@ function downloadZip(cb){
             zip.file("guest.srt", srt_content_guest);
         }
 
-        var json_data = createInputJSON(combined_data_arr, meeting_start_time , meeting_number, conv_id);
+        var json_data = createInputJSON(combined_data_arr, meeting_start_time , meeting_number, 
+            conv_id, host_data, guest_data);
 
         zip.file("input.json", JSON.stringify(json_data));
        

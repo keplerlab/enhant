@@ -741,11 +741,13 @@ class RecordIcon extends Icon{
     
             // sends message to content script (main.js)
             chrome.tabs.sendMessage(tabs[0].id, {action: "capture_mic_start", data: settings}, function(response){
-                console.log("Mic recording status : ", response.status);
+                
+                var host_data = response.data;
+                chrome.runtime.sendMessage({msg: "save-host-data", data: host_data}, function(response){
+                    console.log("Host data saved : ", response.status);
+                });
             });
-    
         });
-
     }
 
     stopCapturingMicAudio(){

@@ -145,14 +145,36 @@ class ScreenCapture{
 
     socket_transcription_onmessage_cb(message){
 
-        var transcription = message.data;
-        // console.log("Transcription data ", message.data);
+        try{
+            var json = JSON.parse(message.data);
 
-        // TODO : add send data when in power mode
-        this.saveTranscription(transcription);
+            if (json.hasOwnProperty("cmd") && json["cmd"] == "start"){
 
-        // set transcription start time
-        this.transcription_start_time = this.transcription_end_time;
+                // save message on local storage about punctuation and language for guest
+                var guest_need_punctuation = json["need_punctuation"];
+                var guest_lang = json["lang"];
+                var obj = {
+                    lang: guest_lang,
+                    need_punctuation: guest_need_punctuation
+                }
+
+                // in message_handler.js (central placeholder to save data via messages)
+                saveGuestData(obj)
+            }
+        }
+        catch(err){
+            console.log(" Could not parse JSON | The message only has transcription data :", err);
+
+            var transcription = message.data;
+
+            console.log("Transcription data ", message, typeof(message));
+
+            // TODO : add send data when in power mode
+            this.saveTranscription(transcription);
+
+            // set transcription start time
+            this.transcription_start_time = this.transcription_end_time;
+        }
         
     }
 

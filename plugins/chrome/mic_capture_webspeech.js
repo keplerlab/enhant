@@ -183,6 +183,8 @@ function startClicked(settings_data){
     }
 
     chrome.runtime.onMessage.addListener(stopClicked);
+
+    return config;
 }
 
 
@@ -192,9 +194,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
     if (message.action == "capture_mic_start"){
 
-        startClicked(message.data);
+        var config = startClicked(message.data);
 
-        sendResponse({status: true});
+        sendResponse({status: true, data: { lang: config.lang, need_punctuation: true}});
     }
 })
 

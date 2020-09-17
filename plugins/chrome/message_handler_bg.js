@@ -51,6 +51,26 @@ function saveMeetingNumber(meeting_number, cb){
     });
 }
 
+function saveHostData(data){
+    var obj = {};
+    obj[STORAGE_KEYS.host] = {
+        "lang": data.lang,
+        "need_punctuation": data.need_punctuation
+    };
+    enhant_local_storage_obj.save_basic(obj);
+}
+
+
+function saveGuestData(data){
+    var obj = {};
+    obj[STORAGE_KEYS.guest] = {
+        "lang": data.lang,
+        "need_punctuation": data.need_punctuation
+    };
+    enhant_local_storage_obj.save_basic(obj);
+
+}
+
 chrome.runtime.onMessage.addListener(
     function(request, sender, sendResponse) {
         
@@ -279,6 +299,14 @@ chrome.runtime.onMessage.addListener(
 
             });
             
+        }
+
+        if (request.msg == "save-host-data"){
+            var obj = request.data;
+            saveHostData(obj);
+            sendResponse({
+                status: true
+            });
         }
 
         if (request.msg == "get-settings"){
