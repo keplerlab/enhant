@@ -40,6 +40,9 @@
         font-family: "Inter-Bold";
         font-size: 16px;
     }
+    .sentiment-engagement-chart{
+        height: 350px;
+    }
 </style>
 
 <style>
@@ -152,9 +155,9 @@
         {{#if context.recording}}
         <div class="section recording">
         </div>
-        {{else}}
-         <div class="chart-container" style="display: none;height:300px;margin-top:20px;">
-            <canvas id="chart" height="200px;"></canvas>
+        {{else if context.chart}}
+         <div class="section sentiment-engagement-chart has-shadow has-padding">
+            <div class="clearfix"><span class="inter-bold-21">Engagement and Sentiment Scores</span></div>
         </div>
         {{/if}}
 
@@ -572,84 +575,35 @@
         }
     }
 
-    function createLineChart(zip){
-        var data = [];
-        var meeting_start_time = zip.start_time;
-        var meeting_end_time = zip.end_time;
-        var samplingRate_in_ms = 10 * 1000; // 10 seconds
+    function renderChart(zip_data){
+        const chartTemplate = Handlebars.templates.chart;
+        const chart_html = chartTemplate({});
+        $('.sentiment-engagement-chart').append(chart_html);
 
-        var  datasets = [];
-        var sentimentData = [];
-
-        var ctx = document.getElementById("chart").getContext('2d');
-
-        if (zip.hasOwnProperty("engagement_scores")){
-
-            var d = zip.engagement_scores.engagement_scores;
-            var ed = d.map(function(r) { return { "x" : new Date(meeting_start_time + r[0]), "y" : r[1]} });
-
-            var engagementData = {
-                label: "Engagement Score",
-                data: ed,
-                borderColor: '#1E90FF',
-                fill: false
-            }
-
-            datasets.push(engagementData);
-        }
-
-        if (zip.hasOwnProperty("highSentimentSentences") || zip.hasOwnProperty("highSentimentSentences")){
-            
-            sentimentData.push(...zip.highSentimentSentences.highSentimentSentencesGuest);
-            sentimentData.push(...zip.lowSentimentSentences.lowSentimentSentencesGuest);
-
-            // sort the final array
-            sentimentData.sort(function(a, b){
-                var et_a = meeting_start_time + a[0];
-                var et_b = meeting_start_time + b[0];
-
-                return et_a - et_b;
-            });
-
-            var ed = sentimentData.map(function(r) { return { "x" : new Date(meeting_start_time + r[0]), "y" : Math.round(r[2]*100)} });
-
-            var sentimentData = {
-                label: "Sentiment Score",
-                data: ed,
-                borderColor: '#8FC8FF',
-                fill: false
-            }
-
-            datasets.push(sentimentData);
-
-        }
-
-        if (datasets.length){
-            $(".chart-container").show();
-
-            var lineChart = new Chart(ctx, {
-                type: 'line',
-                data: { datasets: datasets },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        xAxes: [{
-                            type: 'time',
-                            time: {
-                                unit: 'minute',
-                                stepSize: 10
-                            }
-                        }],
-                        yAxes: [{
-                            gridLines: {
-                                display: false
-                            }
-                        }]
-                    }
+        var chart_config = {
+            xAxes: [{
+                type: 'time',
+                time: {
+                    unit: 'minute',
+                    stepSize: 10
                 }
-            });
-        }
+            }],
+            yAxes: [{
+                gridLines: {
+                    display: false
+                },
+                ticks: {
+                    max: 100,
+                    min: 0,
+                    stepSize: 25
+                }
+            }]
+        };
+
+        var event = new CustomEvent("createChart", {
+                detail: {zip: zip_data, config: chart_config}
+        });
+        window.dispatchEvent(event);
     }
 
     function reset(){
@@ -689,7 +643,9 @@
 
             // if recording url is null, create a chart and show here
             if (recording_data.url == null){
-                createLineChart(zip_data);
+                if ($('.sentiment-engagement-chart').length){
+                    renderChart(zip_data);
+                }
             }
             
             
@@ -700,13 +656,24 @@
 
         if (recording_data.url !== null){
 
+            var mediaContext = {
+                chart: false,
+                url: recording_data.url
+            }
+
+            if (zip_data.hasOwnProperty("engagement_scores") || zip_data.hasOwnProperty("avgSentimentScoreGuest")){
+                mediaContext.chart = true;
+            }
+
             const mediaPlayerTemplate = Handlebars.templates.mediaPlayer;
             const media_html = mediaPlayerTemplate({
-                "url": recording_data.url
+                "url": recording_data.url,
+                "chart": mediaContext.chart
             });
+
             $('.recording').html(media_html);
 
-             // forward message to dashboard
+            // forward message to dashboard
             var event = new CustomEvent("initializePlayer", {
                 detail: data
             });

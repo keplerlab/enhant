@@ -104,7 +104,8 @@
             "sentiment_outliers": false,
             "questions": false,
             "avg_engagement": false,
-            "avg_sentiment": false
+            "avg_sentiment": false,
+            "chart": false
         };
 
         var recording_data = data.recording;
@@ -164,10 +165,12 @@
 
             if (zip_data.hasOwnProperty("avgSentimentScoreGuest")){
                 context.avg_sentiment = true;
+                context.chart = true;
             }
 
             if (zip_data.hasOwnProperty("engagement_scores")){
                 context.avg_engagement = true;
+                context.chart = true;
             }
         }
 

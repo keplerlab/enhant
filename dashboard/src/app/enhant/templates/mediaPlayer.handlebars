@@ -80,6 +80,21 @@
     right: 10px;
     bottom:75px;
 }
+.sentiment-engagement-chart-video{
+    height: 100px;
+    margin-top: -180px;
+    padding-left: 0px;
+    padding-right: 0px;
+}
+
+.progress__line{
+    height:150px;
+    z-index:99999;
+    bottom: 26px;
+    position: absolute;
+    border: 1px solid white;
+    margin-top: -150px;
+}
 
 </style>
 
@@ -112,8 +127,14 @@
             </div>
         </div>
         
-        <div class="chart-container" style="display: none;height:300px;margin-top:20px;">
-            <canvas id="chart" height="200px;"></canvas>
+        {{#if chart}}
+        <div class="sentiment-engagement-chart-video col-xs-8 col-xs-offset-1"></div>
+        {{/if}}
+
+        <div class="clearfix vertical-line-container">
+            <div class="col-xs-8 col-xs-offset-1" style="padding-right:0px;padding-left:0px">
+                <div class="progress__line"></div>
+            </div>
         </div>
 
         <div class="clearfix marker-container">
@@ -144,79 +165,6 @@
 </div>
 
 <script>
-
-    function createLineChart(zip){
-        var data = [];
-        var meeting_start_time = zip.start_time;
-        var meeting_end_time = zip.end_time;
-        var samplingRate_in_ms = 10 * 1000; // 10 seconds
-
-        var  datasets = [];
-        var sentimentData = [];
-
-        var ctx = document.getElementById("chart").getContext('2d');
-
-        if (zip.hasOwnProperty("engagement_scores")){
-
-            var d = zip.engagement_scores.engagement_scores;
-            var ed = d.map(function(r) { return { "x" : new Date(meeting_start_time + r[0]), "y" : r[1]} });
-
-            var engagementData = {
-                label: "Engagement Score",
-                data: ed,
-                borderColor: '#1E90FF',
-                fill: false
-            }
-
-            datasets.push(engagementData);
-        }
-
-        if (zip.hasOwnProperty("highSentimentSentences") || zip.hasOwnProperty("highSentimentSentences")){
-            
-            sentimentData.push(...zip.highSentimentSentences.highSentimentSentencesGuest);
-            sentimentData.push(...zip.lowSentimentSentences.lowSentimentSentencesGuest);
-
-            // sort the final array
-            sentimentData.sort(function(a, b){
-                var et_a = meeting_start_time + a[0];
-                var et_b = meeting_start_time + b[0];
-
-                return et_a - et_b;
-            });
-
-            var ed = sentimentData.map(function(r) { return { "x" : new Date(meeting_start_time + r[0]), "y" : Math.round(r[2]*100)} });
-
-            var sentimentData = {
-                label: "Sentiment Score",
-                data: ed,
-                borderColor: '#8FC8FF',
-                fill: false
-            }
-
-            datasets.push(sentimentData);
-
-        }
-
-        if (datasets.length){
-            $(".chart-container").show();
-
-            var lineChart = new Chart(ctx, {
-                type: 'line',
-                data: { datasets: datasets },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        xAxes: [{
-                            type: 'time',
-                            display: false
-                        }]
-                    }
-                }
-            });
-        }
-    }
-
     class MediaPlayer{
         constructor(conf){
 
@@ -304,10 +252,16 @@
            
         }
 
+        moveProgressLine(percent){
+            $('.' + this.conf.progress__line).css("left", percent + "%");
+        }
+
         progressClickedHandler(e){
             const scrubTime = (e.offsetX / this.progress_container.offsetWidth) * this.video.duration;
             this.video.currentTime = scrubTime;
 
+            const percent = (this.video.currentTime / this.video.duration) * 100; 
+            this.moveProgressLine(percent);
             this.showVideoCurrentTime();
         }
 
@@ -315,6 +269,7 @@
             const percent = (this.video.currentTime / this.video.duration) * 100; 
             this.progress_filled_container.style.flexBasis = `${percent}%`;
 
+            this.moveProgressLine(percent);
             this.showVideoCurrentTime();
         }
 
@@ -387,9 +342,39 @@
             }
         }
 
-        addChartOverPlayer(zip_data){
-            // function in dashboard script
-            createLineChart(zip_data)
+        getChartConfig(){
+            var config = {
+                xAxes: [{
+                    type: 'time',
+                    gridLines: {
+                        display: false
+                    },
+                    ticks: {
+                        display: false
+                    }
+                }],
+                yAxes: [{
+                    gridLines: {
+                        display: false
+                    },
+                    ticks: {
+                        display: false
+                    }
+                }]
+            };
+            return config;
+        }
+
+        renderChartOnVideo(zip_data){
+            const chartConf = this.getChartConfig();
+            const chartTemplate = Handlebars.templates.chart;
+            const chart_html = chartTemplate({});
+            $('.' + this.conf.chart_container_cls).append(chart_html);
+
+            var event = new CustomEvent("createChart", {
+                    detail: {zip: zip_data, config: chartConf}
+            });
+            window.dispatchEvent(event);
         }
     }
 
@@ -404,19 +389,23 @@
             marker_cls: "markers",
             progress__time__duration: "progress__time__duration",
             progress__time__current_time: "progress__time__current_time",
+            progress__line: "progress__line",
             settings: {
                 icon_cls: "video-settings",
                 container_cls: "settings-container",
                 offset_id: "setting-time-offset",
                 metric_id: "show-metrics",
                 apply_icon: "video-settings-apply"
-            }
+            },
+            chart_container_cls: "sentiment-engagement-chart-video"
         };
         
         const player = new MediaPlayer(conf);
         player.registerEvents();
 
         var zip_data = data.zip;
+
+        player.renderChartOnVideo(zip_data);
 
         if (!isEmpty(zip_data)){
             var video = player.getVideo();
