@@ -2,6 +2,12 @@
 <canvas id="chart" style="width:100%"></canvas>
 
 <script>
+
+    // This is to modify the spacing betwen legend and chart
+    Chart.Legend.prototype.afterFit = function() {
+        this.height = this.height + 20;
+    };
+
     function createLineChart(zip, config){
         var data = [];
         var meeting_start_time = zip.start_time;

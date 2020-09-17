@@ -45,7 +45,7 @@
         font-size: 16px;
     }
     .sentiment-engagement-chart{
-        height: 350px;
+        height: 400px;
     }
 </style>
 
@@ -161,7 +161,9 @@
         </div>
         {{else if context.chart}}
          <div class="section sentiment-engagement-chart has-shadow has-padding">
-            <div class="clearfix"><span class="inter-bold-21">Engagement and Sentiment Scores</span></div>
+            <div class="clearfix" style="margin-bottom: 20px;">
+                <span class="inter-bold-21">Engagement and Sentiment Scores</span>
+            </div>
         </div>
         {{/if}}
 
