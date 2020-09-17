@@ -20,7 +20,7 @@ class Config:
         self.STREAMING_LIMIT = 240000
         self.CHUNK_SIZE = int(self.SAMPLE_RATE / 100)  # 100ms
         self.SAMPLE_WIDTH = 2
-        self.LANGUAGE_CODE = "en-IN"
+        self.LANGUAGE_CODE = "en-US"
         self.ENABLE_AUTOMATIC_PUNCTUATION = True
         self.SPEECH_CONTEXT_PHRASES = []
         self.TRANSCRIPTION_PROVDER = "Kaldi"
