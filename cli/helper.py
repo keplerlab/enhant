@@ -31,8 +31,6 @@ home = str(Path.home())
 model_file = os.path.join(home,'.punctuator','Demo-Europarl-EN.pcl')
 print(f"model_file {model_file}")
 punctuator_runner = Punctuator(model_file)
-punct_correction_tool: str = "fastpunct"
-#punct_correction_tool: str = "punctuator"
 
 def eprint(*args, **kwargs):
     print(*args, file=sys.stderr, **kwargs)
@@ -128,7 +126,7 @@ def fix_apostrophe(string_to_fix: str) -> str:
     else:
         return string_to_fix
 
-def correct_punctuation_srt_file(srtList: dict, use_punct_correction: bool):
+def correct_punctuation_srt_file(srtList: dict, correction_method: str):
     """[transform srt packet to list]
     :return: [description]
     :rtype: [type]
@@ -138,28 +136,14 @@ def correct_punctuation_srt_file(srtList: dict, use_punct_correction: bool):
     corrected_transcription_list = []
     for srt in srtList:
         srt.text = srt.text.replace("\n", " ")
-        if use_punct_correction:
-            srt.text = truncate_string_to_fixed_size(srt.text)
-            transcription_list.append(srt.text)
-        else:
-            transcription_list.append(srt.text)
+        transcription_list.append(srt.text)
 
     start = time.time()
     tokenized_sentences = []
     new_counter = 0
     sentence_mapper = dict()
     for idx, item in enumerate(transcription_list):
-        if use_punct_correction:
-            tokenized_item = sent_tokenize(item)
-        else:
-            #print("item", item)
-            deepSegResult = segmenter.segment_long(item)
-            #print("deepSegResult",deepSegResult)
-            tokenized_item = []
-            for item in deepSegResult:
-                item2 = item+"."
-                #print("item2",item2)
-                tokenized_item.append(item2)
+        tokenized_item = sent_tokenize(item)
         for broken_sentence in tokenized_item:
             tokenized_sentences.append(broken_sentence)
             sentence_mapper[new_counter] = idx
@@ -168,18 +152,19 @@ def correct_punctuation_srt_file(srtList: dict, use_punct_correction: bool):
     #print("transcription_list", transcription_list)
     #print("tokenized_sentences", tokenized_sentences)
     #print("sentence_mapper", sentence_mapper)
-    if use_punct_correction:
-
-        if punct_correction_tool == "fastpunct":
-            print(f"using punctation tool: {punct_correction_tool}")
-            transcription_list_results = fastpunct.punct(
-            tokenized_sentences, batch_size=32
-            )
-        elif punct_correction_tool == "punctuator":
-            print(f"using punctation tool: {punct_correction_tool}")
-            transcription_list_results = []
-            for sentence_t in tokenized_sentences:
-                transcription_list_results.append(punctuator_runner.punctuate(sentence_t))
+    if correction_method == "fastpunct":
+        for idx, sentence_t in enumerate(tokenized_sentences):
+            sentence_t = truncate_string_to_fixed_size(sentence_t)
+            #tokenized_sentences[idx] = sentence_t
+        print(f"using punctation tool: {correction_method}")
+        transcription_list_results = fastpunct.punct(
+        tokenized_sentences, batch_size=32
+        )
+    elif correction_method == "punctuator":
+        print(f"using punctation tool: {correction_method}")
+        transcription_list_results = []
+        for sentence_t in tokenized_sentences:
+            transcription_list_results.append(punctuator_runner.punctuate(sentence_t))
 
     else:
         transcription_list_results = tokenized_sentences
@@ -195,11 +180,9 @@ def correct_punctuation_srt_file(srtList: dict, use_punct_correction: bool):
     #print("corrected_transcription_list", corrected_transcription_list)  
 
     end = time.time()
-    if use_punct_correction == False:
-        print("Time without punctuations correction:", end - start)
-    if punct_correction_tool == "fastpunct":
+    if correction_method == "fastpunct":
         print("Time for fastpunct:", end - start)
-    elif punct_correction_tool == "punctuator":
+    elif correction_method == "punctuator":
         print("Time for punctuator:", end - start)
 
     for idx, srt in enumerate(srtList):

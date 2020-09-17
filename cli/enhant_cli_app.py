@@ -51,20 +51,6 @@ def analyze(input: str) -> NoReturn:
 
     print(Back.GREEN + f"\n ***** Analyzing folder {folder} *****")
 
-    guest_transcription_list = None
-    host_transcription_list = None
-    srtListGuest = helper.read_srt_file(folder, "guest")
-    srtListHost = helper.read_srt_file(folder, "host")
-    if srtListGuest is not None:
-        srtListGuest = helper.correct_punctuation_srt_file(srtListGuest, config.settings.use_punct_correction)
-        guest_transcription_list = helper.transform_Srt_to_list(srtListGuest, "guest")
-        helper.save_corrected_srt_file(srtListGuest, folder, "guest")
-
-    if srtListHost is not None:
-        srtListHost = helper.correct_punctuation_srt_file(srtListHost, config.settings.use_punct_correction)    
-        host_transcription_list = helper.transform_Srt_to_list(srtListHost, "host")
-        helper.save_corrected_srt_file(srtListHost, folder, "host")
-
     input_json_file_name = os.path.join(folder, "input.json")
     input_json_data = None
     if os.path.isfile(input_json_file_name):
@@ -72,6 +58,32 @@ def analyze(input: str) -> NoReturn:
             input_json_data = json.load(f)
     else:
         print(Fore.RED + f"\n ERROR: Input JSON file seems to be missing")
+
+    if "guest" in input_json_data:
+        need_punctation_guest = True
+        if "need_punctuation" in input_json_data["guest"]:
+            need_punctation_guest = input_json_data["guest"]["need_punctuation"]
+    
+    if "host" in input_json_data:
+        need_punctation_host = True
+        if "need_punctuation" in input_json_data["host"]:
+            need_punctation_host = input_json_data["host"]["need_punctuation"]
+
+    guest_transcription_list = None
+    host_transcription_list = None
+    srtListGuest = helper.read_srt_file(folder, "guest")
+    srtListHost = helper.read_srt_file(folder, "host")
+    if srtListGuest is not None:
+        if need_punctation_guest:
+            srtListGuest = helper.correct_punctuation_srt_file(srtListGuest, config.settings.punct_correction_tool)
+            helper.save_corrected_srt_file(srtListGuest, folder, "guest")
+        guest_transcription_list = helper.transform_Srt_to_list(srtListGuest, "guest")
+
+    if srtListHost is not None:
+        if need_punctation_host:
+            srtListHost = helper.correct_punctuation_srt_file(srtListHost, config.settings.punct_correction_tool)  
+            helper.save_corrected_srt_file(srtListHost, folder, "host")
+        host_transcription_list = helper.transform_Srt_to_list(srtListHost, "host")
 
     # Get all the analyzers
     analyzers = config.settings.data_analyzers
