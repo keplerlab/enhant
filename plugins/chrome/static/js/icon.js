@@ -697,7 +697,7 @@ class RecordIcon extends Icon{
         this.recording = false;
 
         this.active_icon_path = "static/images/record.svg";
-        this.inactive_icon_path = "static/images/record_inactive.svg";
+        this.inactive_icon_path = "static/images/record_blinking.svg";
 
         this.icon_disable_path = "static/images/record_disabled.svg";
     }
@@ -714,12 +714,10 @@ class RecordIcon extends Icon{
 
         if (this.state == ICONSTATE.ACTIVE){
             // run animation switch between two icons
-            icon_img.addClass("pulse-ring");
+            icon_img.attr("src", this.inactive_icon_path);
         
         }
         else if (this.state == ICONSTATE.INACTIVE){
-            icon_img.removeClass("pulse-ring");
-            icon_background.css("background-color", this.inactive_color);
             icon_img.attr("src", this.active_icon_path);
         }
     }
