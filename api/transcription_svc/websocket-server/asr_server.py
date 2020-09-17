@@ -56,25 +56,11 @@ def process_chunk(rec, message):
         resultStatus = False
 
     responseJson = json.loads(responseJsonStr)
-    #print("responseJson", responseJson)
     if "result" in responseJson:
         resultText = responseJson["text"]
-        #print("transcription without punct:", resultText, flush=True)
-        #start = time.time()
-        #result_after_fastpunct = fastpunct.punct([resultText], batch_size=1)
-        #end = time.time()
-        #print("Time for fastpunct", end - start, flush=True)
-        #print("result_after_fastpunct", result_after_fastpunct, flush=True)
-        #start = time.time()
         deepSegResult = segmenter.segment(resultText)
         deepSegResultStr = '. '.join(deepSegResult)
         deepSegResultStr = deepSegResultStr + ". "
-        #end = time.time()
-        #print("Time for deepSegResult", end - start, flush=True)
-        #print("deepSegResult", deepSegResultStr, flush=True)
-
-        
-        #print("transcription after punct:", result_after_fastpunct, flush=True)
         return deepSegResultStr, resultStatus
     return None, resultStatus
 
@@ -105,6 +91,11 @@ async def recognize(websocket, path):
         return 0
 
     conversation_id = jsonData["conversation_id"]
+
+    jsonData["lang"] = "en-US"
+    jsonData["need_punctuation"] = "True"
+    await websocket.send(json.dumps(jsonData))
+
     print("conversation_id", conversation_id, flush=True)
     print("data_origin", data_origin, flush=True)
 

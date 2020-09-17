@@ -110,7 +110,7 @@ def listen_print_loop(responses, stream, parent_conn, stream_closed_flag):
 
 
 def transcription_loop(
-    audio_buffer, parent_conn, stream_closed_flag, audio_recording_frames
+    audio_buffer, parent_conn, stream_closed_flag, audio_recording_frames, lang_code
 ):
     # await asyncio.sleep(4)
     # audio_recording_frames = []
@@ -201,6 +201,16 @@ async def on_data(websocket, path):
         print("Error in initial packet conversation_id not found", flush=True)
         #return 0
 
+
+    if "lang" not in jsonData:
+        print("Language setting not found", flush=True)
+    
+    language_code = jsonData["lang"]
+        
+    #jsonData["lang"] = "en-US"
+    jsonData["need_punctuation"] = "False"
+    await websocket.send(json.dumps(jsonData))
+
     conversation_id = jsonData["conversation_id"]
 
     ## Make audio manager
@@ -218,6 +228,7 @@ async def on_data(websocket, path):
             (parent_conn),
             (stream_closed_flag),
             (audio_recording_frames),
+            (language_code)
         ),
     )
     reader_process.daemon = True
