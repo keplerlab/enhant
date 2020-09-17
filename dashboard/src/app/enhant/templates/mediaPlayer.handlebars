@@ -88,7 +88,7 @@
 }
 
 .progress__line{
-    height:150px;
+    height:155px;
     z-index:99999;
     bottom: 26px;
     position: absolute;
@@ -367,12 +367,15 @@
 
         renderChartOnVideo(zip_data){
             const chartConf = this.getChartConfig();
+            const canvasStyle = {
+                "background-color": "rgb(255,255,255,0.4)"
+            }
             const chartTemplate = Handlebars.templates.chart;
             const chart_html = chartTemplate({});
             $('.' + this.conf.chart_container_cls).append(chart_html);
 
             var event = new CustomEvent("createChart", {
-                    detail: {zip: zip_data, config: chartConf}
+                    detail: {zip: zip_data, config: chartConf, style: canvasStyle}
             });
             window.dispatchEvent(event);
         }
