@@ -93,7 +93,7 @@ async def recognize(websocket, path):
     conversation_id = jsonData["conversation_id"]
 
     jsonData["lang"] = "en-US"
-    jsonData["need_punctuation"] = "True"
+    jsonData["need_punctuation"] = True
     await websocket.send(json.dumps(jsonData))
 
     print("conversation_id", conversation_id, flush=True)

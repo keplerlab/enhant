@@ -208,7 +208,7 @@ async def on_data(websocket, path):
     language_code = jsonData["lang"]
         
     #jsonData["lang"] = "en-US"
-    jsonData["need_punctuation"] = "False"
+    jsonData["need_punctuation"] = False
     await websocket.send(json.dumps(jsonData))
 
     conversation_id = jsonData["conversation_id"]
