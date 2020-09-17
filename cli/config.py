@@ -17,9 +17,8 @@ class Settings(BaseSettings):
         ]
 
     data_analyzers: list = get_data_analyers()
-    #punct_correction_tool: str = "fastpunct"
-    punct_correction_tool: str = "punctuator"
-    #use_punct_correction: bool = False
+    punct_correction_tool: str = "fastpunct"
+    #punct_correction_tool: str = "punctuator"
 
 
 

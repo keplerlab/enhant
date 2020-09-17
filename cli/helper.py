@@ -27,9 +27,7 @@ fastpunct = FastPunct("en")
 
 from punctuator import Punctuator
 
-home = str(Path.home())
-model_file = os.path.join(home,'.punctuator','Demo-Europarl-EN.pcl')
-print(f"model_file {model_file}")
+model_file = os.path.join(str(Path.home()),'.punctuator','Demo-Europarl-EN.pcl')
 punctuator_runner = Punctuator(model_file)
 
 def eprint(*args, **kwargs):
@@ -152,20 +150,18 @@ def correct_punctuation_srt_file(srtList: dict, correction_method: str):
     #print("transcription_list", transcription_list)
     #print("tokenized_sentences", tokenized_sentences)
     #print("sentence_mapper", sentence_mapper)
+    print(f"using punctation tool: {correction_method}")
     if correction_method == "fastpunct":
         for idx, sentence_t in enumerate(tokenized_sentences):
-            sentence_t = truncate_string_to_fixed_size(sentence_t)
-            #tokenized_sentences[idx] = sentence_t
-        print(f"using punctation tool: {correction_method}")
+            sentence_t_truncated = truncate_string_to_fixed_size(sentence_t)
+            tokenized_sentences[idx] = sentence_t_truncated
         transcription_list_results = fastpunct.punct(
         tokenized_sentences, batch_size=32
         )
     elif correction_method == "punctuator":
-        print(f"using punctation tool: {correction_method}")
         transcription_list_results = []
         for sentence_t in tokenized_sentences:
             transcription_list_results.append(punctuator_runner.punctuate(sentence_t))
-
     else:
         transcription_list_results = tokenized_sentences
     corrected_transcription_list = []
