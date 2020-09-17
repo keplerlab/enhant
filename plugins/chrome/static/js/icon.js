@@ -655,6 +655,27 @@ class SettingsIcon extends Icon{
         super.registerEvents();
         var _this = this;
 
+        $('#' + _this.langauge_id).change(function(){
+
+            // check if selected value is en-IN
+            var language = $('#'+ _this.langauge_id + " option:selected").val();
+
+            console.log(" language changed to : ", language);
+
+            if (language == "en-IN"){
+                var notification_html = "<div class='col-xs-2'>" +
+                "<img title='Info' height=24 width=24 src='static/images/info.svg'>" +
+                "</div>" + 
+                "<div class='col-xs-10'><span>English (India) language works best with google transcription service.</span>" +
+                "</div>";
+                var event = new CustomEvent("showNotification", {
+                    detail: {html: notification_html, timeout_in_sec: 2}
+                });
+                window.dispatchEvent(event);
+            }
+
+        })
+
         $('#' + _this.apply_btn_id).click(function(){
 
             _this.power_mode = _this.getPowerModeSetting();
