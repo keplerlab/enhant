@@ -14,6 +14,9 @@ import textwrap
 from typing import NoReturn, Tuple
 import time
 from nltk import sent_tokenize
+from pathlib import Path
+import os
+
 segmenter = DeepSegment('en')
 
 
@@ -22,6 +25,14 @@ from fastpunct import FastPunct
 
 fastpunct = FastPunct("en")
 
+from punctuator import Punctuator
+
+home = str(Path.home())
+model_file = os.path.join(home,'.punctuator','Demo-Europarl-EN.pcl')
+print(f"model_file {model_file}")
+punctuator_runner = Punctuator(model_file)
+punct_correction_tool: str = "fastpunct"
+#punct_correction_tool: str = "punctuator"
 
 def eprint(*args, **kwargs):
     print(*args, file=sys.stderr, **kwargs)
@@ -158,9 +169,18 @@ def correct_punctuation_srt_file(srtList: dict, use_punct_correction: bool):
     #print("tokenized_sentences", tokenized_sentences)
     #print("sentence_mapper", sentence_mapper)
     if use_punct_correction:
-        transcription_list_results = fastpunct.punct(
-        tokenized_sentences, batch_size=32
-        )
+
+        if punct_correction_tool == "fastpunct":
+            print(f"using punctation tool: {punct_correction_tool}")
+            transcription_list_results = fastpunct.punct(
+            tokenized_sentences, batch_size=32
+            )
+        elif punct_correction_tool == "punctuator":
+            print(f"using punctation tool: {punct_correction_tool}")
+            transcription_list_results = []
+            for sentence_t in tokenized_sentences:
+                transcription_list_results.append(punctuator_runner.punctuate(sentence_t))
+
     else:
         transcription_list_results = tokenized_sentences
     corrected_transcription_list = []
@@ -175,7 +195,12 @@ def correct_punctuation_srt_file(srtList: dict, use_punct_correction: bool):
     #print("corrected_transcription_list", corrected_transcription_list)  
 
     end = time.time()
-    print("Time for fastpunct:", end - start)
+    if use_punct_correction == False:
+        print("Time without punctuations correction:", end - start)
+    if punct_correction_tool == "fastpunct":
+        print("Time for fastpunct:", end - start)
+    elif punct_correction_tool == "punctuator":
+        print("Time for punctuator:", end - start)
 
     for idx, srt in enumerate(srtList):
         string_text = corrected_transcription_list[idx]

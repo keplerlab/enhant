@@ -50,6 +50,11 @@ RUN (echo "import nltk" ; echo "nltk.download('nps_chat')") | python
 RUN pip --no-cache-dir install deepsegment \
    && (echo "from deepsegment import DeepSegment" ; echo "segmenter = DeepSegment('en')" ) | python 
 
+RUN pip install punctuator \
+    && mkdir -p ~/.punctuator \
+    && cd ~/.punctuator \
+    && gdown https://drive.google.com/uc?id=0B7BsN5f2F1fZd1Q0aXlrUDhDbnM
+
 
 ARG PROJECT_DIR=/home/cli/
 WORKDIR ${PROJECT_DIR}
