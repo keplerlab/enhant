@@ -59,13 +59,13 @@ def analyze(input: str) -> NoReturn:
     else:
         print(Fore.RED + f"\n ERROR: Input JSON file seems to be missing")
 
+    need_punctation_guest = True
     if "guest" in input_json_data:
-        need_punctation_guest = True
         if "need_punctuation" in input_json_data["guest"]:
             need_punctation_guest = input_json_data["guest"]["need_punctuation"]
     
+    need_punctation_host = True
     if "host" in input_json_data:
-        need_punctation_host = True
         if "need_punctuation" in input_json_data["host"]:
             need_punctation_host = input_json_data["host"]["need_punctuation"]
 
