@@ -21,6 +21,10 @@
         padding: 5%;
     }
 
+    .outliers{
+        height:300px;
+    }
+
     .table-responsive{
         overflow-y: scroll;
         height: 200px;
@@ -276,19 +280,36 @@
         {{/CheckIfbothTrue}}
 
         {{#if context.sentiment_outliers}}
-        <div class="section outliers has-shadow">
-            <div class="row">
-                <div class="col-xs-12 has-padding">
-                    <div class="row heading">
-                        <div class="col-xs-4">
-                             <span class="cell-text inter-bold-21">Sentiment Outliers
+        <div class="section">
+            <div class="clearfix">
+                <div class="col-xs-6 outliers has-shadow">
+                    <div class="data-container has-padding">
+                        <div class="row heading">
+                            <div class="col-xs-12">
+                                <span class="cell-text inter-bold-21">Sentiment Outliers (Negative)</span>
+                            </div>
                         </div>
-                    </div>
-                    <div class="table-responsive" style="margin-top:5%;">
+                        <div class="table-responsive" style="margin-top:5%;">
                         <table class="table table-striped">
-                        <tbody class="outliers-data-tbody inter-regular-16">
+                        <tbody class="negative-outliers-data-tbody inter-regular-16">
                         </tbody>
                         </table>
+                    </div>
+                    </div>
+                </div>
+                <div class="col-xs-6 outliers has-shadow">
+                    <div class="data-container has-padding">
+                        <div class="row heading">
+                            <div class="col-xs-12">
+                                <span class="cell-text inter-bold-21">Sentiment Outliers (Positive)</span>
+                            </div>
+                        </div>
+                        <div class="table-responsive" style="margin-top:5%;">
+                        <table class="table table-striped">
+                        <tbody class="positive-outliers-data-tbody inter-regular-16">
+                        </tbody>
+                        </table>
+                    </div>
                     </div>
                 </div>
             </div>
@@ -459,21 +480,7 @@
             var highSentimentOutliers = zip.highSentimentSentences.highSentimentSentencesGuest;
             var lowSentimentOutliers = zip.lowSentimentSentences.lowSentimentSentencesGuest;
 
-            var final_arr = [];
-            final_arr.push(...highSentimentOutliers);
-            final_arr.push(...lowSentimentOutliers);
-
-            // sort the final array
-            final_arr.sort(function(a, b){
-                var et_a = zip.start_time + a[0];
-                var et_b = zip.start_time + b[0];
-
-                return et_a - et_b;
-            })
-
-            var sentiment_outlier_html = "";
-
-            final_arr.forEach(function(d){
+            lowSentimentOutliers.forEach(function(d){
 
                 // add number of milliseconds to the start time
                 var end_time = zip.start_time + d[0];
@@ -483,7 +490,21 @@
                         "<td>" + d[1] + "</td>" +
                         "<td>" + elapsed_time + "</td></tr>";
                 
-                $('.outliers-data-tbody').append(row_html);
+                $('.negative-outliers-data-tbody').append(row_html);
+
+            });
+
+            highSentimentOutliers.forEach(function(d){
+
+                // add number of milliseconds to the start time
+                var end_time = zip.start_time + d[0];
+                var elapsed_time = getMeetingDuration(zip.start_time, end_time);
+
+                var row_html = "<tr>" +
+                        "<td>" + d[1] + "</td>" +
+                        "<td>" + elapsed_time + "</td></tr>";
+                
+                $('.positive-outliers-data-tbody').append(row_html);
 
             });
         }
