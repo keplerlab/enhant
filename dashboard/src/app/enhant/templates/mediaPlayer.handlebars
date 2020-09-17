@@ -23,11 +23,11 @@
 .player__controls {
   position: absolute;
   width: 100%;
-  height: 40px;
+  height: 50px;
   transition:all .3s;   
   flex-wrap:wrap;
   background:rgba(0,0,0,0.1);
-  margin-top: -40px;
+  margin-top: -50px;
 }
 
 .progress {
@@ -55,10 +55,30 @@
 }
 
 .markers{
-    margin-top: -40px;
+    margin-top: -70px;
     display: flex;
     height: 20px;
     overflow: hidden;
+}
+
+.progress__time{
+    color: white;
+    font-family: "Inter-Regular";
+    font-size: 16px;
+    margin-top:4px;
+}
+
+.settings-container{
+    background-color: white;
+    color: black;
+    font-family: "Inter-Regular";
+    font-size: 14px;
+    border-radius: 4px;
+    width: 264px;
+    height:102px;
+    position: absolute;
+    right: 10px;
+    bottom:75px;
 }
 
 </style>
@@ -67,19 +87,135 @@
     <div class="col-xs-12 player">
         <video width="100%" height="100%" class="viewer" id="recording-video" src="{{url}}"></video>
 
+        <div class="settings-container" state="inactive" style="display: none;">
+            <div class="clearfix">
+                <div class="form-group" style="margin-top:4%;margin-bottom:4%;">
+                    <div class="col-xs-10">
+                        <div class="form-check">
+                            <input class="form-check-input custom-checkbox" type="checkbox" id="show-metrics" checked>
+                            <label class="form-check-label" for="show-metrics">
+                            Show call metrics
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="clearfix">
+                <div class="form-group" style="margin-top:4%;margin-bottom:4%;">
+                    <label  style="margin-top:6px;" class="col-xs-5 col-form-label" for="setting-time-offset">Time offset: </label>
+                    <div class="col-xs-5" style="padding-left: 0px;padding-right:0px;">
+                        <input id="setting-time-offset" placeholder="hh:mm:ss" type="text" class="form-control">
+                    </div>
+
+                    <img id="video-settings-apply" style="cursor:pointer;margin-left:8px;margin-top:6px" width="24" height="24" src="public/img/check.svg">
+                </div>
+            </div>
+        </div>
+        
+        <div class="chart-container" style="display: none;height:300px;margin-top:20px;">
+            <canvas id="chart" height="200px;"></canvas>
+        </div>
+
+        <div class="clearfix marker-container">
+            <div class="markers col-xs-8 col-xs-offset-1"></div>
+        </div>
+
         <div class="player__controls clearfix">
             <icon style="cursor: pointer;text-align:center" class="toggle col-xs-1">
-                <img width="32" height="32" src="public/img/play.svg"></icon>
+                <img width="32" height="32" src="public/img/play.svg">
+            </icon>
             <div class="progress col-xs-8">
                 <div class="progress__filled"></div>
             </div>
 
-            <div class="markers col-xs-8"></div>
+            <div class="col-xs-2 progress__time">
+                <span class="progress__time__current_time">00:00:00</span>
+                <span> / </span>
+                <span class="progress__time__duration">00:00:00</span>
+            </div>
+
+            <div class="col-xs-1">
+                <icon class="video-settings" style="cursor:pointer; text-align:center;" inactive>
+                    <img width="20" height="30" src="public/img/settings.svg">
+                </icon>
+            </div>
         </div>
     </div>
 </div>
 
 <script>
+
+    function createLineChart(zip){
+        var data = [];
+        var meeting_start_time = zip.start_time;
+        var meeting_end_time = zip.end_time;
+        var samplingRate_in_ms = 10 * 1000; // 10 seconds
+
+        var  datasets = [];
+        var sentimentData = [];
+
+        var ctx = document.getElementById("chart").getContext('2d');
+
+        if (zip.hasOwnProperty("engagement_scores")){
+
+            var d = zip.engagement_scores.engagement_scores;
+            var ed = d.map(function(r) { return { "x" : new Date(meeting_start_time + r[0]), "y" : r[1]} });
+
+            var engagementData = {
+                label: "Engagement Score",
+                data: ed,
+                borderColor: '#1E90FF',
+                fill: false
+            }
+
+            datasets.push(engagementData);
+        }
+
+        if (zip.hasOwnProperty("highSentimentSentences") || zip.hasOwnProperty("highSentimentSentences")){
+            
+            sentimentData.push(...zip.highSentimentSentences.highSentimentSentencesGuest);
+            sentimentData.push(...zip.lowSentimentSentences.lowSentimentSentencesGuest);
+
+            // sort the final array
+            sentimentData.sort(function(a, b){
+                var et_a = meeting_start_time + a[0];
+                var et_b = meeting_start_time + b[0];
+
+                return et_a - et_b;
+            });
+
+            var ed = sentimentData.map(function(r) { return { "x" : new Date(meeting_start_time + r[0]), "y" : Math.round(r[2]*100)} });
+
+            var sentimentData = {
+                label: "Sentiment Score",
+                data: ed,
+                borderColor: '#8FC8FF',
+                fill: false
+            }
+
+            datasets.push(sentimentData);
+
+        }
+
+        if (datasets.length){
+            $(".chart-container").show();
+
+            var lineChart = new Chart(ctx, {
+                type: 'line',
+                data: { datasets: datasets },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        xAxes: [{
+                            type: 'time',
+                            display: false
+                        }]
+                    }
+                }
+            });
+        }
+    }
 
     class MediaPlayer{
         constructor(conf){
@@ -95,10 +231,31 @@
             this.progress_filled_container = this.player.querySelector('.' + this.conf.progress_filled_container_cls);
             this.toggle_icon = this.player.querySelector('.' + this.conf.toggle_cls); 
             this.marker_cls = this.player.querySelector('.' + this.conf.marker_cls);
+
+            this.settings_icon = $('.' + this.conf.settings.icon_cls);
+            this.settings_icon_container = $("." + this.conf.settings.container_cls);
+            this.settings_icon_time_offset = $("#" + this.conf.settings.offset_id);
+            this.settings_icon_show_metric = $("#" + this.conf.settings.metric_id);
+            this.settings_apply_icon = $("#" + this.conf.settings.apply_icon);
+
+            this.settings_offset_value = "";
+            this.show_metrics = true;
         }
 
         getVideo(){
             return this.video;
+        }
+
+        settingsToggle(){
+            var current_state = this.settings_icon_container.attr("state");
+            if (current_state == "active"){
+                this.settings_icon_container.hide();
+                this.settings_icon_container.attr("state", "inactive");
+            }
+            else {
+                this.settings_icon_container.show();
+                this.settings_icon_container.attr("state", "active");
+            }
         }
 
         play(){
@@ -131,14 +288,44 @@
             }
         }
 
+        formatTime(seconds){
+            var diff = seconds;
+            var ss = diff % 60;
+            diff = (diff - ss) / 60;
+            var mm = diff % 60;
+            diff = (diff - mm) / 60;
+            var hh = diff % 24;
+
+            var formatted_hh = ("0" + hh).slice(-2).toString();
+            var formatted_mm = ("0" + mm).slice(-2).toString();
+            var formatted_ss = ("0" + Math.round(ss)).slice(-2).toString();
+
+            return formatted_hh + ":" + formatted_mm + ":" + formatted_ss;
+           
+        }
+
         progressClickedHandler(e){
             const scrubTime = (e.offsetX / this.progress_container.offsetWidth) * this.video.duration;
             this.video.currentTime = scrubTime;
+
+            this.showVideoCurrentTime();
         }
 
         videoTimeUpdated(){
             const percent = (this.video.currentTime / this.video.duration) * 100; 
             this.progress_filled_container.style.flexBasis = `${percent}%`;
+
+            this.showVideoCurrentTime();
+        }
+
+        showVideoCurrentTime(){
+            var formated_current_time = this.formatTime(this.video.currentTime);
+            $('.'+ this.conf.progress__time__current_time).text(formated_current_time);
+        }
+
+        showVideoDuration(){
+            var formated_duration = this.formatTime(this.video.duration);
+            $('.'+ this.conf.progress__time__duration).text(formated_duration);
         }
 
         addMarkersOnProgressBar(zip){
@@ -176,6 +363,17 @@
            $('.' + this.conf.toggle_cls + " img").attr("src", this.pause_icon);
         }
 
+        registerSettingsEvents(){
+            var _this = this;
+            this.settings_icon.on("click", function(evt){
+                _this.settingsToggle();
+            });
+
+            this.settings_apply_icon.on("click", function(evt){
+
+            });
+        }
+
         registerEvents(){
             var _this = this;
             this.video.addEventListener("click", _this.togglePlay.bind(_this));
@@ -183,20 +381,36 @@
             this.video.addEventListener("timeupdate", _this.videoTimeUpdated.bind(_this));
             this.video.addEventListener("ended", _this.videoEnded.bind(_this));
             this.progress_container.addEventListener("click", _this.progressClickedHandler.bind(_this));
+
+            if (this.conf.settings){
+                this.registerSettingsEvents();
+            }
+        }
+
+        addChartOverPlayer(zip_data){
+            // function in dashboard script
+            createLineChart(zip_data)
         }
     }
 
     window.addEventListener("initializePlayer", function(evt){
         var data = evt.detail;
-
         var conf = {
             player_cls: "player",
             video_cls: "viewer",
             progress_container_cls: "progress",
             progress_filled_container_cls: "progress__filled",
             toggle_cls: "toggle",
-            marker_cls: "markers"
-
+            marker_cls: "markers",
+            progress__time__duration: "progress__time__duration",
+            progress__time__current_time: "progress__time__current_time",
+            settings: {
+                icon_cls: "video-settings",
+                container_cls: "settings-container",
+                offset_id: "setting-time-offset",
+                metric_id: "show-metrics",
+                apply_icon: "video-settings-apply"
+            }
         };
         
         const player = new MediaPlayer(conf);
@@ -207,6 +421,7 @@
         if (!isEmpty(zip_data)){
             var video = player.getVideo();
             video.onloadedmetadata = function(){
+                player.showVideoDuration();
                 player.addMarkersOnProgressBar(zip_data);
                 delete player;
             }
