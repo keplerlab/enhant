@@ -47,6 +47,10 @@ RUN (echo "from fastpunct import FastPunct" ; echo "fastpunct = FastPunct('en')"
 
 RUN (echo "import nltk" ; echo "nltk.download('nps_chat')") | python
 
+RUN pip --no-cache-dir install deepsegment \
+   && (echo "from deepsegment import DeepSegment" ; echo "segmenter = DeepSegment('en')" ) | python 
+
+
 ARG PROJECT_DIR=/home/cli/
 WORKDIR ${PROJECT_DIR}
 CMD ["/bin/bash"]
