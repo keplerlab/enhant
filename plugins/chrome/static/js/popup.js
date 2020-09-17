@@ -39,6 +39,7 @@ $(document).ready(function(){
     ];
 
     var icons_object_mapping = {};
+    var pluginActivated = false;
 
     // register the classes and events
     registered_classes.forEach(function(cl){
@@ -55,6 +56,8 @@ $(document).ready(function(){
         console.log(" Received message from browser action [Activate plugin] : ", message);
     
         if (message.cmd == "activate_plugin"){
+
+            pluginActivated = true;
 
             var event = new CustomEvent("pluginActivated", {});
             window.dispatchEvent(event);
@@ -124,7 +127,7 @@ $(document).ready(function(){
 
         if (is_icon_clickable !== undefined){
 
-             // get the icon type
+            // get the icon type
             var icon_type = $(this).attr("type");
 
             var icon_obj = icons_object_mapping[icon_type];
@@ -154,6 +157,15 @@ $(document).ready(function(){
 
                 hideOtherIconWindow(icon_type);
                 icon_obj.handleClick();
+            }
+        }
+        else{
+            if (pluginActivated){
+                // get the icon type
+                var icon_type = $(this).attr("type");
+
+                var icon_obj = icons_object_mapping[icon_type];
+                icon_obj.displayMessageOnIconDisabled();
             }
         }
     

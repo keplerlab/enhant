@@ -22,7 +22,7 @@ class Icon{
 
         this.info_svg_path = "static/images/info.svg";
 
-        this.hover_message_disabled = null;
+        this.icon_disabled_message = null;
 
         this.disabled = true;
         
@@ -157,40 +157,28 @@ class Icon{
         });
     }
 
-    displayMessageOnIconHover(){
+    displayMessageOnIconDisabled(){
         var _this = this;
-        var icon_type = this.constructor.name;
-        if (this.hover_message_disabled !== null){
-            $('icon[type="' + icon_type + '"]').hover(function(){
+        if (_this.disabled && _this.icon_disabled_message !== null){
+            var disabled_message = _this.icon_disabled_message;
+            var html = "<div class='clearfix'>" + 
+            "<div class='col-xs-2'>" + 
+            "<img width=20 height=20 src='/static/images/info.svg'>" +
+            "</div>" + 
+            "<div class='col-xs-10'>" +
+            "<span>" + disabled_message+ "</span>" + 
+            "</div>" +
+            "</div>";
 
-                // if plugin is disabled
-                if (_this.disabled){
-                    var hover_message = _this.hover_message_disabled;
-                    var html = "<div class='clearfix'>" + 
-                    "<div class='col-xs-2'>" + 
-                    "<img width=20 height=20 src='/static/images/info.svg'>" +
-                    "</div>" + 
-                    "<div class='col-xs-10'>" +
-                    "<span>" + hover_message+ "</span>" + 
-                    "</div>" +
-                    "</div>";
+            var event = new CustomEvent("showNotification", {
+                detail: {html: html, timeout_in_sec: 2}
+            });
 
-                    var event = new CustomEvent("showNotification", {
-                        detail: {html: html, timeout_in_sec: 2}
-                    });
-
-                    window.dispatchEvent(event);
-                }
-            }, function(){});
+            window.dispatchEvent(event);
         }
     }
 
-    registerEvents(){
-        var _this = this;
-        window.addEventListener("pluginActivated", function(evt){
-            _this.displayMessageOnIconHover();
-        });
-    }
+    registerEvents(){}
 }
 
 class NotesIcon extends Icon{
@@ -205,7 +193,7 @@ class NotesIcon extends Icon{
 
         this.icon_disable_path = "static/images/notes_disabled.svg";
 
-        this.hover_message_disabled = "Take note enabled when recording.";
+        this.icon_disabled_message = "Take note enabled when recording.";
         
     }
 
@@ -279,7 +267,7 @@ class BookmarkIcon extends Icon{
         this.inactive_icon_path = "static/images/bookmark_inactive.svg";
 
         this.icon_disable_path = "static/images/bookmark_disabled.svg";
-        this.hover_message_disabled = "Bookmark moment enabled when recording.";
+        this.icon_disabled_message = "Bookmark moment enabled when recording.";
     }
 
     generateBookmark(obj){
@@ -390,7 +378,7 @@ class CaptureTabIcon extends Icon{
         this.inactive_icon_path = "static/images/capture_inactive.svg";
 
         this.icon_disable_path = "static/images/capture_disabled.svg";
-        this.hover_message_disabled = "Capture screenshot enabled when recording.";
+        this.icon_disabled_message = "Capture screenshot enabled when recording.";
     }
 
     capture(){
@@ -612,7 +600,7 @@ class SettingsIcon extends Icon{
         this.inactive_icon_path = "static/images/settings_inactive.svg";
 
         this.icon_disable_path = "static/images/settings_disabled.svg";
-        this.hover_message_disabled = "Settings not available during recording.";
+        this.icon_disabled_message = "Settings not available during recording.";
         
     }
 
@@ -639,7 +627,10 @@ class SettingsIcon extends Icon{
     }
 
     updateLanguage(lang){
-        $('#' + this.langauge_id + ' option[value="' + lang +'"]').prop('selected', 'selected').change();
+        this.languaged_updated_from_previous_setting = true;
+        $('#' + this.langauge_id + ' option[value="' + lang +'"]').prop('selected', 'selected').change({
+            internal: true
+        });
     }
 
     settingsUpdateHandler(settings){
@@ -655,26 +646,26 @@ class SettingsIcon extends Icon{
         super.registerEvents();
         var _this = this;
 
-        $('#' + _this.langauge_id).change(function(){
+        $('#' + _this.langauge_id).change(function(evt){
 
             // check if selected value is en-IN
             var language = $('#'+ _this.langauge_id + " option:selected").val();
 
-            console.log(" language changed to : ", language);
-
-            if (language == "en-IN"){
-                var notification_html = "<div class='col-xs-2'>" +
-                "<img title='Info' height=24 width=24 src='static/images/info.svg'>" +
-                "</div>" + 
-                "<div class='col-xs-10'><span>English (India) language works best with google transcription service.</span>" +
-                "</div>";
-                var event = new CustomEvent("showNotification", {
-                    detail: {html: notification_html, timeout_in_sec: 2}
-                });
-                window.dispatchEvent(event);
+            // if not internally changed via updateLanguage
+            if ((!evt.data)){
+                if (language == "en-IN"){
+                    var notification_html = "<div class='col-xs-2'>" +
+                    "<img title='Info' height=24 width=24 src='static/images/info.svg'>" +
+                    "</div>" + 
+                    "<div class='col-xs-10'><span>English (India) language works best with google transcription service.</span>" +
+                    "</div>";
+                    var event = new CustomEvent("showNotification", {
+                        detail: {html: notification_html, timeout_in_sec: 2}
+                    });
+                    window.dispatchEvent(event);
+                }
             }
-
-        })
+        });
 
         $('#' + _this.apply_btn_id).click(function(){
 
@@ -899,7 +890,7 @@ class PowerModeIcon extends Icon{
 
         this.recording = false;
 
-        this.hover_message_disabled = "Power mode OFF. Enable it from settings.";
+        this.icon_disabled_message = "Power mode OFF. Enable it from settings.";
     }
 
     // dont toggle icon for powermode
