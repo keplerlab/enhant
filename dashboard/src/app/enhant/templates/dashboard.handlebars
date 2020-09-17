@@ -152,9 +152,11 @@
         {{#if context.recording}}
         <div class="section recording">
         </div>
+        {{else}}
+         <div class="chart-container" style="display: none;height:300px;margin-top:20px;">
+            <canvas id="chart" height="200px;"></canvas>
+        </div>
         {{/if}}
-
-         <canvas id="chart" height="200px;"></canvas>
 
         {{#if context.bookmark}}
         <div class="section bookmark has-shadow">
@@ -589,7 +591,7 @@
             var engagementData = {
                 label: "Engagement Score",
                 data: ed,
-                borderColor: 'red',
+                borderColor: '#1E90FF',
                 fill: false
             }
 
@@ -622,17 +624,32 @@
 
         }
 
-        var lineChart = new Chart(ctx, {
-            type: 'line',
-            data: { datasets: datasets },
-            options: {
-                scales: {
-                    xAxes: [{
-                        type: 'time'
-                    }]
+        if (datasets.length){
+            $(".chart-container").show();
+
+            var lineChart = new Chart(ctx, {
+                type: 'line',
+                data: { datasets: datasets },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        xAxes: [{
+                            type: 'time',
+                            time: {
+                                unit: 'minute',
+                                stepSize: 10
+                            }
+                        }],
+                        yAxes: [{
+                            gridLines: {
+                                display: false
+                            }
+                        }]
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 
     function reset(){
@@ -669,7 +686,13 @@
 
         if (!isEmpty(zip_data)){
             processData(zip_data);
-            createLineChart(zip_data);
+
+            // if recording url is null, create a chart and show here
+            if (recording_data.url == null){
+                createLineChart(zip_data);
+            }
+            
+            
         }
         else if (!isEmpty(notes_data)){
             processData(notes_data);
