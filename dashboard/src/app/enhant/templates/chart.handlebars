@@ -52,7 +52,7 @@
                 return et_a - et_b;
             });
 
-            var ed = sentimentData.map(function(r) { return { "x" : new Date(meeting_start_time + r[0]), "y" : Math.round(r[2]*100)} });
+            var ed = sentimentData.map(function(r) { return { "x" : new Date(meeting_start_time + r[0]), "y" : r[2] !== null ? Math.round(r[2]*100): r[2]} });
 
             var sentimentData = {
                 label: "Sentiment Score",
@@ -73,7 +73,8 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    scales: config
+                    scales: config,
+                    spanGaps: false
                 }
             });
         }
@@ -85,5 +86,9 @@
         var config = data.config;
         var canvas_style = data.style || null;
         createLineChart(zip, config, canvas_style);
+
+        window.removeEventListener("createChart", function(evt){
+            console.log("createChart event removed");
+        });
     });
 </script>

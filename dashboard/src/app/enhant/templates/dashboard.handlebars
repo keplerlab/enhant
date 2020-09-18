@@ -342,6 +342,10 @@
 
     function getMeetingDuration(start_time, end_time){
         var diff = end_time - start_time;
+        var is_negative = diff < 0 ? true : false;
+
+        diff = Math.abs(diff);
+
         var ms = diff % 1000;
         diff = (diff - ms) / 1000;
         var ss = diff % 60;
@@ -356,7 +360,12 @@
         var formatted_ss = ("0" + ss).slice(-2).toString();
         var formatted_ms = ("0" + ms + "0").slice(-3).toString();
 
-        return formatted_hh + ":" + formatted_mm + ":" + formatted_ss;
+        if (is_negative){
+            return "-" + formatted_hh + ":" + formatted_mm + ":" + formatted_ss;
+        }
+        else{
+            return formatted_hh + ":" + formatted_mm + ":" + formatted_ss;
+        }
     }
 
     function updateMeetingData(zip){
@@ -599,6 +608,10 @@
     }
 
     function renderChart(zip_data){
+
+        // clear the previous chart
+        $('.sentiment-engagement-chart').html("");
+
         const chartTemplate = Handlebars.templates.chart;
         const chart_html = chartTemplate({});
         $('.sentiment-engagement-chart').append(chart_html);
@@ -649,6 +662,13 @@
         updateAverageEngagementScore(data);
         updateAverageSentiment(data);
     }
+
+    window.addEventListener("update-dashboard", function(evt){
+        var zip_data = evt.detail;
+        reset();
+        processData(zip_data);
+
+    });
 
     window.addEventListener("dashboard-data", function(evt){
         var data = evt.detail;
@@ -703,6 +723,10 @@
             window.dispatchEvent(event);
 
         }
+
+        window.removeEventListener("dashboard-data", function(evt){
+            console.log("dashboard-data event removed");
+        });
 
     });
 </script>
