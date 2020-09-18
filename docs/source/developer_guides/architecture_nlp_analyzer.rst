@@ -1,6 +1,15 @@
 
-How to add or subtract NLP analyzer
+Intro to NLP analyzers
 ===================================
+
+As discussed in overview section enhan(t) analytics module enables you to
+extract helpful insights like engagement, sentiment and questions from
+your online video interactions. All of these tasks are accomplished by help of 
+NLP analyzers on top of speech transcripts of video. 
+Enhant analytics module is built as a service where a developer can add or remove
+any of these analyzers easily. To understand how we can add and remove analyzers let's 
+first look at Architecture of NLP analyzers:
+
 
 **Architecture NLP analyzer**
 
@@ -8,15 +17,21 @@ How to add or subtract NLP analyzer
   :width: 600px
   :alt: NLP Analyzer Architecture
 
-Take a look at above figure NLP Analyser Architecture
-cli app has one config module on which we can dynamically load
-all the nlp analyzers we want to run on our input data.
-Currently cli app takes input.json as input and writes back result in
-processed.json, each of the NLP analyzers needs to follow this same syntax
-that each needs to take input.json as well as host and guest srt files as input
-writes back results in processed json.
+Take a look at above figure NLP Analyser Architecture,
+All of analytics is processed by our included cli application, cli application 
+configures which analyzers to run on included transcriptions data using config module,
+in config module you can their is function you can get_data_analyers() where you can 
+initialize your own custom nlp analyzer or remove any of the existing nlp analyzer.
+
+Each of the NLP analyzers needs to follow this common input output syntax to help
+with modularity, hence each of them take input.json with host and guest side transcriptions inside srt format 
+as input and results are written back  in processed.json file.
+
 In our current implementation these functions are Engagement_finder, Questions_finder, Sentiment_finder respectively.
-As we want to decouple our application related interface (e.g. here input.json, guest.srt and host.srt) operations from core  nlp operations, we have made a core nlp logic as an nlp lib which has their own common interface, for our current implementation, these are located in NLP_lib_engagement, NLP_Questions_finder, NLP_lib_sentiment respectively.
+As we want to decouple our application related interface 
+(e.g. here input.json, guest.srt and host.srt) operations from core  nlp operations,
+we have made a core nlp logic as an nlp lib which has their own common interface, for our current implementation,
+these are located in NLP_lib_engagement, NLP_Questions_finder, NLP_lib_sentiment respectively.
 
 As shown in diagram all of the NLP analyzers need to follow common
 interface which so if you need to add a additional nlp analyzers
