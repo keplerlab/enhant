@@ -88,7 +88,7 @@
 }
 
 .progress__line{
-    height:150px;
+    height:155px;
     z-index:99999;
     bottom: 26px;
     position: absolute;
@@ -171,6 +171,8 @@
             this.pause_icon = "public/img/play.svg";
             this.play_icon = "public/img/stop.svg";
 
+            this.zip_data = {};
+
             this.conf = conf;
 
             this.player = document.querySelector('.' + this.conf.player_cls);
@@ -182,12 +184,18 @@
 
             this.settings_icon = $('.' + this.conf.settings.icon_cls);
             this.settings_icon_container = $("." + this.conf.settings.container_cls);
-            this.settings_icon_time_offset = $("#" + this.conf.settings.offset_id);
-            this.settings_icon_show_metric = $("#" + this.conf.settings.metric_id);
             this.settings_apply_icon = $("#" + this.conf.settings.apply_icon);
 
-            this.settings_offset_value = "";
             this.show_metrics = true;
+            this.recording_start_time = null;
+
+            // negative offset means recording started before plugin and positive otherwise
+            this.offset = 0; // 0 is no offset, -1 is negative offset, +1 is positive offset
+            this.offset_in_ms = 0;
+        }
+
+        setZipData(zip_data){
+            this.zip_data = zip_data;
         }
 
         getVideo(){
@@ -283,16 +291,22 @@
             $('.'+ this.conf.progress__time__duration).text(formated_duration);
         }
 
-        addMarkersOnProgressBar(zip){
+        addMarkersOnProgressBar(){
             var _this = this;
-            var all_notes = zip.notes;
+            var el = $('.' + _this.conf.marker_cls);
+
+            // clear previous markers
+            el.html("");
+    
+            var _this = this;
+            var all_notes = this.zip_data.notes;
             all_notes.forEach(function(note){
 
-                var seconds_elapsed = (note.event_time - zip.start_time) / 1000 ;
+                var seconds_elapsed = (note.event_time - _this.recording_start_time) / 1000 ;
 
-                if (seconds_elapsed < zip.end_time){
+                // only render those between the recording duration
+                if (seconds_elapsed >= 0 && seconds_elapsed <= _this.video.duration){
                     var positionToPlace = (seconds_elapsed / _this.video.duration) * 100 + '%';
-
                     var img_src = "public/img/";
 
                     if (note.type == "bookmark"){
@@ -308,7 +322,6 @@
                     // create a div
                     var html = "<div style='position:absolute;left:"+ positionToPlace +"'><img src='" + img_src + "'</div>";
 
-                    var el = $('.' + _this.conf.marker_cls);
                     el.append(html);
                 }
             });
@@ -318,14 +331,290 @@
            $('.' + this.conf.toggle_cls + " img").attr("src", this.pause_icon);
         }
 
+        getCallMetricCheckboxStatus(){
+            var status = $("#" + this.conf.settings.metric_id + ":checkbox:checked").length > 0;
+            return status;
+        }
+
+        hideChartsContainer(){
+            $('.' + this.conf.chart_container_cls).hide();
+            $('.' + this.conf.progress__line).hide();
+        }
+
+        showChartsContainer(){
+            $('.' + this.conf.chart_container_cls).show();
+            $('.' + this.conf.progress__line).show();
+        }
+
+        calculateOffsetInMilliSeconds(hh, mm, ss){
+            var offset_in_ms = (hh*60*60 + mm * 60 + ss) * 1000;
+            this.offset_in_ms = offset_in_ms;
+        }
+
+        setRecordingStartTime(){
+
+            // recording initially should be the same as meeting start because
+            // we are not doing relative movement (to the previous one)
+            this.recording_start_time = this.zip_data.start_time;
+
+            if (this.offset == -1){
+                this.recording_start_time = this.zip_data.start_time - this.offset_in_ms;
+            }
+            else if (this.offset == 1){
+                this.recording_start_time = this.zip_data.start_time + this.offset_in_ms;
+            }
+            else{
+                this.recording_start_time = this.zip_data.start_time;
+            }
+
+        }
+
+
+        updateNotesData(){
+            var notes = this.zip_data.notes;
+            var updated_notes = [];
+
+            var _this = this;
+            notes.forEach(function(nd){
+
+                var event_time;
+
+                if (_this.offset == 1){
+                    event_time = nd.event_time - _this.offset_in_ms;
+                }
+                else if (_this.offset == -1){
+                    event_time =  nd.event_time + _this.offset_in_ms;
+                }
+                else{
+                    event_time = nd.event_time;
+                }
+
+                var obj = {
+                    event_time: event_time,
+                    type: nd.type,
+                    content: nd.content
+                }
+               
+                updated_notes.push(obj);
+            });
+
+            return updated_notes;
+        }
+
+        updateQuestionsAskedData(){
+            var questionsAsked = this.zip_data.questionsAsked;
+            var updated_questions = [];
+
+            var _this = this;
+            questionsAsked.forEach(function(qd){
+                var time;
+                if (_this.offset == 1){
+                    time = qd.time - _this.offset_in_ms;
+                }
+                else if (_this.offset == -1){
+                    time =  qd.time + _this.offset_in_ms;
+                }
+                else{
+                    time = qd.time;
+                }
+
+                var obj = {
+                    origin: qd.origin,
+                    time: time,
+                    question: qd.question
+                }
+
+                updated_questions.push(obj);
+
+            });
+
+            return updated_questions;
+        }
+
+        filterData(data_arr, start_time){
+            var _this = this;
+            var filtered_arr = data_arr.filter(function(d){
+                return ((start_time + d[0]) >= _this.recording_start_time);
+            });
+
+            return filtered_arr;
+        }
+
+        addEmptyData(data_arr, start_time, is_engagement, add){
+
+            var _this = this;
+            var new_arr = [];
+
+            var sampleRate_in_ms = 1*1000; //1 sec
+            var count = 1;
+
+            var current_time = this.recording_start_time;
+
+            if (add){
+
+                // add null samples till current time doesnt reach meeting start time
+                while(current_time < start_time){
+
+                    var time_in_ms = count*sampleRate_in_ms;
+
+                    current_time = this.recording_start_time + time_in_ms;
+
+                    if (is_engagement){
+                        new_arr.push([time_in_ms, null]);
+                    }
+                    else{
+                        new_arr.push([time_in_ms, null, null]);
+                    }
+                    
+                    count += 1;
+                }
+            }
+            var updated_time_arr = [];
+
+            data_arr.forEach(function(d){
+                var item = [];
+                item[0] = d[0] + _this.offset_in_ms;
+                item[1] = d[1];
+
+                if (!is_engagement){
+                    item[2] = d[2];
+                }
+
+                updated_time_arr.push(item);
+            });
+
+            // add remaining data arr
+            new_arr.push(...updated_time_arr);
+
+            return new_arr;
+        }
+
+        //TODO: add proper check for keys
+        createNewZipData(){
+
+            {{!-- console.log(" old zip ", this.zip_data); --}}
+            var new_zip = {
+                start_time: this.zip_data.start_time,
+                end_time: this.zip_data.end_time,
+                avgSentimentScoreGuest: this.zip_data.avgSentimentScoreGuest,
+                avgSentimentScoreHost: this.zip_data.avgSentimentScoreHost,
+                conv_id: this.zip_data.conv_id,
+                meeting_id: this.zip_data.meeting_id,
+                questionsAsked: this.updateQuestionsAskedData(),
+                engagement_scores: {
+                    avg_engagement_score: this.zip_data.engagement_scores.avg_engagement_score,
+                    engagement_scores: []
+                },
+                highSentimentSentences: {
+                    highSentimentSentencesHost: this.zip_data.highSentimentSentences.highSentimentSentencesHost,
+                    highSentimentSentencesGuest: []
+                },
+                lowSentimentSentences: {
+                    lowSentimentSentencesHost: this.zip_data.lowSentimentSentences.lowSentimentSentencesHost,
+                    lowSentimentSentencesGuest: []
+                },
+                notes: this.updateNotesData()
+            }
+
+            if (this.offset == -1){
+                var start_time = this.zip_data.start_time;
+                var engagement_scores = this.addEmptyData(this.zip_data.engagement_scores.engagement_scores, start_time, true, true);
+                var highSentimentSentencesGuest = this.addEmptyData(this.zip_data.highSentimentSentences.highSentimentSentencesGuest, start_time, false, true);
+                var lowSentimentSentencesGuest = this.addEmptyData(this.zip_data.lowSentimentSentences.lowSentimentSentencesGuest, start_time, false, false);
+
+                new_zip.engagement_scores.engagement_scores = engagement_scores;
+                new_zip.highSentimentSentences.highSentimentSentencesGuest = highSentimentSentencesGuest;
+                new_zip.lowSentimentSentences.lowSentimentSentencesGuest = lowSentimentSentencesGuest;
+
+            }
+            else if (this.offset == 1){
+                var start_time = this.zip_data.start_time;
+                var engagement_scores = this.filterData(this.zip_data.engagement_scores.engagement_scores, start_time);
+                var highSentimentSentencesGuest = this.filterData(this.zip_data.highSentimentSentences.highSentimentSentencesGuest, start_time);
+                var lowSentimentSentencesGuest = this.filterData(this.zip_data.lowSentimentSentences.lowSentimentSentencesGuest, start_time);
+
+                new_zip.engagement_scores.engagement_scores = engagement_scores;
+                new_zip.highSentimentSentences.highSentimentSentencesGuest = highSentimentSentencesGuest;
+                new_zip.lowSentimentSentences.lowSentimentSentencesGuest = lowSentimentSentencesGuest;
+
+            }
+            else{
+                new_zip = this.zip_data;
+            }
+
+            {{!-- console.log(" new zip ", new_zip); --}}
+
+            return new_zip;
+        }
+
+        plotChart(zip_data){
+            var new_zip = this.createNewZipData(zip_data);
+            this.renderChartOnVideo(new_zip);
+        }
+
+        renderMarkers(zip_data){
+            this.addMarkersOnProgressBar(zip_data);
+        }
+
+        processOffsetValue(offset_string){
+
+            var offset_arr = offset_string.split(":");
+            if (offset_arr.length == 3){
+
+                var hh = offset_arr[0].slice(-2);
+
+                if (offset_arr[0].length == 3 && offset_arr[0][0] == "-"){
+                    this.offset = -1;
+                }
+                else{
+                    this.offset = 1;
+                }
+
+                var mm = offset_arr[1].slice(-2);
+                var ss = offset_arr[2].slice(-2);
+
+                this.calculateOffsetInMilliSeconds(Number(hh), Number(mm), Number(ss));
+
+            }
+        }
+
         registerSettingsEvents(){
             var _this = this;
             this.settings_icon.on("click", function(evt){
                 _this.settingsToggle();
             });
 
+
+            $('#' + _this.conf.settings.metric_id).change(function(){
+
+                if (this.checked){
+                    _this.showChartsContainer();
+                }
+                else{
+                    _this.hideChartsContainer();
+                }
+            });
+
             this.settings_apply_icon.on("click", function(evt){
 
+                // get the timeoffset
+                var offset = $('#'+ _this.conf.settings.offset_id).val();
+
+                if (offset){
+                    _this.processOffsetValue(offset);
+                    _this.setRecordingStartTime();
+
+                    var new_zip = _this.createNewZipData();
+                    _this.plotChart(new_zip);
+                    _this.addMarkersOnProgressBar();
+
+                    // forward message to dashboard
+                    var event = new CustomEvent("update-dashboard", {
+                        detail: new_zip
+                    });
+                    window.dispatchEvent(event);
+                }
+                
             });
         }
 
@@ -366,13 +655,17 @@
         }
 
         renderChartOnVideo(zip_data){
+            $('.' + this.conf.chart_container_cls).html("");
             const chartConf = this.getChartConfig();
+            const canvasStyle = {
+                "background-color": "rgb(255,255,255,0.4)"
+            }
             const chartTemplate = Handlebars.templates.chart;
             const chart_html = chartTemplate({});
             $('.' + this.conf.chart_container_cls).append(chart_html);
 
             var event = new CustomEvent("createChart", {
-                    detail: {zip: zip_data, config: chartConf}
+                    detail: {zip: zip_data, config: chartConf, style: canvasStyle}
             });
             window.dispatchEvent(event);
         }
@@ -399,25 +692,41 @@
             },
             chart_container_cls: "sentiment-engagement-chart-video"
         };
-        
-        const player = new MediaPlayer(conf);
-        player.registerEvents();
 
         var zip_data = data.zip;
 
-        player.renderChartOnVideo(zip_data);
-
         if (!isEmpty(zip_data)){
+
+            const player = new MediaPlayer(conf);
+
+            // set player zip data
+            player.setZipData(zip_data);
+
+            // set the recording start time (will match the meeting start time without offset)
+            player.setRecordingStartTime();
+
+            // register player events
+            player.registerEvents();
+
+            // render chart
+            player.renderChartOnVideo(zip_data);
+
             var video = player.getVideo();
+
+            // video is loaded, add duration data and markers
             video.onloadedmetadata = function(){
                 player.showVideoDuration();
-                player.addMarkersOnProgressBar(zip_data);
+                player.addMarkersOnProgressBar();
                 delete player;
             }
         }
         else{
              delete player;
         }
+
+        window.removeEventListener("initializePlayer", function(evt){
+            console.log(" initializePlayer event removed ");
+        });
     });
   
 </script>

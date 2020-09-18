@@ -2,7 +2,13 @@
 <canvas id="chart" style="width:100%"></canvas>
 
 <script>
-    function createLineChart(zip, config){
+
+    // This is to modify the spacing betwen legend and chart
+    Chart.Legend.prototype.afterFit = function() {
+        this.height = this.height + 20;
+    };
+
+    function createLineChart(zip, config, canvas_style){
         var data = [];
         var meeting_start_time = zip.start_time;
         var meeting_end_time = zip.end_time;
@@ -12,6 +18,11 @@
         var sentimentData = [];
 
         var ctx = document.getElementById("chart").getContext('2d');
+
+        if (canvas_style){
+             $('#chart').css(canvas_style);
+        }
+       
 
         if (zip.hasOwnProperty("engagement_scores")){
 
@@ -41,7 +52,7 @@
                 return et_a - et_b;
             });
 
-            var ed = sentimentData.map(function(r) { return { "x" : new Date(meeting_start_time + r[0]), "y" : Math.round(r[2]*100)} });
+            var ed = sentimentData.map(function(r) { return { "x" : new Date(meeting_start_time + r[0]), "y" : r[2] !== null ? Math.round(r[2]*100): r[2]} });
 
             var sentimentData = {
                 label: "Sentiment Score",
@@ -62,7 +73,8 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    scales: config
+                    scales: config,
+                    spanGaps: false
                 }
             });
         }
@@ -72,6 +84,11 @@
         var data = evt.detail;
         var zip = data.zip;
         var config = data.config;
-        createLineChart(zip, config);
+        var canvas_style = data.style || null;
+        createLineChart(zip, config, canvas_style);
+
+        window.removeEventListener("createChart", function(evt){
+            console.log("createChart event removed");
+        });
     });
 </script>
