@@ -584,16 +584,18 @@
                 _this.settingsToggle();
             });
 
-            this.settings_apply_icon.on("click", function(evt){
 
-                // get the call metric check
-                var show_metric_status = _this.getCallMetricCheckboxStatus();
-                if (show_metric_status){
+            $('#' + _this.conf.settings.metric_id).change(function(){
+
+                if (this.checked){
                     _this.showChartsContainer();
                 }
                 else{
                     _this.hideChartsContainer();
                 }
+            });
+
+            this.settings_apply_icon.on("click", function(evt){
 
                 // get the timeoffset
                 var offset = $('#'+ _this.conf.settings.offset_id).val();
