@@ -21,17 +21,15 @@
     "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
     "background": {
       "scripts": ["restrict_url.js", "config.js", 
-        "flac-encoder/setpath.js", "flac-encoder/libflac.js", 
         "jszip/fileSaver.js" ,"jszip/jszip.js" , "jszip/jszip-utils.js", 
         "utilities.js" , "socket.js" ,"backend.js" , "local_storage.js", "message_handler_bg.js", 
-        "encoder.js" , "background.js"],
+        "background.js"],
       "persistent": true
     },
     "content_scripts": [
       {
         "matches": ["https://*.zoom.us/*", "http://*.zoom.us/*", "https://teams.microsoft.com/*",
-           "http://teams.microsoft.com/*", "https://*.youtube.com/*", "http://*.youtube.com/*", "http://0.0.0.0:8000/*",
-          "https://meet.jit.si/*", "http://meet.jit.si/*"],
+           "http://teams.microsoft.com/*", "https://meet.jit.si/*", "http://meet.jit.si/*"],
         "js": ["config.js", "static/js/jquery.min.js", "static/js/jquery-ui.min.js",
           "static/js/iframeResizer.js", "contentscript.js" , 
           "capture_meeting_id.js", "mic_capture_webspeech.js"],

@@ -96,6 +96,17 @@
     margin-top: -150px;
 }
 
+.settings-with-error{
+    height:140px;
+}
+
+.offset-error-msg{
+    font-family: "Inter-Bold";
+    font-size: 14px;
+    color: #1E90FF;
+    display: none;
+}
+
 </style>
 
 <div class="row">
@@ -103,6 +114,11 @@
         <video width="100%" height="100%" class="viewer" id="recording-video" src="{{url}}"></video>
 
         <div class="settings-container" state="inactive" style="display: none;">
+            <div class="clearfix">
+                <div class="col-xs-12" style="margin-top: 5px;">
+                    <span class="offset-error-msg"></span>
+                </div>
+            </div>
             <div class="clearfix">
                 <div class="form-group" style="margin-top:4%;margin-bottom:4%;">
                     <div class="col-xs-10">
@@ -488,12 +504,116 @@
 
             return new_arr;
         }
+        
+        checkOffsetDurationRight(){
+            
+            // check if offset duration is correct
+            if (this.offset_in_ms >= (this.video.duration * 1000)){
+                return {
+                    status: false,
+                    msg: "Offset outside of video duration - Not Allowed"
+                };
+            }
+            else{
+                return {
+                    status: true,
+                    msg: ''
+                };
+            }
+        }
+
+        validateOffset(offset_string){
+
+            var validated_offset_data = {
+                status: true,
+                msg: ''
+            };
+
+            var offset_arr = offset_string.split(":");
+
+            if (offset_arr.length !== 3){
+                validated_offset_data = {
+                    status: false,
+                    msg: "Entered offset format is incorrect. Valid format is hh:mm:ss"
+                }
+
+                return validated_offset_data;
+            }
+            else {
+                var entered_hh = offset_arr[0];
+                var entered_mm = offset_arr[1];
+                var entered_ss = offset_arr[2];
+
+                // 3 because it can have a negative sign
+                if (entered_hh.length !== 3 && entered_hh.length !== 2){
+                    validated_offset_data = {
+                        status: false,
+                        msg: "Hour offset is incorrect. Valid format is hh:mm:ss"
+                    }
+
+                    return validated_offset_data;
+                }
+
+                if (entered_hh.length === 3){
+
+                    // only -ve sign allowed for hh when length is 3
+                    if (entered_hh[0] !== "-"){
+                        validated_offset_data = {
+                            status: false,
+                            msg: "Hour offset is incorrect. Valid format is hh:mm:ss"
+                        }
+
+                        return validated_offset_data;
+                    }
+
+                }
+
+                if (entered_mm.length !== 2){
+                    validated_offset_data = {
+                        status: false,
+                        msg: "Minute offset is incorrect. Valid format is hh:mm:ss"
+                    }
+
+                    return validated_offset_data;
+                }
+
+                if (entered_ss.length !== 2){
+                    validated_offset_data = {
+                        status: false,
+                        msg: "Seconds offset is incorrect. Valid format is hh:mm:ss"
+                    }
+
+                    return validated_offset_data;
+                }
+            }
+
+            return validated_offset_data;
+
+        }
+
+        showOffsetError(data){
+            var _this = this;
+            var error_msg = data.msg;
+
+            // increase settings container height to 
+            _this.settings_icon_container.addClass("settings-with-error");
+            $('.' + _this.conf.settings.offset_error).show();
+            $('.' + _this.conf.settings.offset_error).text(error_msg);
+
+            setTimeout(function(){
+                $('.' + _this.conf.settings.offset_error).text("");
+                $('.' + _this.conf.settings.offset_error).hide();
+                _this.settings_icon_container.removeClass("settings-with-error");
+            }, 2000);
+
+        }
 
         //TODO: add proper check for keys
         createNewZipData(){
 
             {{!-- console.log(" old zip ", this.zip_data); --}}
             var new_zip = {
+                offset: this.offset,
                 start_time: this.zip_data.start_time,
                 end_time: this.zip_data.end_time,
                 avgSentimentScoreGuest: this.zip_data.avgSentimentScoreGuest,
@@ -558,24 +678,52 @@
 
         processOffsetValue(offset_string){
 
-            var offset_arr = offset_string.split(":");
-            if (offset_arr.length == 3){
+            var processing_ok = false;
 
-                var hh = offset_arr[0].slice(-2);
+            var offset_validated_data =  this.validateOffset(offset_string);
 
-                if (offset_arr[0].length == 3 && offset_arr[0][0] == "-"){
+            if (offset_validated_data.status){
+                var offset_arr = offset_string.split(":");
+                var entered_hh = offset_arr[0];
+                var entered_mm = offset_arr[1];
+                var entered_ss = offset_arr[2];
+
+                var hh = ("0" + entered_hh).slice(-2);
+                var mm = ("0" + entered_mm).slice(-2);
+                var ss = ("0" + entered_ss).slice(-2);
+
+                var hh_number = Number(offset_arr[0].slice(-2));
+                var mm_number = Number(offset_arr[1].slice(-2));
+                var ss_number = Number(offset_arr[2].slice(-2));
+
+                if (entered_hh[0] == "-"){
                     this.offset = -1;
                 }
                 else{
-                    this.offset = 1;
+                    if (hh_number > 0 || mm_number > 0 || ss_number > 0) {
+                        this.offset = 1;
+                    }
+                    else{
+                        this.offset = 0;
+                    }
                 }
 
-                var mm = offset_arr[1].slice(-2);
-                var ss = offset_arr[2].slice(-2);
+                this.calculateOffsetInMilliSeconds(hh_number, mm_number, ss_number);
+                var offset_duration_check_data = this.checkOffsetDurationRight();
 
-                this.calculateOffsetInMilliSeconds(Number(hh), Number(mm), Number(ss));
+                if (offset_duration_check_data.status){
+                    processing_ok = true;
+                }
+                else{
+                    this.showOffsetError(offset_duration_check_data);
+                }
 
             }
+            else{
+                 this.showOffsetError(offset_validated_data);
+            }
+
+            return processing_ok;
         }
 
         registerSettingsEvents(){
@@ -601,20 +749,23 @@
                 var offset = $('#'+ _this.conf.settings.offset_id).val();
 
                 if (offset){
-                    _this.processOffsetValue(offset);
-                    _this.setRecordingStartTime();
+                    var offset_ok = _this.processOffsetValue(offset);
 
-                    var new_zip = _this.createNewZipData();
-                    _this.plotChart(new_zip);
-                    _this.addMarkersOnProgressBar();
+                    // if only offset is valid
+                    if (offset_ok){
+                        _this.setRecordingStartTime();
 
-                    // forward message to dashboard
-                    var event = new CustomEvent("update-dashboard", {
-                        detail: new_zip
-                    });
-                    window.dispatchEvent(event);
+                        var new_zip = _this.createNewZipData();
+                        _this.plotChart(new_zip);
+                        _this.addMarkersOnProgressBar();
+
+                        // forward message to dashboard
+                        var event = new CustomEvent("update-dashboard", {
+                            detail: new_zip
+                        });
+                        window.dispatchEvent(event);
+                    }
                 }
-                
             });
         }
 
@@ -687,6 +838,7 @@
                 icon_cls: "video-settings",
                 container_cls: "settings-container",
                 offset_id: "setting-time-offset",
+                offset_error: "offset-error-msg",
                 metric_id: "show-metrics",
                 apply_icon: "video-settings-apply"
             },
