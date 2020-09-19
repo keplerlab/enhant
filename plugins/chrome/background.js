@@ -10,14 +10,6 @@ class ScreenCapture{
         this.input = null
         this.meeting_number = config.meeting_number || null;
         this.lang = config.lang;
-        this.EVENT_FLAC_ENCODER = "screen_encoder";
-
-        if (config.use_flac_encoder){
-            this.encoder = new FlacEncoder(this.EVENT_FLAC_ENCODER);
-        }
-        else{
-            this.encoder = null;
-        }
 
         this.transcription_start_time = null;
         this.transcription_end_time = null;
@@ -40,13 +32,6 @@ class ScreenCapture{
 
         this.transcription_start_time = null;
         this.transcription_end_time = null;
-    }
-
-    initializeEncoder(){
-        if (!(this.encoder == null)){
-            this.encoder.initialize();
-            this.registerEventListner();
-        }
     }
 
     generateUnixTime(){
@@ -88,30 +73,10 @@ class ScreenCapture{
         }
     }
 
-    registerEventListner(){
-        var _this = this;
-        window.addEventListener(_this.EVENT_FLAC_ENCODER, function(event){
-            var flac_buffer = event.detail
-            // console.log("Buffer Data for mic : ", flac_buffer);
-
-            if ((_this.socket_transcription !== null) && (_this.socket_transcription.readyState == WebSocket.OPEN)){
-                _this.sendBufferData(flac_buffer);
-            }
-            
-        });
-    }
-
     playAudio(){
         let audio = new Audio();
         audio.srcObject = this.stream;
         audio.play();
-    }
-
-    deregisterEventListner(){
-        var _this = this;
-        window.removeEventListener(_this.EVENT_FLAC_ENCODER, function(event){
-            console.log(" Event listners removed ");
-        });
     }
 
     socket_transcription_closed_cb(new_socket){
@@ -163,13 +128,12 @@ class ScreenCapture{
             }
         }
         catch(err){
-            console.log(" Could not parse JSON | The message only has transcription data :", err);
+            // console.log(" Could not parse JSON | The message only has transcription data :", err);
 
             var transcription = message.data;
 
-            console.log("Transcription data ", message, typeof(message));
+            // console.log("Transcription data ", message, typeof(message));
 
-            // TODO : add send data when in power mode
             this.saveTranscription(transcription);
 
             // set transcription start time
@@ -249,19 +213,6 @@ class ScreenCapture{
 
     }
 
-    finishEncoding(){
-
-        if (!(this.encoder == null)){
-
-            // stop the event listner 
-            this.deregisterEventListner();
-
-            // stop the encoder
-            this.encoder.finish();
-        }
-
-    }
-
     disconnectFromTranscriptionService(){
         // disconnect from the transcription service
         this.socket_obj.doReconnect(false);
@@ -285,7 +236,6 @@ class ScreenCapture{
 
     start(){
         console.log("Starting the screen capture process ..");
-        this.initializeEncoder();
         this.connectToTranscriptionService();
         this.captureStream();
     }

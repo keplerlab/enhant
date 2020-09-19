@@ -21,10 +21,9 @@
     "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
     "background": {
       "scripts": ["restrict_url.js", "config.js", 
-        "flac-encoder/setpath.js", "flac-encoder/libflac.js", 
         "jszip/fileSaver.js" ,"jszip/jszip.js" , "jszip/jszip-utils.js", 
         "utilities.js" , "socket.js" ,"backend.js" , "local_storage.js", "message_handler_bg.js", 
-        "encoder.js" , "background.js"],
+        "background.js"],
       "persistent": true
     },
     "content_scripts": [
