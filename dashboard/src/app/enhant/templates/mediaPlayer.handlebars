@@ -494,6 +494,7 @@
 
             {{!-- console.log(" old zip ", this.zip_data); --}}
             var new_zip = {
+                offset: this.offset,
                 start_time: this.zip_data.start_time,
                 end_time: this.zip_data.end_time,
                 avgSentimentScoreGuest: this.zip_data.avgSentimentScoreGuest,
@@ -562,18 +563,27 @@
             if (offset_arr.length == 3){
 
                 var hh = offset_arr[0].slice(-2);
+                var mm = offset_arr[1].slice(-2);
+                var ss = offset_arr[2].slice(-2);
+
+                var hh_number = Number(offset_arr[0].slice(-2));
+                var mm_number = Number(offset_arr[1].slice(-2));
+                var ss_number = Number(offset_arr[2].slice(-2));
+
 
                 if (offset_arr[0].length == 3 && offset_arr[0][0] == "-"){
                     this.offset = -1;
                 }
-                else{
-                    this.offset = 1;
+                else {
+                    if (hh_number > 0 || mm_number > 0 || ss_number > 0) {
+                        this.offset = 1;
+                    }
+                    else{
+                        this.offset = 0;
+                    }
                 }
 
-                var mm = offset_arr[1].slice(-2);
-                var ss = offset_arr[2].slice(-2);
-
-                this.calculateOffsetInMilliSeconds(Number(hh), Number(mm), Number(ss));
+                this.calculateOffsetInMilliSeconds(hh_number, mm_number, ss_number);
 
             }
         }

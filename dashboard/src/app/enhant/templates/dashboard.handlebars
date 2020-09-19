@@ -35,6 +35,11 @@
         font-size: 16px;
     }
 
+    .inter-bold-14{
+        font-family: "Inter-Bold";
+        font-size: 14px;
+    }
+
     .inter-bold-21{
         font-family: "Inter-Bold";
         font-size: 21px;
@@ -117,6 +122,11 @@
         .modal-content {
             width: 100%;
         }
+    }
+
+    .negative-time-msg{
+        display: none;
+        color: #1E90FF;
     }
 
 </style>
@@ -244,8 +254,9 @@
             <div class="row">
                 <div class="col-xs-12 has-padding">
                     <div class="row heading">
-                        <div class="col-xs-4">
-                             <span class="cell-text inter-bold-21">Bookmarks</span>
+                        <div class="col-xs-8">
+                             <span class="cell-text inter-bold-21">Bookmarks</span><br>
+                             <span class="negative-time-msg inter-bold-14">Bookmarks taken before recording are represented with negative time</span>
                         </div>
                     </div>
 
@@ -270,8 +281,9 @@
             <div class="row">
                 <div class="col-xs-12 has-padding">
                     <div class="row heading">
-                        <div class="col-xs-4">
-                             <span class="cell-text inter-bold-21">Captured Moments</span>
+                        <div class="col-xs-8">
+                             <span class="cell-text inter-bold-21">Captured Moments</span><br>
+                             <span class="negative-time-msg inter-bold-14">Screenshots taken before recording are represented with negative time</span>
                         </div>
                     </div>
                     <div class="clearfix capture-moments-data" style="margin-top:5%;">
@@ -288,8 +300,9 @@
                 <div class="col-xs-6 notes has-shadow">
                     <div class="data-container has-padding">
                         <div class="row heading">
-                            <div class="col-xs-4">
-                                <span class="cell-text inter-bold-21">Notes</span>
+                            <div class="col-xs-8">
+                                <span class="cell-text inter-bold-21">Notes</span><br>
+                                <span class="negative-time-msg inter-bold-14">Notes taken before recording are represented with negative time</span>
                             </div>
                         </div>
                         <div class="table-responsive" style="margin-top:5%;">
@@ -303,8 +316,9 @@
                 <div class="col-xs-6 questions has-shadow">
                     <div class="data-container has-padding">
                         <div class="row heading">
-                            <div class="col-xs-4">
-                                <span class="cell-text inter-bold-21">Questions</span>
+                            <div class="col-xs-8">
+                                <span class="cell-text inter-bold-21">Questions</span><br>
+                                <span class="negative-time-msg inter-bold-14">Questions identified befored recording are represented with negative time</span>
                             </div>
                         </div>
                         <div class="table-responsive" style="margin-top:5%;">
@@ -323,8 +337,9 @@
             <div class="row">
                 <div class="col-xs-12 has-padding">
                     <div class="row heading">
-                        <div class="col-xs-4">
-                             <span class="cell-text inter-bold-21">Notes</span>
+                        <div class="col-xs-8">
+                             <span class="cell-text inter-bold-21">Notes</span><br>
+                             <span class="negative-time-msg inter-bold-14">Notes taken before recording are represented with negative time</span>
                         </div>
                     </div>
                     <div class="table-responsive" style="margin-top:5%;">
@@ -342,8 +357,9 @@
             <div class="row">
                 <div class="col-xs-12 has-padding">
                     <div class="row heading">
-                        <div class="col-xs-4">
-                             <span class="cell-text inter-bold-21">Questions</span>
+                        <div class="col-xs-8">
+                             <span class="cell-text inter-bold-21">Questions</span><br>
+                             <span class="negative-time-msg inter-bold-14">Questions identified before recording are represented with negative time</span>
                         </div>
                     </div>
                     <div class="table-responsive" style="margin-top:5%;">
@@ -365,7 +381,8 @@
                     <div class="data-container has-padding">
                         <div class="row heading">
                             <div class="col-xs-12">
-                                <span class="cell-text inter-bold-21">Sentiment Outliers (Negative)</span>
+                                <span class="cell-text inter-bold-21">Sentiment Outliers (Negative)</span><br>
+                                <span class="negative-time-msg inter-bold-14">Outliers identified before recording are represented with negative time</span>
                             </div>
                         </div>
                         <div class="table-responsive" style="margin-top:5%;">
@@ -380,7 +397,8 @@
                     <div class="data-container has-padding">
                         <div class="row heading">
                             <div class="col-xs-12">
-                                <span class="cell-text inter-bold-21">Sentiment Outliers (Positive)</span>
+                                <span class="cell-text inter-bold-21">Sentiment Outliers (Positive)</span><br>
+                                <span class="negative-time-msg inter-bold-14">Outliers identified before recording are represented with negative time</span>
                             </div>
                         </div>
                         <div class="table-responsive" style="margin-top:5%;">
@@ -761,6 +779,12 @@
         reset();
         processData(zip_data);
 
+        if (zip_data.offset == 1){
+            $('.negative-time-msg').show();
+        }
+        else {
+            $('.negative-time-msg').hide();
+        }
     });
 
     window.addEventListener("dashboard-data", function(evt){
