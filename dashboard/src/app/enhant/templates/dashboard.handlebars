@@ -558,20 +558,22 @@
             $('.capture-moments-data').append(html);
         });
 
-        var modal = document.getElementById("myModal");
-        var img = $(".captured-image");
-        var modalImg = document.getElementById("img01");
-        img.click(function(){
-            modal.style.display = "block";
-            modalImg.src = this.src;
-        });
+        if (data.length){
+             var modal = document.getElementById("myModal");
+            var img = $(".captured-image");
+            var modalImg = document.getElementById("img01");
+            img.click(function(){
+                modal.style.display = "block";
+                modalImg.src = this.src;
+            });
 
-        // Get the <span> element that closes the modal
-        var span = document.querySelector(".close");
+            // Get the <span> element that closes the modal
+            var span = document.querySelector(".close");
 
-        // When the user clicks on <span> (x), close the modal
-        span.onclick = function() { 
-            modal.style.display = "none";
+            // When the user clicks on <span> (x), close the modal
+            span.onclick = function() { 
+                modal.style.display = "none";
+            }
         }
     }
 
