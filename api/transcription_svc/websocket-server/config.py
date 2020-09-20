@@ -27,8 +27,8 @@ class Config:
         self.INTERFACE = os.environ.get('SERVER_INTERFACE', '0.0.0.0')
         self.PORT = int(os.environ.get('SERVER_PORT', 1111))
         self.VOSK_MODEL_PATH = os.environ.get('VOSK_MODEL_PATH', 'model')
-        self.CERT_FILE_PATH = "certificates/cert.pem"
-        self.KEY_FILE_PATH = "certificates/key.pem"
+        self.CERT_FILE_PATH = "certificates-and-credentials/cert.pem"
+        self.KEY_FILE_PATH = "certificates-and-credentials/key.pem"
 
 
 cfg = Config()
