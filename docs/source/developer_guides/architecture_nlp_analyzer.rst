@@ -59,7 +59,7 @@ negative sentiment scores.
 
 
 Adding your own nlp analyser
-===============================
+----------------------------
 
 As shown in nlp Architecture diagram all of the NLP analyzers need to follow common
 interface which so if you need to add a additional nlp analyzers
@@ -111,8 +111,9 @@ get_data_analyzers function will look like this::
         ]
 
 
-Remove your nlp analyser
-===============================
+Remove nlp analyser
+----------------------------
+
 Similarly if you need to remove any of the existing nlp analyzers you just need to remove
 their respective instance from get_data_analyzers function in cli/config file so if you want to remove
 let's say engagement detection than you can delete it's import statement ::
