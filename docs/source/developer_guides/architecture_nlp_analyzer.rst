@@ -1,6 +1,10 @@
+================================================================
+NLP analyzers for enhan(t) analytics module
+===================================================================
 
-Intro to NLP analyzers
-===================================
+
+Introduction
+--------------
 
 As discussed in overview section enhan(t) analytics module enables you to
 extract helpful insights like engagement, sentiment and questions from
@@ -24,16 +28,39 @@ in config module you can their is function you can get_data_analyers() where you
 initialize your own custom nlp analyzer or remove any of the existing nlp analyzer.
 
 Each of the NLP analyzers needs to follow this common input output syntax to help
-with modularity, hence each of them take input.json with host and guest side transcriptions inside srt format 
+with modularity, hence each of them take input.json with host and guest side transcriptions in .srt format 
 as input and results are written back  in processed.json file.
 
-In our current implementation these functions are Engagement_finder, Questions_finder, Sentiment_finder respectively.
-As we want to decouple our application related interface 
-(e.g. here input.json, guest.srt and host.srt) operations from core  nlp operations,
-we have made a core nlp logic as an nlp lib which has their own common interface, for our current implementation,
-these are located in NLP_lib_engagement, NLP_Questions_finder, NLP_lib_sentiment respectively.
+Current NLP Analyzers
+----------------------------
+Currently insights like engagement, sentiment and questions are extracted from
+your online video interactions. Each of these features are provided by their 
+respective modules in nlp_lib. We will briefly go through each one of them one 
+by one. 
 
-As shown in diagram all of the NLP analyzers need to follow common
+**Engagement Detection**
+This module compares calculates engagement score for any conversation, Engagement score 
+is a measure of how much is the guest or audience of your call is participating in call,
+So for any one sided call in which only host is speaking, engagement score is low, but in any 
+call where host and guest both sides are equally speaking, engagement is high, to calculate 
+engagement score, transcription data of both sides is used, for any given time window, engagement 
+score is calculated by a heuristic of ratio of host vs guest side transcription. 
+
+**Question Detection**
+This module is used for finding out what are the questions being asked in a given meeting, this 
+is done by training a machine learning model (random forest) trained on nps_chat data which can
+classify whether a sentence is a question or not. 
+
+**Sentiment Detection**
+This module calculates sentiment score of each of the spoken sentence in meeting, In dashboard
+we can then show sentences which are outliers, means which have highly positive as well as 
+negative sentiment scores. 
+
+
+Adding your own nlp analyser
+===============================
+
+As shown in nlp Architecture diagram all of the NLP analyzers need to follow common
 interface which so if you need to add a additional nlp analyzers
 you need to implement same interface standard public interface. Which is ::
 
@@ -48,8 +75,8 @@ This process function can call any of your own pre-processing logic, you can als
 new module implemented inside nlp_lib.
 
 After implementing your own nlp analyser you can import it's module inside
-cli/config.py file and add instance of your module class inside get_data_analyers()
+cli/config.py file and add instance of your module class inside get_data_analyzers()
 function.
 
 Similarly if you need to remove any of the existing nlp analyzers you just need to remove
-their respective instance from get_data_analyers function in cli/config
+their respective instance from get_data_analyzers function in cli/config

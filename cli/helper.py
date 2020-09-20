@@ -15,17 +15,18 @@ import time
 from nltk import sent_tokenize
 from pathlib import Path
 import os
+import config
 
 
 init(init(autoreset=True))
-from fastpunct import FastPunct
 
-fastpunct = FastPunct("en")
-
-from punctuator import Punctuator
-
-model_file = os.path.join(str(Path.home()),'.punctuator','Demo-Europarl-EN.pcl')
-punctuator_runner = Punctuator(model_file)
+if config.settings.punct_correction_tool == "fastpunct":
+    from fastpunct import FastPunct
+    fastpunct = FastPunct("en")
+elif config.settings.punct_correction_tool == "punctuator":
+    from punctuator import Punctuator
+    model_file = os.path.join(str(Path.home()),'.punctuator','Demo-Europarl-EN.pcl')
+    punctuator_runner = Punctuator(model_file)
 
 def eprint(*args, **kwargs):
     print(*args, file=sys.stderr, **kwargs)
