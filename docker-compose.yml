@@ -18,7 +18,7 @@ services:
 
 
   cli:
-    image: keplerlab/enhant-cli:0.1.3
+    image: keplerlab/enhant-cli:0.1.4
     stdin_open: true # docker run -i
     tty: true        # docker run -t
     volumes:

@@ -5,7 +5,6 @@
 """
 import sys
 import os
-from deepsegment import DeepSegment
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 import pysrt
 from typing import List, Optional
@@ -16,8 +15,6 @@ import time
 from nltk import sent_tokenize
 from pathlib import Path
 import os
-
-segmenter = DeepSegment('en')
 
 
 init(init(autoreset=True))
@@ -150,8 +147,10 @@ def correct_punctuation_srt_file(srtList: dict, correction_method: str):
     #print("transcription_list", transcription_list)
     #print("tokenized_sentences", tokenized_sentences)
     #print("sentence_mapper", sentence_mapper)
-    print(f"using punctation tool: {correction_method}")
+    #print(f"using punctation tool: {correction_method}")
     if correction_method == "fastpunct":
+        average_wait_time_per_sentence = 6
+        print(f"\n***** {Fore.YELLOW} Message: Correcting punctuations for transcriptions using fastpunct it can take long time, approx time for completion: {len(tokenized_sentences)*average_wait_time_per_sentence} seconds ")
         for idx, sentence_t in enumerate(tokenized_sentences):
             sentence_t_truncated = truncate_string_to_fixed_size(sentence_t)
             tokenized_sentences[idx] = sentence_t_truncated
@@ -176,10 +175,10 @@ def correct_punctuation_srt_file(srtList: dict, correction_method: str):
     #print("corrected_transcription_list", corrected_transcription_list)  
 
     end = time.time()
-    if correction_method == "fastpunct":
-        print("Time for fastpunct:", end - start)
-    elif correction_method == "punctuator":
-        print("Time for punctuator:", end - start)
+    #if correction_method == "fastpunct":
+    #    print("Time for fastpunct:", end - start)
+    #elif correction_method == "punctuator":
+    #    print("Time for punctuator:", end - start)
 
     for idx, srt in enumerate(srtList):
         string_text = corrected_transcription_list[idx]
