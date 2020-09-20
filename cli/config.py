@@ -5,7 +5,7 @@ from engagment_finder import EngagmentFinder
 
 
 class Settings(BaseSettings):
-    def get_data_analyers():
+    def get_data_analyzers() -> list:
         """
         Returns the list of analyzers.
         """
@@ -16,7 +16,7 @@ class Settings(BaseSettings):
             EngagmentFinder(),
         ]
 
-    data_analyzers: list = get_data_analyers()
+    data_analyzers: list = get_data_analyzers()
     punct_correction_tool: str = "fastpunct"
     #punct_correction_tool: str = "punctuator"
 

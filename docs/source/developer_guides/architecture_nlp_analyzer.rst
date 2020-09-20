@@ -3,8 +3,8 @@ NLP analyzers for enhan(t) analytics module
 ===================================================================
 
 
-Introduction
---------------
+Introduction enhan(t) NLP analyzers
+------------------------------------
 
 As discussed in overview section enhan(t) analytics module enables you to
 extract helpful insights like engagement, sentiment and questions from
@@ -33,6 +33,7 @@ as input and results are written back  in processed.json file.
 
 Current NLP Analyzers
 ----------------------------
+
 Currently insights like engagement, sentiment and questions are extracted from
 your online video interactions. Each of these features are provided by their 
 respective modules in nlp_lib. We will briefly go through each one of them one 
@@ -77,6 +78,56 @@ new module implemented inside nlp_lib.
 After implementing your own nlp analyser you can import it's module inside
 cli/config.py file and add instance of your module class inside get_data_analyzers()
 function.
+e.g. currently in config.py get_data_analyers() function looks like this::
 
+
+    def get_data_analyzers() -> list:
+        """
+        Returns the list of analyzers.
+        """
+        # Add or remove analyzers here. All the analyzers will update the conversation JSON
+        return [
+            QuestionsFinder(),
+            SentimentFinder(),
+            EngagmentFinder(),
+        ]
+
+So if you want to add your custome nlp analyser than you can make a class for them with input
+output formatting similar to current nlp analyzers and then initialize object of the class in 
+get_data_analyers function. e.g. if you analyzer is called my_custom_nlp_finder() than your new 
+get_data_analyzers function will look like this::
+
+
+    def get_data_analyzers() -> list:
+        """
+        Returns the list of analyzers.
+        """
+        # Add or remove analyzers here. All the analyzers will update the conversation JSON
+        return [
+            QuestionsFinder(),
+            SentimentFinder(),
+            EngagmentFinder(),
+            my_custom_nlp_finder(),
+        ]
+
+
+Remove your nlp analyser
+===============================
 Similarly if you need to remove any of the existing nlp analyzers you just need to remove
-their respective instance from get_data_analyzers function in cli/config
+their respective instance from get_data_analyzers function in cli/config file so if you want to remove
+let's say engagement detection than you can delete it's import statement ::
+
+  from engagment_finder import EngagmentFinder
+
+and then can delete initialization code from get_data_analyzers function, so new get_data_analyzers will look like this::
+
+
+    def get_data_analyzers() -> list:
+        """
+        Returns the list of analyzers.
+        """
+        # Add or remove analyzers here. All the analyzers will update the conversation JSON
+        return [
+            QuestionsFinder(),
+            SentimentFinder(),
+        ]
