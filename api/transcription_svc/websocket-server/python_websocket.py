@@ -275,9 +275,9 @@ async def on_data(websocket, path):
 
     fileName = "recorded_audio_" + helper.generate_filename() + ".wav"
     full_file_name = os.path.join(folderName, fileName)
-    print("\n*** Writing audio data in file:", full_file_name)
+    #print("\n*** Writing audio data in file:", full_file_name)
 
-    helper.write_audio_wave(record_audio, full_file_name, cfg.SAMPLE_RATE, cfg.SAMPLE_WIDTH, cfg.CHANNELS)
+    #helper.write_audio_wave(record_audio, full_file_name, cfg.SAMPLE_RATE, cfg.SAMPLE_WIDTH, cfg.CHANNELS)
     
     # helper.write_audio_flac(
     #     record_audio, full_file_name
