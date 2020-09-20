@@ -86,8 +86,11 @@ def read_srt_file(input_data_folder_path: str, origin: str) -> dict:
     """
     srt_file_name = os.path.join(input_data_folder_path, origin + ".srt")
     if os.path.isfile(srt_file_name):
-        srtList = pysrt.open(srt_file_name)
-        return srtList
+        try:
+            srtList = pysrt.open(srt_file_name)
+            return srtList
+        except:
+            print(f"\n {Fore.YELLOW} WARNING: {origin}.srt file corrupted")
     else:
         print(f"\n {Fore.YELLOW} WARNING: {origin}.srt file not present")
         return None
