@@ -151,7 +151,13 @@ def correct_punctuation_srt_file(srtList: dict, correction_method: str):
     #print(f"using punctation tool: {correction_method}")
     if correction_method == "fastpunct":
         average_wait_time_per_sentence = 6
-        print(f"\n***** {Fore.YELLOW} Message: Correcting punctuations for transcriptions using fastpunct it can take long time, approx time for completion: {len(tokenized_sentences)*average_wait_time_per_sentence} seconds ")
+        approx_time_to_convert = len(tokenized_sentences)*average_wait_time_per_sentence
+        approx_time_string = ""
+        if approx_time_to_convert > 60:
+            approx_time_string = str(approx_time_to_convert/60) + " minutes"
+        else:
+            approx_time_string = str(approx_time_to_convert) + " seconds"
+        print(f"\n***** {Fore.YELLOW}Correcting punctuations for transcriptions, Grab a coffee it can take time, approx time for completion: {approx_time_string} ")
         for idx, sentence_t in enumerate(tokenized_sentences):
             sentence_t_truncated = truncate_string_to_fixed_size(sentence_t)
             tokenized_sentences[idx] = sentence_t_truncated
