@@ -19,22 +19,68 @@
             "event_time": ""
         }
     ],
-    "questionsAsked": {
-        "questionsAsked": [
-            "When I go to a bank or some other lending institution?",
-            "Going to be paying the bank for the privilege of using their money and that?",
-            "Now, what makes Bank's profitable is the rate?",
-            "That they charge people to use the bank's money is higher than the rate that they?",
-            "Lending institution that charges a lower interest rate on the other hand, if I?",
-            "Want to earn more interest on my investment?",
-            "When I go to a bank or some other lending institution?",
-            "Going to be paying the bank for the privilege of using their money and that?",
-            "Now, what makes Bank's profitable is the rate?",
-            "That they charge people to use the bank's money is higher than the rate that they?",
-            "Lending institution that charges a lower interest rate on the other hand, if I?",
-            "Want to earn more interest on my investment?"
-        ]
-    },
+    "questionsAsked": [
+        {
+            "origin": "guest",
+            "time": 10009,
+            "question": "When I go to a bank or some other lending institution?"
+        },
+        {
+            "origin": "guest",
+            "time": 17900,
+            "question": "Going to be paying the bank for the privilege of using their money and that?"
+        },
+        {
+            "origin": "guest",
+            "time": 44400,
+            "question": "Now, what makes Bank's profitable is the rate?"
+        },
+        {
+            "origin": "guest",
+            "time": 48700,
+            "question": "That they charge people to use the bank's money is higher than the rate that they?"
+        },
+        {
+            "origin": "guest",
+            "time": 92600,
+            "question": "Lending institution that charges a lower interest rate on the other hand, if I?"
+        },
+        {
+            "origin": "guest",
+            "time": 97279,
+            "question": "Want to earn more interest on my investment?"
+        },
+        {
+            "origin": "host",
+            "time": 10009,
+            "question": "When I go to a bank or some other lending institution?"
+        },
+        {
+            "origin": "host",
+            "time": 17900,
+            "question": "Going to be paying the bank for the privilege of using their money and that?"
+        },
+        {
+            "origin": "host",
+            "time": 44400,
+            "question": "Now, what makes Bank's profitable is the rate?"
+        },
+        {
+            "origin": "host",
+            "time": 48700,
+            "question": "That they charge people to use the bank's money is higher than the rate that they?"
+        },
+        {
+            "origin": "host",
+            "time": 92600,
+            "question": "Lending institution that charges a lower interest rate on the other hand, if I?"
+        },
+        {
+            "origin": "host",
+            "time": 97279,
+            "question": "Want to earn more interest on my investment?"
+        }
+    ],
     "highSentimentSentences": {
         "highSentimentSentencesHost": [
             [

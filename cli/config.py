@@ -20,6 +20,4 @@ class Settings(BaseSettings):
     punct_correction_tool: str = "fastpunct"
     #punct_correction_tool: str = "punctuator"
 
-
-
 settings = Settings()
