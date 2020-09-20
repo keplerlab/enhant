@@ -13,7 +13,7 @@ cli/
 !cli/*.py
 
 # Ignore certifiacate directories
-certificates/*
+certificates-and-credentials/*
  
 # Input zip files and folders for cli
 *.zip 
