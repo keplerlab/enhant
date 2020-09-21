@@ -673,7 +673,7 @@
 
         if (zip.hasOwnProperty("engagement_scores")){
 
-            var averageScore = zip.engagement_scores.avg_engagement_score;
+            var averageScore = parseFloat(zip.engagement_scores.avg_engagement_score.toFixed(1));
 
             $(".GaugeMeter").gaugeMeter({
                 "percent": averageScore,
