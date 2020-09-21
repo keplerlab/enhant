@@ -7,8 +7,10 @@ enhant Getting Started Guide
 Installation
 ==============
 
-Chrome Extension
------------------
+.. _installing_chrome_extension:
+
+Installing the Chrome Extension
+-------------------------------
 
 The Chrome extension is the minimal requirement for most users to leverage enhan(t). The easiest way to install it is via the Chrome store.
 
