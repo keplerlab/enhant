@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Enhant Dashboard</title>
+        <style>
+            @font-face {
+                font-family: "Inter-Regular";
+                src: url('public/fonts/Inter-Regular.otf') format("opentype");
+            }
+            @font-face {
+                font-family: "Inter-Bold";
+                src: url('public/fonts/Inter-Bold.otf') format("opentype");
+            }
+        </style>
+        <link rel="stylesheet" href="public/css/bootstrap.min.css">
+        <link rel="stylesheet" href="public/css/enhant.css">
+
+        <script src="public/scripts/jquery.min.js"></script>
+        <script src="public/scripts/bootstrap.min.js"></script>
+        <script src="public/scripts/handlebar.js"></script>
+        <script src="public/scripts/app.js"></script>
+
+    </head>
+    <body>
+        <div class="container-fluid">
+
+            <!--Header-->
+            <div class="row header">
+                <div class="col-xs-2 col-xs-offset-1 text-center">
+                    <div class="logo">
+                       <img src="public/img/logo.svg">
+                    </div>
+                </div>
+
+                <div class="col-xs-1 col-xs-offset-1 text-center">
+                    <div class="home">
+                       <a class="text-white" href="javascript:void(0);" onclick="loadUploadTemplateIntoApp();">Home</a>
+                    </div>
+                </div>
+
+                <div class="col-xs-1 text-center">
+                    <div class="dashboard">
+                       <a class="text-white" href="#">Dashboard</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="sidenav has-shadow">
+                     <!--Side Nav-->
+                    <div>
+                        <ul style="list-style: none;padding:0px">
+                            <li class="home-icon" style="width:100%">
+                                <div id="sidenav-home-icon" style="text-align:center;padding: 20%;background-color:#1E90FF;cursor: pointer;">
+                                    <img src="public/img/home_selected.svg">
+                                </div>
+                            </li>
+                            <li class="dashboard-icon" style="width:100%">
+                                <div id="sidenav-dashboard-icon" style="text-align:center;padding: 20%;cursor: pointer;">
+                                    <img src="public/img/dashboard_unselected.svg">
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+
+                </div>
+                <div class="col-xs-10 col-xs-offset-1 content">
+                    <!--app-->
+                    <!--Contents will render inside this-->
+                    <div id="app" class="row"></div>
+                </div>
+            </div>
+            
+        </div>
+
+        <video id="video-type-check" style="display: none;"></video>
+    </body>
+
+    <script>
+
+    function getUploadTemplate(){
+        const upload_template = Handlebars.templates.upload;
+        const html = upload_template({});
+        return html;
+    }
+
+    function isEmpty(obj){
+        for(var prop in obj) {
+            if(obj.hasOwnProperty(prop)) {
+                return false;
+            }
+        }
+
+        return JSON.stringify(obj) === JSON.stringify({});
+    }
+
+    function generateContextForDashboardTemplate(data){
+
+        var context = {
+            "recording": false,
+            "bookmark": false,
+            "images": false,
+            "notes": false,
+            "sentiment_outliers": false,
+            "questions": false,
+            "avg_engagement": false,
+            "avg_sentiment": false,
+            "chart": false
+        };
+
+        var recording_data = data.recording;
+        var zip_data = {};
+
+        if (!isEmpty(data.zip)){
+            zip_data = data.zip;
+        }
+        else if (!isEmpty(data.notes)){
+            zip_data = data.notes;
+        }
+
+        if (recording_data.url !== null){
+            var videoNode = document.getElementById('video-type-check');
+            var canPlay = videoNode.canPlayType(recording_data.type);  
+
+            canPlay = (canPlay === '' ? false : true);
+
+            // set context recording
+            context.recording = canPlay;
+        }
+
+        // if zip data is empty
+        if (!isEmpty(zip_data)){
+
+            var all_notes = zip_data.notes;
+            if (all_notes.length){
+                
+                var bookmarks = all_notes.filter(function(obj){ return obj.type == "bookmark"});
+                var images = all_notes.filter(function(obj){ return obj.type == "image"});
+                var notes = all_notes.filter(function(obj){ return obj.type == "notes"});
+
+                if (bookmarks.length){
+                    context.bookmark = true;
+                }
+
+                if (images.length){
+                    context.images = true;
+                }
+
+                if (notes.length){
+                    context.notes = true;
+                }
+            }
+
+            if (zip_data.hasOwnProperty("highSentimentSentences")){
+                if (zip_data.highSentimentSentences.highSentimentSentencesGuest.length || zip_data.lowSentimentSentences.lowSentimentSentencesGuest.length){
+                    context.sentiment_outliers = true;
+                }
+            }
+
+            if (zip_data.hasOwnProperty("questionsAsked")){
+                if (zip_data.questionsAsked.length){
+                    context.questions = true;
+                }
+            }
+
+            if (zip_data.hasOwnProperty("avgSentimentScoreGuest")){
+                context.avg_sentiment = true;
+                context.chart = true;
+            }
+
+            if (zip_data.hasOwnProperty("engagement_scores")){
+                context.avg_engagement = true;
+                context.chart = true;
+            }
+        }
+
+        return context;
+
+    }
+
+    function getDashboardTemplate(data, context){
+        const dashboard_template = Handlebars.templates.dashboard;
+        
+        const html = dashboard_template({
+           context: context
+        });
+        return html;
+    }
+
+    function loadUploadTemplateIntoApp(){
+        const el = $('#app');
+        homeSelected();
+        var html = getUploadTemplate();
+        el.html(html);
+    }
+
+    function removeDashboardListners(cb){
+        if (window.APP.hasOwnProperty("dashboardUpdateHandler")){
+            window.removeEventListener("update-dashboard", window.dashboardUpdateHandler, true);
+            console.log(" Removing dashboard update listner ");
+            cb();
+        }
+        else{
+            console.log(" no dashboard listner to remove");
+            cb();
+        }
+    }
+
+    function loadDashboardTemplateIntoApp(data, context){
+        const el = $('#app');
+
+        removeDashboardListners(function(){
+            el.html("");
+
+            dashboardSelected();
+            var html = getDashboardTemplate(data, context);
+            el.html(html);
+
+            setTimeout(function(){
+              // forward message to dashboard
+                var event = new CustomEvent("dashboard-data", {
+                    detail: data
+                });
+
+                window.dispatchEvent(event);
+            }, 100);
+        });
+    }
+
+    function registerHelperFunctions(){
+        Handlebars.registerHelper('CheckIfbothTrue', function(v1, v2, options) {
+            if(v1 && v2) {
+                return options.fn(this);
+            }
+            return options.inverse(this);
+        });
+    }
+
+    function regsiterEvents(){
+        $('#sidenav-home-icon').click(function(){
+            loadUploadTemplateIntoApp();
+        });
+    }
+
+    $(document).ready(function(){
+        window.APP = {};
+        registerHelperFunctions();
+        loadUploadTemplateIntoApp();
+
+        regsiterEvents();
+    });
+
+    function homeSelected(){
+
+        var img_dashboard = $('#sidenav-dashboard-icon img');
+        var dashboard_div = $('#sidenav-dashboard-icon');
+
+        var img_home = $('#sidenav-home-icon img');
+        var home_div = $('#sidenav-home-icon');
+
+        home_div.css("background-color", "#1E90FF");
+        img_home.attr("src", "public/img/home_selected.svg");
+
+        dashboard_div.css("background-color", "white");
+        img_dashboard.attr("src", "public/img/dashboard_unselected.svg");
+
+    }
+
+    function dashboardSelected(){
+        var img_dashboard = $('#sidenav-dashboard-icon img');
+        var dashboard_div = $('#sidenav-dashboard-icon');
+
+        var img_home = $('#sidenav-home-icon img');
+        var home_div = $('#sidenav-home-icon');
+
+        home_div.css("background-color", "white");
+        img_home.attr("src", "public/img/home_unselected.svg");
+
+        dashboard_div.css("background-color", "#1E90FF");
+        img_dashboard.attr("src", "public/img/dashboard_selected.svg");
+    }
+
+
+    window.addEventListener("dashboard", function(evt){
+
+        var data = evt.detail;
+        
+        var context = generateContextForDashboardTemplate(data);
+        loadDashboardTemplateIntoApp(data, context);
+    });
+
+    </script>
+</html>

@@ -1,0 +1,94 @@
+
+<canvas id="chart" style="width:100%"></canvas>
+
+<script>
+
+    // This is to modify the spacing betwen legend and chart
+    Chart.Legend.prototype.afterFit = function() {
+        this.height = this.height + 20;
+    };
+
+    function createLineChart(zip, config, canvas_style){
+        var data = [];
+        var meeting_start_time = zip.start_time;
+        var meeting_end_time = zip.end_time;
+        var samplingRate_in_ms = 10 * 1000; // 10 seconds
+
+        var  datasets = [];
+        var sentimentData = [];
+
+        var ctx = document.getElementById("chart").getContext('2d');
+
+        if (canvas_style){
+             $('#chart').css(canvas_style);
+        }
+       
+
+        if (zip.hasOwnProperty("engagement_scores")){
+
+            var d = zip.engagement_scores.engagement_scores;
+            var ed = d.map(function(r) { return { "x" : new Date(meeting_start_time + r[0]), "y" : r[1]} });
+
+            var engagementData = {
+                label: "Engagement Score",
+                data: ed,
+                borderColor: '#1E90FF',
+                fill: false
+            }
+
+            datasets.push(engagementData);
+        }
+
+        if (zip.hasOwnProperty("highSentimentSentences") || zip.hasOwnProperty("highSentimentSentences")){
+            
+            sentimentData.push(...zip.highSentimentSentences.highSentimentSentencesGuest);
+            sentimentData.push(...zip.lowSentimentSentences.lowSentimentSentencesGuest);
+
+            // sort the final array
+            sentimentData.sort(function(a, b){
+                var et_a = meeting_start_time + a[0];
+                var et_b = meeting_start_time + b[0];
+
+                return et_a - et_b;
+            });
+
+            var ed = sentimentData.map(function(r) { return { "x" : new Date(meeting_start_time + r[0]), "y" : r[2] !== null ? Math.round(r[2]*100): r[2]} });
+
+            var sentimentData = {
+                label: "Sentiment Score",
+                data: ed,
+                borderColor: '#8FC8FF',
+                fill: false
+            }
+
+            datasets.push(sentimentData);
+
+        }
+
+        if (datasets.length){
+
+            var lineChart = new Chart(ctx, {
+                type: 'line',
+                data: { datasets: datasets },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: config,
+                    spanGaps: false
+                }
+            });
+        }
+    }
+
+    window.addEventListener("createChart", function(evt){
+        var data = evt.detail;
+        var zip = data.zip;
+        var config = data.config;
+        var canvas_style = data.style || null;
+        createLineChart(zip, config, canvas_style);
+
+        window.removeEventListener("createChart", function(evt){
+            console.log("createChart event removed");
+        });
+    });
+</script>

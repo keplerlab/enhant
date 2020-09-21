@@ -1,0 +1,184 @@
+<style>
+    .file-upload{
+        color: #1E90FF;
+        border: 2px solid #1E90FF;
+        padding: 5px;
+    }
+
+    #file-zip, #file-recording{
+        opacity: 0;
+
+        height: 0.1px;
+        z-index: -1;
+    }
+
+    .upload-container{
+        margin-top: 1%;
+        width: 90%;
+        height: 312px;
+        border-radius: 5px;
+    }
+
+    .upload-container .heading{
+        margin-top: 20px;
+        
+    }
+    .upload-files{
+        margin-top: 20px;
+    }
+
+    .custom-btn{
+        background-color:  #1E90FF;
+        color: white;
+        border: 2px solid #1E90FF;
+        border-radius: 5px;
+        padding: 5px;
+    }
+
+    .upload-el{
+         margin-top: 26px;
+    }
+
+    .inter-bold-18{
+        font-family: "Inter-Bold";
+        font-size: 18px;
+        color:  #1E90FF; 
+    }
+
+    .alert-msg-container{  
+        margin-top: 12px;
+    }
+
+    .msg-container{
+        height: 50px;
+        display: none;
+        margin-top: 20px;
+        width: 90%;
+    }
+
+
+</style>
+
+<div class="msg-container col-xs-10 has-shadow">
+    <div class="alert-msg-container clearfix">
+        <div>
+            <img style="margin-top:-5px;" height="20" width="20" src="public/img/info.svg">
+            <span class="upload-alert-msg inter-bold-18"></span>
+        </div>
+     </div>
+</div>
+
+<div class="upload-container has-shadow col-xs-10">
+    
+   <div class="heading clearfix">
+       <h4>Upload meeting data to view</h4>
+   </div>
+
+    <div class="upload-files">
+        <div class="upload-el">
+            <input type="file" id="file-zip" name="file-zip" multiple />
+            <label for="file-zip" class="file-upload">
+                <span>Select meeting data (.zip)</span>
+                <img src="public/img/upload_icon.svg">
+            </label>
+        </div>
+
+        <div class="upload-el">
+            <input type="file" id="file-recording" name="file-recording" multiple />
+            <label for="file-recording" class="file-upload">
+                <span>Optional - Select recording (.mp4)</span>
+                <img src="public/img/upload_icon.svg">
+            </label>
+        </div>
+
+        <div class="upload-el">
+            <button onclick="uploadSubmit();" class="custom-btn">View meeting<img style="margin-left:8px;" src="public/img/next_icon.svg"></button>
+        </div>
+       
+    </div>
+</div>
+<script src="public/scripts/jszip.js"></script>
+<script>
+
+    var ZIP_DATA = {};
+    var NOTES_DATA = {};
+    var RECORDING_DATA = {
+        url: null,
+        type: null
+    };
+
+    // add js zip code here
+    function handleZipUpload(f){
+        JSZip.loadAsync(f).then(function(zip){
+
+            zip.forEach(function(file){
+
+                var name_arr = file.split("/");
+                if (name_arr.length >= 1){
+                    var fileName = name_arr[name_arr.length - 1];
+                    if (fileName == "processed.json"){
+
+                        zip.file(file).async("text").then(function(data){
+                            var json = JSON.parse(data);
+                            ZIP_DATA = json;
+                        });
+                    }
+
+                    if (fileName == "input.json"){
+
+                        zip.file(file).async("text").then(function(data){
+                            var json = JSON.parse(data);
+                            NOTES_DATA = json;
+                        });
+                    }
+                }
+            })
+        });
+    };
+
+    function updateRecordingURL(file){
+        RECORDING_DATA.url =  URL.createObjectURL(file);
+        RECORDING_DATA.type = file.type;
+    };
+
+    $('#file-zip').on("change", function(evt){
+
+        if (evt.target.files.length){
+            var file = evt.target.files[0];
+
+            handleZipUpload(file);
+
+        };
+    });
+
+    $('#file-recording').on("change", function(evt){
+
+        if (evt.target.files.length){
+            var file = evt.target.files[0];
+
+            updateRecordingURL(file);
+        };
+
+    });
+
+
+    function uploadSubmit(){
+
+        if (isEmpty(ZIP_DATA) && isEmpty(NOTES_DATA)){
+            $(".msg-container").show();
+            var msg = "You need to upload meeting data to view dashboard.";
+            $('.upload-alert-msg').text(msg);
+            setTimeout(function(){
+                $(".msg-container").hide();
+            }, 2000);
+        }
+        else{
+            // file to dashboard handlebar
+            var event = new CustomEvent("dashboard", {
+                detail: {zip: ZIP_DATA, recording: RECORDING_DATA, notes: NOTES_DATA}
+            });
+
+            window.dispatchEvent(event);
+        }
+    }
+</script>

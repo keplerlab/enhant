@@ -1,0 +1,859 @@
+<style>
+    .card{
+        height: 296px;
+        margin-left: 6%;
+    }
+
+    .card-cell{
+        margin-top: 32px;
+    }
+
+    .cell-text{
+        font-size: 20px;
+        word-break: break-all;
+    }
+
+    .section{
+        margin-top: 2%;
+    }
+
+    .has-padding{
+        padding: 5%;
+    }
+
+    .outliers{
+        height:350px;
+    }
+
+    .table-responsive{
+        overflow-y: scroll;
+        height: 200px;
+    }
+
+    .inter-regular-16{
+        font-family: "Inter-Regular";
+        font-size: 16px;
+    }
+
+    .inter-bold-14{
+        font-family: "Inter-Bold";
+        font-size: 14px;
+    }
+
+    .inter-bold-21{
+        font-family: "Inter-Bold";
+        font-size: 21px;
+    }
+
+    .inter-bold-16{
+        font-family: "Inter-Bold";
+        font-size: 16px;
+    }
+    .sentiment-engagement-chart{
+        height: 400px;
+    }
+
+    .captured-image {
+        border-radius: 5px;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+    .captured-image:hover {opacity: 0.7;}
+
+    /* The Modal (background) */
+    .modal {
+        display: none; /* Hidden by default */
+        position: fixed; /* Stay in place */
+        z-index: 1; /* Sit on top */
+        padding-top: 100px; /* Location of the box */
+        left: 0;
+        top: 0;
+        width: 100%; /* Full width */
+        height: 100%; /* Full height */
+        overflow: auto; /* Enable scroll if needed */
+        background-color: rgb(0,0,0); /* Fallback color */
+        background-color: rgba(0,0,0,0.9); /* Black w/ opacity */
+    }
+
+    /* Modal Content (image) */
+    .modal-content {
+        margin: auto;
+        display: block;
+        width: 80%;
+        max-width: 1000px;
+
+         /* Add Animation */
+        -webkit-animation-name: zoom;
+        -webkit-animation-duration: 0.6s;
+        animation-name: zoom;
+        animation-duration: 0.6s;
+    }
+
+    @-webkit-keyframes zoom {
+        from {-webkit-transform:scale(0)} 
+        to {-webkit-transform:scale(1)}
+    }
+
+    @keyframes zoom {
+        from {transform:scale(0)} 
+        to {transform:scale(1)}
+    }
+
+    /* The Close Button */
+    .close {
+        position: absolute;
+        top: 15px;
+        right: 35px;
+        color: #f1f1f1;
+        font-size: 40px;
+        font-weight: bold;
+        transition: 0.3s;
+    }
+
+    .close:hover,
+    .close:focus {
+        color: #bbb;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    /* 100% Image Width on Smaller Screens */
+    @media only screen and (max-width: 700px){
+        .modal-content {
+            width: 100%;
+        }
+    }
+
+    .negative-time-msg{
+        display: none;
+        color: #1E90FF;
+    }
+
+</style>
+
+<style>
+    .GaugeMeter{
+	Position:        Relative;
+	Text-Align:      Center;
+	Overflow:        Hidden;
+	Cursor:          Default;
+}
+
+.GaugeMeter SPAN,
+    .GaugeMeter B{
+    	Margin:          0 23%;
+    	Width:           54%;
+    	Position:        Absolute;
+    	Text-align:      Center;
+    	Display:         Inline-Block;
+    	Color:           RGBa(0,0,0,.8);
+    	Font-Weight:     100;
+    	Font-Family:     "Open Sans", Arial;
+    	Overflow:        Hidden;
+    	White-Space:     NoWrap;
+    	Text-Overflow:   Ellipsis;
+}
+.GaugeMeter[data-style="Semi"] B{
+	Margin:          0 10%;
+	Width:           80%;
+}
+
+.GaugeMeter S,
+    .GaugeMeter U{
+    	Text-Decoration: None;
+    	Font-Size:       .5em;
+    	Opacity:         .5;
+}
+
+.GaugeMeter B{
+	Color:           Black;
+	Font-Weight:     300;
+	Font-Size:       .5em;
+	Opacity:         .8;
+}
+</style>
+
+<div class="row section">
+    <div class="col-xs-3 has-shadow card text-center">
+        <div class="row card-cell">
+            <span class="cell-text inter-bold-21">Call Duration</span>
+        </div>
+        <div class="row card-cell">
+            <img width="112" height="112" src="public/img/clock.svg">
+        </div>
+
+         <div class="row card-cell">
+            <span class="cell-text inter-bold-21" id="call-duration"></span>
+        </div>
+    </div>
+
+     {{#if context.avg_sentiment}}
+    <div class="col-xs-3 has-shadow card text-center">
+        <div class="row card-cell">
+            <span class="cell-text inter-bold-21">Average Sentiment</span>
+        </div>
+        <div class="row card-cell">
+            <img width="112" height="112" id="average-sentiment" src="public/img/dissatisfied_sentiment.svg">
+        </div>
+    </div>
+    {{/if}}
+
+    {{#if context.avg_engagement}}
+    <div class="col-xs-3 has-shadow card text-center">
+        <div class="row card-cell">
+            <span class="cell-text inter-bold-21">Average Engagement</span>
+        </div>
+        <div class="row card-cell">
+            <div class="GaugeMeter" style="margin: auto"></div>
+        </div>
+
+         <div class="row card-cell">
+            <span class="cell-text inter-bold-21" id="average-engagement"></span>
+        </div>
+    </div>
+    {{/if}}
+
+
+</div>
+
+<div class="clearfix section has-shadow">
+    <div class="col-xs-12 meeting-data-container has-padding">
+        <div class="meeting-info">
+            <div class="row">
+                <div class="col-xs-4">
+                    <span class="cell-text inter-bold-21">Meeting</span>
+                </div>
+            </div>
+
+            <div class="row" style="margin-top: 2%;">
+                <div class="col-xs-4">
+                    <span class="cell-text inter-bold-16" id="meeting-date">Date: </span>
+                </div>
+                <div class="col-xs-4">
+                    <span class="cell-text inter-bold-16" id="meeting-time">Start Time: </span>
+                </div>
+                <div class="col-xs-4">
+                    <span class="cell-text inter-bold-16" id="meeting-duration">Duration: </span>
+                </div>
+            </div>
+        </div>
+
+        {{#if context.recording}}
+        <div class="section recording">
+        </div>
+        {{else if context.chart}}
+         <div class="section sentiment-engagement-chart has-shadow has-padding">
+            <div class="clearfix" style="margin-bottom: 20px;">
+                <span class="inter-bold-21">Engagement and Sentiment Scores</span>
+            </div>
+        </div>
+        {{/if}}
+
+        {{#if context.bookmark}}
+        <div class="section bookmark has-shadow">
+            <div class="row">
+                <div class="col-xs-12 has-padding">
+                    <div class="row heading">
+                        <div class="col-xs-8">
+                             <span class="cell-text inter-bold-21">Bookmarks</span><br>
+                             <span class="negative-time-msg inter-bold-14">Bookmarks taken before recording are represented with negative time</span>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive" style="margin-top:5%;">
+                        <table class="table table-striped">
+                        <tbody class="bookmark-data-tbody inter-regular-16">
+                        </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {{/if}}
+
+        {{#if context.images}}
+        <div id="myModal" class="modal">
+            <span class="close">&times;</span>
+            <img class="modal-content" id="img01">
+        </div>
+        
+       <div class="section images has-shadow">
+            <div class="row">
+                <div class="col-xs-12 has-padding">
+                    <div class="row heading">
+                        <div class="col-xs-8">
+                             <span class="cell-text inter-bold-21">Captured Moments</span><br>
+                             <span class="negative-time-msg inter-bold-14">Screenshots taken before recording are represented with negative time</span>
+                        </div>
+                    </div>
+                    <div class="clearfix capture-moments-data" style="margin-top:5%;">
+                    </div>
+                </div>
+            </div>
+        </div>
+        {{/if}}
+    
+    
+        {{#CheckIfbothTrue context.notes context.questions}}
+        <div class="section">
+            <div class="clearfix">
+                <div class="col-xs-6 notes has-shadow">
+                    <div class="data-container has-padding">
+                        <div class="row heading">
+                            <div class="col-xs-8">
+                                <span class="cell-text inter-bold-21">Notes</span><br>
+                                <span class="negative-time-msg inter-bold-14">Notes taken before recording are represented with negative time</span>
+                            </div>
+                        </div>
+                        <div class="table-responsive" style="margin-top:5%;">
+                        <table class="table table-striped">
+                        <tbody class="notes-data-tbody inter-regular-16">
+                        </tbody>
+                        </table>
+                    </div>
+                    </div>
+                </div>
+                <div class="col-xs-6 questions has-shadow">
+                    <div class="data-container has-padding">
+                        <div class="row heading">
+                            <div class="col-xs-8">
+                                <span class="cell-text inter-bold-21">Questions</span><br>
+                                <span class="negative-time-msg inter-bold-14">Questions identified befored recording are represented with negative time</span>
+                            </div>
+                        </div>
+                        <div class="table-responsive" style="margin-top:5%;">
+                        <table class="table table-striped">
+                        <tbody class="questions-data-tbody inter-regular-16">
+                        </tbody>
+                        </table>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {{else}}
+        {{#if context.notes}}
+        <div class="section notes has-shadow">
+            <div class="row">
+                <div class="col-xs-12 has-padding">
+                    <div class="row heading">
+                        <div class="col-xs-8">
+                             <span class="cell-text inter-bold-21">Notes</span><br>
+                             <span class="negative-time-msg inter-bold-14">Notes taken before recording are represented with negative time</span>
+                        </div>
+                    </div>
+                    <div class="table-responsive" style="margin-top:5%;">
+                        <table class="table table-striped">
+                        <tbody class="notes-data-tbody inter-regular-16">
+                        </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {{/if}}
+        {{#if context.questions}}
+        <div class="section questions has-shadow">
+            <div class="row">
+                <div class="col-xs-12 has-padding">
+                    <div class="row heading">
+                        <div class="col-xs-8">
+                             <span class="cell-text inter-bold-21">Questions</span><br>
+                             <span class="negative-time-msg inter-bold-14">Questions identified before recording are represented with negative time</span>
+                        </div>
+                    </div>
+                    <div class="table-responsive" style="margin-top:5%;">
+                        <table class="table table-striped">
+                        <tbody class="questions-data-tbody inter-regular-16">
+                        </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {{/if}}
+        {{/CheckIfbothTrue}}
+
+        {{#if context.sentiment_outliers}}
+        <div class="section">
+            <div class="clearfix">
+                <div class="col-xs-6 outliers has-shadow">
+                    <div class="data-container has-padding">
+                        <div class="row heading">
+                            <div class="col-xs-12">
+                                <span class="cell-text inter-bold-21">Sentiment Outliers (Negative)</span><br>
+                                <span class="negative-time-msg inter-bold-14">Outliers identified before recording are represented with negative time</span>
+                            </div>
+                        </div>
+                        <div class="table-responsive" style="margin-top:5%;">
+                        <table class="table table-striped">
+                        <tbody class="negative-outliers-data-tbody inter-regular-16">
+                        </tbody>
+                        </table>
+                    </div>
+                    </div>
+                </div>
+                <div class="col-xs-6 outliers has-shadow">
+                    <div class="data-container has-padding">
+                        <div class="row heading">
+                            <div class="col-xs-12">
+                                <span class="cell-text inter-bold-21">Sentiment Outliers (Positive)</span><br>
+                                <span class="negative-time-msg inter-bold-14">Outliers identified before recording are represented with negative time</span>
+                            </div>
+                        </div>
+                        <div class="table-responsive" style="margin-top:5%;">
+                        <table class="table table-striped">
+                        <tbody class="positive-outliers-data-tbody inter-regular-16">
+                        </tbody>
+                        </table>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {{/if}}
+    </div>
+</div>
+
+<script src="public/scripts/GaugeMeter.js"></script>
+<script src="public/scripts/moment.js"></script>
+<script src="public/scripts/Chart.js"></script>
+<script>
+
+    function generateMeetingDate(start_time){
+        var date = new Date(start_time);
+        var formatted_months = ("0" + (date.getMonth()+1)).slice(-2).toString();
+        var formatted_yy = ("0" + date.getFullYear()).slice(-4).toString();
+        var formatted_dd = ("0" + date.getDate()).slice(-2).toString();
+
+        var formatted_hh = ("0" + date.getHours()).slice(-2).toString();
+        var formatted_mm = ("0" + date.getMinutes()).slice(-2).toString();
+
+        return {
+            "date" : formatted_yy + "/" + formatted_months + "/" + formatted_dd,
+            "time": formatted_hh + ":" + formatted_mm
+        }
+    }
+
+    function getMeetingDuration(start_time, end_time){
+        var diff = end_time - start_time;
+        var is_negative = diff < 0 ? true : false;
+
+        diff = Math.abs(diff);
+
+        var ms = diff % 1000;
+        diff = (diff - ms) / 1000;
+        var ss = diff % 60;
+        diff = (diff - ss) / 60;
+        var mm = diff % 60;
+        diff = (diff - mm) / 60;
+        var hh = diff % 24;
+        days = (diff - hh) / 24;
+
+        var formatted_hh = ("0" + hh).slice(-2).toString();
+        var formatted_mm = ("0" + mm).slice(-2).toString();
+        var formatted_ss = ("0" + ss).slice(-2).toString();
+        var formatted_ms = ("0" + ms + "0").slice(-3).toString();
+
+        if (is_negative){
+            return "-" + formatted_hh + ":" + formatted_mm + ":" + formatted_ss;
+        }
+        else{
+            return formatted_hh + ":" + formatted_mm + ":" + formatted_ss;
+        }
+    }
+
+    function updateMeetingData(zip){
+        var start_time_data = generateMeetingDate(zip.start_time);
+        var meeting_date = start_time_data.date;
+        var meeting_start_time = start_time_data.time;
+        var meeting_duration = getMeetingDuration(zip.start_time, zip.end_time);
+
+        $('#meeting-date').text("Date: " + meeting_date);
+        $('#meeting-time').text("Start Time: " + meeting_start_time);
+        $('#meeting-duration').text("Duration: " + meeting_duration);
+    }
+
+    function updateBookmarks(zip){
+        var data = zip.notes.filter(function(obj){return obj["type"] == "bookmark"});
+
+        var bookmark_html = "";
+        data.forEach(function(obj){
+
+            var bookmark_arr = obj.content;
+            var row_html = "";
+
+            var host_transcription = bookmark_arr.filter(function(d){return d["origin"] == "host"});
+            var guest_transcription = bookmark_arr.filter(function(d){return d["origin"] == "guest"});
+
+            if (!host_transcription.length && !guest_transcription.length){
+
+                var row_data = bookmark_arr[0];
+
+                row_html = "<tr>" +
+                    "<td>" + row_data.content + "</td>" +
+                    "<td>" + getMeetingDuration(zip.start_time, obj.event_time)+ "</td></tr>"; 
+                
+                bookmark_html += row_html;
+            
+            }
+            else{
+
+                var host_final = "Host: "; 
+                var guest_final = "Guest: ";
+
+                host_transcription.forEach(function(hd){
+                    host_final += hd.content;
+                });
+
+                guest_transcription.forEach(function(gd){
+                   guest_final += gd.content;
+                });
+
+                var final_bookmark_text = "";
+
+                if (host_transcription.length){
+                    final_bookmark_text += host_final;
+                    final_bookmark_text += "<br>";
+                }
+                if (guest_transcription.length){
+                    final_bookmark_text += guest_final;
+                }
+
+                row_html += "<tr>" +
+                    "<td>" + final_bookmark_text + "</td>" +
+                    "<td>" + getMeetingDuration(zip.start_time, obj.event_time)+ "</td></tr>";
+
+                bookmark_html += row_html;
+
+            }
+        });
+
+        $('.bookmark-data-tbody').html(bookmark_html);
+
+    }
+
+    function updateNotes(zip){
+        var data = zip.notes.filter(function(obj){return obj["type"] == "notes"});
+
+        data.forEach(function(d){
+            var row_html = "<tr>" +
+                    "<td>" + d.content + "</td>" +
+                    "<td>" + getMeetingDuration(zip.start_time, d.event_time)+ "</td></tr>";
+            
+            $('.notes-data-tbody').append(row_html);
+        });
+    }
+
+    function updateCapturedImages(zip){
+        var data = zip.notes.filter(function(obj){return obj["type"] == "image"});
+
+        data.forEach(function(d){
+            var html = "<div class='col-md-3 has-shadow' style='margin-left:5%'>" +
+                "<div><img class='captured-image' style='max-width:100%;max-height:100%' src='" + d.content + "'>" +
+                "</div>" +
+                "<div class='text-center has-padding inter-regular-16' style='margin-top:5%'>" + getMeetingDuration(zip.start_time, d.event_time) +
+                "</div>"; 
+
+            $('.capture-moments-data').append(html);
+        });
+
+        if (data.length){
+             var modal = document.getElementById("myModal");
+            var img = $(".captured-image");
+            var modalImg = document.getElementById("img01");
+            img.click(function(){
+                modal.style.display = "block";
+                modalImg.src = this.src;
+            });
+
+            // Get the <span> element that closes the modal
+            var span = document.querySelector(".close");
+
+            // When the user clicks on <span> (x), close the modal
+            span.onclick = function() { 
+                modal.style.display = "none";
+            }
+        }
+    }
+
+    function updateQuestions(zip){
+
+        if (zip.hasOwnProperty("questionsAsked")){
+            var data = zip.questionsAsked;
+
+            data.forEach(function(d){
+
+                // add number of milliseconds to the start time
+                var end_time = zip.start_time + d.time;
+                var elapsed_time = getMeetingDuration(zip.start_time, end_time);
+
+                var row_html = "<tr>" +
+                        "<td>" + d.question + "</td>" +
+                        "<td>" + elapsed_time + "</td></tr>";
+                
+                $('.questions-data-tbody').append(row_html);
+                    
+            });
+        }
+    }
+
+    function updateSentimentOutliers(zip){
+
+        if (zip.hasOwnProperty("highSentimentSentences")){
+            var highSentimentOutliers = zip.highSentimentSentences.highSentimentSentencesGuest;
+            var lowSentimentOutliers = zip.lowSentimentSentences.lowSentimentSentencesGuest;
+
+            lowSentimentOutliers.forEach(function(d){
+
+                // add number of milliseconds to the start time
+                var end_time = zip.start_time + d[0];
+                var elapsed_time = getMeetingDuration(zip.start_time, end_time);
+
+                var row_html = "<tr>" +
+                        "<td>" + d[1] + "</td>" +
+                        "<td>" + elapsed_time + "</td></tr>";
+                
+                $('.negative-outliers-data-tbody').append(row_html);
+
+            });
+
+            highSentimentOutliers.forEach(function(d){
+
+                // add number of milliseconds to the start time
+                var end_time = zip.start_time + d[0];
+                var elapsed_time = getMeetingDuration(zip.start_time, end_time);
+
+                var row_html = "<tr>" +
+                        "<td>" + d[1] + "</td>" +
+                        "<td>" + elapsed_time + "</td></tr>";
+                
+                $('.positive-outliers-data-tbody').append(row_html);
+
+            });
+        }
+        
+    }
+
+    function updateCallDuration(zip){
+        var duration = getMeetingDuration(zip.start_time,zip.end_time);
+        var duration_arr = duration.split(":");
+
+        var hh = duration_arr[0];
+        var mm = duration_arr[1];
+        var ss = duration_arr[2];
+
+        // check if hours is 0
+        if (hh == "00"){
+
+            // check if min is 0
+            if (mm == "00"){
+                var text = ss + " " + "sec";
+                $('#call-duration').text(text);
+            }
+            else{
+                var text = mm + " " +"min" + " " + ss + " " +"sec";
+                $('#call-duration').text(text);
+            }
+        }
+        else{
+
+            if (mm == "00"){
+                var text = hh + " " +"hrs";
+                $('#call-duration').text(text);
+            }
+            else{
+                var text = hh + " " +"hrs" + " " + mm + " " +"min";
+                $('#call-duration').text(text);
+            }
+        }
+    }
+
+    function updateAverageEngagementScore(zip){
+
+        if (zip.hasOwnProperty("engagement_scores")){
+
+            var averageScore = parseFloat(zip.engagement_scores.avg_engagement_score.toFixed(1));
+
+            $(".GaugeMeter").gaugeMeter({
+                "percent": averageScore,
+                "text": null,
+                "text_size": 0.0,
+                "prepend": null,
+                "append": "%",
+                "size": "112",
+                "width": "12",
+                "style": "Full",
+                "color": "#1E90FF",
+                "back": "#E6E6E6",
+                "theme": null,
+                "animate_gauge_colors": false,
+                "animate_text_colors":  false,
+                "label": null,
+                "label_color": null,
+                "stripe": null
+            });
+
+            // this is to remove the text within gauge meter
+            $(".GaugeMeter span").remove();
+
+            $('#average-engagement').text(averageScore + " %");
+        }
+
+    }
+
+    function updateAverageSentiment(zip){
+
+        if (zip.hasOwnProperty("avgSentimentScoreGuest")){
+
+            var sentiment = Number(zip.avgSentimentScoreGuest);
+            if (sentiment <= 0.2){
+                $('#average-sentiment').attr("src", "public/img/dissatisfied_sentiment.svg");
+            }
+            else if (sentiment > 0.2 && sentiment < 0.7){
+                $('#average-sentiment').attr("src", "public/img/neutral_sentiment.svg");
+            }
+            else{
+                $('#average-sentiment').attr("src", "public/img/satisfied_sentiment.svg");
+            }
+
+        }
+    }
+
+    function renderChart(zip_data){
+
+        // clear the previous chart
+        $('.sentiment-engagement-chart').html("");
+
+        const chartTemplate = Handlebars.templates.chart;
+        const chart_html = chartTemplate({});
+        $('.sentiment-engagement-chart').append(chart_html);
+
+        var chart_config = {
+            xAxes: [{
+                type: 'time',
+                time: {
+                    unit: 'minute',
+                    stepSize: 10
+                }
+            }],
+            yAxes: [{
+                gridLines: {
+                    display: false
+                },
+                ticks: {
+                    max: 100,
+                    min: 0,
+                    stepSize: 25
+                }
+            }]
+        };
+
+        var event = new CustomEvent("createChart", {
+                detail: {zip: zip_data, config: chart_config}
+        });
+        window.dispatchEvent(event);
+    }
+
+    function reset(){
+        $('.outliers-data-tbody').html("");
+        $('.questions-data-tbody').html("");
+        $('.notes-data-tbody').html("");
+        $('.bookmark-data-tbody').html("");
+        $('.capture-moments-data').html("");
+    }
+
+    function processData(data){
+        updateMeetingData(data);
+        updateBookmarks(data);
+        updateCapturedImages(data);
+        updateNotes(data);
+        updateQuestions(data);
+        updateSentimentOutliers(data);
+
+        updateCallDuration(data);
+        updateAverageEngagementScore(data);
+        updateAverageSentiment(data);
+    }
+
+    window.addEventListener("update-dashboard", function dashboardUpdateHandler(evt){
+        var zip_data = evt.detail;
+        reset();
+        processData(zip_data);
+
+        if (zip_data.offset == 1){
+            $('.negative-time-msg').show();
+        }
+        else {
+            $('.negative-time-msg').hide();
+        }
+
+        window.APP.dashboardUpdateHandler = dashboardUpdateHandler;
+    }, true);
+
+    window.addEventListener("dashboard-data", function dashboardInitHandler(evt){
+        var data = evt.detail;
+
+        console.log(" dashboard data : ", data);
+
+        var zip_data = data.zip;
+        var recording_data = data.recording;
+        var notes_data = data.notes;
+
+        reset();
+
+        if (!isEmpty(zip_data)){
+            processData(zip_data);
+
+            // if recording url is null, create a chart and show here
+            if (recording_data.url == null){
+                if ($('.sentiment-engagement-chart').length){
+                    renderChart(zip_data);
+                }
+            }
+            
+            
+        }
+        else if (!isEmpty(notes_data)){
+            processData(notes_data);
+        }
+
+        if (recording_data.url !== null){
+
+            var mediaContext = {
+                chart: false,
+                url: recording_data.url
+            }
+
+            if (zip_data.hasOwnProperty("engagement_scores") || zip_data.hasOwnProperty("avgSentimentScoreGuest")){
+                mediaContext.chart = true;
+            }
+
+            if (window.APP.hasOwnProperty("player")){
+                console.log(" removing existing players ");
+                delete window.APP.player;
+            }
+
+            // clear previous html, then insert again
+            $('.recording').empty();
+
+            const mediaPlayerTemplate = Handlebars.templates.mediaPlayer;
+            const media_html = mediaPlayerTemplate({
+                "url": recording_data.url,
+                "chart": mediaContext.chart
+            });
+            $('.recording').html(media_html);
+            
+            setTimeout(function(){
+                // forward message to dashboard
+                var event = new CustomEvent("initializePlayer", {
+                    detail: data
+                });
+                window.dispatchEvent(event);
+            }, 100);
+        }
+
+        window.removeEventListener("dashboard-data", dashboardInitHandler, true);
+
+    }, true);
+</script>

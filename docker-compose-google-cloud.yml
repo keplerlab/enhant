@@ -1,0 +1,30 @@
+version: '3'
+services:
+
+  transcription_google_cloud:
+    build: ./api/transcription_svc/Docker-google-cloud/
+    ports:
+    - "1111:1111"
+    - "1112:1112"
+    volumes:
+       - ./api/transcription_svc/websocket-server/:/opt/transcription_svc/websocket-server/
+       - ./certificates-and-credentials/:/opt/transcription_svc/websocket-server/certificates-and-credentials/
+    environment:
+      - GOOGLE_APPLICATION_CREDENTIALS=/opt/transcription_svc/websocket-server/certificates-and-credentials/google_credential_file.json # Google credential file
+      - SERVER_INTERFACE=0.0.0.0
+      - SERVER_PORT=1111
+      - SAMPLE_RATE=44100
+
+  cli:
+    image: keplerlab/enhant-cli:0.1.4
+    stdin_open: true # docker run -i
+    tty: true        # docker run -t
+    volumes:
+      - ./cli/:/home/cli/
+      - ./meeting-data/:/home/cli/meeting-data/
+      - ./nlp_lib/:/home/nlp_lib/
+      - ./docs/:/home/docs/
+      - ./api/transcription_svc/:/home/api/transcription_svc/
+      - ./dashboard/:/home/dashboard/
+      # Exclude mount node_modules directory
+      #- /usr/src/app/node_modules/

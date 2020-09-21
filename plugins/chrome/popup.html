@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+  <html>
+    <head>
+        <title>enhan(t) Meeting Power Tool</title>
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="static/css/bootstrap.min.css">
+    
+      <!-- Latest compiled and minified JavaScript -->
+      <script src="static/js/jquery.min.js"></script>
+     <script src="static/js/bootstrap.min.js"></script>
+     <script src="config.js"></script>
+     <style>
+
+        @font-face {
+            font-family: "Inter-Regular";
+            src: url('static/fonts/Inter-Regular.otf') format("opentype");
+        }
+        @font-face {
+            font-family: "Inter-Bold";
+            src: url('static/fonts/Inter-Bold.otf') format("opentype");
+        }
+
+        #notification{
+            font-family: "Inter-Regular" ;
+            font-size: 14px;
+            border-top: 1px dashed #8080803b;
+            
+        }
+
+        #notification-content{
+            padding: 3%;
+        }
+
+
+         ul.icon-list{
+             margin-top: 9px;
+         }
+         textarea.notes-textarea{
+             display: block;
+             margin-left: auto;
+             margin-right: auto;
+             border: 1px solid #8080803b;
+             color:  #808080b5;
+         }
+
+         .btn-custom, .btn-custom:hover, .btn-custom:active, .btn-custom:visited {
+            background-color: #1E90FF !important;
+            color: white !important;
+            font-weight: bold;
+        }    
+
+        icon{
+            margin-top: 8px;
+            margin-bottom: 8px;
+            display: block;
+            padding-left: 15px;
+            padding-right: 15px;
+        }
+
+        icon[clickable]{
+            cursor: pointer;
+        }
+
+        .icon{
+            height: 40px;
+        }
+
+        .parent-data p{
+            color:  #808080b5;
+        } 
+
+        label {
+            color:  #808080b5;
+        }
+
+        .custom-checkbox[type="checkbox"] + label:after {
+            background-color: #1E90FF !important;
+        }
+
+        .custom-checkbox[type="checkbox"]:checked + label:after {
+            background-color: white !important;
+            color: #1E90FF !important;
+        }
+
+        @media (min-width: 200px){
+            .seven-cols .col-md-1,
+            .seven-cols .col-sm-1,
+            .seven-cols .col-lg-1, 
+            .seven-cols .col-xs-1 {
+                width: 11.1111111111111%;
+                *width: 11.1111111111111%;
+                padding-left: 0px;
+                padding-right: 0px;
+            }
+        }
+
+        .pulse-ring {
+            content: '';
+            border: 10px solid #1E90FF;
+            border-radius: 50%;
+            height:24px;
+            width:24px;
+            animation: pulsate infinite 1s;
+        }
+
+        @-webkit-keyframes pulsate {
+            0% {
+                -webkit-transform: scale(1, 1);
+                opacity: 1;
+            }
+            100% {
+                -webkit-transform: scale(1.2, 1.2);
+                opacity: 0.4;
+            }
+        }
+
+     </style>
+    </head>
+    <body>
+        <div class="container-fluid" id="main" style="width:376px;height:40px;">
+
+            <div class="row seven-cols" style="height: 40px;">
+                <div class="col-xs-1 icon">
+                    <icon type="LogoIcon"><img title="enhan(t)" height=24 width=24  src="/static/images/logo_24.svg"></icon>
+                </div>
+                <div class="col-xs-1 icon">
+                    <icon type="SeparatorIcon"><img title="Separator" height=24 width=24  src="/static/images/seperator_line.svg"></icon>
+                </div>
+
+                <div class="col-xs-1 icon">
+                    <icon type="BookmarkIcon" available_when_recording><img title="Bookmark Moment" height=18 width=14  src="/static/images/bookmark.svg"></icon>
+                </div>
+                <div class="col-xs-1 icon">
+                    <icon type="CaptureTabIcon" available_when_recording><img title="Capture Screenshot" height=18 width=20 src="/static/images/capture.svg"></icon>
+                </div>
+                <div class="col-xs-1 icon">
+                    <icon type="NotesIcon" available_when_recording><img title="Take Note" height=20 width=16 src="/static/images/notes.svg"></icon>
+                </div>
+
+                <div class="col-xs-1 icon">
+                    <icon type="RecordIcon"><img title="Start recording" height=20 width=20 src="/static/images/record.svg"></icon>
+                </div>
+
+                <div class="col-xs-1 icon">
+                    <icon type="PowerModeIcon"><img title="Power Mode OFF" height=22 width=16 src="/static/images/powermode.svg"></icon>
+                </div>
+
+                <div class="col-xs-1 icon">
+                    <icon type="SettingsIcon"><img title="Settings" height=20 width=20 src="/static/images/settings.svg" style="margin-left: -4px;"></icon>
+                </div>
+
+                <div class="col-xs-1 icon">
+                    <icon type="ExpandIcon"><img title="View/Hide History" height=7 width=11 src="/static/images/down_arrow.svg"></icon>
+                </div>
+            </div>
+        </div>
+
+        <!-- notes container -->
+        <div class="row" id="notes-container" style="height:250px;display: none;">
+            <div class="col-xs-12">
+                <div class="clearfix">
+                    <textarea class="notes-textarea" id="notes-data" placeholder="Write your notes here.." style="width:344px;height:160px;"></textarea>
+                </div>
+                <div class="clearfix" style="margin-top:2%">
+                    <div class="col-xs-12">
+                        <img width="20" height="20" src="/static/images/info.svg">
+                        <span>Press Cmd/Ctrl + Shift + I to add a note.</span>
+                    </div>
+                </div>
+                <div class="clearfix" style="margin-top: 3%;">
+                    <div class="col-xs-4 col-xs-offset-8">
+                        <button class="btn btn-custom" id="notes-submit">Add Note</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notification data -->
+        <div class="row" id="notification">
+            <div id="notification-content" class="col-xs-12">
+                <div class="col-xs-1" style="margin-top:8px">
+                    <img src="static/images/jigsaw.svg" width="24" height="24">
+                </div>
+                <div class="col-xs-11">
+                    <div class="clearfix">
+                        <span>Can't find enhan(t)? Click on the chrome jigsaw button to pin it.</span>
+                    </div>
+                    <div class="clearfix" style="margin-top:10px;">
+                        <span style="color: red;">Click on <img style="margin-top:-10px" src="static/images/logo_24.svg" width="24" height="24"> icon in the toolbar to enable it</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Expanded data view here -->
+        <div class="row align-self-center" id="data-container" style="height:349px;overflow:scroll;display: none;"></div>
+        
+        <!-- Settings view here -->
+        <div class="row align-self-center" id="settings-container" style="height:196px;display: none;">
+            <div class="row">
+                <div class="col-xs-10" style="margin-left:55px;">
+
+                    <div class="form-group row" style="margin-top:4%;margin-bottom:4%;">
+                        <div class="col-xs-10">
+                            <div class="form-check">
+                              <input class="form-check-input custom-checkbox" type="checkbox" id="setting-enable-powermode">
+                              <label class="form-check-label" for="setting-enable-powermode">
+                                Enable Power Mode
+                              </label>
+                            </div>
+                        </div>
+                    </div>
+                      
+                    <div class="form-group row" style="margin-top:4%;margin-bottom:4%;">
+                        <label class="col-xs-3 col-form-label" for="lang">Language: </label>
+                        <div class="col-xs-7">
+                            <select class="form-control" id="lang">
+                                <option selected value="en-US">English (US)</option>
+                                <option value="en-IN">English (India)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group row" style="margin-top:4%;margin-bottom:4%;">
+                        <label class="col-xs-2 col-form-label" for="base-url">Server: </label>
+                        <div class="col-xs-8">
+                            <input id="setting-server-url" type="text" class="form-control" value="https://127.0.0.1">
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <div class="col-xs-5 pull-right">
+                          <button id="settings-apply-btn" type="button" class="btn btn-custom">Apply</button>
+                        </div>
+                      </div>
+                </div>
+            </div>
+        </div>
+        <script src="static/js/iframeResizer.contentWindow.js"></script>
+        <script src="static/js/icon.js"></script>
+        <script src="static/js/popup.js"></script>
+    </body>
+  </html>
