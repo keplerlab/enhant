@@ -97,6 +97,7 @@ Knowing the document organization will help you find and use features effectivel
    Parts of enhan(t) <parts_of_enhant>
    Installation <getting_started>
    Chrome Extension Usage <chrome_extension_usage>
+   Analysis CLI Usage <analysis_cli_usage>
    Developer guides <developer_guides>
    Troubleshooting and FAQ <troubleshooting>
    API reference <reference>
