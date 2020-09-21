@@ -12,6 +12,7 @@ api/transcription_svc/websocket-server/
 cli/
 !cli/*.py
 
+meeting-data/
 # Ignore certifiacate directories
 certificates-and-credentials/*
  

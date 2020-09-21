@@ -21,6 +21,7 @@ services:
     tty: true        # docker run -t
     volumes:
       - ./cli/:/home/cli/
+      - ./meeting-data/:/home/cli/meeting-data/
       - ./nlp_lib/:/home/nlp_lib/
       - ./docs/:/home/docs/
       - ./api/transcription_svc/:/home/api/transcription_svc/
