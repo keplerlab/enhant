@@ -194,11 +194,37 @@
         el.html(html);
     }
 
+    function removeDashboardListners(cb){
+        if (window.APP.hasOwnProperty("dashboardUpdateHandler")){
+            window.removeEventListener("update-dashboard", window.dashboardUpdateHandler, true);
+            console.log(" Removing dashboard update listner ");
+            cb();
+        }
+        else{
+            console.log(" no dashboard listner to remove");
+            cb();
+        }
+    }
+
     function loadDashboardTemplateIntoApp(data, context){
         const el = $('#app');
-        dashboardSelected();
-        var html = getDashboardTemplate(data, context);
-        el.html(html);
+
+        removeDashboardListners(function(){
+            el.html("");
+
+            dashboardSelected();
+            var html = getDashboardTemplate(data, context);
+            el.html(html);
+
+            setTimeout(function(){
+              // forward message to dashboard
+                var event = new CustomEvent("dashboard-data", {
+                    detail: data
+                });
+
+                window.dispatchEvent(event);
+            }, 100);
+        });
     }
 
     function registerHelperFunctions(){
@@ -217,6 +243,7 @@
     }
 
     $(document).ready(function(){
+        window.APP = {};
         registerHelperFunctions();
         loadUploadTemplateIntoApp();
 
@@ -260,14 +287,6 @@
         
         var context = generateContextForDashboardTemplate(data);
         loadDashboardTemplateIntoApp(data, context);
-
-        // forward message to dashboard
-        var event = new CustomEvent("dashboard-data", {
-            detail: evt.detail
-        });
-
-        window.dispatchEvent(event);
-
     });
 
     </script>

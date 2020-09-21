@@ -776,7 +776,7 @@
         updateAverageSentiment(data);
     }
 
-    window.addEventListener("update-dashboard", function(evt){
+    window.addEventListener("update-dashboard", function dashboardUpdateHandler(evt){
         var zip_data = evt.detail;
         reset();
         processData(zip_data);
@@ -787,9 +787,11 @@
         else {
             $('.negative-time-msg').hide();
         }
-    });
 
-    window.addEventListener("dashboard-data", function(evt){
+        window.APP.dashboardUpdateHandler = dashboardUpdateHandler;
+    }, true);
+
+    window.addEventListener("dashboard-data", function dashboardInitHandler(evt){
         var data = evt.detail;
 
         console.log(" dashboard data : ", data);
@@ -827,25 +829,31 @@
                 mediaContext.chart = true;
             }
 
+            if (window.APP.hasOwnProperty("player")){
+                console.log(" removing existing players ");
+                delete window.APP.player;
+            }
+
+            // clear previous html, then insert again
+            $('.recording').empty();
+
             const mediaPlayerTemplate = Handlebars.templates.mediaPlayer;
             const media_html = mediaPlayerTemplate({
                 "url": recording_data.url,
                 "chart": mediaContext.chart
             });
-
             $('.recording').html(media_html);
-
-            // forward message to dashboard
-            var event = new CustomEvent("initializePlayer", {
-                detail: data
-            });
-            window.dispatchEvent(event);
-
+            
+            setTimeout(function(){
+                // forward message to dashboard
+                var event = new CustomEvent("initializePlayer", {
+                    detail: data
+                });
+                window.dispatchEvent(event);
+            }, 100);
         }
 
-        window.removeEventListener("dashboard-data", function(evt){
-            console.log("dashboard-data event removed");
-        });
+        window.removeEventListener("dashboard-data", dashboardInitHandler, true);
 
-    });
+    }, true);
 </script>
