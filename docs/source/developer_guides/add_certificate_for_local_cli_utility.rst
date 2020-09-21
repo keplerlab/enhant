@@ -83,7 +83,7 @@ Create new certificate using mkcert
 ::
 
 
-        $ cd certificates
+        $ cd certificates-and-credentials
         $ mkcert -key-file key.pem -cert-file cert.pem localhost 127.0.0.1 ::1
 
 

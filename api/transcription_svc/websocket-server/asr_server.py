@@ -149,9 +149,10 @@ async def recognize(websocket, path):
 
     
     print("Exit from transcription_loop function saving recorded audio", flush=True)
-    print("\n*** Writing audio data in file:", full_file_name_Wav, flush=True)
+    #print("\n*** Writing audio data in file:", full_file_name_Wav, flush=True)
 
-    helper.write_audio_wave(record_audio, full_file_name_Wav, cfg.SAMPLE_RATE, cfg.SAMPLE_WIDTH, cfg.CHANNELS)
+    #helper.write_audio_wave(record_audio, full_file_name_Wav, cfg.SAMPLE_RATE, cfg.SAMPLE_WIDTH, cfg.CHANNELS)
+    await websocket.close()
     
 
 ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)

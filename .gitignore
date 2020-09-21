@@ -6,8 +6,14 @@ npm-debug.log
 package-lock.json
 test/*.log
 
+api/transcription_svc/websocket-server/
+!api/transcription_svc/websocket-server/*.py
+
+cli/
+!cli/*.py
+
 # Ignore certifiacate directories
-certificates/*
+certificates-and-credentials/*
  
 # Input zip files and folders for cli
 *.zip 

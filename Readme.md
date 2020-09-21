@@ -139,7 +139,7 @@ The local CA is now installed in the Firefox trust store (requires browser resta
 
 ## Create new certificate using mkcert 
 ```
-$ cd certificates
+$ cd certificates-and-credentials
 $ mkcert -key-file key.pem -cert-file cert.pem localhost 127.0.0.1 ::1
 ```
 You should see following output with last command
@@ -155,4 +155,7 @@ The certificate is at "cert.pem" and the key at "key.pem" ✅
 ```
 
 
-
+### Attributions
+1. For offline speech to text we use vosk-server https://github.com/alphacep/vosk-server which in turn uses Kaldi and Vosk-API.
+2. For sentiment analysis we use pre-trained sentiment model provided by flair library, https://github.com/flairNLP/flair library. 
+3. For correction of text punctuations we use fastpunct https://github.com/notAI-tech/fastPunct library.

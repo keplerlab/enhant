@@ -57,7 +57,7 @@ To install both as application using docker application follow these instruction
 #.  Next, to have locally trusted development certificates we need to install mkcert. Please follow the installation instructions :ref:`certificate_for_localhost` for detailed instructions
 #.  Now go to the cloned ‘enhant’ directory and then run go to certificates directory.::
 
-        $ cd certificates
+        $ cd certificates-and-credentials
 
 #.  Run following to create the certificates.::
 

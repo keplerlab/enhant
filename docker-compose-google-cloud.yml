@@ -8,15 +8,15 @@ services:
     - "1112:1112"
     volumes:
        - ./api/transcription_svc/websocket-server/:/opt/transcription_svc/websocket-server/
-       - ./certificates/:/opt/transcription_svc/websocket-server/certificates/
+       - ./certificates-and-credentials/:/opt/transcription_svc/websocket-server/certificates-and-credentials/
     environment:
-      - GOOGLE_APPLICATION_CREDENTIALS=/opt/transcription_svc/websocket-server/project-voicebox-fa7bc2f8fa18.json # Google credential file
+      - GOOGLE_APPLICATION_CREDENTIALS=/opt/transcription_svc/websocket-server/certificates-and-credentials/google_credential_file.json # Google credential file
       - SERVER_INTERFACE=0.0.0.0
       - SERVER_PORT=1111
       - SAMPLE_RATE=44100
 
   cli:
-    image: keplerlab/enhant-cli:0.1.3
+    image: keplerlab/enhant-cli:0.1.4
     stdin_open: true # docker run -i
     tty: true        # docker run -t
     volumes:

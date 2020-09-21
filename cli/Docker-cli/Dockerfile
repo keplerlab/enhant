@@ -55,6 +55,9 @@ RUN pip install punctuator \
     && cd ~/.punctuator \
     && gdown https://drive.google.com/uc?id=0B7BsN5f2F1fZd1Q0aXlrUDhDbnM
 
+COPY train_questions_model.py .
+RUN mkdir -p /home/model \
+    && python train_questions_model.py
 
 ARG PROJECT_DIR=/home/cli/
 WORKDIR ${PROJECT_DIR}

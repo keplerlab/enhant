@@ -5,7 +5,6 @@
 """
 import sys
 import os
-from deepsegment import DeepSegment
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 import pysrt
 from typing import List, Optional
@@ -16,19 +15,18 @@ import time
 from nltk import sent_tokenize
 from pathlib import Path
 import os
-
-segmenter = DeepSegment('en')
+import config
 
 
 init(init(autoreset=True))
-from fastpunct import FastPunct
 
-fastpunct = FastPunct("en")
-
-from punctuator import Punctuator
-
-model_file = os.path.join(str(Path.home()),'.punctuator','Demo-Europarl-EN.pcl')
-punctuator_runner = Punctuator(model_file)
+if config.settings.punct_correction_tool == "fastpunct":
+    from fastpunct import FastPunct
+    fastpunct = FastPunct("en")
+elif config.settings.punct_correction_tool == "punctuator":
+    from punctuator import Punctuator
+    model_file = os.path.join(str(Path.home()),'.punctuator','Demo-Europarl-EN.pcl')
+    punctuator_runner = Punctuator(model_file)
 
 def eprint(*args, **kwargs):
     print(*args, file=sys.stderr, **kwargs)
@@ -88,8 +86,11 @@ def read_srt_file(input_data_folder_path: str, origin: str) -> dict:
     """
     srt_file_name = os.path.join(input_data_folder_path, origin + ".srt")
     if os.path.isfile(srt_file_name):
-        srtList = pysrt.open(srt_file_name)
-        return srtList
+        try:
+            srtList = pysrt.open(srt_file_name)
+            return srtList
+        except:
+            print(f"\n {Fore.YELLOW} WARNING: {origin}.srt file corrupted")
     else:
         print(f"\n {Fore.YELLOW} WARNING: {origin}.srt file not present")
         return None
@@ -150,8 +151,16 @@ def correct_punctuation_srt_file(srtList: dict, correction_method: str):
     #print("transcription_list", transcription_list)
     #print("tokenized_sentences", tokenized_sentences)
     #print("sentence_mapper", sentence_mapper)
-    print(f"using punctation tool: {correction_method}")
+    #print(f"using punctation tool: {correction_method}")
     if correction_method == "fastpunct":
+        average_wait_time_per_sentence = 6
+        approx_time_to_convert = len(tokenized_sentences)*average_wait_time_per_sentence
+        approx_time_string = ""
+        if approx_time_to_convert > 60:
+            approx_time_string = str(approx_time_to_convert/60) + " minutes"
+        else:
+            approx_time_string = str(approx_time_to_convert) + " seconds"
+        print(f"\n***** {Fore.YELLOW}Correcting punctuations for transcriptions, Grab a coffee it can take time, approx time for completion: {approx_time_string} ")
         for idx, sentence_t in enumerate(tokenized_sentences):
             sentence_t_truncated = truncate_string_to_fixed_size(sentence_t)
             tokenized_sentences[idx] = sentence_t_truncated
@@ -176,10 +185,10 @@ def correct_punctuation_srt_file(srtList: dict, correction_method: str):
     #print("corrected_transcription_list", corrected_transcription_list)  
 
     end = time.time()
-    if correction_method == "fastpunct":
-        print("Time for fastpunct:", end - start)
-    elif correction_method == "punctuator":
-        print("Time for punctuator:", end - start)
+    #if correction_method == "fastpunct":
+    #    print("Time for fastpunct:", end - start)
+    #elif correction_method == "punctuator":
+    #    print("Time for punctuator:", end - start)
 
     for idx, srt in enumerate(srtList):
         string_text = corrected_transcription_list[idx]

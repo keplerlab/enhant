@@ -9,7 +9,7 @@ services:
     volumes:
        - ./api/transcription_svc/websocket-server/:/opt/transcription_svc/websocket-server/
        #- ./api/transcription_svc/models/vosk-model-en-us-daanzu-20200905-big/:/opt/transcription_svc/vosk-model-en/model/
-       - ./certificates/:/opt/transcription_svc/websocket-server/certificates/
+       - ./certificates-and-credentials/:/opt/transcription_svc/websocket-server/certificates-and-credentials/
     environment:
       - SERVER_INTERFACE=0.0.0.0
       - SERVER_PORT=1111
@@ -18,7 +18,7 @@ services:
 
 
   cli:
-    image: keplerlab/enhant-cli:0.1.3
+    image: keplerlab/enhant-cli:0.1.4
     stdin_open: true # docker run -i
     tty: true        # docker run -t
     volumes:

@@ -32,8 +32,8 @@ class Questions_finder(object):
 
     def _load_model(self):
 
-        vectorizer_pickle_file = "vectorizer.pickle.dat"
-        gb_pickle_file = "gb.pickle.dat"
+        vectorizer_pickle_file = "/home/model/vectorizer.pickle.dat"
+        gb_pickle_file = "/home/model/gb.pickle.dat"
 
         if not os.path.isfile(gb_pickle_file):
             #print("Did not find pre trained gradient model, generating new one")
