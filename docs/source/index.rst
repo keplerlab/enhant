@@ -61,7 +61,7 @@ But can this experience be enhanced?
 That is what enhan(t) is all about. By leveraging existing web based
 meeting solutions and providing a Chrome extension, the user is able to
 now take a bookmark to mark an important moment and what was spoken in
-the last <few> seconds, take screenshot of the tab with a single click
+the last 10 seconds, take screenshot of the tab with a single click
 and still provide the flexibility of taking manual notes. All of these
 come along with when these actions were taken, so that at a later point
 of time, this data could be overlaid on top of a meeting recording to

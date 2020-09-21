@@ -16,7 +16,7 @@ Then enhan(t) Chrome extension is the minimum requirement to get started
 with enhan(t) in a meaningful way. It allows basic users to enhance the
 meetings conducted in Zoom, MS Teams or Jitsi on the Chrome browser. It
 enables users to bookmark moments (capture the timestamp of the moment
-along with the last <few> seconds of host side transcription), capture
+along with the last 10 seconds of host side transcription), capture
 screenshots (take the screenshot of the visible tab area along with the
 timestamp), take notes (take manual notes along with timestamp) and
 transcript the host side of the conversation (from the microphone) after
@@ -38,7 +38,7 @@ application run and the Power mode is enabled in the extension settings,
 the extension will now be able to transcript both the host side (via
 microphone) and guest side (via tab audio) of the conversation.
 Bookmarking moment would come along with the transcription of the last
-<few> seconds of both side of the conversation. Additionally, meeting
+10 seconds of both side of the conversation. Additionally, meeting
 metrics like engagement and sentiment is also provided. Post the call,
 all the questions asked during the meeting can be extracted via
 interrogative analysis.

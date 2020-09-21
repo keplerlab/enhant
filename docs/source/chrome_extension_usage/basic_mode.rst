@@ -25,7 +25,7 @@ Once the meeting has been joined, the record icon can be hit to start the enhan(
         <Provide screenshots for 1-3>
 
 
-#.  Bookmark moment (bookmark icon): This allows the user to literally bookmark a moment during the meeting. A lot of times, one wants to mark a moment which seems important so that one can go back later and refer to it. This enables this feature. Apart from noting the timestamp, it also captures the transcription of the last <few> seconds of host side (via microphone).
+#.  Bookmark moment (bookmark icon): This allows the user to literally bookmark a moment during the meeting. A lot of times, one wants to mark a moment which seems important so that one can go back later and refer to it. This enables this feature. Apart from noting the timestamp, it also captures the transcription of the last 10 seconds of host side (via microphone).
 #.  Capture screenshot (camera icon): This allows the user to capture the contents displayed in the tab along with the timestamp. This allows the user to captured shared screen content, like that important slide during a presentation, along with the time.
 #.  Take notes (file icon): On clicking this, the user is provided with a text area where one can take notes. On clicking the ‘Add Notes’ button, the notes are persisted along with the timestamp. Users at times want to add their thoughts during the meeting. This feature enables that.
 
