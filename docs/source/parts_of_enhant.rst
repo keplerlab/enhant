@@ -25,7 +25,12 @@ provided with a zip download, containing all the data captured. This
 data can be viewed as plan text after extracting the zip download or can
 be viewed in the enhan(t) data viewer.
 
-<Show Basic mode screenshots>
+.. figure:: ./images/basic_mode_toolbar.png
+  :width: 70%
+  :alt: enhan(t) Chrome extension - Basic mode toolbar
+  :align: center
+
+  enhan(t) Chrome extension - Basic mode toolbar
 
 The extension can provide more data if used in Power mode alongside the
 companion transcription service. Once the setup is done, Docker
@@ -38,7 +43,12 @@ metrics like engagement and sentiment is also provided. Post the call,
 all the questions asked during the meeting can be extracted via
 interrogative analysis.
 
-<Show Power mode screenshots>
+.. figure:: ./images/power_mode_toolbar.png
+  :width: 70%
+  :alt: enhan(t) Chrome extension - Power mode toolbar
+  :align: center
+  
+  enhan(t) Chrome extension - Power mode toolbar
 
 Transcription Service
 ---------------------
@@ -65,8 +75,6 @@ enhan(t) Meeting Data Viewer
 The enhan(t) Meeting Data Viewer where a user can view a downloaded
 meeting data zip file in context.
 
-<Meeting Data Viewer screenshot basic mode>
-
 Once a basic mode meeting data zip file is loaded locally, the user can
 view the following details along with the time:
 
@@ -81,7 +89,12 @@ view the following details along with the time:
 -  Audio or video recording overlayed with bookmarks, screenshots and
    notes moments (if user uploads them)
 
-<Meeting Data Viewer screenshot power mode>
+.. figure:: ./images/meeting_data_viewer_basic_mode.png
+  :width: 70%
+  :alt: enhan(t) Meeting Data Viewer - Basic mode
+  :align: center
+  
+  enhan(t) Meeting Data Viewer - Basic mode
 
 If a power mode meeting data zip file is loaded, along with the basic
 mode details, one can also view:
