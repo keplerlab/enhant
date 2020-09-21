@@ -9,7 +9,7 @@ Installing the enhan(t) extension
 ---------------------------------
 
 1. Navigate to Chrome Webstore <add link> via your Chrome browser.
-   <Chrome store screenshot>
+   <Chrome store screenshot - update after publishing>
 
 2. Click the ‘Add to Chrome’ button. You would be able to see the
    ‘enhan(t) Meeting Power Tool’ extension under the ‘Extensions’ jigsaw
@@ -20,9 +20,16 @@ Installing the enhan(t) extension
 Using the enhan(t) extension
 ----------------------------
 
+.. raw:: html
+
+   <video width="600" height="auto" controls>
+      <source src="_videos/getting_started_in_2_mins.mp4" type="video/mp4">
+      Your browser does not support the video tag.
+   </video>
+
 1. When you open a Zoom, MS Teams or Jitsi meeting, you will find the
    enhan(t) toolbar on the top right of your tab, with icons all grayed
-   out and disabled. <Toolbar screenshot>
+   out and disabled.
 
 2. Click on the enhan(t) extension icon in the toolbar to activate the
    extension. The record icon would now be blue.
@@ -52,7 +59,7 @@ Viewing the meeting data
    zip file.
 
 3. Optionally, add the meeting recording by clicking on ‘Optional -
-   Select meeting recording (.mp4, .flac)’.
+   Select meeting recording (.mp4)’.
 
 4. Click on ‘View meeting’ button to see all your bookmarked moments,
    captured screenshots and taken notes in context.

@@ -72,3 +72,6 @@
 .gitattributes export-ignore
 .gitignore     export-ignore
 .gitkeep       export-ignore
+
+# Videos
+*.mp4      binary
