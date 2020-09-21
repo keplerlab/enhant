@@ -108,6 +108,10 @@
     display: none;
 }
 
+.vertical-line-container{
+    display: none;
+}
+
 </style>
 
 <div class="row">
@@ -808,6 +812,7 @@
             }
 
             renderChartOnVideo(zip_data){
+                $('.'+ this.conf.progress__line_container).show();
                 $('.' + this.conf.chart_container_cls).html("");
                 const chartConf = this.getChartConfig();
                 const canvasStyle = {
@@ -837,6 +842,7 @@
                 progress__time__duration: "progress__time__duration",
                 progress__time__current_time: "progress__time__current_time",
                 progress__line: "progress__line",
+                progress__line_container: "vertical-line-container",
                 settings: {
                     icon_cls: "video-settings",
                     container_cls: "settings-container",
@@ -849,6 +855,7 @@
             };
 
             var zip_data = data.zip;
+            var notes_data = data.notes;
 
             if (!isEmpty(zip_data)){
 
@@ -872,6 +879,28 @@
                 video.onloadedmetadata = function(){
                     player.showVideoDuration();
                     player.addMarkersOnProgressBar();
+                }
+
+                window.APP.player =  player;
+            }
+
+            else if (!isEmpty(notes_data)){
+                var player = new EnhantMediaPlayer(conf);
+
+                // set player zip data
+                player.setZipData(zip_data);
+
+                // set the recording start time (will match the meeting start time without offset)
+                player.setRecordingStartTime();
+
+                // register player events
+                player.registerEvents();
+
+                 var video = player.getVideo();
+
+                // video is loaded, add duration data and markers
+                video.onloadedmetadata = function(){
+                    player.showVideoDuration();
                 }
 
                 window.APP.player =  player;
