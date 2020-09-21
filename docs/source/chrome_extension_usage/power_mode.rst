@@ -3,7 +3,7 @@
 Power Mode
 ================
 
-This mode of the extension gives additional functionalities to power users when used in conjunction with the companion transcription service. For installation of the transcription service, please refer to the installation guide <refer to the Docker compose installation guide>.
+This mode of the extension gives additional functionalities to power users when used in conjunction with the companion transcription service. For installation of the transcription service, please refer to :ref:`installing_transcription_service_and_cli`.
 
 Once the transcription service is installed and run, one can click the settings icon in the extension toolbar, check ‘Enable Power Mode’ and hit ‘Apply’ to activate the Power mode.
 
@@ -22,6 +22,8 @@ A lightning icon will now appear in the toolbar, signifying that the Power mode 
   :align: center
   
   Power mode icon active in the toolbar
+
+If you want to change the transcription language setting for the host side (via microphone) and guest side (via tab audio), you can select English (US) or English (IN) from the drop down. Hit 'Apply' to save the changes. English (IN) would be used only if the Google Cloud Speech to Text transcription service is run in the background.
 
 For advanced developers, who want to change ports during local deployment or host the Docker application remotely, the ‘Server’ textbox can be used to input the URL. Hit ‘Apply’ to persist the changes.
 

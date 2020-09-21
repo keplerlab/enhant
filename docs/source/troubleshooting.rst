@@ -5,7 +5,7 @@ Tips, Troubleshooting and FAQs
 FAQ
 =========
 
-What does offset mean in Enhant Dashboard Viewer? 
+What does offset mean in enhan(t) Dashboard Viewer? 
 -----------------------------------------------------
 
 If you upload recording in addition to the meeting data, you see a separate video section in the dashboard.
@@ -17,7 +17,7 @@ you started the recording and the moment when enhant plugin was started.
 
 For example, if your recording started 10 min before the enhant plugin - you will add the offset 
 value -00:10:00 and if the recording started 10 minutes after the plugin you will add the offset value of 00:10:00. 
-Doing this will shift the timeline for all the data across the dashbaord and you will get better 
+Doing this will shift the timeline for all the data across the dashboard and you will get better 
 sense of guest actions over the course of entire recording.
 
 In a situation where the offset is positive (recording started after the enhant), any data collected 
@@ -32,11 +32,12 @@ not part of the enhant system so there is no way to evaluate inside of dashboard
 
 What are the supported languages? 
 -------------------------------------------
-   Currently we provide support for English (US).
- 
+The Chrome Extension provides the host side transcription (from microphone) in both Basic Mode and Power mode. Currently we provide support for English (US) and English (IN) for host side transcription.
+
+Guest side transcription (from tab audio) is available only in the Power mode when used in conjunction with the transcription service. When the default Vosk service is used, it can only provide transcription optimized for English (US). If the alternate Google Cloud Speech to Text service is used, it can provide transcriptions optimized for both English (US) as well as English (IN), as per the setting applied in the Chrome extension.
 
 Error:- Docker container crashed
----------------------------------
+--------------------------------
 
 If your transcription service crashes or docker goes down, please raise a issue on github with details.
 Check if you have allocated sufficient RAM to docker container by going to docker 
@@ -57,8 +58,8 @@ docker-compose up.
 Refer :ref:`certificate_for_localhost` for instructions
 
 
-Remove all Dangling Docker images
------------------------------------
+How to remove dangling Docker images?
+-------------------------------------
 
 If you are using docker to build and manage enhant it may happen
 that after running *docker-compose build* multiple times you may

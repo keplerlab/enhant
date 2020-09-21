@@ -25,7 +25,7 @@ If the extension has just been installed for the first time, it would also ask f
 
   enhan(t) Chrome extension - Permissions
 
-For Basic mode users, you can leave the settings alone.
+For Basic mode users, you can leave the 'Enable Power Mode' settings unchecked.
 
 .. figure:: ../images/basic_mode_settings.png
   :width: 70%
@@ -33,6 +33,8 @@ For Basic mode users, you can leave the settings alone.
   :align: center
 
   Basic mode setting - 'Enable Power Mode' unchecked
+
+If you want to change the transcription language setting for the host side (via microphone), you can select English (US) or English (IN) from the drop down. Hit 'Apply' to save the changes.
 
 Once the meeting has been joined, the record icon can be hit to start the enhan(t) session. The record icon will keep animating during the course of the session. The toolbar will expand to show 3 new icons – bookmark, camera and file. These icons provide the following functions:
 

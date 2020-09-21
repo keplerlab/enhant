@@ -18,6 +18,8 @@ To install the enhan(t) extension:
 
   enhan(t) Chrome extension toolbar on the top right of your tab
 
+.. _installing_transcription_service_and_cli:
+
 Installing the Transcription Service and Analysis CLI (Command Line Interface)
 ==============================================================================
 The transcription service and analysis CLI enables the Power mode in the Chrome extension to work. It enables guest side transcription, provides engagement, sentiment and interrogatives.
