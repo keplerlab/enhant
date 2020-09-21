@@ -3,27 +3,28 @@
 Power Mode
 ================
 
-This mode of the extension gives additional functionalities to power users when used in conjunction with the companion Docker compose application. For installation of the Docker application, please refer to the installation guide <refer to the Docker compose installation guide>.
+This mode of the extension gives additional functionalities to power users when used in conjunction with the companion transcription service. For installation of the transcription service, please refer to the installation guide <refer to the Docker compose installation guide>.
 
-Once the Docker application is installed and run, one can click the settings icon in the extension toolbar, check ‘Enable Power Mode’ and hit ‘Apply’ to activate the Power mode.
+Once the transcription service is installed and run, one can click the settings icon in the extension toolbar, check ‘Enable Power Mode’ and hit ‘Apply’ to activate the Power mode.
 
-Now a new flash icon should be visible in the toolbar.::
+.. figure:: ../images/power_mode_settings.png
+  :width: 70%
+  :alt: enhan(t) Chrome extension settings - 'Enable Power Mode' checked
+  :align: center
 
+  Power mode setting - 'Enable Power Mode' checked
 
-        <Show screenshots of the process>
+A lightning icon will now appear in the toolbar, signifying that the Power mode is active.
 
+.. figure:: ../images/power_mode_toolbar.png
+  :width: 70%
+  :alt: enhan(t) Chrome extension - Power mode icon active in the toolbar
+  :align: center
+  
+  Power mode icon active in the toolbar
 
-
-On clicking the flash icon for Power mode, you get to see the real-time call metrics – engagement and sentiment – from the meeting.::
-
-
-        <Show screenshot of engagement and sentiment>
-
-
-
-The call metrics can be removed by hitting the close button or by clicking the Power mode icon in the toolbar. It can be brought back in the view by clicking the Power mode icon again.
+For advanced developers, who want to change ports during local deployment or host the Docker application remotely, the ‘Server’ textbox can be used to input the URL. Hit ‘Apply’ to persist the changes.
 
 All other features work as is in the Basic mode. The difference is that now both host (via microphone) and guest (via tab audio) side of the conversation are transcribed in real time.
 
-
-
+The meeting zip file generated in Power mode can be further analyzed by using the Analysis CLI application and viewed at the `enhan(t) Meeting Data Viewer <https://keplerlab.github.io/enhant-dashboard-viewer/>`_ for further details.

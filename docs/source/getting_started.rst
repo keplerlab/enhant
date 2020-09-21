@@ -1,50 +1,30 @@
-.. _idea2life_getting_started:
-
-###############################
-enhant Getting Started Guide
-###############################
-
-Installation
-==============
-
 .. _installing_chrome_extension:
 
 Installing the Chrome Extension
--------------------------------
+===============================
 
 The Chrome extension is the minimal requirement for most users to leverage enhan(t). The easiest way to install it is via the Chrome store.
 
+To install the enhan(t) extension:
 
-
-To install the enhan(t) extension::
-''''''''''''''''''''''''''''''''''''''''''''''''
-
-#.  Navigate to Chrome Webstore via your Chrome browser. Chrome store screenshot
+#.  Navigate to Chrome Webstore <Chrome store link> via your Chrome browser. <Chrome store screenshot - After publishing>
 #.  Click the ‘Add to Chrome’ button. You would be able to see the enhan(t) icon in your toolbar.
-#.  When you open a Zoom, MS Teams or Jitsi meeting, you will find the enhan(t) toolbar on the top right of your tab. <Toolbar screenshot>
+#.  When you open a Zoom, MS Teams or Jitsi meeting, you will find the enhan(t) toolbar on the top right of your tab.
 
-Settings::
-''''''''''''''''
+.. figure:: ./images/basic_mode_toolbar.png
+  :width: 70%
+  :alt: enhan(t) Chrome extension toolbar on the top right of your tab
+  :align: center
 
-For Basic mode users, you can leave the settings alone.::
+  enhan(t) Chrome extension toolbar on the top right of your tab
 
-
-        <Show settings screenshot>
-
-
-
-For Power mode users, you need to install and run the companion Docker application (installation guide here <link to the installation guide>) and then check the ‘Enable Power Mode’ checkbox and hit ‘Apply’. A lightning icon will now appear in the toolbar once the record icon is pressed. The lightning icon can be used to show the real-time engagement and sentiment.
-
-
-For advanced developers, who want to change ports during local deployment or host the Docker application remotely, the ‘Server’ textbox can be used to input the URL. Hit ‘Apply’ to persist the changes.
-
-
-Transcription Service and CLI (Command Line Interface)
-The transcription service and CLI enables the Power mode in the Chrome extension to work. It enables guest side transcription, provides engagement, sentiment and interrogatives.
-The transcription service and CLI can be installed as a Docker compose application.
+Installing the Transcription Service and Analysis CLI (Command Line Interface)
+==============================================================================
+The transcription service and analysis CLI enables the Power mode in the Chrome extension to work. It enables guest side transcription, provides engagement, sentiment and interrogatives.
+The transcription service and the analysis CLI can be installed as a Docker compose application.
 To install both as application using docker application follow these instructions:
 
-#.  Make sure you have Docker installed on your system. If not,follow the instructions there to get started with Docker. link `docker-desktop <https://www.docker.com/products/docker-desktop>`_. and for linux using this link `docker-desktop on linux <https://docs.docker.com/install/linux/docker-ce/ubuntu/>`_
+#.  Make sure you have Docker installed on your system. If not, go to https://docs.docker.com/get-docker/ and follow the instructions there to get started with Docker.
 
 #.  Make sure you have Git installed. If not, go to https://www.atlassian.com/git/tutorials/install-git and follow the instructions there.
 
@@ -70,7 +50,7 @@ To install both as application using docker application follow these instruction
 #.  Start Docker containers::
 
 
-        cd /path/to/enahant-repo/
+        cd /path/to/enhant-repo/
         docker-compose up
 
 
@@ -84,7 +64,7 @@ To install both as application using docker application follow these instruction
 #.  Invoke cli for input zip file from plugin (input.zip in example below))::
 
 
-        cd /path/to/enahant-repo
+        cd /path/to/enhant-repo
         docker-compose run cli
         python enhant_cli_app analyze input.zip
 
@@ -113,5 +93,3 @@ enhant software is supported on the following host operating systems:
 * RAM: 6GB of system memory
 * Hard disk space: 30 GB
 * Google Chrome or chromium browser
-
-
