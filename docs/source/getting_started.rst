@@ -63,15 +63,6 @@ To install both as application using docker application follow these instruction
         docker-compose down
 
 
-#.  Invoke cli for input zip file from plugin (input.zip in example below))::
-
-
-        cd /path/to/enhant-repo
-        docker-compose run cli
-        python enhant_cli_app analyze input.zip
-
-
-
 Supported Hardware and operating system
 ========================================
 
