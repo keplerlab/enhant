@@ -23,7 +23,7 @@ Using the enhan(t) extension
 .. raw:: html
 
    <video width="600" height="auto" controls>
-      <source src="_videos/getting_started_in_2_mins.mp4" type="video/mp4">
+      <source src="_static/getting_started_in_2_mins.mp4" type="video/mp4">
       Your browser does not support the video tag.
    </video>
 
