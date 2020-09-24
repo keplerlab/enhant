@@ -310,7 +310,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     }
 })
 
-chrome.pageAction.onClicked.addListener(function(tab) {
+chrome.browserAction.onClicked.addListener(function(tab) {
 
     var obj = {
         "plugin_activated": true
@@ -324,13 +324,9 @@ chrome.pageAction.onClicked.addListener(function(tab) {
             chrome.tabs.sendMessage(tabs[0].id, {cmd: "activate_plugin"}, function(result) {
                 console.log("Plugin activated : ", result.status);
             });
-    
-        });
-        
+        });       
     });
-
-    
-  });
+});
 
 chrome.commands.onCommand.addListener((command) => {
     if (command === "take-note") {

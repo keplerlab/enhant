@@ -42,7 +42,8 @@ const STORAGE_KEYS = {
     tab_id: "tab_id",
     settings: "settings",
     guest: "guest",
-    host: "host"
+    host: "host",
+    urls: "urls"
 }
 
 class EnhantLocalStorage{
@@ -62,6 +63,10 @@ class EnhantLocalStorage{
 
     generateUnixTimestamp(){
         return Math.round(new Date().getTime());
+    }
+
+    getHostname(url) {
+        return url.match(/^(.*:)\/\/([A-Za-z0-9\-\.]+)/)[2];
     }
 
     generate_data_obj(data, time){
@@ -109,6 +114,111 @@ class EnhantLocalStorage{
                 cb(data_obj);
             });
         });
+    }
+
+    remove_url(url, cb){
+        var status = true;
+        var error = null;
+        var _this = this;
+
+        chrome.storage.local.get([STORAGE_KEYS.settings], function(result){
+
+            var settings = result[STORAGE_KEYS.settings];
+
+            var urls = settings["urls"];
+
+            var index = urls.findIndex(obj => obj.url == url);
+
+            if (index !== -1){
+                urls.splice(index, 1);
+            }
+
+            var new_obj = {};
+            new_obj[STORAGE_KEYS.settings] = {};
+            new_obj[STORAGE_KEYS.settings]["lang"] = settings["lang"];
+            new_obj[STORAGE_KEYS.settings]["power_mode"] = settings["power_mode"];
+            new_obj[STORAGE_KEYS.settings]["server_url"] = settings["server_url"];
+            new_obj[STORAGE_KEYS.settings]["urls"] = urls;
+            
+            // set the new array value to the same key
+            chrome.storage.local.set(new_obj, function () {
+                cb(url, status, error);
+            });
+
+        });
+    }
+
+    add_url(url, cb){
+
+        var status = true;
+        var error = null;
+        var _this = this;
+
+        var default_urls_arr = CONFIG.default_whitelisted_urls.map(function(url){
+            return {default: true, url: url}
+        });
+       
+        chrome.storage.local.get([STORAGE_KEYS.settings], function(result){
+
+            var settings = result[STORAGE_KEYS.settings];
+
+            if (!settings){
+
+                // default settings
+                settings = {
+                    "lang": "en-US",
+                    "power_mode": false,
+                    "server_url": "http://127.0.0.1",
+                    "urls": [].push(...default_urls_arr),
+                }
+            }
+
+            console.log(" settings ", settings);
+
+            var valid_hostnames = settings["urls"].map(function(obj){ return _this.getHostname(obj.url)});
+
+            var urls = [];
+
+            if (settings.hasOwnProperty(STORAGE_KEYS.urls)){
+                urls = settings[STORAGE_KEYS.urls];
+            }
+
+            var hostname_already_included = valid_hostnames.map(function (valid_host){
+
+                if (_this.getHostname(url).length >= valid_host.length){
+                    return _this.getHostname(url).includes(valid_host);
+                }
+                else{
+                    return valid_host.includes(_this.getHostname(url));
+                }
+            });
+
+            console.log(" hostname already added ", hostname_already_included);
+            
+            if (hostname_already_included.indexOf(true) == -1){
+                // add item to beginning of array
+                urls.unshift({default: false, url: url});
+
+                var new_obj = {};
+                new_obj[STORAGE_KEYS.settings] = {};
+                new_obj[STORAGE_KEYS.settings]["lang"] = settings["lang"];
+                new_obj[STORAGE_KEYS.settings]["power_mode"] = settings["power_mode"];
+                new_obj[STORAGE_KEYS.settings]["server_url"] = settings["server_url"];
+                new_obj[STORAGE_KEYS.settings]["default_urls"] = settings["default_urls"];
+
+                new_obj[STORAGE_KEYS.settings]["urls"] = urls;
+
+                // set the new array value to the same key
+                chrome.storage.local.set(new_obj, function () {
+                    cb(url, status, error);
+                });
+            }
+            else{
+                status = false;
+                error = "Website is already whitelisted.";
+                cb(url, status, error);
+            }
+        })
     }
 
     read_multiple(keysArr, cb){

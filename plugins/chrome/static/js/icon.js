@@ -586,7 +586,7 @@ class SettingsIcon extends Icon{
         super();
         this.server = "http://" + CONFIG.transcription.ip;
         this.enable_transcription_view_for_debug = false;
-        this.power_mode = false;
+        this.power_mode = CONFIG.power_mode;
         this.apply_btn_id = "settings-apply-btn";
         this.container_id = "settings-container";
 

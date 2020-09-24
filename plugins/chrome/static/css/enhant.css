@@ -1,0 +1,115 @@
+html{
+    min-height:100%;/* make sure it is at least as tall as the viewport */
+    position:relative;
+}
+
+body{
+    height: 100%;
+}
+
+.header{
+    height: 86px;
+    background-color: #1E90FF;
+    color: white;
+}
+
+@media (max-width: 992px){
+    .header{
+        height: 140px;
+    }
+}
+.main{
+    height: 800px;
+    margin-top: 30px;
+}
+
+.table-responsive{
+    height: 450px;
+    overflow-y: scroll;
+    width: 90%;
+}
+
+.url-enabled{
+    cursor: pointer;
+}
+
+.notification{
+    height: 50px;
+    width: 90%;
+}
+
+.section{
+    margin-top: 20px;
+}
+
+.main-heading{
+    padding-top: 5%;
+}
+
+.main-heading-description{
+    margin-top: 10px;
+}
+
+.text-white {
+    color: white !important; 
+}
+
+.inter-regular-16{
+    font-family: "Inter-Regular";
+    font-size: 16px;
+}
+
+.oxygen-regular-14{
+    font-family: "Oxygen-Regular";
+    font-size: 14px;
+    line-height: 20px;
+    color: #939393;
+}
+
+.inter-bold-14{
+    font-family: "Inter-Bold";
+    font-size: 14px;
+}
+
+.inter-bold-21{
+    font-family: "Inter-Bold";
+    font-size: 21px;
+}
+
+.inter-bold-25{
+    font-family: "Inter-Bold";
+    font-size: 25px;
+}
+
+.inter-bold-16{
+    font-family: "Inter-Bold";
+    font-size: 16px;
+}
+
+.text-white:hover, .text-white:active {
+color: white !important;
+}
+
+.header div{
+    margin-top: 12px;
+}
+
+.home, .dashboard{
+    padding-top: 6px;
+}
+
+.has-shadow{
+    box-shadow: 0 1px 4px 0 rgb(48, 49, 51, 0.1),0 1px 4px 0 rgb(48, 49, 51, 0.1);
+    border-radius: 5px;
+}
+
+.has-padding{
+    padding-left: 5%;
+}
+
+.sidenav{
+    position: absolute;
+    width: 5%;
+    height: 100%;
+  
+}

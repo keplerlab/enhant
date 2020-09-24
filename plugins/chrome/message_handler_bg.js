@@ -4,6 +4,36 @@ var backend_obj = new BackendHandler();
 // TODO: connect to backend (should be moved to power mode);
 // backend_obj.connectToBackend();
 
+function isEmpty(obj){
+    for(var prop in obj) {
+        if(obj.hasOwnProperty(prop)) {
+            return false;
+        }
+    }
+
+    return JSON.stringify(obj) === JSON.stringify({});
+}
+
+function getSettings(cb, data){
+    enhant_local_storage_obj.read_multiple([STORAGE_KEYS.settings], function(result){
+
+        var settings_data = result[STORAGE_KEYS.settings];
+        cb(settings_data, data);
+    });
+}
+
+window.addEventListener("inject-content-match-url", function(evt){
+    var handler_cb = evt.detail.handler_cb;
+    var url = evt.detail.url;
+    var tabId = evt.detail.tabId;
+
+    var data = {
+        url: url,
+        tabId: tabId
+    }
+    getSettings(handler_cb, data);
+})
+
 function transcriptionMessageHandler(transcription_data){
     var d_type = STORAGE_KEYS.transcription;
 
@@ -291,13 +321,26 @@ chrome.runtime.onMessage.addListener(
         }
 
         if (request.msg == "settings_updated"){
-            var obj = {};
-            obj[STORAGE_KEYS.settings] = request.data;
-            enhant_local_storage_obj.save_basic(obj, function(){
-                // console.log("storage updated in local storage"); 
-                sendResponse({status:true, data: obj});
 
-            });
+            var changed_data = request.data;
+
+            getSettings(function(storage_settings_data, passed_data){
+                var obj = {};
+
+                obj[STORAGE_KEYS.settings] = {
+                    "power_mode": passed_data["power_mode"],
+                    "server_url": passed_data["server_url"],
+                    "lang": passed_data["lang"],
+                    "urls": storage_settings_data["urls"]
+                }
+
+                enhant_local_storage_obj.save_basic(obj, function(){
+                    // console.log("storage updated in local storage"); 
+                    sendResponse({status:true, data: obj});
+    
+                });
+
+            }, changed_data);
             
         }
 
@@ -310,22 +353,28 @@ chrome.runtime.onMessage.addListener(
         }
 
         if (request.msg == "get-settings"){
-            enhant_local_storage_obj.read_multiple([STORAGE_KEYS.settings], function(result){
 
-                var settings_data = result[STORAGE_KEYS.settings];
-                if (settings_data){
-                   sendResponse({
-                       status: true,
-                       settings: settings_data
-                   });
-                }
-                else{
-                    sendResponse({
-                        status: true,
-                        settings: {}
-                    });
-                }
-                
+            getSettings(function(settings_data){
+                sendResponse({
+                    status: true,
+                    settings: settings_data
+                });
+            });
+        }
+
+        if (request.msg == "add-url"){
+            var url_to_add = request.data;
+            enhant_local_storage_obj.add_url(url_to_add, function(url, status, err){
+                sendResponse({url_added: url, status: status, error: err });
+            });
+            
+        }
+
+        if (request.msg == "remove-url"){
+            var url_to_remove = request.data;
+            console.log(" removing url ", url_to_remove);
+            enhant_local_storage_obj.remove_url(url_to_remove, function(url, status, err){
+                sendResponse({url_removed: url, status: status, error: err });
             });
             
         }
