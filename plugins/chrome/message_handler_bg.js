@@ -372,7 +372,7 @@ chrome.runtime.onMessage.addListener(
 
         if (request.msg == "remove-url"){
             var url_to_remove = request.data;
-            console.log(" removing url ", url_to_remove);
+            // console.log(" removing url ", url_to_remove);
             enhant_local_storage_obj.remove_url(url_to_remove, function(url, status, err){
                 sendResponse({url_removed: url, status: status, error: err });
             });

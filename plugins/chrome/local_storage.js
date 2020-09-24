@@ -173,7 +173,7 @@ class EnhantLocalStorage{
                 }
             }
 
-            console.log(" settings ", settings);
+            // console.log(" settings ", settings);
 
             var valid_hostnames = settings["urls"].map(function(obj){ return _this.getHostname(obj.url)});
 
@@ -193,7 +193,7 @@ class EnhantLocalStorage{
                 }
             });
 
-            console.log(" hostname already added ", hostname_already_included);
+            // console.log(" hostname already added ", hostname_already_included);
             
             if (hostname_already_included.indexOf(true) == -1){
                 // add item to beginning of array
