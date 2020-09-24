@@ -90,6 +90,7 @@ class ScreenCapture{
             "lang": this.lang
         }));
 
+        this.socket_transcription.onmessage = this.socket_transcription_onmessage_cb.bind(this);
     }
 
     saveTranscription(transcription){
