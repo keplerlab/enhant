@@ -162,17 +162,6 @@ class EnhantLocalStorage{
 
             var settings = result[STORAGE_KEYS.settings];
 
-            if (!settings){
-
-                // default settings
-                settings = {
-                    "lang": "en-US",
-                    "power_mode": false,
-                    "server_url": "http://127.0.0.1",
-                    "urls": [].push(...default_urls_arr),
-                }
-            }
-
             // console.log(" settings ", settings);
 
             var valid_hostnames = settings["urls"].map(function(obj){ return _this.getHostname(obj.url)});
