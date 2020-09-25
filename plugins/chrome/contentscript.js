@@ -20,7 +20,7 @@ $(document).ready(function(){
     div.style.right = "0px";
     div.style.top = "10px";
     div.style.position = "absolute";
-    div.style.background = "inherit";
+    div.style.background = "white";
     div.style.zIndex = "9000000";
     div.style.width = "380px";
     div.style.cursor = "move";
