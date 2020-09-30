@@ -163,54 +163,89 @@ def upload_blob(bucket_name, source_file_name, destination_blob_name):
     blob = bucket.blob(destination_blob_name)
 
     blob.upload_from_filename(source_file_name)
-
+    return blob
     print(
         "File {} uploaded to {}.".format(
             source_file_name, destination_blob_name
         )
     )
 
+def upload_blob_and_run_transcription(bucket_name, source_file_name, destination_blob_name):
+    try:
+        blob = upload_blob(bucket_name, source_file_name, destination_blob_name)
+    except Exception as e:
+        print("Error in uploading files: ", str(e.output))
+        return -1
+    
+
+    try:
+        output = subprocess.check_output(
+            [
+                "node",
+                "speaker_dirazation_long_audio.js",
+                bucket_name,
+                destination_blob_name
+            ]
+        )
+        print(output)
+        return output
+    except subprocess.CalledProcessError as e:
+        print("\n Subprocess error")
+        print(str(e.output))
+        return -1
+
+
+    print("Deleting blob after processing")
+    try:
+        blob.delete()
+    except Exception as e:
+        print("Error in deleting blob please delete manually: ", str(e.output))
+        return -1
+    
+
+
 
 @app.command()
 def analyze_batch(input: str) -> NoReturn:
     print("input", input)
     if input.endswith(".mp4") or input.endswith(".mov"):
+        print(Fore.GREEN + f"\n Converting video file:{input} to wav format")
         try:
             input_video_filename = input
             output_wav_filename = os.path.splitext(input)[0]+".wav"
             output = subprocess.check_output(
                 [
                     "ffmpeg",
+                    "-hide_banner",
+                    "-loglevel",
+                    "warning",
+                    "-y",
                     "-i",
                     input_video_filename,
+                    "-ar",
+                    "16000",
                     output_wav_filename,
                 ]
             )
-            print(output)
+            #print(output)
         except subprocess.CalledProcessError as e:
             print("\n Subprocess error")
             print(str(e.output))
             return -1
 
-        print(Fore.GREEN + f"\n Uploading data", input)
+        print(Fore.GREEN + f"\n Uploading data", output_wav_filename)
         wav_file_basename = os.path.basename(output_wav_filename)
-        try:
-            upload_blob("enhant-testing", output_wav_filename, wav_file_basename)
-        except Exception as e:
-            print("Exception in uploading blob:", str(e.output))
-            return -1 
+        result = upload_blob_and_run_transcription("enhant-testing", output_wav_filename, wav_file_basename)
+        if result != -1:
+            print("result:", result)
+
     elif input.endswith(".wav"):
         wav_file_basename = os.path.basename(input)
         print(Fore.GREEN + f"\n Uploading data", input)
-        try:
-            upload_blob("enhant-testing", input, wav_file_basename)
-        except Exception as e:
-            print(str(e.output))
-            return -1
+        upload_blob_and_run_transcription("enhant-testing", input, wav_file_basename)
     else:
         print(Fore.RED + f"\n ERROR: Unsupported file format for batch processing")
         return 0
-
 
 if __name__ == "__main__":
     app()
