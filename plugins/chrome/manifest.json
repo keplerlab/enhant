@@ -34,7 +34,7 @@
         "persistent": true
       }
     ],
-    "web_accessible_resources": ["static/css/jquery-ui.css", "config.js", "popup.html"],
+    "web_accessible_resources": ["static/css/jquery-ui.css", "config.js", "popup.html", "iframe2.html"],
     "permissions": [
       "webNavigation",
       "declarativeContent",

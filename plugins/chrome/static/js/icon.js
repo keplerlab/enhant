@@ -961,5 +961,112 @@ class SeparatorIcon extends Icon{
     }
 }
 
+class AnnotationIcon extends Icon{
+    constructor(){
+        super();
+
+        this.container_id = "annotation-toolbar";
+
+        this.active_icon_path = "static/images/annotation.svg";
+        this.inactive_icon_path = "static/images/annotation_inactive.svg";
+
+        this.icon_disable_path = "static/images/annotation_disabled.svg";
+
+        this.icon_disabled_message = "Annotate enabled when recording.";
+    }
+
+    // as soon as annotation is enabled.. create the canvas
+    enableIcon(){
+        super.enableIcon();
+
+        window.parent.postMessage(
+            {
+                "id": "frame2", 
+                "key": "annotation_active",
+                "sender": "enhant",
+                "tool_info": {}
+                
+            }, "*")
+    }
+
+    //remove the canvas when it disables
+    disableIcon(){
+        super.disableIcon();
+
+        window.parent.postMessage(
+            {
+                "id": "frame2", 
+                "sender": "enhant",
+                "key": "annotation_inactive",
+                "tool_info": {}
+            }, "*")
+    }
+}
+
+class SelectAnnotationIcon extends Icon{
+    constructor(){
+        super();
+        this.active_icon_path = "static/images/select_annotation.svg";
+        this.inactive_icon_path = "static/images/select_annotation_inactive.svg";
+    }
+
+    handleClick(){
+        window.parent.postMessage(
+            {
+                "id": "frame2", 
+                "key": "annotation_tool",
+                "sender": "enhant",
+                "tool_info": {
+                    "name": "Select",
+                    "data": {}
+                }
+            }, "*")
+    }
+}
+
+class PenAnnotationIcon extends Icon{
+    constructor(){
+        super();
+        this.active_icon_path = "static/images/pen_annotation.svg";
+        this.inactive_icon_path = "static/images/pen_annotation_inactive.svg";
+    }
+
+    handleClick(){
+        window.parent.postMessage(
+            {
+                "id": "frame2", 
+                "key": "annotation_tool",
+                "sender": "enhant",
+                "tool_info": {
+                    "name": "Pen",
+                    "data": {}
+                }
+            }, "*")
+    }
+    
+}
+
+class EyeAnnotationIcon extends Icon{
+    constructor(){
+        super();
+        this.active_icon_path = "static/images/eye_opened_annotation.svg";
+        this.inactive_icon_path = "static/images/eye_closed_annotation.svg";
+    }
+
+    handleClick(){
+        window.parent.postMessage(
+            {
+                "id": "frame2", 
+                "key": "annotation_tool",
+                "sender": "enhant",
+                "tool_info": {
+                    "name": "Eye",
+                    "data": {}
+                }
+            }, "*")
+    }
+}
+
+
 
 
