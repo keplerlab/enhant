@@ -7,15 +7,15 @@ const client = new speech.SpeechClient();
 /**
  * TODO(developer): Uncomment the following lines before running the sample.
  */
-const gcsUri = 'gs://enhant-testing/Agent.wav';
+const gcsUri = 'gs://enhant-testing/LLP_test.wav';
 const encoding = 'LINEAR16';
 const sampleRateHertz = 16000;
-const languageCode = 'en-IN';
+const languageCode = 'en-US';
 const speakerDiarizationConfig = 
 {
     "enableSpeakerDiarization": true,
     "minSpeakerCount": 1,
-    "maxSpeakerCount": 5
+    "maxSpeakerCount": 10
     //"speakerTag": integer
 }
 
@@ -54,7 +54,10 @@ const request = {
     //console.log(`response.results: ${response.results}`);
 
     console.log('Speaker Diarization:');
+
     const result = response.results[response.results.length - 1];
+    //console.log(`wordsInfo: ${JSON.stringify(wordsInfo)}`);
+
     //console.log(`result: ${JSON.stringify(result)}`);
     const wordsInfo = result.alternatives[0].words;
     console.log(`wordsInfo: ${JSON.stringify(wordsInfo)}`);

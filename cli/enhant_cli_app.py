@@ -12,12 +12,15 @@ import os
 import config
 from typing import NoReturn, Tuple
 
+from google.cloud import storage
 
 from operator import methodcaller
 import helper as helper
 import json
 import zipfile
 import shutil
+
+import subprocess
 
 from colorama import init, Fore, Back
 
@@ -129,6 +132,84 @@ def delete(folder: str):
     """
     typer.echo("You called delete")
     typer.echo(f"Your folder is {folder}")
+
+
+def create_bucket_class_location(bucket_name):
+    """Create a new bucket in specific location with storage class"""
+    bucket_name = "enhant-testing"
+
+    storage_client = storage.Client()
+
+    bucket = storage_client.bucket(bucket_name)
+    bucket.storage_class = "STANDARD"
+    new_bucket = storage_client.create_bucket(bucket, location="us")
+
+    print(
+        "Created bucket {} in {} with storage class {}".format(
+            new_bucket.name, new_bucket.location, new_bucket.storage_class
+        )
+    )
+    return new_bucket
+
+
+def upload_blob(bucket_name, source_file_name, destination_blob_name):
+    """Uploads a file to the bucket."""
+    # bucket_name = "enhant-testing"
+    # source_file_name = "local/path/to/file"
+    # destination_blob_name = "storage-object-name"
+
+    storage_client = storage.Client()
+    bucket = storage_client.bucket(bucket_name)
+    blob = bucket.blob(destination_blob_name)
+
+    blob.upload_from_filename(source_file_name)
+
+    print(
+        "File {} uploaded to {}.".format(
+            source_file_name, destination_blob_name
+        )
+    )
+
+
+@app.command()
+def analyze_batch(input: str) -> NoReturn:
+    print("input", input)
+    if input.endswith(".mp4") or input.endswith(".mov"):
+        try:
+            input_video_filename = input
+            output_wav_filename = os.path.splitext(input)[0]+".wav"
+            output = subprocess.check_output(
+                [
+                    "ffmpeg",
+                    "-i",
+                    input_video_filename,
+                    output_wav_filename,
+                ]
+            )
+            print(output)
+        except subprocess.CalledProcessError as e:
+            print("\n Subprocess error")
+            print(str(e.output))
+            return -1
+
+        print(Fore.GREEN + f"\n Uploading data", input)
+        wav_file_basename = os.path.basename(output_wav_filename)
+        try:
+            upload_blob("enhant-testing", output_wav_filename, wav_file_basename)
+        except Exception as e:
+            print("Exception in uploading blob:", str(e.output))
+            return -1 
+    elif input.endswith(".wav"):
+        wav_file_basename = os.path.basename(input)
+        print(Fore.GREEN + f"\n Uploading data", input)
+        try:
+            upload_blob("enhant-testing", input, wav_file_basename)
+        except Exception as e:
+            print(str(e.output))
+            return -1
+    else:
+        print(Fore.RED + f"\n ERROR: Unsupported file format for batch processing")
+        return 0
 
 
 if __name__ == "__main__":

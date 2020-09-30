@@ -64,6 +64,8 @@ def test_batch_wav(input: str) -> NoReturn:
         print(Fore.GREEN + f"\n Uploading data", input)
 
         upload_blob("enhant-testing", input, "LLP_test.wav")
+
+
     else:
         print(Fore.RED + f"\n ERROR: Invalid zip file or folder")
         return 0
