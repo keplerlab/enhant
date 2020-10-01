@@ -17,6 +17,7 @@ from nltk import sent_tokenize
 from pathlib import Path
 import os
 import config
+import json
 
 
 init(init(autoreset=True))
@@ -239,3 +240,45 @@ def transform_Srt_to_list(srtList: dict, origin, meeting_start_utc: Optional[int
 
     # print("transcription_pkt_list", transcription_pkt_list)
     return transcription_pkt_list
+
+
+def _parse_number(input_dict: dict, dict_key: str):
+    if dict_key in input_dict:
+        return int(input_dict[dict_key])
+    else:
+        return 0 
+
+
+def _transform_time_stamp(element: dict) -> dict:
+    element["startTime"] = _parse_number(element["startTime"], "seconds")*1000 + _parse_number(element["startTime"], "nanos")//1000000 
+    element["endTime"] = _parse_number(element["endTime"], "seconds")*1000 + _parse_number(element["endTime"], "nanos")//1000000 
+    
+    return element
+
+
+def _join_word_after_sentence(sentence: str, word: str) -> str:
+    return sentence + " " + word
+
+
+def parse_speaker_wise_json(input_json: dict) -> dict:
+    speaker_tag_result = input_json[len(input_json) - 1]
+    temp = speaker_tag_result["alternatives"][0]["words"]
+    consolidated_speaker_tag_list = []
+    prev_speaker_tag = -1
+    for element in temp:
+        element = _transform_time_stamp(element)
+        currentSpeakerTag = element["speakerTag"]
+        if currentSpeakerTag != prev_speaker_tag:
+            consolidated_speaker_tag_list.append(element)
+        else:
+            consolidated_speaker_tag_list[-1]["endTime"] = element["endTime"]
+            consolidated_speaker_tag_list[-1]["word"] = _join_word_after_sentence(consolidated_speaker_tag_list[-1]["word"], element["word"])
+        prev_speaker_tag = currentSpeakerTag
+    return consolidated_speaker_tag_list
+
+
+def jsonstring_to_speaker_wise_json(input_json_string: str) -> dict:
+    input_json = json.loads(input_json_string)
+    output_json = parse_speaker_wise_json(input_json)
+    print("output_json", output_json)
+    return output_json

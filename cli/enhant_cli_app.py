@@ -171,7 +171,7 @@ def upload_blob(bucket_name, source_file_name, destination_blob_name):
 
 
 def upload_blob_and_run_transcription(
-    bucket_name, source_file_name, destination_blob_name
+    bucket_name, source_file_name, destination_blob_name, process_folder
 ):
     try:
         blob = upload_blob(bucket_name, source_file_name, destination_blob_name)
@@ -188,8 +188,17 @@ def upload_blob_and_run_transcription(
                 destination_blob_name,
             ]
         )
-        print(output)
-        return output
+        #print(output)
+        output_json = helper.jsonstring_to_speaker_wise_json(output)
+        output_json_file_name = os.path.join(process_folder, "speaker_wise.json")
+        with open(output_json_file_name, "w") as json_file:
+            print(
+                Back.GREEN
+                + f"\n***** Writing results in file: {output_json_file_name} ***** \n"
+            )
+            json.dump(output_json, json_file, indent=4)
+
+        return output_json
     except subprocess.CalledProcessError as e:
         print("\n Subprocess error")
         print(str(e.output))
@@ -201,16 +210,26 @@ def upload_blob_and_run_transcription(
     except Exception as e:
         print("Error in deleting blob please delete manually: ", str(e.output))
         return -1
+    
+
 
 
 @app.command()
 def analyze_batch(input: str) -> NoReturn:
     print("input", input)
     if input.endswith(".mp4") or input.endswith(".mov"):
+
+        process_folder = os.path.splitext(input)[0]
+        if not os.path.exists(process_folder):
+            os.makedirs(process_folder)
+
         print(Fore.GREEN + f"\n Converting video file:{input} to wav format")
         try:
             input_video_filename = input
-            output_wav_filename = os.path.splitext(input)[0] + ".wav"
+            wav_file_basename = os.path.basename(os.path.splitext(input)[0])
+            print("wav_file_basename", wav_file_basename)
+            output_wav_filename = os.path.join(process_folder, wav_file_basename+".wav")
+            print("output_wav_filename", output_wav_filename)
             output = subprocess.check_output(
                 [
                     "ffmpeg",
@@ -231,17 +250,18 @@ def analyze_batch(input: str) -> NoReturn:
             return -1
 
         print(Fore.GREEN + f"\n Uploading data", output_wav_filename)
-        wav_file_basename = os.path.basename(output_wav_filename)
         result = upload_blob_and_run_transcription(
-            "enhant-testing", output_wav_filename, wav_file_basename
+            "enhant-testing", output_wav_filename, wav_file_basename, process_folder
         )
         if result != -1:
             print("result:", result)
-
     elif input.endswith(".wav"):
+        process_folder = os.path.splitext(input)[0]
+        if not os.path.exists(process_folder):
+            os.makedirs(process_folder)
         wav_file_basename = os.path.basename(input)
         print(Fore.GREEN + f"\n Uploading data", input)
-        upload_blob_and_run_transcription("enhant-testing", input, wav_file_basename)
+        upload_blob_and_run_transcription("enhant-testing", input, wav_file_basename, process_folder)
     else:
         print(Fore.RED + f"\n ERROR: Unsupported file format for batch processing")
         return 0
