@@ -5,6 +5,7 @@
 """
 import sys
 import os
+
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 import pysrt
 from typing import List, Optional
@@ -22,11 +23,14 @@ init(init(autoreset=True))
 
 if config.settings.punct_correction_tool == "fastpunct":
     from fastpunct import FastPunct
+
     fastpunct = FastPunct("en")
 elif config.settings.punct_correction_tool == "punctuator":
     from punctuator import Punctuator
-    model_file = os.path.join(str(Path.home()),'.punctuator','Demo-Europarl-EN.pcl')
+
+    model_file = os.path.join(str(Path.home()), ".punctuator", "Demo-Europarl-EN.pcl")
     punctuator_runner = Punctuator(model_file)
+
 
 def eprint(*args, **kwargs):
     print(*args, file=sys.stderr, **kwargs)
@@ -74,6 +78,7 @@ def truncate_string_to_fixed_size(input_string: str, max_len: int = 350) -> str:
     )
     return truncated_string
 
+
 def read_srt_file(input_data_folder_path: str, origin: str) -> dict:
     """[summary]
 
@@ -96,7 +101,9 @@ def read_srt_file(input_data_folder_path: str, origin: str) -> dict:
         return None
 
 
-def save_corrected_srt_file(srtList:dict, input_data_folder_path: str, origin: str) -> NoReturn:
+def save_corrected_srt_file(
+    srtList: dict, input_data_folder_path: str, origin: str
+) -> NoReturn:
     """[summary]
 
     :param srtList: [description]
@@ -109,7 +116,8 @@ def save_corrected_srt_file(srtList:dict, input_data_folder_path: str, origin: s
     :rtype: NoReturn
     """
     srt_file_name = os.path.join(input_data_folder_path, origin + "_corrected.srt")
-    srtList.save(srt_file_name, encoding='utf-8')
+    srtList.save(srt_file_name, encoding="utf-8")
+
 
 def fix_apostrophe(string_to_fix: str) -> str:
     """fix apostrophe issue in string
@@ -124,6 +132,7 @@ def fix_apostrophe(string_to_fix: str) -> str:
         return string_fixed
     else:
         return string_to_fix
+
 
 def correct_punctuation_srt_file(srtList: dict, correction_method: str):
     """[transform srt packet to list]
@@ -148,25 +157,27 @@ def correct_punctuation_srt_file(srtList: dict, correction_method: str):
             sentence_mapper[new_counter] = idx
             new_counter += 1
 
-    #print("transcription_list", transcription_list)
-    #print("tokenized_sentences", tokenized_sentences)
-    #print("sentence_mapper", sentence_mapper)
-    #print(f"using punctation tool: {correction_method}")
+    # print("transcription_list", transcription_list)
+    # print("tokenized_sentences", tokenized_sentences)
+    # print("sentence_mapper", sentence_mapper)
+    # print(f"using punctation tool: {correction_method}")
     if correction_method == "fastpunct":
         average_wait_time_per_sentence = 6
-        approx_time_to_convert = len(tokenized_sentences)*average_wait_time_per_sentence
+        approx_time_to_convert = (
+            len(tokenized_sentences) * average_wait_time_per_sentence
+        )
         approx_time_string = ""
         if approx_time_to_convert > 60:
-            approx_time_string = str(approx_time_to_convert/60) + " minutes"
+            approx_time_string = str(approx_time_to_convert / 60) + " minutes"
         else:
             approx_time_string = str(approx_time_to_convert) + " seconds"
-        print(f"\n***** {Fore.YELLOW}Correcting punctuations for transcriptions, Grab a coffee it can take time, approx time for completion: {approx_time_string} ")
+        print(
+            f"\n***** {Fore.YELLOW}Correcting punctuations for transcriptions, Grab a coffee it can take time, approx time for completion: {approx_time_string} "
+        )
         for idx, sentence_t in enumerate(tokenized_sentences):
             sentence_t_truncated = truncate_string_to_fixed_size(sentence_t)
             tokenized_sentences[idx] = sentence_t_truncated
-        transcription_list_results = fastpunct.punct(
-        tokenized_sentences, batch_size=32
-        )
+        transcription_list_results = fastpunct.punct(tokenized_sentences, batch_size=32)
     elif correction_method == "punctuator":
         transcription_list_results = []
         for sentence_t in tokenized_sentences:
@@ -174,20 +185,22 @@ def correct_punctuation_srt_file(srtList: dict, correction_method: str):
     else:
         transcription_list_results = tokenized_sentences
     corrected_transcription_list = []
-    #print("transcription_list_results", transcription_list_results)
+    # print("transcription_list_results", transcription_list_results)
     for idx, item in enumerate(transcription_list_results):
         if idx == 0:
             corrected_transcription_list.append(item)
-        elif sentence_mapper[idx] == (len(corrected_transcription_list)-1):
-            corrected_transcription_list[-1] = corrected_transcription_list[-1] + " " +item
+        elif sentence_mapper[idx] == (len(corrected_transcription_list) - 1):
+            corrected_transcription_list[-1] = (
+                corrected_transcription_list[-1] + " " + item
+            )
         else:
             corrected_transcription_list.append(item)
-    #print("corrected_transcription_list", corrected_transcription_list)  
+    # print("corrected_transcription_list", corrected_transcription_list)
 
     end = time.time()
-    #if correction_method == "fastpunct":
+    # if correction_method == "fastpunct":
     #    print("Time for fastpunct:", end - start)
-    #elif correction_method == "punctuator":
+    # elif correction_method == "punctuator":
     #    print("Time for punctuator:", end - start)
 
     for idx, srt in enumerate(srtList):
@@ -197,9 +210,7 @@ def correct_punctuation_srt_file(srtList: dict, correction_method: str):
     return srtList
 
 
-def transform_Srt_to_list(
-    srtList: dict , origin, meeting_start_utc: Optional[int] = 0
-):
+def transform_Srt_to_list(srtList: dict, origin, meeting_start_utc: Optional[int] = 0):
     """[transform srt packet to list]
     :return: [description]
     :rtype: [type]
@@ -219,15 +230,12 @@ def transform_Srt_to_list(
             "start_time"
         ] = _transformTime(srt.start, meeting_start_utc)
 
-        transcriptions_pkt["msg"]["data"]["transcription"][
-            "end_time"
-        ] = _transformTime(srt.end, meeting_start_utc)
-
-        transcription_pkt_list.append(transcriptions_pkt)
-        transcription_pkt_list = add_origin(
-            transcription_pkt_list, origin
+        transcriptions_pkt["msg"]["data"]["transcription"]["end_time"] = _transformTime(
+            srt.end, meeting_start_utc
         )
 
+        transcription_pkt_list.append(transcriptions_pkt)
+        transcription_pkt_list = add_origin(transcription_pkt_list, origin)
 
     # print("transcription_pkt_list", transcription_pkt_list)
     return transcription_pkt_list

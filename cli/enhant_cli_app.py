@@ -4,7 +4,8 @@
     :synopsis: Main file
 """
 import os
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' 
+
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 
 import typer
 from typing import List
@@ -29,6 +30,7 @@ init(init(autoreset=True))
 APP_NAME = "enhant-cli-app"
 
 app = typer.Typer()
+
 
 @app.command()
 def analyze(input: str) -> NoReturn:
@@ -66,7 +68,7 @@ def analyze(input: str) -> NoReturn:
     if "guest" in input_json_data:
         if "need_punctuation" in input_json_data["guest"]:
             need_punctation_guest = input_json_data["guest"]["need_punctuation"]
-    
+
     need_punctation_host = True
     if "host" in input_json_data:
         if "need_punctuation" in input_json_data["host"]:
@@ -78,13 +80,17 @@ def analyze(input: str) -> NoReturn:
     srtListHost = helper.read_srt_file(folder, "host")
     if srtListGuest is not None:
         if need_punctation_guest:
-            srtListGuest = helper.correct_punctuation_srt_file(srtListGuest, config.settings.punct_correction_tool)
+            srtListGuest = helper.correct_punctuation_srt_file(
+                srtListGuest, config.settings.punct_correction_tool
+            )
             helper.save_corrected_srt_file(srtListGuest, folder, "guest")
         guest_transcription_list = helper.transform_Srt_to_list(srtListGuest, "guest")
 
     if srtListHost is not None:
         if need_punctation_host:
-            srtListHost = helper.correct_punctuation_srt_file(srtListHost, config.settings.punct_correction_tool)  
+            srtListHost = helper.correct_punctuation_srt_file(
+                srtListHost, config.settings.punct_correction_tool
+            )
             helper.save_corrected_srt_file(srtListHost, folder, "host")
         host_transcription_list = helper.transform_Srt_to_list(srtListHost, "host")
 
@@ -110,12 +116,9 @@ def analyze(input: str) -> NoReturn:
             + f"\n***** Writing results in file: {output_json_file_name} ***** \n"
         )
         json.dump(input_json_data, json_file, indent=4)
-        
+
     result_zip_name = folder + "_result"
-    print(
-        Back.GREEN
-        + f"\n***** Making zip for result: {result_zip_name}.zip ***** \n"
-    )
+    print(Back.GREEN + f"\n***** Making zip for result: {result_zip_name}.zip ***** \n")
     shutil.make_archive(result_zip_name, "zip", folder)
     print(
         Back.GREEN
@@ -164,19 +167,17 @@ def upload_blob(bucket_name, source_file_name, destination_blob_name):
 
     blob.upload_from_filename(source_file_name)
     return blob
-    print(
-        "File {} uploaded to {}.".format(
-            source_file_name, destination_blob_name
-        )
-    )
+    print("File {} uploaded to {}.".format(source_file_name, destination_blob_name))
 
-def upload_blob_and_run_transcription(bucket_name, source_file_name, destination_blob_name):
+
+def upload_blob_and_run_transcription(
+    bucket_name, source_file_name, destination_blob_name
+):
     try:
         blob = upload_blob(bucket_name, source_file_name, destination_blob_name)
     except Exception as e:
         print("Error in uploading files: ", str(e.output))
         return -1
-    
 
     try:
         output = subprocess.check_output(
@@ -184,7 +185,7 @@ def upload_blob_and_run_transcription(bucket_name, source_file_name, destination
                 "node",
                 "speaker_dirazation_long_audio.js",
                 bucket_name,
-                destination_blob_name
+                destination_blob_name,
             ]
         )
         print(output)
@@ -194,15 +195,12 @@ def upload_blob_and_run_transcription(bucket_name, source_file_name, destination
         print(str(e.output))
         return -1
 
-
     print("Deleting blob after processing")
     try:
         blob.delete()
     except Exception as e:
         print("Error in deleting blob please delete manually: ", str(e.output))
         return -1
-    
-
 
 
 @app.command()
@@ -212,7 +210,7 @@ def analyze_batch(input: str) -> NoReturn:
         print(Fore.GREEN + f"\n Converting video file:{input} to wav format")
         try:
             input_video_filename = input
-            output_wav_filename = os.path.splitext(input)[0]+".wav"
+            output_wav_filename = os.path.splitext(input)[0] + ".wav"
             output = subprocess.check_output(
                 [
                     "ffmpeg",
@@ -227,7 +225,6 @@ def analyze_batch(input: str) -> NoReturn:
                     output_wav_filename,
                 ]
             )
-            #print(output)
         except subprocess.CalledProcessError as e:
             print("\n Subprocess error")
             print(str(e.output))
@@ -235,7 +232,9 @@ def analyze_batch(input: str) -> NoReturn:
 
         print(Fore.GREEN + f"\n Uploading data", output_wav_filename)
         wav_file_basename = os.path.basename(output_wav_filename)
-        result = upload_blob_and_run_transcription("enhant-testing", output_wav_filename, wav_file_basename)
+        result = upload_blob_and_run_transcription(
+            "enhant-testing", output_wav_filename, wav_file_basename
+        )
         if result != -1:
             print("result:", result)
 
@@ -246,6 +245,7 @@ def analyze_batch(input: str) -> NoReturn:
     else:
         print(Fore.RED + f"\n ERROR: Unsupported file format for batch processing")
         return 0
+
 
 if __name__ == "__main__":
     app()

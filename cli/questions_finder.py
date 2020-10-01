@@ -46,7 +46,6 @@ class QuestionsFinder(object):
             transcriptions_pkt["msg"]["data"]["transcription"]["start_time"],
         )
 
-
     def process(
         self,
         input_json_data: dict,
@@ -68,29 +67,32 @@ class QuestionsFinder(object):
         listOfQuestions = []
         if guest_transcription_list is not None:
             for transcriptions_pkt in guest_transcription_list:
-                transcription, start_time = self._transformTranscription(transcriptions_pkt)
+                transcription, start_time = self._transformTranscription(
+                    transcriptions_pkt
+                )
                 interrogativeSentences = question_finder.processMessage(transcription)
                 if len(interrogativeSentences) > 0:
                     for interrogativeSentence in interrogativeSentences:
                         originKey = dict()
-                        originKey["origin"] = "guest" 
+                        originKey["origin"] = "guest"
                         originKey["time"] = start_time
                         originKey["question"] = interrogativeSentence
                         listOfQuestions.append(originKey)
-                        
 
         if host_transcription_list is not None:
             for transcriptions_pkt in host_transcription_list:
-                transcription, start_time = self._transformTranscription(transcriptions_pkt)
+                transcription, start_time = self._transformTranscription(
+                    transcriptions_pkt
+                )
                 interrogativeSentences = question_finder.processMessage(transcription)
                 if len(interrogativeSentences) > 0:
                     for interrogativeSentence in interrogativeSentences:
                         originKey = dict()
-                        originKey["origin"] = "host" 
+                        originKey["origin"] = "host"
                         originKey["time"] = start_time
                         originKey["question"] = interrogativeSentence
                         listOfQuestions.append(originKey)
-                        
+
         if len(listOfQuestions) > 0:
-            #jsonPkt = {"questionsAsked": listOfQuestions}
+            # jsonPkt = {"questionsAsked": listOfQuestions}
             input_json_data["questionsAsked"] = listOfQuestions
