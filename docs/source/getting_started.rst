@@ -7,7 +7,7 @@ The Chrome extension is the minimal requirement for most users to leverage enhan
 
 To install the enhan(t) extension:
 
-#.  Navigate to Chrome Webstore <Chrome store link> via your Chrome browser. <Chrome store screenshot - After publishing>
+#.  Navigate to Chrome Webstore `enhan(t) Meeting Power Tool <https://chrome.google.com/webstore/detail/enhant-meeting-power-tool/fohcdemnkddkfcbheibnjhnpfliemnfg>`__ page via your Chrome browser.
 #.  Click the ‘Add to Chrome’ button. You would be able to see the enhan(t) icon in your toolbar.
 #.  When you open a Zoom, MS Teams or Jitsi meeting, you will find the enhan(t) toolbar on the top right of your tab.
 

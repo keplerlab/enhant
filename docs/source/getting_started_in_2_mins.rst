@@ -8,8 +8,9 @@ install it is via the Chrome store.
 Installing the enhan(t) extension
 ---------------------------------
 
-1. Navigate to Chrome Webstore <add link> via your Chrome browser.
-   <Chrome store screenshot - update after publishing>
+1. Navigate to Chrome Webstore `enhan(t) Meeting Power
+   Tool <https://chrome.google.com/webstore/detail/enhant-meeting-power-tool/fohcdemnkddkfcbheibnjhnpfliemnfg>`__
+   page via your Chrome browser.
 
 2. Click the ‘Add to Chrome’ button. You would be able to see the
    ‘enhan(t) Meeting Power Tool’ extension under the ‘Extensions’ jigsaw
@@ -45,7 +46,23 @@ Using the enhan(t) extension
 
    c. Document icon to take notes
 
-5. Once the meeting is over, hit the animated record icon to stop
+5. You can click the pencil icon to open up various annotation tools.
+   The functionality of different tools below:
+
+   a. Pen icon to draw over the page (with color selection)
+
+   b. Highlighter icon to highlight content (with color selection)
+
+   c. Text icon to add text anywhere in the page (with color selection)
+
+   d. Eraser icon to erase content drawn by pen, highlighter or text
+      annotation tools
+
+   e. Eye icon to temporarily hide all annotations
+
+   f. Trash icon to delete all annotations
+
+6. Once the meeting is over, hit the animated record icon to stop
    enhan(t). A zip file containing the meeting data is downloaded in
    your default download location.
 
