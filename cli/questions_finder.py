@@ -130,12 +130,12 @@ class QuestionsFinder(object):
             return
 
         listOfQuestions = []
-        print("\n\ninput_json_data", input_json_data)
-        print("\noutput_json_data", output_json_data)
+        #print("\n\ninput_json_data", input_json_data)
+        #print("\noutput_json_data", output_json_data)
 
         if input_json_data is not None:
             for transcriptions_pkt in input_json_data:
-                print("transcriptions_pkt", transcriptions_pkt)
+                #print("transcriptions_pkt", transcriptions_pkt)
                 transcription, start_time, speakerTag = self._transformTranscriptionbatch(
                     transcriptions_pkt
                 )

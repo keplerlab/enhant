@@ -259,44 +259,41 @@ def batchmode(input: str) -> NoReturn:
             return -1
 
         print(Fore.GREEN + f"\nUploading data", output_wav_filename)
-        result_json = upload_blob_and_run_transcription(
+        transcription_json = upload_blob_and_run_transcription(
             "enhant-testing", output_wav_filename, wav_file_basename, process_folder
         )
-        interaction_json = interaction_finder.process(result_json)
-        questions_finder.processbatch(result_json,interaction_json)
+        result_json = interaction_finder.process(transcription_json)
+        questions_finder.processbatch(transcription_json,result_json)
 
-        #print(json.dumps(interaction_json, indent=6))
         output_json_file_name = os.path.join(process_folder, "processed_results.json")
         with open(output_json_file_name, "w") as json_file:
             print(
                 Back.GREEN
                 + f"\n***** Writing results in file: {output_json_file_name} ***** \n"
             )
-            json.dump(interaction_json, json_file, indent=6)
+            json.dump(result_json, json_file, indent=6)
 
 
-        #print("result:", result_json)
     elif input.endswith(".wav"):
         process_folder = os.path.splitext(input)[0]
         if not os.path.exists(process_folder):
             os.makedirs(process_folder)
         wav_file_basename = os.path.basename(input)
         print(Fore.GREEN + f"\n Uploading data", input)
-        result = upload_blob_and_run_transcription(
+        transcription_json = upload_blob_and_run_transcription(
             "enhant-testing", input, wav_file_basename, process_folder
         )
-        interaction_json = interaction_finder.process(result_json)
+        result_json = interaction_finder.process(transcription_json)
         output_json_file_name = os.path.join(process_folder, "processed_results.json")
-        questions_finder.processbatch(result_json,interaction_json)
+        questions_finder.processbatch(transcription_json, result_json)
         with open(output_json_file_name, "w") as json_file:
             print(
                 Back.GREEN
                 + f"\n***** Writing results in file: {output_json_file_name} ***** \n"
             )
-            json.dump(interaction_json, json_file, indent=6)
+            json.dump(result_json, json_file, indent=6)
 
-        #print(json.dumps(interaction_json, indent=6))
-        #print("result_json:", result_json)
+
 
     else:
         print(Fore.RED + f"\n ERROR: Unsupported file format for batch processing")
