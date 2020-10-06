@@ -1,32 +1,43 @@
-
 import json
 import os
 from colorama import init, Fore, Back, Style
+from interaction_finder import InteractionFinder
+
+interaction_finder = InteractionFinder()
 
 
 def _parse_number(input_dict: dict, dict_key: str):
-    print(input_dict, dict_key)
+    # print(input_dict, dict_key)
     if dict_key in input_dict:
         return int(input_dict[dict_key])
     else:
-        return 0 
+        return 0
+
 
 def _transform_time_stamp(element: dict) -> dict:
-    print("element:", element)
-    element["startTime"] = _parse_number(element["startTime"], "seconds")*1000 + _parse_number(element["startTime"], "nanos")//1000000 
-    element["endTime"] = _parse_number(element["endTime"], "seconds")*1000 + _parse_number(element["endTime"], "nanos")//1000000 
-    
+    # print("element:", element)
+    element["startTime"] = (
+        _parse_number(element["startTime"], "seconds") * 1000
+        + _parse_number(element["startTime"], "nanos") // 1000000
+    )
+    element["endTime"] = (
+        _parse_number(element["endTime"], "seconds") * 1000
+        + _parse_number(element["endTime"], "nanos") // 1000000
+    )
+
     return element
+
 
 def _join_word_after_sentence(sentence: str, word: str) -> str:
     return sentence + " " + word
 
-def parse_speaker_wise_json(input_json: dict) -> dict :
-    speaker_tag_result = input_json[len(input_json) - 1 ]
+
+def parse_speaker_wise_json(input_json: dict) -> dict:
+    speaker_tag_result = input_json[len(input_json) - 1]
     temp = speaker_tag_result["alternatives"][0]["words"]
     consolidated_speaker_tag_list = []
     prev_speaker_tag = -1
-    
+
     for idx, element in enumerate(temp):
         element = _transform_time_stamp(element)
         currentSpeakerTag = element["speakerTag"]
@@ -47,7 +58,9 @@ def parse_speaker_wise_json(input_json: dict) -> dict :
                 consolidated_speaker_tag_list.append(element)
             else:
                 consolidated_speaker_tag_list[-1]["endTime"] = element["endTime"]
-                consolidated_speaker_tag_list[-1]["word"] = _join_word_after_sentence(consolidated_speaker_tag_list[-1]["word"], element["word"])
+                consolidated_speaker_tag_list[-1]["word"] = _join_word_after_sentence(
+                    consolidated_speaker_tag_list[-1]["word"], element["word"]
+                )
         else:
             # Insert silent and then data
             silence_element = element.copy()
@@ -67,9 +80,11 @@ input_json_data = None
 if os.path.isfile(input_json_file_name):
     with open(input_json_file_name) as f:
         input_json_data = json.load(f)
-        print("input_json_data", input_json_data)
+        # print("input_json_data", input_json_data)
         result_json = parse_speaker_wise_json(input_json_data)
-        print("result_json", result_json)
+        interaction_json = interaction_finder.process(result_json)
+        print(json.dumps(interaction_json, indent=6))
+        # print("interaction_json", interaction_json)
+
 else:
     print(Fore.RED + f"\n ERROR: Input JSON file seems to be missing")
-

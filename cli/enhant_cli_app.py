@@ -188,8 +188,8 @@ def upload_blob_and_run_transcription(
                 destination_blob_name,
             ]
         )
-        #print(output)
-        
+        # print(output)
+
         output_json = helper.jsonstring_to_speaker_wise_json(output)
         output_json_file_name = os.path.join(process_folder, "speaker_wise.json")
         with open(output_json_file_name, "w") as json_file:
@@ -211,13 +211,11 @@ def upload_blob_and_run_transcription(
     except Exception as e:
         print("Error in deleting blob please delete manually: ", str(e.output))
         return -1
-    
-
 
 
 @app.command()
 def batchmode(input: str) -> NoReturn:
-    #print("input", input)
+    # print("input", input)
     if input.endswith(".mp4") or input.endswith(".mov"):
 
         process_folder = os.path.splitext(input)[0]
@@ -229,7 +227,9 @@ def batchmode(input: str) -> NoReturn:
             input_video_filename = input
             wav_file_basename = os.path.basename(os.path.splitext(input)[0])
             print("wav_file_basename", wav_file_basename)
-            output_wav_filename = os.path.join(process_folder, wav_file_basename+".wav")
+            output_wav_filename = os.path.join(
+                process_folder, wav_file_basename + ".wav"
+            )
             print("output_wav_filename", output_wav_filename)
             output = subprocess.check_output(
                 [
@@ -262,7 +262,9 @@ def batchmode(input: str) -> NoReturn:
             os.makedirs(process_folder)
         wav_file_basename = os.path.basename(input)
         print(Fore.GREEN + f"\n Uploading data", input)
-        upload_blob_and_run_transcription("enhant-testing", input, wav_file_basename, process_folder)
+        upload_blob_and_run_transcription(
+            "enhant-testing", input, wav_file_basename, process_folder
+        )
     else:
         print(Fore.RED + f"\n ERROR: Unsupported file format for batch processing")
         return 0
