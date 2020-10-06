@@ -31,7 +31,8 @@ from interaction_finder import InteractionFinder
 interaction_finder = InteractionFinder()
 from questions_finder import QuestionsFinder
 questions_finder = QuestionsFinder()
-
+from sentiment_finder import SentimentFinder
+sentiment_finder = SentimentFinder()
 
 init(init(autoreset=True))
 
@@ -264,6 +265,8 @@ def batchmode(input: str) -> NoReturn:
         )
         result_json = interaction_finder.process(transcription_json)
         questions_finder.processbatch(transcription_json,result_json)
+        sentiment_finder.processbatch(transcription_json, result_json)
+
 
         output_json_file_name = os.path.join(process_folder, "processed_results.json")
         with open(output_json_file_name, "w") as json_file:
@@ -286,6 +289,7 @@ def batchmode(input: str) -> NoReturn:
         result_json = interaction_finder.process(transcription_json)
         output_json_file_name = os.path.join(process_folder, "processed_results.json")
         questions_finder.processbatch(transcription_json, result_json)
+        sentiment_finder.processbatch(transcription_json, result_json)
         with open(output_json_file_name, "w") as json_file:
             print(
                 Back.GREEN

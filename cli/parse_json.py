@@ -8,6 +8,9 @@ interaction_finder = InteractionFinder()
 from questions_finder import QuestionsFinder
 questions_finder = QuestionsFinder()
 
+from sentiment_finder import SentimentFinder
+sentiment_finder = SentimentFinder()
+
 def _parse_number(input_dict: dict, dict_key: str):
     # print(input_dict, dict_key)
     if dict_key in input_dict:
@@ -86,7 +89,7 @@ if os.path.isfile(input_json_file_name):
         result_json = parse_speaker_wise_json(input_json_data)
         interaction_json = interaction_finder.process(result_json)
         questions_finder.processbatch(result_json,interaction_json)
-
+        sentiment_finder.processbatch(result_json,interaction_json)
         print(json.dumps(interaction_json, indent=6))
         # print("interaction_json", interaction_json)
 

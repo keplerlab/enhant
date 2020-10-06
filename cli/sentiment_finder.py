@@ -50,6 +50,20 @@ class SentimentFinder(object):
             transcriptions_pkt["msg"]["data"]["transcription"]["start_time"],
         )
 
+    def _transformTranscriptionbatch(self, transcriptions_pkt: dict) -> dict:
+        """[transform transcription packet]
+
+        :param transcriptions_pkt: [description]
+        :type transcriptions_pkt: [type]
+        :return: [description]
+        :rtype: [type]
+        """
+        return (
+            transcriptions_pkt["word"],
+            transcriptions_pkt["startTime"],
+            transcriptions_pkt["speakerTag"],
+        )
+
     def process(
         self,
         input_json_data: dict,
@@ -134,3 +148,62 @@ class SentimentFinder(object):
                 total_of_sentiment_scores_host / number_of_sentiment_scores_host
             )
             input_json_data["avgSentimentScoreHost"] = str(avg_sentiment_score_host)
+
+
+
+    def processbatch(
+        self,
+        input_json_data: dict,
+        output_json_data: dict,
+
+    ) -> NoReturn:
+        """[Public function for extracting and getting sentiments]
+
+        :param conv_id: [description]
+        :type conv_id: [type]
+        """
+
+        print(Fore.GREEN + "\n**** Analyzing Sentiment ****")
+        if input_json_data == None:
+            print(f"No matching conversation for input_json_data: {input_json_data}")
+            return
+
+        low_sentiment_scores = []
+        high_sentiment_scores = []
+        total_of_sentiment_scores = 0.0
+        number_of_sentiment_scores = 0
+        avg_sentiment_score = 0.0
+        avg_sentiment_score = 0.0
+
+        if input_json_data is not None:
+            for transcriptions_pkt in input_json_data:
+                transcription, start_time, speakerTag = self._transformTranscriptionbatch(
+                    transcriptions_pkt
+                )
+                sentiment_score = sentiment_lib.processMessage(transcription)
+                sentiment_with_time = (start_time, transcription, sentiment_score)
+                total_of_sentiment_scores += float(sentiment_score)
+                number_of_sentiment_scores += 1
+
+                if sentiment_score < self.low_sentiment_threshold:
+                    low_sentiment_scores.append(sentiment_with_time)
+                elif sentiment_score > self.high_sentiment_threshold:
+                    high_sentiment_scores.append(sentiment_with_time)
+
+        if len(high_sentiment_scores) > 0 :
+            jsonPkt = {
+                "highSentimentSentences": high_sentiment_scores,
+            }
+            output_json_data["highSentimentSentences"] = jsonPkt
+
+        if len(low_sentiment_scores) > 0 :
+            jsonPkt = {
+                "low_sentiment_scores": low_sentiment_scores,
+            }
+            output_json_data["lowSentimentSentences"] = jsonPkt
+
+        if number_of_sentiment_scores > 0:
+            avg_sentiment_score = (
+                total_of_sentiment_scores / number_of_sentiment_scores
+            )
+            output_json_data["avgSentimentScore"] = str(avg_sentiment_score)

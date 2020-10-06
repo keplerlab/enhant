@@ -46,7 +46,7 @@ class QuestionsFinder(object):
             transcriptions_pkt["msg"]["data"]["transcription"]["start_time"],
         )
 
-    def _transformTranscriptionbatch(self, transcriptions_pkt: dict) -> Dict:
+    def _transformTranscriptionbatch(self, transcriptions_pkt: dict) -> dict:
         """[transform transcription packet]
 
         :param transcriptions_pkt: [description]
