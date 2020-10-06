@@ -1,5 +1,26 @@
-$(document).ready(function(){
-    console.log(" contentscript for popup html loaded ");
+function createIframeCanvas(){
+    var windowWidth = window.innerWidth;
+    var windowHeight = window.innerHeight
+
+    var iframe2 = document.createElement('iframe');
+    iframe2.frameBorder = "none";
+    iframe2.src = chrome.runtime.getURL("iframe2.html");
+    iframe2.style.position = "fixed";
+    iframe2.style.pointerEvents = "none";
+    iframe2.style.top = "0px";
+    iframe2.style.left = "0px";
+    iframe2.style.zIndex = "-2147483647";
+    iframe2.id = "frame2";
+
+    document.body.appendChild(iframe2);
+
+    iframe2.style.width = windowWidth;
+    iframe2.style.height = windowHeight;
+
+    return iframe2;
+}
+
+function createEnhantPlugin(){
     const FRAME_ID = "enhant-frame";
 
     // in pixels
@@ -9,35 +30,9 @@ $(document).ready(function(){
     var iframe = document.createElement('iframe');
     iframe.frameBorder = "none";
     iframe.style.width = "100%";
+    iframe.style.position = "fixed";
     iframe.id = FRAME_ID
     iframe.src = chrome.runtime.getURL("popup.html");
-
-
-    var iframe2 = document.createElement('iframe');
-    iframe2.frameBorder = "none";
-    iframe2.style.width = "100%";
-    iframe2.style.position = "absolute";
-    iframe2.style.pointerEvents = "none";
-    iframe2.style.top = "0px";
-    iframe2.style.left = "0px";
-    iframe2.style.height = "100%";
-    iframe2.style.zIndex = "-2147483647";
-    iframe2.id = "frame2";
-    iframe2.src = chrome.runtime.getURL("iframe2.html");
-
-    // create a div
-    const DIV_ID = "enhant-frame2-wrapper";
-    var div_2 = document.createElement('div');
-    div_2.id = DIV_ID;
-    div_2.style.left = "0px";
-    div_2.style.top = "10px";
-    div_2.style.position = "absolute";
-    div_2.style.background = "white";
-    div_2.style.zIndex = "2147483647";
-    div_2.style.width = "380px";
-    div_2.style.cursor = "move";
-    div_2.style["boxShadow"] = "0 10px 16px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19)";
-    document.body.appendChild(iframe2);
 
     // create a div
     const DIV_ID_2 = "enhant-frame-wrapper";
@@ -56,13 +51,20 @@ $(document).ready(function(){
     div.appendChild(iframe);
     document.body.appendChild(div);
 
+    const resizer = iFrameResize({ log: false, checkOrigin: false,
+        maxHeight: FRAME_MAX_HEIGHT, maxWidth: FRAME_MAX_WIDTH}, '#' + FRAME_ID);
 
     $('#' + DIV_ID_2).draggable({
         iframeFix: true
     });
+    
+}
 
-    const resizer = iFrameResize({ log: false, checkOrigin: false,
-        maxHeight: FRAME_MAX_HEIGHT, maxWidth: FRAME_MAX_WIDTH}, '#' + FRAME_ID);
+$(document).ready(function(){
+    console.log(" contentscript for popup html loaded ");
+
+    var iframe2 = createIframeCanvas();
+    createEnhantPlugin();
 
     var targetFrame = document.getElementById(iframe2.id);
 
@@ -71,9 +73,6 @@ $(document).ready(function(){
         if ((m.data.hasOwnProperty("sender")) && (m.data.sender == "enhant")){
             
             console.log(" received message [Parent content script] : ", m);
-
-             // send  a message with the size
-             windowResizeHandler();
 
             targetFrame.contentWindow.postMessage(m.data, '*');
 
@@ -84,23 +83,62 @@ $(document).ready(function(){
                 }
                 
             }
+
+            if (m.data.key == "annotation_active"){
+                windowResizeHandler();
+            }
         }
     }, false);
 
+
     function windowResizeHandler(e){
+
+        var height = window.innerHeight;
+        var width = window.innerWidth;
+
         // send parent dimensions
         var parent_dimensions = {
             "key": "resize",
             "scale": {
-                "height": $(document).height(),
-                "width": $(document).width()
+                "height": height,
+                "width": width
             }
         }
+
+        iframe2.style.width = width;
+        iframe2.style.height = height;
 
         targetFrame.contentWindow.postMessage(parent_dimensions, '*');
     };
 
+    function windowScrollHandler(e){
+
+        var top = "0px";
+        var left = "0px";
+
+        if (window.scrollY + document.documentElement.clientHeight <= document.documentElement.scrollHeight) {
+            top = window.scrollY + "px";
+        }
+        if (window.scrollX + document.documentElement.clientWidth <= document.documentElement.scrollWidth) {
+            left = window.scrollX + "px";
+        }
+
+        iframe2.style.top = top;
+        iframe2.style.left = left;
+
+        // send parent dimensions
+        var parent_dimensions = {
+            "key": "scroll",
+            "position": {
+                "top": top,
+                "left": left
+            }
+        }
+    }
+
     window.addEventListener("resize", windowResizeHandler);
+
+    window.addEventListener("scroll", windowScrollHandler);
 });
 
 

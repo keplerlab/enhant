@@ -49,7 +49,7 @@
             font-weight: bold;
         }    
 
-        icon{
+        icon, iconAnnotation{
             margin-top: 8px;
             margin-bottom: 8px;
             display: block;
@@ -57,8 +57,25 @@
             padding-right: 10px;
         }
 
-        icon[clickable]{
+        icon[clickable], iconAnnotation[clickable]{
             cursor: pointer;
+        }
+
+        iconPaint, iconHighlight, iconText{
+            margin-top: 4px;
+            margin-bottom: 4px;
+            display: block;
+            padding-left: 10px;
+            padding-right: 10px;
+            cursor: pointer;
+        }
+
+        .color-icon{
+            height: 20px;
+        }
+
+        .annotation-icon{
+            height: 40px;
         }
 
         .icon{
@@ -174,35 +191,143 @@
         <!-- Annotation Toolbar -->
         <div class="container-fluid">
             <div class="row ten-cols" id="annotation-toolbar" style="display: none;">
-                <div class="col-xs-1 icon">
+                <div class="col-xs-1 annotation-icon">
                     <iconEmpty type="Empty"></iconEmpty>
                 </div>
-                <div class="col-xs-1 icon">
+                <div class="col-xs-1 annotation-icon">
                     <iconEmpty type="Empty"></iconEmpty>
                 </div>
-                <div class="col-xs-1 icon">
+                <div class="col-xs-1 annotation-icon">
                     <iconEmpty type="Empty"></iconEmpty>
                 </div>
-                <div class="col-xs-1 icon">
-                    <icon type="SelectAnnotationIcon" annotation_icon><img title="Select" height=20 width=20 src="/static/images/select_annotation.svg"></icon>
+                <div class="col-xs-1 annotation-icon">
+                    <iconAnnotation type="SelectAnnotationIcon"><img title="Select" height=20 width=20 src="/static/images/select_annotation.svg"></iconAnnotation>
                 </div>
-                <div class="col-xs-1 icon">
-                    <icon type="PenAnnotationIcon" annotation_icon><img title="Pen" height=20 width=20 src="/static/images/pen_annotation.svg"></icon>
+                <div class="col-xs-1 annotation-icon">
+                    <iconAnnotation type="PenAnnotationIcon"><img title="Pen" height=20 width=20 src="/static/images/pen_annotation.svg"></iconAnnotation>
                 </div>
-                <div class="col-xs-1 icon">
-                    <icon type="HighlightAnnotation" annotation_icon><img title="Highlight" height=20 width=20 src="/static/images/highlight_annotation.svg"></icon>
+                <div class="col-xs-1 annotation-icon">
+                    <iconAnnotation type="HighlightAnnotationIcon"><img title="Highlight" height=20 width=20 src="/static/images/highlight_annotation.svg"></iconAnnotation>
                 </div>
-                <div class="col-xs-1 icon">
-                    <icon type="TextAnnotation" annotation_icon><img title="Text" height=20 width=20 src="/static/images/text_annotation.svg"></icon>
+                <div class="col-xs-1 annotation-icon">
+                    <iconAnnotation type="TextAnnotationIcon"><img title="Text" height=20 width=20 src="/static/images/text_annotation.svg"></iconAnnotation>
                 </div>
-                <div class="col-xs-1 icon">
-                    <icon type="EraseAnnotation" annotation_icon><img title="Erase" height=20 width=20 src="/static/images/erase_annotation.svg"></icon>
+                <div class="col-xs-1 annotation-icon">
+                    <iconAnnotation type="EraseAnnotation"><img title="Erase" height=20 width=20 src="/static/images/erase_annotation.svg"></iconAnnotation>
                 </div>
-                <div class="col-xs-1 icon">
-                    <icon type="EyeAnnotationIcon" annotation_icon><img title="Hide" height=20 width=20 src="/static/images/eye_opened_annotation.svg"></icon>
+                <div class="col-xs-1 annotation-icon">
+                    <iconAnnotation type="EyeAnnotationIcon"><img title="Hide" height=20 width=20 src="/static/images/eye_opened_annotation.svg"></iconAnnotation>
                 </div>
-                <div class="col-xs-1 icon">
-                    <icon type="DeleteAnnotation"><img title="Delete" height=20 width=20 src="/static/images/delete_annotation.svg"></icon>
+                <div class="col-xs-1 annotation-icon">
+                    <iconAnnotation type="DeleteAnnotationIcon"><img title="Delete" height=20 width=20 src="/static/images/delete_annotation.svg"></iconAnnotation>
+                </div>
+            </div>
+        </div>
+
+        <!--Color Toolbar paint-->
+        <div class="container-fluid">
+            <div class="row ten-cols" id="color-toolbar-paint" style="display: none;">
+                <div class="col-xs-1 annotation-icon">
+                    <iconEmpty type="Empty"></iconEmpty>
+                </div>
+                <div class="col-xs-1 color-icon">
+                    <iconEmpty type="Empty"></iconEmpty>
+                </div>
+                <div class="col-xs-1 color-icon">
+                    <iconPaint value="#000000"><img title="Select" height=20 width=20 src="/static/images/paint_black.svg"></iconPaint>
+                </div>
+                <div class="col-xs-1 color-icon">
+                    <iconPaint value="#FFBB38"><img title="Pen" height=20 width=20 src="/static/images/paint_yellow.svg"></iconPaint>
+                </div>
+                <div class="col-xs-1 color-icon">
+                    <iconPaint value="#DF1642"><img title="Highlight" height=20 width=20 src="/static/images/paint_red.svg"></iconPaint>
+                </div>
+                <div class="col-xs-1 color-icon">
+                    <iconPaint value="#9C0F2E"><img title="Text" height=20 width=20 src="/static/images/paint_red_dark.svg"></iconPaint>
+                </div>
+                <div class="col-xs-1 color-icon">
+                    <iconPaint value="#5DC389"><img title="Erase" height=20 width=20 src="/static/images/paint_success.svg"></iconPaint>
+                </div>
+                <div class="col-xs-1 color-icon">
+                    <iconPaint value="#4BA6FF"><img title="Hide" height=20 width=20 src="/static/images/paint_primary.svg"></iconPaint>
+                </div>
+                <div class="col-xs-1 color-iconn">
+                    <iconPaint value="#E6E6E6"><img title="Delete" height=20 width=20 src="/static/images/paint_gray.svg"></iconPaint>
+                </div>
+                <div class="col-xs-1 color-icon">
+                    <iconEmpty type="Empty"></iconEmpty>
+                </div>
+            </div>
+        </div>
+
+        <!--Color Toolbar highlight-->
+        <div class="container-fluid">
+            <div class="row ten-cols" id="color-toolbar-highlight" style="display: none;">
+                <div class="col-xs-1 annotation-icon">
+                    <iconEmpty type="Empty"></iconEmpty>
+                </div>
+                <div class="col-xs-1 color-icon">
+                    <iconEmpty type="Empty"></iconEmpty>
+                </div>
+                <div class="col-xs-1 color-icon">
+                    <iconHighlight value="#FFCF74"><img title="Select" height=20 width=20 src="/static/images/highlight_yellow_light.svg"></iconHighlight>
+                </div>
+                <div class="col-xs-1 color-icon">
+                    <iconHighlight value="#E95C7B"><img title="Pen" height=20 width=20 src="/static/images/highlight_red_light.svg"></iconHighlight>
+                </div>
+                <div class="col-xs-1 color-icon">
+                    <iconHighlight value="#8FC8FF"><img title="Highlight" height=20 width=20 src="/static/images/highlight_primary_light.svg"></iconHighlight>
+                </div>
+                <div class="col-xs-1 color-icon">
+                    <iconHighlight value="#FFE4AF"><img title="Text" height=20 width=20 src="/static/images/highlight_yellow_lighter.svg"></iconHighlight>
+                </div>
+                <div class="col-xs-1 color-icon">
+                    <iconHighlight value="#A0BFFD"><img title="Erase" height=20 width=20 src="/static/images/highlight_secondary_lighter.svg"></iconHighlight>
+                </div>
+                <div class="col-xs-1 color-icon">
+                    <iconHighlight value="#A3DDBC"><img title="Hide" height=20 width=20 src="/static/images/highlight_success.svg"></iconHighlight>
+                </div>
+                <div class="col-xs-1 color-iconn">
+                    <iconHighlight value="#8879FC"><img title="Delete" height=20 width=20 src="/static/images/highlight_tertiary.svg"></iconHighlight>
+                </div>
+                <div class="col-xs-1 color-icon">
+                    <iconEmpty type="Empty"></iconEmpty>
+                </div>
+            </div>
+        </div>
+
+        <!--color toolbar text-->
+        <div class="container-fluid">
+            <div class="row ten-cols" id="color-toolbar-text" style="display: none;">
+                <div class="col-xs-1 annotation-icon">
+                    <iconEmpty type="Empty"></iconEmpty>
+                </div>
+                <div class="col-xs-1 color-icon">
+                    <iconEmpty type="Empty"></iconEmpty>
+                </div>
+                <div class="col-xs-1 color-icon">
+                    <iconText value="black"><img title="Select" height=20 width=20 src="/static/images/paint_black.svg"></iconText>
+                </div>
+                <div class="col-xs-1 color-icon">
+                    <iconText value="#FFBB38"><img title="Pen" height=20 width=20 src="/static/images/paint_yellow.svg"></iconText>
+                </div>
+                <div class="col-xs-1 color-icon">
+                    <iconText value="#DF1642"><img title="Highlight" height=20 width=20 src="/static/images/paint_red.svg"></iconText>
+                </div>
+                <div class="col-xs-1 color-icon">
+                    <iconText value="#9C0F2E"><img title="Text" height=20 width=20 src="/static/images/paint_red_dark.svg"></iconText>
+                </div>
+                <div class="col-xs-1 color-icon">
+                    <iconText value="#5DC389"><img title="Erase" height=20 width=20 src="/static/images/paint_success.svg"></iconText>
+                </div>
+                <div class="col-xs-1 color-icon">
+                    <iconText value="#4BA6FF"><img title="Hide" height=20 width=20 src="/static/images/paint_primary.svg"></iconText>
+                </div>
+                <div class="col-xs-1 color-iconn">
+                    <iconText value="#E6E6E6"><img title="Delete" height=20 width=20 src="/static/images/paint_gray.svg"></iconText>
+                </div>
+                <div class="col-xs-1 color-icon">
+                    <iconEmpty type="Empty"></iconEmpty>
                 </div>
             </div>
         </div>

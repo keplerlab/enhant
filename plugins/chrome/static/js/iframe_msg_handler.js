@@ -1,21 +1,20 @@
 const AnnotationTools = [
     Select,
     Pen,
-    Eye
-]
-
-const AnnotationMessageCLSMapping = {
-    select: Select,
-    pen: Pen,
-    eye: Eye
-};
+    Highlight,
+    Eye,
+    Delete,
+    Text
+];
 
 
 const MESSAGING_PROTOCOL = {
     annotation_active: "annotation_active",
     annotation_inactive: "annotation_inactive",
-    annotation_tool: "annotation_tool",
-    resize: "resize"
+    activate_tool: "activate_tool",
+    update_tool: "update_tool",
+    resize: "resize",
+    scroll: "scroll"
 };
 
 class Annotation{
@@ -25,32 +24,50 @@ class Annotation{
 
         // default class is the select tool
         this.selected_cls = Select.name;
+
+        this.width = 0;
+        this.height = 0;
+        this.left = 0;
+        this.top = 0;
+
+        this.canvas = null;
+        this.ctx = null;
     }
 
-    initializeCanvas(){
-        $('#' + this.canvas_id).css({
-            "top": "0px",
-            "left": "0px"
-        });
-
-        this.resizeCanvas();
+    clearCanvas(){
+        var canvas = document.getElementById(this.canvas_id);
+        var ctx = canvas.getContext("2d");
+        ctx.clearReact(0, 0, canvas.width, canvas.height);
     }
 
-    resizeCanvas(e){
+    resizeCanvas(scale_data){
+
         var htmlCanvas = document.getElementById(this.canvas_id);
-        htmlCanvas.width = window.innerWidth;
-        htmlCanvas.height = window.innerHeight;
+        htmlCanvas.width = scale_data.width;
+        htmlCanvas.height = scale_data.height;
+        this.width = htmlCanvas.width;
+        this.height = htmlCanvas.height;
     }
 
-    addCanvasToBody(html){
-        $("body").prepend(html);
-        this.initializeCanvas();
+    setCanvasAndContext(){
+        var canvas = document.getElementById(this.canvas_id);
+        var ctx = canvas.getContext("2d");
+        this.canvas = canvas;
+        this.ctx = ctx;
     }
 
     // create the canvas
     createCanvas(){
         var html = "<canvas id='" + this.canvas_id + "'></canvas>";
-        this.addCanvasToBody(html);
+        $("body").prepend(html);
+        $('#' + this.canvas_id).css({
+            "top": "0px",
+            "left": "0px",
+            "width": window.innerWidth + "px",
+            "height": window.innerHeight + "px"
+        });
+
+        this.setCanvasAndContext();
     }
 
     // handle events to respective classes
@@ -74,30 +91,19 @@ class Annotation{
         tool_obj.handleMouseMove(e);
     }
 
-    handleScroll(e){
-        console.log(" scroll ", e);
+    handleScroll(data){
         var _this = this;
-        requestAnimationFrame(function(){
-            if (window.scrollY + document.documentElement.clientHeight <= document.documentElement.scrollHeight) {
-
-                $('#' + _this.canvas_id).css({
-                    "top": window.scrollY + "px"
-                });
-                
-            }
-            if (window.scrollX + document.documentElement.clientWidth <= document.documentElement.scrollWidth) {
-    
-                $('#' + _this.canvas_id).css({
-                    "left": window.scrollX + "px"
-                });
-            }
+        $('#'+ _this.canvas_id).css({
+            "left": data.left,
+            "top": data.top
         });
+        _this.clearCanvas();
     }
 
     // will be called when annotation is enabled
     registerListeners(){
         var _this = this;   
-        window.addEventListener("resize", _this.resizeCanvas.bind(_this));
+        // window.addEventListener("resize", _this.resizeCanvas.bind(_this));
         window.addEventListener("mousedown", _this.handleMouseDown.bind(_this));
         window.addEventListener("mouseup", _this.handleMouseUp.bind(_this));
         window.addEventListener("mousemove", _this.handleMouseMove.bind(_this));
@@ -106,7 +112,7 @@ class Annotation{
     // will be called when annotation is disabled
     removeListeners(){
         var _this = this;
-        window.removeEventListener("resize", _this.resizeCanvas.bind(_this));
+        // window.removeEventListener("resize", _this.resizeCanvas.bind(_this));
         window.removeEventListener("mousedown", _this.handleMouseDown.bind(_this));
         window.removeEventListener("mouseup", _this.handleMouseUp.bind(_this));
         window.removeEventListener("mousemove", _this.handleMouseMove.bind(_this));
@@ -114,26 +120,31 @@ class Annotation{
 
     initialize(){
         var _this = this;
-        AnnotationTools.forEach(function(cls){
-            _this.annotation_tools_ref[cls.name] =  new cls(_this.canvas_id);
-        });
-
         _this.createCanvas();
+
+        AnnotationTools.forEach(function(cls){
+            _this.annotation_tools_ref[cls.name] =  new cls(_this.canvas, _this.ctx);
+        });
     }
 
-    selectTool(cls_name, data){
+    updateSelectedTool(data){
+        var _this = this;
+        var tool_obj = _this.annotation_tools_ref[_this.selected_cls];
+        tool_obj.update(data);
+    }
+
+    selectTool(cls_name, tool_data){
         var _this = this;
 
         _this.selected_cls = cls_name;
 
         var tool_obj = _this.annotation_tools_ref[_this.selected_cls];
-
-        console.log(" selecting tool ", tool_obj);
-        tool_obj.activate(data);
+        tool_obj.activate(tool_data);
     }
 
     removeSelectedTool(){
         var _this = this;
+
         var tool_obj = _this.annotation_tools_ref[_this.selected_cls];
         tool_obj.deactivate();
     }
@@ -145,38 +156,45 @@ class Annotation{
     }
 }
 
-var _annotation;
+var _annotation = null;
 
 window.addEventListener("message", function(m){
-    console.log(" Message received from enhan(t) plugin ", m);
+    // console.log(" Message received from enhan(t) plugin ", m);
 
     var key = m["data"]["key"];
 
-    // if (key == MESSAGING_PROTOCOL.resize){
-        
-    //     if (_annotation instanceof Annotation){
-    //         _annotation.resizeCanvas(m["data"]["scale"]);
-    //     }
-    // }
+    if (key == MESSAGING_PROTOCOL.resize){
+        if (_annotation instanceof Annotation){
+            _annotation.resizeCanvas(m["data"]["scale"]);
+        }
+    }
+
+    if (key == MESSAGING_PROTOCOL.scroll){
+        if (_annotation instanceof Annotation){
+            var scroll_data = m["data"]["position"];
+            _annotation.handleScroll(scroll_data);
+        }
+    }
 
     // based on the message key get the annotation class
     if (key == MESSAGING_PROTOCOL.annotation_active){
-        _annotation = new Annotation();
-        _annotation.initialize();
-        _annotation.registerListeners();
+        if (!(_annotation instanceof Annotation)){
+            _annotation = new Annotation();
+            _annotation.initialize();
+            _annotation.registerListeners();
+        }
     }
 
     if (key == MESSAGING_PROTOCOL.annotation_inactive){
-
         if (_annotation instanceof Annotation){
             _annotation.clear();
             delete _annotation;
+            _annotation = null;
         }
         
     };
 
-    if (key == MESSAGING_PROTOCOL.annotation_tool){
-
+    if (key == MESSAGING_PROTOCOL.activate_tool){
         var tool_info = m.data.tool_info;
         var tool_name = tool_info["name"];
         var tool_data = tool_info["data"];
@@ -185,6 +203,17 @@ window.addEventListener("message", function(m){
              // remove the previous selected tool
             _annotation.removeSelectedTool();
             _annotation.selectTool(tool_name, tool_data);
+        }
+       
+    }
+
+    if (key == MESSAGING_PROTOCOL.update_tool){
+        var tool_info = m.data.tool_info;
+        var tool_name = tool_info["name"];
+        var tool_data = tool_info["data"];
+
+        if (_annotation instanceof Annotation){
+            _annotation.updateSelectedTool(tool_data);
         }
        
     }

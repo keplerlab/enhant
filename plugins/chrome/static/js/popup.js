@@ -42,7 +42,9 @@ $(document).ready(function(){
     var annotationsIcons = [
         SelectAnnotationIcon,
         PenAnnotationIcon,
-        EyeAnnotationIcon
+        EyeAnnotationIcon,
+        HighlightAnnotationIcon,
+        DeleteAnnotationIcon
     ];
 
     var all_class = [];
@@ -196,7 +198,8 @@ $(document).ready(function(){
        var annotationIconsToDisable = [
             SelectAnnotationIcon,
             PenAnnotationIcon,
-            EyeAnnotationIcon
+            EyeAnnotationIcon,
+            HighlightAnnotationIcon
        ];
 
        var iconsToEnable = [
@@ -204,11 +207,6 @@ $(document).ready(function(){
        ];
 
         iconsToDisable.forEach(function(cl){
-            var icon_obj = icons_object_mapping[cl.name];
-            icon_obj.disableIcon();
-        });
-
-        annotationIconsToDisable.forEach(function(cl){
             var icon_obj = icons_object_mapping[cl.name];
             icon_obj.disableIcon();
         });
@@ -234,22 +232,14 @@ $(document).ready(function(){
         var annotationIconsToEnable = [
             SelectAnnotationIcon,
             PenAnnotationIcon,
-            EyeAnnotationIcon
+            EyeAnnotationIcon,
+            HighlightAnnotationIcon
         ];
  
         iconsToEnable.forEach(function(cl){
              var icon_obj = icons_object_mapping[cl.name];
              icon_obj.enableIcon();
 
-             if (cl.name == AnnotationIcon.name){
-
-                // create a canvas here
-             }
-        });
-
-        annotationIconsToEnable.forEach(function(cl){
-            var icon_obj = icons_object_mapping[cl.name];
-            icon_obj.enableIcon();
         });
 
         iconsToDisable.forEach(function(cl){
