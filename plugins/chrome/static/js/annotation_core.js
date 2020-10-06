@@ -234,7 +234,17 @@ class Eye extends AnnotationTool{
     constructor(canvas, ctx){
         super(canvas, ctx);
 
+        this.CLS_TEXT_TOOL_CONTAINER = "enhant-text-container";
+
         this.hidden = false;
+    }
+
+    hideTextOverlays(){
+        $('.' + this.CLS_TEXT_TOOL_CONTAINER).hide();
+    }
+
+    showTextOverlays(){
+        $('.' + this.CLS_TEXT_TOOL_CONTAINER).show();
     }
 
     update(data){
@@ -243,10 +253,12 @@ class Eye extends AnnotationTool{
         if (data.state){
             this.hidden = true;
             $('#'+ canvas.id).hide();
+            this.hideTextOverlays();
         }
         else{
             this.hidden = false;
             $('#'+ canvas.id).show();
+            this.showTextOverlays();
         }
     }
 }
