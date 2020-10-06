@@ -11,7 +11,6 @@ from colorama import init, Fore
 
 init(init(autoreset=True))
 
-
 class InteractionFinder(object):
     """[Client for handling notes]
 
@@ -101,13 +100,13 @@ class InteractionFinder(object):
     def _generate_time_windows(
         self, meeting_start_time: float, meeting_end_time: float
     ) -> list:
-        print("meeting_start_time", meeting_start_time)
-        print("meeting_end_time", meeting_end_time)
+        #print("meeting_start_time", meeting_start_time)
+        #print("meeting_end_time", meeting_end_time)
         time_window_list = []
         duration_of_each_window = (
             meeting_end_time - meeting_start_time
         ) / self.total_interaction_scores
-        print("duration_of_each_window", duration_of_each_window)
+        #print("duration_of_each_window", duration_of_each_window)
         for idx in range(self.total_interaction_scores):
             if idx == 0:
                 element = dict()

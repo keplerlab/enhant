@@ -25,12 +25,17 @@ import subprocess
 
 from colorama import init, Fore, Back
 
+
+from interaction_finder import InteractionFinder
+
+interaction_finder = InteractionFinder()
+
+
 init(init(autoreset=True))
 
 APP_NAME = "enhant-cli-app"
 
 app = typer.Typer()
-
 
 @app.command()
 def analyze(input: str) -> NoReturn:
@@ -222,7 +227,8 @@ def batchmode(input: str) -> NoReturn:
         if not os.path.exists(process_folder):
             os.makedirs(process_folder)
 
-        print(Fore.GREEN + f"\n Converting video file:{input} to wav format")
+        print(Fore.GREEN + f"\nConverting video file:", input)
+
         try:
             input_video_filename = input
             wav_file_basename = os.path.basename(os.path.splitext(input)[0])
@@ -250,21 +256,43 @@ def batchmode(input: str) -> NoReturn:
             print(str(e.output))
             return -1
 
-        print(Fore.GREEN + f"\n Uploading data", output_wav_filename)
-        result = upload_blob_and_run_transcription(
+        print(Fore.GREEN + f"\nUploading data", output_wav_filename)
+        result_json = upload_blob_and_run_transcription(
             "enhant-testing", output_wav_filename, wav_file_basename, process_folder
         )
-        if result != -1:
-            print("result:", result)
+        interaction_json = interaction_finder.process(result_json)
+        #print(json.dumps(interaction_json, indent=6))
+        output_json_file_name = os.path.join(process_folder, "processed_results.json")
+        with open(output_json_file_name, "w") as json_file:
+            print(
+                Back.GREEN
+                + f"\n***** Writing results in file: {output_json_file_name} ***** \n"
+            )
+            json.dump(interaction_json, json_file, indent=6)
+
+
+        #print("result:", result_json)
     elif input.endswith(".wav"):
         process_folder = os.path.splitext(input)[0]
         if not os.path.exists(process_folder):
             os.makedirs(process_folder)
         wav_file_basename = os.path.basename(input)
         print(Fore.GREEN + f"\n Uploading data", input)
-        upload_blob_and_run_transcription(
+        result = upload_blob_and_run_transcription(
             "enhant-testing", input, wav_file_basename, process_folder
         )
+        interaction_json = interaction_finder.process(result_json)
+        output_json_file_name = os.path.join(process_folder, "processed_results.json")
+        with open(output_json_file_name, "w") as json_file:
+            print(
+                Back.GREEN
+                + f"\n***** Writing results in file: {output_json_file_name} ***** \n"
+            )
+            json.dump(interaction_json, json_file, indent=6)
+
+        #print(json.dumps(interaction_json, indent=6))
+        #print("result_json:", result_json)
+
     else:
         print(Fore.RED + f"\n ERROR: Unsupported file format for batch processing")
         return 0
