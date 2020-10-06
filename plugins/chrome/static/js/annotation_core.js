@@ -199,7 +199,6 @@ class Pen extends AnnotationTool{
         var style_obj = {
             "z-index": _this.zIndexHighest, 
             "pointer-events": "auto",
-            "position": "absolute",
             "cursor": _this.cursor_path == "" ? "default" : "url('" + _this.cursor_path + "'), auto"
         }
 
@@ -290,9 +289,13 @@ class Text extends AnnotationTool{
         this.minInitHeight = 75;
 
         this.CLS_TEXT_TOOL_CONTAINER = "enhant-text-container";
-        this.CLS_TEXT_TOOL_PREFIX = "enhant-text-element"
+        this.CLS_TEXT_TOOL_PREFIX = "enhant-text-element";
 
-        this.lastEle;
+
+        this.BUFFER_WIDTH_IN_PX = 20;
+        this.BUFFER_HEIGHT_IN_PX = 20;
+
+        this.overlap = false;
     }
     
     createTextElementContainer(left, top, width, height) {
@@ -358,6 +361,8 @@ class Text extends AnnotationTool{
         // });
        
         textElement.focus();
+
+        $('.'+ this.CLS_TEXT_TOOL_CONTAINER).draggable().resizable();
     }
 
     getPosition(event){ 
@@ -370,49 +375,80 @@ class Text extends AnnotationTool{
             x: x,
             y: y
         }
-      }
+    }
+
+    checkOverlapWithExistingTextContainer(){
+        var newLeft = this.initX;
+        var newTop = this.initY;
+
+        var _this = this;
+
+        var allContainers = $('.' + this.CLS_TEXT_TOOL_CONTAINER);
+        allContainers.each(function(){
+            var el_position = $(this).offset();
+            var el_width = $(this).width();
+            var el_height = $(this).height();
+
+            // console.log(" width height , position ",el_width, el_height, el_position, newLeft, newTop);
+
+            var el_right = el_position.left + el_width;
+            var el_bottom = el_position.top + el_height;
+
+            var bounding_left = el_position.left - _this.BUFFER_WIDTH_IN_PX;
+            var bounding_right = el_right + _this.BUFFER_WIDTH_IN_PX;
+            var bounding_top = el_position.top - _this.BUFFER_HEIGHT_IN_PX;
+            var bounding_bottom = el_bottom + _this.BUFFER_HEIGHT_IN_PX;
+
+            // console.log(" overlaps ? ", bounding_left, bounding_right, bounding_top, bounding_bottom);
+
+            if ((newLeft >= bounding_left) && (newLeft <= bounding_right)){
+
+                if ((newTop >=  bounding_top) && (newTop <= bounding_bottom)){
+                    _this.overlap = true;
+                }
+            }
+        });
+
+        return this.overlap;
+    }
 
     handleMouseDown(e){
         this.getPosition(e); 
 
+        // reset overlap
+        this.overlap = false;
+
         this.initX = e.clientX + window.scrollX;
         this.initY = e.clientY + window.scrollY;
 
-        var textEle = document.createElement('div');
-        textEle.id = "enhant-temp-text-element";
-        textEle.style.position = "absolute";
-        textEle.style.top = this.initY + "px";
-        textEle.style.left = this.initX + "px";
-        textEle.style.width = "0px";
-        textEle.style.height = "0px";
-        textEle.style.border = "2px solid black";
-        textEle.style.zIndex = "2147483642";
-        document.body.appendChild(textEle);
-    }
+        this.checkOverlapWithExistingTextContainer();
 
-    createResizeWidthHandle() {
-        resizeWidthHandle = document.createElement('div');
-        resizeWidthHandle.style.display = "none";
-        resizeWidthHandle.style.width = resizeWidthHandleSize + "px";
-        resizeWidthHandle.style.height = resizeWidthHandleSize + "px";
-        resizeWidthHandle.style.position = "absolute";
-        resizeWidthHandle.style.backgroundImage = "url(" + chrome.extension.getURL("images/resize_width_handle.png") + ")";
-        resizeWidthHandle.style.backgroundSize = resizeWidthHandleSize + "px";
-        resizeWidthHandle.style.zIndex = "2147483644";
-        document.body.appendChild(resizeWidthHandle);
+        if (!this.overlap){
+            var textEle = document.createElement('div');
+            textEle.id = "enhant-temp-text-element";
+            textEle.style.position = "absolute";
+            textEle.style.top = this.initY + "px";
+            textEle.style.left = this.initX + "px";
+            textEle.style.width = "0px";
+            textEle.style.height = "0px";
+            textEle.style.border = "2px solid black";
+            textEle.style.zIndex = "2147483642";
+            document.body.appendChild(textEle);
+        }
     }
 
     handleMouseUp(event){
 
-        var textEle = document.getElementById("enhant-temp-text-element");
-        var eleLeft = parseFloat(textEle.style.left.slice(0, -2));
-        var eleTop = parseFloat(textEle.style.top.slice(0, -2));
-        var eleWidth = parseFloat(textEle.style.width.slice(0, -2));
-        var eleHeight = parseFloat(textEle.style.height.slice(0, -2));
-        textEle.remove();
+        if (!this.overlap){
+            var textEle = document.getElementById("enhant-temp-text-element");
+            var eleLeft = parseFloat(textEle.style.left.slice(0, -2));
+            var eleTop = parseFloat(textEle.style.top.slice(0, -2));
+            var eleWidth = parseFloat(textEle.style.width.slice(0, -2));
+            var eleHeight = parseFloat(textEle.style.height.slice(0, -2));
+            textEle.remove();
 
-        this.addText(eleLeft, eleTop, eleWidth, eleHeight);
-
+            this.addText(eleLeft, eleTop, eleWidth, eleHeight);
+        }
     }
 
     handleMouseMove(event){
@@ -451,7 +487,6 @@ class Text extends AnnotationTool{
         var style_obj = {
             "z-index": _this.zIndexHighest, 
             "pointer-events": "auto",
-            "position": "absolute"
         }
 
         _this.updateParentIframeZIndex({
