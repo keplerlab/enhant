@@ -59,6 +59,13 @@ COPY train_questions_model.py .
 RUN mkdir -p /home/model \
     && python train_questions_model.py
 
+RUN npm install --save @google-cloud/speech
+RUN pip install google-cloud-storage 
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends ffmpeg && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
 ARG PROJECT_DIR=/home/cli/
 WORKDIR ${PROJECT_DIR}
 CMD ["/bin/bash"]

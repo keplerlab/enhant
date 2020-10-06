@@ -16,12 +16,31 @@ services:
       - SAMPLE_RATE=44100
       - VOSK_MODEL_PATH=model
 
+  # speaker_diarization:
+  #   build: ./api/transcription_svc/speaker_diarization/
+  #   stdin_open: true # docker run -i
+  #   tty: true        # docker run -t
+  #   volumes:
+  #       - ./api/transcription_svc/speaker_diarization/test_audio/:/opt/transcription_svc/speaker_diarization/test_audio/
+  #       #- ./api/transcription_svc/models/vosk-model-en-us-daanzu-20200905-big/:/opt/transcription_svc/vosk-model-en/model/
+
+
+  # azure:
+  #   build: ./api/transcription_svc/azure/
+  #   stdin_open: true # docker run -i
+  #   tty: true        # docker run -t
+  #   volumes:
+  #       - ./api/transcription_svc/azure/test_audio/:/data/
+  #       #- ./api/transcription_svc/models/vosk-model-en-us-daanzu-20200905-big/:/opt/transcription_svc/vosk-model-en/model/
 
   cli:
-    image: keplerlab/enhant-cli:0.1.4
+    image: keplerlab/enhant-cli:0.1.5
     stdin_open: true # docker run -i
     tty: true        # docker run -t
+    environment:
+      - GOOGLE_APPLICATION_CREDENTIALS=/opt/transcription_svc/websocket-server/certificates-and-credentials/google_credential_file.json # Google credential file
     volumes:
+      - ./certificates-and-credentials/:/opt/transcription_svc/websocket-server/certificates-and-credentials/
       - ./cli/:/home/cli/
       - ./meeting-data/:/home/cli/meeting-data/
       - ./nlp_lib/:/home/nlp_lib/
