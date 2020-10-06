@@ -186,6 +186,7 @@ class Pen extends AnnotationTool{
         }
 
         if (data.hasOwnProperty("cursor")){
+            console.oog(" cursor found ");
             this.cursor_path = data.cursor;
         }
     }
@@ -194,18 +195,16 @@ class Pen extends AnnotationTool{
         var _this = this
         var canvas = _this.canvas;
 
-        _this.cursor_path = data.cursor;
-
         var style_obj = {
             "z-index": _this.zIndexHighest, 
             "pointer-events": "auto",
-            "cursor": _this.cursor_path == "" ? "default" : "url('" + _this.cursor_path + "'), auto"
+            "cursor": _this.cursor_path ? "default" : "url('" + _this.cursor_path + "'), auto"
         }
 
         _this.updateParentIframeZIndex({
             "z-index": _this.zIndexHighest, 
             "pointer-events": "auto",
-            "cursor": _this.cursor_path == "" ? "default" : "url('" + _this.cursor_path + "'), auto"
+            "cursor": _this.cursor_path ? "default" : "url('" + _this.cursor_path + "'), auto"
         });
 
         // set the z-index of the canvas to low value so it hides beneath 
@@ -269,11 +268,91 @@ class Delete extends AnnotationTool{
     }
 
     clearCanvas(){
-        this.ctx.clearReact(0, 0, canvas.width, canvas.height);
+        var ctx = this.ctx;
+        ctx.clearReact(0, 0, this.canvas.width, this.canvas.height);
+    }
+
+    activate(data){
+       this.clearCanvas();
+    }
+}
+
+class Erase extends Pen{
+    constructor(canvas, ctx){
+        super(canvas, ctx);
+
+        this.paint = false;
+        this.stroke = 20;
+        this.lineCap = "round";
+        this.lineJoin = "round";
+    }
+
+    handleMouseMove(e){
+
+        // draw only if paint is enabled (between mouse up and down)
+        if (!this.paint) return;
+        var ctx = this.ctx;
+        ctx.lineWidth = this.stroke;
+        ctx.lineCap = this.lineCap;
+        ctx.lineJoin = this.lineJoin;
+        ctx.strokeStyle = "rgba(0,0,0,1)";
+
+        ctx.beginPath();
+
+        // move to the start mouse coordinate
+        ctx.moveTo(this.mouse_position.x, this.mouse_position.y);
+
+        // update the mouse position as it moves
+        this.updateMousePosition(e);
+
+        // trace a line from start coordinate to new coordinate
+        ctx.lineTo(this.mouse_position.x, this.mouse_position.y);
+
+        // draw the line
+        ctx.stroke();
+    }
+
+    stopErase(){
+
+        var _this = this
+        var canvas = _this.canvas;
+
+        var style_obj = {
+            "z-index": _this.zIndexHighest, 
+            "pointer-events": "auto"
+        }
+
+        _this.updateParentIframeZIndex({
+            "z-index": _this.zIndexHighest, 
+            "pointer-events": "auto"
+        });
+
+        // set the z-index of the canvas to low value so it hides beneath 
+        $('#'+ canvas.id).css(style_obj);
+
+        var ctx = _this.ctx;
+        ctx.globalCompositeOperation = "source-over";
+    }
+
+    startErase(){
+        var ctx = this.ctx;
+        ctx.globalCompositeOperation = "destination-out";
+        ctx.strokeStyle = "rgba(0,0,0,1)";
+        console.log(" context ? ", ctx);
+    }
+
+    update(data){
+        console.log(" status .... ", data.state);
+        if (data.state){
+            this.startErase();
+        }
+        else{
+            this.stopErase();
+        }
     }
 
     activate(){
-       this.clearCanvas();
+        this.startErase();
     }
 }
 

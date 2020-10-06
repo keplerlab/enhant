@@ -4,7 +4,8 @@ const AnnotationTools = [
     Highlight,
     Eye,
     Delete,
-    Text
+    Text,
+    Erase
 ];
 
 

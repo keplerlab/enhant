@@ -1302,6 +1302,46 @@ class TextAnnotationIcon extends AnnotationIconBase{
     }
 }
 
+class EraseAnnotationIcon extends AnnotationIconBase{
+    constructor(){
+        super();
+        this.active_icon_path = "static/images/erase_annotation.svg";
+        this.inactive_icon_path = "static/images/erase_annotation_inactive.svg";
+    }
+
+    handleClick(){
+        var _this = this;
+        super.handleClick();
+
+        if (_this.state == ICONSTATE.ACTIVE){
+            window.parent.postMessage(
+                {
+                    "id": "frame2", 
+                    "key": "activate_tool",
+                    "sender": "enhant",
+                    "tool_info": {
+                        "name": "Erase",
+                        "data": {}
+                    }
+                }, "*")
+        }
+
+        window.parent.postMessage(
+            {
+                "id": "frame2", 
+                "key": "update_tool",
+                "sender": "enhant",
+                "tool_info": {
+                    "name": "Erase",
+                    "data": {
+                        "state": _this.state == ICONSTATE.ACTIVE ? true : false
+                    }
+                }
+            }, "*")
+
+    }
+}
+
 
 class AnnotationIcon extends Icon{
     constructor(){
@@ -1322,7 +1362,8 @@ class AnnotationIcon extends Icon{
             HighlightAnnotationIcon,
             EyeAnnotationIcon,
             TextAnnotationIcon,
-            DeleteAnnotationIcon
+            DeleteAnnotationIcon,
+            EraseAnnotationIcon
         ]
 
         this.annotation_icons = {}
