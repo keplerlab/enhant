@@ -26,7 +26,7 @@ function powermodeIconHandler(data){
 
 $(document).ready(function(){
 
-    var registered_classes = [
+    var icons = [
         LogoIcon,
         SeparatorIcon,
         NotesIcon,
@@ -35,14 +35,27 @@ $(document).ready(function(){
         CaptureTabIcon,
         SettingsIcon,
         RecordIcon,
-        PowerModeIcon
+        PowerModeIcon,
+        AnnotationIcon
     ];
+
+    var annotationsIcons = [
+        SelectAnnotationIcon,
+        PenAnnotationIcon,
+        EyeAnnotationIcon,
+        HighlightAnnotationIcon,
+        DeleteAnnotationIcon
+    ];
+
+    var all_class = [];
+    all_class.push(...icons);
+    all_class.push(...annotationsIcons);
 
     var icons_object_mapping = {};
     var pluginActivated = false;
 
     // register the classes and events
-    registered_classes.forEach(function(cl){
+    all_class.forEach(function(cl){
 
         var obj = new cl();
         obj.registerEvents();
@@ -129,6 +142,9 @@ $(document).ready(function(){
 
             // get the icon type
             var icon_type = $(this).attr("type");
+            var is_annotation_icon = $(this).attr("annotation_icon") !== undefined ? true : false;
+
+            console.log(" is annotation icon ", is_annotation_icon);
 
             var icon_obj = icons_object_mapping[icon_type];
 
@@ -175,12 +191,20 @@ $(document).ready(function(){
        var iconsToDisable = [
            BookmarkIcon,
            CaptureTabIcon,
-           NotesIcon
+           NotesIcon,
+           AnnotationIcon
+       ];
+
+       var annotationIconsToDisable = [
+            SelectAnnotationIcon,
+            PenAnnotationIcon,
+            EyeAnnotationIcon,
+            HighlightAnnotationIcon
        ];
 
        var iconsToEnable = [
            SettingsIcon
-       ]
+       ];
 
         iconsToDisable.forEach(function(cl){
             var icon_obj = icons_object_mapping[cl.name];
@@ -197,23 +221,31 @@ $(document).ready(function(){
         var iconsToEnable = [
             BookmarkIcon,
             CaptureTabIcon,
-            NotesIcon
+            NotesIcon,
+            AnnotationIcon
         ];
 
         var iconsToDisable = [
             SettingsIcon
-        ]
+        ];
+
+        var annotationIconsToEnable = [
+            SelectAnnotationIcon,
+            PenAnnotationIcon,
+            EyeAnnotationIcon,
+            HighlightAnnotationIcon
+        ];
  
         iconsToEnable.forEach(function(cl){
              var icon_obj = icons_object_mapping[cl.name];
              icon_obj.enableIcon();
+
         });
 
         iconsToDisable.forEach(function(cl){
             var icon_obj = icons_object_mapping[cl.name];
             icon_obj.disableIcon();
-        })
-
+        });
     });
 
     window.addEventListener("switchToIcon", function(event){

@@ -962,4 +962,440 @@ class SeparatorIcon extends Icon{
 }
 
 
+class AnnotationIconBase extends Icon{
+    constructor(){
+        super();
+    }
+
+    toggleIcon(){
+        if ((this.active_icon_path !== null) && (this.inactive_icon_path !== null)){
+            var icon_type = this.constructor.name;
+
+            console.log(" toggle icon ", icon_type);
+            var icon = $('iconAnnotation[type="' + icon_type +'"]');
+            var icon_img = $('iconAnnotation[type="' + icon_type +'"] img');
+            var icon_background = icon.parent();
+
+            if (this.state == ICONSTATE.ACTIVE){
+                icon_background.css("background-color", this.active_color);
+                icon_img.attr("src", this.inactive_icon_path);
+            }
+            else if (this.state == ICONSTATE.INACTIVE){
+                icon_background.css("background-color", this.inactive_color);
+                icon_img.attr("src", this.active_icon_path);
+            }
+        }
+    }
+
+    disableIcon(){
+        var icon_type = this.constructor.name;
+        var icon = $('iconAnnotation[type="' + icon_type +'"]');
+        var icon_img = $('iconAnnotation[type="' + icon_type +'"] img');
+
+        icon_img.attr("src", this.icon_disable_path);
+
+        icon.removeAttr("clickable");
+        this.disabled = true;
+    }
+
+    enableIcon(){
+        var icon_type = this.constructor.name;
+        var icon = $('iconAnnotation[type="' + icon_type +'"]');
+        var icon_img = $('iconAnnotation[type="' + icon_type +'"] img');
+
+        icon_img.attr("src", this.active_icon_path);
+
+        if (this.clickable){
+            icon.attr("clickable", true);
+        }
+
+        this.disabled = false;
+    }
+}
+
+class SelectAnnotationIcon extends AnnotationIconBase{
+    constructor(){
+        super();
+        this.active_icon_path = "static/images/select_annotation.svg";
+        this.inactive_icon_path = "static/images/select_annotation_inactive.svg";
+    }
+
+    handleClick(){
+        super.handleClick();
+        window.parent.postMessage(
+            {
+                "id": "frame2", 
+                "key": "activate_tool",
+                "sender": "enhant",
+                "tool_info": {
+                    "name": "Select",
+                    "data": {}
+                }
+            }, "*")
+    }
+}
+
+class PenAnnotationIcon extends AnnotationIconBase{
+    constructor(){
+        super();
+        this.active_icon_path = "static/images/pen_annotation.svg";
+        this.inactive_icon_path = "static/images/pen_annotation_inactive.svg";
+
+        this.color_toolbar_id = "color-toolbar-paint";
+
+        this.color_click_event_registered = false;
+
+        this.pen_cursor = "static/images/pen_canvas_cursor.svg";
+    }
+
+    registerColorIconClick(){
+        var _this = this;
+        $("iconPaint").click(function(){
+            var colorCode = $(this).attr("value");
+
+            if (_this.state == ICONSTATE.ACTIVE){
+                window.parent.postMessage(
+                    {
+                        "id": "frame2", 
+                        "key": "update_tool",
+                        "sender": "enhant",
+                        "tool_info": {
+                            "name": "Pen",
+                            "data": {
+                                "color": colorCode
+                            }
+                        }
+                    }, "*")
+            }
+        });
+        _this.color_click_event_registered = true;
+    }
+
+    toggleState(){
+        super.toggleState();
+        $("#" + this.color_toolbar_id).hide();
+    }
+
+    handleClick(){
+        var _this = this;
+        super.handleClick();
+
+        if (this.state == ICONSTATE.ACTIVE){
+
+            $("#" + this.color_toolbar_id).show();
+            if (!this.color_click_event_registered){
+                this.registerColorIconClick();
+            }
+
+            window.parent.postMessage(
+                {
+                    "id": "frame2", 
+                    "key": "activate_tool",
+                    "sender": "enhant",
+                    "tool_info": {
+                        "name": "Pen",
+                        "data": {
+                        }
+                    }
+                }, "*")
+        }
+        else{
+            $("#" + this.color_toolbar_id).hide();
+        }
+    }
+    
+}
+
+class HighlightAnnotationIcon extends AnnotationIconBase{
+    constructor(){
+        super();
+        this.active_icon_path = "static/images/highlight_annotation.svg";
+        this.inactive_icon_path = "static/images/highlight_annotation_inactive.svg";
+
+        this.color_click_event_registered = false;
+        this.color_toolbar_id = "color-toolbar-highlight";
+
+        this.highlight_cursor = "static/images/highlight_canvas_cursor.svg";
+    }
+
+    registerColorIconClick(){
+        var _this = this;
+        $("iconHighlight").click(function(){
+            var colorCode = $(this).attr("value");
+
+            if (_this.state == ICONSTATE.ACTIVE){
+                window.parent.postMessage(
+                    {
+                        "id": "frame2", 
+                        "key": "update_tool",
+                        "sender": "enhant",
+                        "tool_info": {
+                            "name": "Highlight",
+                            "data": {
+                                "color": colorCode
+                            }
+                        }
+                    }, "*")
+            }
+        });
+        _this.color_click_event_registered = true;
+    }
+
+    toggleState(){
+        super.toggleState();
+        $("#" + this.color_toolbar_id).hide();
+    }
+
+    handleClick(){
+        var _this = this;
+        super.handleClick();
+
+        if (this.state == ICONSTATE.ACTIVE){
+            $("#" + this.color_toolbar_id).show();
+            if (!this.color_click_event_registered){
+                this.registerColorIconClick();
+            }
+            window.parent.postMessage(
+                {
+                    "id": "frame2", 
+                    "key": "activate_tool",
+                    "sender": "enhant",
+                    "tool_info": {
+                        "name": "Highlight",
+                        "data": {
+                        }
+                    }
+                }, "*")
+        }
+        else{
+            $("#" + this.color_toolbar_id).hide();
+        }
+    }
+}
+
+class EyeAnnotationIcon extends AnnotationIconBase{
+    constructor(){
+        super();
+        this.active_icon_path = "static/images/eye_opened_annotation.svg";
+        this.inactive_icon_path = "static/images/eye_closed_annotation.svg";
+    }
+
+    handleClick(){
+        var _this = this;
+        super.handleClick();
+
+        if (_this.state == ICONSTATE.ACTIVE){
+            window.parent.postMessage(
+                {
+                    "id": "frame2", 
+                    "key": "activate_tool",
+                    "sender": "enhant",
+                    "tool_info": {
+                        "name": "Eye",
+                        "data": {}
+                    }
+                }, "*")
+        }
+
+        window.parent.postMessage(
+            {
+                "id": "frame2", 
+                "key": "update_tool",
+                "sender": "enhant",
+                "tool_info": {
+                    "name": "Eye",
+                    "data": {
+                        "state": _this.state == ICONSTATE.ACTIVE ? true : false
+                    }
+                }
+            }, "*")
+    }
+}
+
+class DeleteAnnotationIcon extends AnnotationIconBase{
+    constructor(){
+        super();
+        this.active_icon_path = "static/images/delete_annotation.svg";
+        this.inactive_icon_path = "static/images/delete_annotation_inactive.svg";
+    }
+
+    handleClick(){
+        var _this = this;
+        super.handleClick();
+
+        setTimeout(
+            function(){
+                _this.toggleState();
+                _this.setLocalStorage();
+                _this.stateHandler();
+        }, 50);
+
+        window.parent.postMessage(
+            {
+                "id": "frame2", 
+                "key": "activate_tool",
+                "sender": "enhant",
+                "tool_info": {
+                    "name": "Delete",
+                    "data": {}
+                }
+            }, "*")
+    }
+}
+
+class TextAnnotationIcon extends AnnotationIconBase{
+    constructor(){
+        super();
+        this.active_icon_path = "static/images/text_annotation.svg";
+        this.inactive_icon_path = "static/images/text_annotation_inactive.svg";
+
+        this.color_click_event_registered = false;
+        this.color_toolbar_id = "color-toolbar-text";
+    }
+
+    registerColorIconClick(){
+        var _this = this;
+        $("iconText").click(function(){
+            var colorCode = $(this).attr("value");
+
+            if (_this.state == ICONSTATE.ACTIVE){
+                window.parent.postMessage(
+                    {
+                        "id": "frame2", 
+                        "key": "update_tool",
+                        "sender": "enhant",
+                        "tool_info": {
+                            "name": "Text",
+                            "data": {
+                                "color": colorCode
+                            }
+                        }
+                    }, "*")
+            }
+        });
+        _this.color_click_event_registered = true;
+    }
+
+    handleClick(){
+        var _this = this;
+        super.handleClick();
+
+        if (_this.state == ICONSTATE.ACTIVE){
+            $("#" + _this.color_toolbar_id).show();
+            if (!_this.color_click_event_registered){
+                _this.registerColorIconClick();
+            }
+            window.parent.postMessage(
+                {
+                    "id": "frame2", 
+                    "key": "activate_tool",
+                    "sender": "enhant",
+                    "tool_info": {
+                        "name": "Text",
+                        "data": {}
+                    }
+                }, "*")
+        }
+        else{
+            $("#" + this.color_toolbar_id).hide();
+        }
+    }
+}
+
+
+class AnnotationIcon extends Icon{
+    constructor(){
+        super();
+
+        this.container_id = "annotation-toolbar";
+
+        this.active_icon_path = "static/images/annotation.svg";
+        this.inactive_icon_path = "static/images/annotation_inactive.svg";
+
+        this.icon_disable_path = "static/images/annotation_disabled.svg";
+
+        this.icon_disabled_message = "Annotate enabled when recording.";
+
+        this.annotation_icon_classes = [
+            SelectAnnotationIcon,
+            PenAnnotationIcon,
+            HighlightAnnotationIcon,
+            EyeAnnotationIcon,
+            TextAnnotationIcon,
+            DeleteAnnotationIcon
+        ]
+
+        this.annotation_icons = {}
+    }
+
+    hideOtherIconWindow(icon_type){
+        var _this = this;
+        for (const prop in _this.annotation_icons){
+            if (!(prop == icon_type)){
+                var icon_obj = _this.annotation_icons[prop];
+
+                if ((icon_obj.state == ICONSTATE.ACTIVE)){
+                    icon_obj.toggleState();
+                    icon_obj.setLocalStorage();
+                    icon_obj.stateHandler();
+
+                }
+            }
+
+        }
+    }
+
+    intializeAnnotationIcons(){
+        var _this = this;
+        this.annotation_icon_classes.forEach(function(cls){
+            var obj = new cls();
+            _this.annotation_icons[cls.name] = obj;
+            obj.enableIcon();
+        });
+    }
+
+    registerClickForAnnotationIcons(){
+        var _this = this;
+        $('iconAnnotation').click(function(e){
+            var icon_type = $(this).attr("type");
+
+            var icon_obj = _this.annotation_icons[icon_type];
+            _this.hideOtherIconWindow(icon_type);
+            icon_obj.handleClick();
+        });
+    }
+
+    // as soon as annotation is enabled.. create the canvas
+    enableIcon(){
+        super.enableIcon();
+        this.intializeAnnotationIcons();
+
+        this.registerClickForAnnotationIcons();
+
+        window.parent.postMessage(
+            {
+                "id": "frame2", 
+                "key": "annotation_active",
+                "sender": "enhant",
+                "tool_info": {}
+                
+            }, "*")
+    }
+
+    //remove the canvas when it disables
+    disableIcon(){
+        super.disableIcon();
+
+        window.parent.postMessage(
+            {
+                "id": "frame2", 
+                "sender": "enhant",
+                "key": "annotation_inactive",
+                "tool_info": {}
+            }, "*")
+    }
+}
+
+
+
 
