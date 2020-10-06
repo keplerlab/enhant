@@ -189,6 +189,7 @@ def upload_blob_and_run_transcription(
             ]
         )
         #print(output)
+        
         output_json = helper.jsonstring_to_speaker_wise_json(output)
         output_json_file_name = os.path.join(process_folder, "speaker_wise.json")
         with open(output_json_file_name, "w") as json_file:
@@ -215,8 +216,8 @@ def upload_blob_and_run_transcription(
 
 
 @app.command()
-def analyze_batch(input: str) -> NoReturn:
-    print("input", input)
+def batchmode(input: str) -> NoReturn:
+    #print("input", input)
     if input.endswith(".mp4") or input.endswith(".mov"):
 
         process_folder = os.path.splitext(input)[0]

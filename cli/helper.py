@@ -231,9 +231,7 @@ def transform_Srt_to_list(srtList: dict, origin, meeting_start_utc: Optional[int
             "start_time"
         ] = _transformTime(srt.start, meeting_start_utc)
 
-        transcriptions_pkt["msg"]["data"]["transcription"]["end_time"] = _transformTime(
-            srt.end, meeting_start_utc
-        )
+        transcriptions_pkt["msg"]["data"]["transcription"]["end_time"] = _transformTime(srt.end, meeting_start_utc)
 
         transcription_pkt_list.append(transcriptions_pkt)
         transcription_pkt_list = add_origin(transcription_pkt_list, origin)
@@ -242,14 +240,13 @@ def transform_Srt_to_list(srtList: dict, origin, meeting_start_utc: Optional[int
     return transcription_pkt_list
 
 def _parse_number(input_dict: dict, dict_key: str):
-    print(input_dict, dict_key)
     if dict_key in input_dict:
         return int(input_dict[dict_key])
     else:
-        return 0 
+        return 0
 
 def _transform_time_stamp(element: dict) -> dict:
-    print("element:", element)
+    #print("element:", element)
     element["startTime"] = _parse_number(element["startTime"], "seconds")*1000 + _parse_number(element["startTime"], "nanos")//1000000 
     element["endTime"] = _parse_number(element["endTime"], "seconds")*1000 + _parse_number(element["endTime"], "nanos")//1000000 
     
@@ -258,12 +255,19 @@ def _transform_time_stamp(element: dict) -> dict:
 def _join_word_after_sentence(sentence: str, word: str) -> str:
     return sentence + " " + word
 
-def parse_speaker_wise_json(input_json: dict) -> dict :
-    speaker_tag_result = input_json[len(input_json) - 1 ]
+def jsonstring_to_speaker_wise_json(input_json: dict) -> dict :
+    input_json = json.loads(input_json)
+    #print("input_json", input_json)
+    speaker_tag_result = input_json[len(input_json) - 1]
+    #print("speaker_tag_result", speaker_tag_result)
+    #print("speaker_tag_result['alternatives']", speaker_tag_result["alternatives"])
+    #print("speaker_tag_result['alternatives'][0]", speaker_tag_result["alternatives"][0])
+
+
     temp = speaker_tag_result["alternatives"][0]["words"]
     consolidated_speaker_tag_list = []
     prev_speaker_tag = -1
-    
+
     for idx, element in enumerate(temp):
         element = _transform_time_stamp(element)
         currentSpeakerTag = element["speakerTag"]
