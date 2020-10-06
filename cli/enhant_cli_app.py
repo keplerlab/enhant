@@ -29,6 +29,8 @@ from colorama import init, Fore, Back
 from interaction_finder import InteractionFinder
 
 interaction_finder = InteractionFinder()
+from questions_finder import QuestionsFinder
+questions_finder = QuestionsFinder()
 
 
 init(init(autoreset=True))
@@ -261,6 +263,8 @@ def batchmode(input: str) -> NoReturn:
             "enhant-testing", output_wav_filename, wav_file_basename, process_folder
         )
         interaction_json = interaction_finder.process(result_json)
+        questions_finder.processbatch(result_json,interaction_json)
+
         #print(json.dumps(interaction_json, indent=6))
         output_json_file_name = os.path.join(process_folder, "processed_results.json")
         with open(output_json_file_name, "w") as json_file:
@@ -283,6 +287,7 @@ def batchmode(input: str) -> NoReturn:
         )
         interaction_json = interaction_finder.process(result_json)
         output_json_file_name = os.path.join(process_folder, "processed_results.json")
+        questions_finder.processbatch(result_json,interaction_json)
         with open(output_json_file_name, "w") as json_file:
             print(
                 Back.GREEN
