@@ -86,11 +86,13 @@ if os.path.isfile(input_json_file_name):
     with open(input_json_file_name) as f:
         input_json_data = json.load(f)
         # print("input_json_data", input_json_data)
-        result_json = parse_speaker_wise_json(input_json_data)
-        interaction_json = interaction_finder.process(result_json)
-        questions_finder.processbatch(result_json,interaction_json)
-        sentiment_finder.processbatch(result_json,interaction_json)
-        print(json.dumps(interaction_json, indent=6))
+        transcription_json = parse_speaker_wise_json(input_json_data)
+        #interaction_json = interaction_finder.process(result_json)
+        result_json = dict()
+        interaction_finder.processbatch(transcription_json,result_json)
+        questions_finder.processbatch(transcription_json,result_json)
+        sentiment_finder.processbatch(transcription_json,result_json)
+        print(json.dumps(result_json, indent=6))
         # print("interaction_json", interaction_json)
 
 else:

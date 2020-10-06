@@ -263,7 +263,8 @@ def batchmode(input: str) -> NoReturn:
         transcription_json = upload_blob_and_run_transcription(
             "enhant-testing", output_wav_filename, wav_file_basename, process_folder
         )
-        result_json = interaction_finder.process(transcription_json)
+        result_json = dict()
+        interaction_finder.processbatch(transcription_json,result_json)
         questions_finder.processbatch(transcription_json,result_json)
         sentiment_finder.processbatch(transcription_json, result_json)
 
@@ -286,10 +287,12 @@ def batchmode(input: str) -> NoReturn:
         transcription_json = upload_blob_and_run_transcription(
             "enhant-testing", input, wav_file_basename, process_folder
         )
-        result_json = interaction_finder.process(transcription_json)
-        output_json_file_name = os.path.join(process_folder, "processed_results.json")
+        result_json = dict()
+        interaction_finder.processbatch(transcription_json, result_json)
         questions_finder.processbatch(transcription_json, result_json)
         sentiment_finder.processbatch(transcription_json, result_json)
+
+        output_json_file_name = os.path.join(process_folder, "processed_results.json")
         with open(output_json_file_name, "w") as json_file:
             print(
                 Back.GREEN

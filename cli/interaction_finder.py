@@ -126,7 +126,7 @@ class InteractionFinder(object):
         # print("time_window_list", time_window_list)
         return time_window_list
 
-    def process(self, input_json_data: dict) -> dict:
+    def processbatch(self, input_json_data: dict, ouptut_json_data:dict):
 
         """[summary]
         """
@@ -146,17 +146,15 @@ class InteractionFinder(object):
         end_meeting_time = input_json_data[-1]["endTime"]
         time_windows = self._generate_time_windows(start_meeting_time, end_meeting_time)
 
-        print("input_json_data")
-        result_json = dict()
-        result_json["interaction"] = dict()
-        result_json["interaction"]["interaction_scores_plot"] = []
-        result_json["interaction"]["interaction_scores_total"] = dict()
+        ouptut_json_data["interaction"] = dict()
+        ouptut_json_data["interaction"]["interaction_scores_plot"] = []
+        ouptut_json_data["interaction"]["interaction_scores_total"] = dict()
 
         for time_window in time_windows:
             interaction_result = self._get_interaction_in_time_window(
                 input_json_data, time_window["startTime"], time_window["endTime"]
             )
-            result_json["interaction"]["interaction_scores_plot"].append(
+            ouptut_json_data["interaction"]["interaction_scores_plot"].append(
                 interaction_result
             )
 
@@ -166,7 +164,6 @@ class InteractionFinder(object):
             input_json_data, start_meeting_time, end_meeting_time
         )
         del interaction_result_total["end_time"]
-        result_json["interaction"][
+        ouptut_json_data["interaction"][
             "interaction_scores_total"
         ] = interaction_result_total
-        return result_json
