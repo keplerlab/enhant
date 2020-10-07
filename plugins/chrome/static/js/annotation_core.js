@@ -62,6 +62,10 @@ class AnnotationTool{
         }
     }
 
+    delete(){
+        this.clearData();
+    }
+
     draw(){
 
     }
@@ -226,14 +230,23 @@ class Pen extends AnnotationTool{
         ctx.stroke();
     }
 
+    clearCanvas(){
+        var ctx = this.ctx;
+        ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    }
+
+    delete(){
+        super.delete();
+        this.clearCanvas();
+
+    }
+
     draw(){
         var _this = this;
         var ctx = this.ctx;
         var canvas_jquery = $('#' + this.canvas.id);
         var scaleWidth = Number(canvas_jquery.attr("scaleWidth"));
         var scaleHeight = Number(canvas_jquery.attr("scaleHeight"));
-
-        console.log(" drawing PEN with scale ", scaleHeight, scaleWidth);
 
         this.points.forEach(function(curve_arr){
 
@@ -360,18 +373,10 @@ class Delete extends AnnotationTool{
         this.CLS_TEXT_TOOL_CONTAINER = "enhant-text-container";
     }
 
-    deleteText(){
-        $('.' + this.CLS_TEXT_TOOL_CONTAINER).remove();
-    }
-
-    clearCanvas(){
-        var ctx = this.ctx;
-        ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-    }
-
-    activate(data){
-       this.clearCanvas();
-       this.deleteText();
+    activate(tool_arr){
+       tool_arr.forEach(function(tool){
+           tool.delete();
+       })
     }
 }
 
@@ -436,11 +441,9 @@ class Erase extends Pen{
         var ctx = this.ctx;
         ctx.globalCompositeOperation = "destination-out";
         ctx.strokeStyle = "rgba(0,0,0,1)";
-        console.log(" context ? ", ctx);
     }
 
     update(data){
-        console.log(" status .... ", data.state);
         if (data.state){
             this.startErase();
         }
@@ -667,6 +670,15 @@ class Text extends AnnotationTool{
             textEle.style.height = parseFloat(this.moveY - this.startY) + "px";
         }
 
+    }
+
+    deleteText(){
+        $('.' + this.CLS_TEXT_TOOL_CONTAINER).remove();
+    }
+
+    delete(){
+        super.delete();
+        this.deleteText();
     }
 
     updateCss(){

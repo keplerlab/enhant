@@ -49,8 +49,6 @@ class Annotation{
 
     resizeCanvas(scale_data){
 
-        console.log(" resizing ", scale_data);
-
         var htmlCanvas = document.getElementById(this.canvas_id);
 
         var canvas_jquery = $('#' + this.canvas_id);
@@ -173,7 +171,16 @@ class Annotation{
         _this.selected_cls = cls_name;
 
         var tool_obj = _this.annotation_tools_ref[_this.selected_cls];
-        tool_obj.activate(tool_data);
+
+        if (cls_name == Delete.name){
+            var cls_arr = [Pen.name, Highlight.name, Text.name];
+            var tool_arr = cls_arr.map(function(cls){return _this.annotation_tools_ref[cls]});
+            tool_obj.activate(tool_arr);
+        }
+        else{
+            tool_obj.activate(tool_data);
+        }
+        
     }
 
     removeSelectedTool(){
