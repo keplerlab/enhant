@@ -23,13 +23,17 @@ class Annotation{
         this.annotation_tools_ref = {};
         this.canvas_id = "enhant-annotation-canvas";
 
+        // array to save points
+        this.points = [];
+
         // default class is the select tool
         this.selected_cls = Select.name;
 
-        this.width = 0;
-        this.height = 0;
         this.left = 0;
         this.top = 0;
+
+        this.originalWidth = 0;
+        this.originalHeight = 0;
 
         this.canvas = null;
         this.ctx = null;
@@ -39,19 +43,29 @@ class Annotation{
         var canvas = document.getElementById(this.canvas_id);
         var ctx = canvas.getContext("2d");
         ctx.clearReact(0, 0, canvas.width, canvas.height);
+
+        this.points = [];
     }
 
     resizeCanvas(scale_data){
 
+        console.log(" resizing ", scale_data);
+
         var htmlCanvas = document.getElementById(this.canvas_id);
+
+        var canvas_jquery = $('#' + this.canvas_id);
+        var scaleWidth = (canvas_jquery.width() / this.originalWidth);
+        var scaleHeight = (canvas_jquery.height() / this.originalHeight);
+        canvas_jquery.attr("scaleWidth", scaleWidth);
+        canvas_jquery.attr("scaleHeight", scaleHeight);
+
         htmlCanvas.width = scale_data.width;
         htmlCanvas.height = scale_data.height;
-        this.width = htmlCanvas.width;
-        this.height = htmlCanvas.height;
     }
 
     setCanvasAndContext(){
         var canvas = document.getElementById(this.canvas_id);
+        
         var ctx = canvas.getContext("2d");
         this.canvas = canvas;
         this.ctx = ctx;
@@ -63,10 +77,18 @@ class Annotation{
         $("body").prepend(html);
         $('#' + this.canvas_id).css({
             "top": "0px",
-            "left": "0px",
-            "width": window.innerWidth + "px",
-            "height": window.innerHeight + "px"
+            "left": "0px"
         });
+
+        var htmlCanvas = document.getElementById(this.canvas_id);
+        htmlCanvas.width = window.innerWidth;
+        htmlCanvas.height = window.innerHeight;
+
+        this.originalWidth = htmlCanvas.width;
+        this.originalHeight = htmlCanvas.height;
+
+        $('#' + this.canvas_id).attr("scaleWidth", 1);
+        $('#' + this.canvas_id).attr("scaleHeight", 1);
 
         this.setCanvasAndContext();
     }
@@ -90,6 +112,17 @@ class Annotation{
         var _this = this;
         var tool_obj = _this.annotation_tools_ref[_this.selected_cls];
         tool_obj.handleMouseMove(e);
+    }
+
+    handleResize(e){
+        var _this = this;
+        for (const cls in _this.annotation_tools_ref){
+            var tool_obj = _this.annotation_tools_ref[cls];
+
+            if (tool_obj.points.length > 0){
+                tool_obj.handleResize(e);
+            }
+        }
     }
 
     handleScroll(data){
@@ -167,6 +200,7 @@ window.addEventListener("message", function(m){
     if (key == MESSAGING_PROTOCOL.resize){
         if (_annotation instanceof Annotation){
             _annotation.resizeCanvas(m["data"]["scale"]);
+            _annotation.handleResize();
         }
     }
 

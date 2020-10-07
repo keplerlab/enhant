@@ -7,10 +7,24 @@ class AnnotationTool{
 
         this.ctx = ctx;
 
+        this.points = [];
+
         this.mouse_position = {
             x: 0,
             y: 0
         }
+    }
+
+    getSavedData(){
+        return this.points;
+    }
+
+    clearData(){
+        this.points = [];
+    }
+
+    addData(arr){
+        this.points.push(arr);
     }
 
     getCanvas(){
@@ -48,6 +62,10 @@ class AnnotationTool{
         }
     }
 
+    draw(){
+
+    }
+
     update(data){
     }
 
@@ -59,6 +77,10 @@ class AnnotationTool{
     }
 
     handleMouseMove(e){
+    }
+
+    handleResize(e){
+        this.draw();
     }
 
     activate(data){
@@ -116,6 +138,8 @@ class Pen extends AnnotationTool{
         this.cursor_path = "";
 
         this.paint = false;
+
+        this.curve_data = [];
     }
 
     getRGBAString(strColor, alpha) {
@@ -144,14 +168,27 @@ class Pen extends AnnotationTool{
 
     handleMouseUp(e){
         this.paint = false;
+        this.addData(this.curve_data);
     }
 
     handleMouseDown(e){
 
         // save the default state
         var ctx = this.ctx;
+
+        this.curve_data = [];
         
         this.updateMousePosition(e);
+
+        this.curve_data.push({
+            x: this.mouse_position.x / this.canvas.width,
+            y: this.mouse_position.y / this.canvas.height,
+            lineWidth: this.stroke,
+            lineCap: this.lineCap,
+            lineJoin: this.lineJoin,
+            strokeStyle: this.getRGBAString(this.color, this.strokeAlpha)
+        });
+
         this.paint = true;
     }
 
@@ -173,11 +210,64 @@ class Pen extends AnnotationTool{
         // update the mouse position as it moves
         this.updateMousePosition(e);
 
+        this.curve_data.push({
+            x: this.mouse_position.x / this.canvas.width,
+            y: this.mouse_position.y / this.canvas.height,
+            lineWidth: this.stroke,
+            lineCap: this.lineCap,
+            lineJoin: this.lineJoin,
+            strokeStyle: this.getRGBAString(this.color, this.strokeAlpha)
+        });
+
         // trace a line from start coordinate to new coordinate
         ctx.lineTo(this.mouse_position.x, this.mouse_position.y);
 
         // draw the line
         ctx.stroke();
+    }
+
+    draw(){
+        var _this = this;
+        var ctx = this.ctx;
+        var canvas_jquery = $('#' + this.canvas.id);
+        var scaleWidth = Number(canvas_jquery.attr("scaleWidth"));
+        var scaleHeight = Number(canvas_jquery.attr("scaleHeight"));
+
+        console.log(" drawing PEN with scale ", scaleHeight, scaleWidth);
+
+        this.points.forEach(function(curve_arr){
+
+            curve_arr.forEach(function(point, index){
+
+                // console.log(" index/ point ", index + 1, curve_arr.length);
+
+                if ((index + 1) < curve_arr.length){
+
+                    ctx.beginPath();
+                    var start_x = point.x * _this.canvas.width;
+                    var start_y = point.y * _this.canvas.height;
+
+                    // console.log(" moving point from ", point.x, point.y, " to ", start_x, start_y);
+                    ctx.moveTo(start_x, start_y);
+                    ctx.lineWidth = point.lineWidth;
+                    ctx.lineCap = point.lineCap;
+                    ctx.lineJoin = point.lineJoin;
+                    ctx.strokeStyle = point.strokeStyle;
+
+                    var start_x = curve_arr[index + 1].x;
+                    var start_y = curve_arr[index + 1].y;
+
+                    var next_x = (start_x * _this.canvas.width);
+                    var next_y = (start_y * _this.canvas.height);
+
+                    // console.log(" moving next point from ", curve_arr[index + 1].x, curve_arr[index + 1].y, " to ", next_x, next_y);
+
+                    // trace a line from start coordinate to next coordinate
+                    ctx.lineTo(next_x, next_y);
+                    ctx.stroke();
+                }
+            });
+        });
     }
 
     setPenData(data){
@@ -224,6 +314,7 @@ class Highlight extends Pen{
     constructor(canvas, ctx){
         super(canvas, ctx);
 
+        this.color = "#FFCF74";
         this.stroke = 14;
         this.strokeAlpha = 0.2;
     }
@@ -265,15 +356,22 @@ class Eye extends AnnotationTool{
 class Delete extends AnnotationTool{
     constructor(canvas, ctx){
         super(canvas, ctx);
+
+        this.CLS_TEXT_TOOL_CONTAINER = "enhant-text-container";
+    }
+
+    deleteText(){
+        $('.' + this.CLS_TEXT_TOOL_CONTAINER).remove();
     }
 
     clearCanvas(){
         var ctx = this.ctx;
-        ctx.clearReact(0, 0, this.canvas.width, this.canvas.height);
+        ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     }
 
     activate(data){
        this.clearCanvas();
+       this.deleteText();
     }
 }
 
