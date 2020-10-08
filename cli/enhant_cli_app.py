@@ -230,7 +230,7 @@ def batchmode(input: str) -> NoReturn:
         if not os.path.exists(process_folder):
             os.makedirs(process_folder)
 
-        print(Fore.GREEN + f"\nConverting video file:", input)
+        print(Fore.GREEN + f"\n**** Converting video file ****")
 
         try:
             input_video_filename = input
@@ -258,8 +258,8 @@ def batchmode(input: str) -> NoReturn:
             print("\n Subprocess error")
             print(str(e.output))
             return -1
-
-        print(Fore.GREEN + f"\nUploading data", output_wav_filename)
+        
+        print(Fore.GREEN + f"\n**** Uploading data ****")
         transcription_json = upload_blob_and_run_transcription(
             "enhant-testing", output_wav_filename, wav_file_basename, process_folder
         )
