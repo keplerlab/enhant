@@ -487,15 +487,25 @@ class Text extends AnnotationTool{
     }
 
     createDeleteIcon(left,top,width,height){
-        var iconEl = document.createElement('img');
+        var html = '<svg width="12px" height="12px" viewBox="0 0 12 12" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">'+
+        '<title>Fill</title>'+
+        '<g id="Symbols" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">'+
+            '<g id="Icon/Close" transform="translate(-6.000000, -6.000000)" fill="' + this.fontColor + '">' +
+                '<path d="M13.41,12 L17.71,7.71 L17.7100001,7.70999993 C18.1021221,7.31787793 18.1021221,6.68211993 17.7099999,6.28999993 C17.3178779,5.89787793 16.6821199,5.89787793 16.2899999,6.29000007 L11.9999999,10.5900001 L7.70999993,6.29000007 L7.71,6.29000014 C7.317878,5.89787814 6.68212,5.89787814 6.29,6.29 C5.897878,6.682122 5.897878,7.31788 6.28999986,7.71 C6.28999986,7.71 6.28999986,7.71 6.28999986,7.71 L10.5899999,12 L6.28999986,16.29 L6.28999988,16.29 C5.89787788,16.67892 5.89528188,17.31208 6.28420151,17.7042 C6.28612635,17.7061407 6.28805914,17.7080735 6.28999983,17.7099983 L6.2899998,17.7099983 C6.6789198,18.1021203 7.3120798,18.1047163 7.7041998,17.7157967 C7.70614049,17.7138718 7.70807328,17.711939 7.70999812,17.7099983 L11.9999981,13.4099983 L16.2899981,17.7099983 L16.2899981,17.7099983 C16.6789181,18.1021203 17.3120781,18.1047163 17.7041981,17.7157967 C17.7061388,17.7138719 17.7080716,17.7119391 17.7099964,17.7099984 L17.7099965,17.7099983 C18.1021185,17.3210783 18.1047145,16.6879183 17.7157947,16.2957983 C17.7138699,16.2938576 17.7119371,16.2919249 17.7099964,16.29 L13.41,12 Z" id="Fill"></path>'+
+            '</g>'+
+        '</g>'+
+        '</svg>';
+        var iconEl = document.createElement('div');
+
+        iconEl.innerHTML = html;
         iconEl.className = this.CLS_IMAGE_DELETE;
         iconEl.id = this.CLS_IMAGE_DELETE + new Date().getTime().toString();
-        iconEl.style.top = "-40px";
-        iconEl.style.left = "90%";
         iconEl.style.position = "relative";
         iconEl.style.zIndex = "900000000";
+        iconEl.style.display = "inline";
+        iconEl.style.float = "right";
         iconEl.style.cursor = "pointer";
-        iconEl.src = "static/images/delete_text.svg";
+        // iconEl.src = "static/images/delete_text.svg";
         return iconEl;
     }
     
@@ -505,9 +515,10 @@ class Text extends AnnotationTool{
         textElementContainer.style.width = width + "px";
         textElementContainer.style.height = height + "px";
         textElementContainer.style.position = "absolute";
+        textElementContainer.style.overflow = "scroll";
         textElementContainer.style.top = top + "px";
         textElementContainer.style.left = left + "px";
-        textElementContainer.style.border = "1px solid black";
+        textElementContainer.style.border = "1px solid " + this.fontColor;
         textElementContainer.style.zIndex = "900000000";
         textElementContainer.style.padding = "10px";
         textElementContainer.style.cursor = "all-scroll";
@@ -522,7 +533,7 @@ class Text extends AnnotationTool{
         textElement.id = className + + (new Date()).getTime();
         textElement.contentEditable = "true";
         textElement.style.userSelect = "none";
-        textElement.style.paddingBottom = "10px";
+        textElement.style.display = "inline";
         textElement.style.boxSizing = "border-box";
         textElement.style.height = "auto";
         textElement.style.minHeight = minHeight + "px";
@@ -637,7 +648,7 @@ class Text extends AnnotationTool{
             textEle.style.left = this.initX + "px";
             textEle.style.width = "0px";
             textEle.style.height = "0px";
-            textEle.style.border = "2px solid black";
+            textEle.style.border = "2px solid " + this.fontColor;
             textEle.style.zIndex = "2147483642";
             document.body.appendChild(textEle);
 
@@ -709,22 +720,14 @@ class Text extends AnnotationTool{
         this.deleteText();
     }
 
-    updateCss(){
+    updateCss(style_local, style_parent){
         var _this = this
         var canvas = _this.canvas;
 
-        var style_obj = {
-            "z-index": _this.zIndexHighest, 
-            "pointer-events": "auto",
-        }
-
-        _this.updateParentIframeZIndex({
-            "z-index": _this.zIndexHighest, 
-            "pointer-events": "auto"
-        });
+        _this.updateParentIframeZIndex(style_parent);
 
         // set the z-index of the canvas to low value so it hides beneath 
-        $('#'+ canvas.id).css(style_obj);
+        $('#'+ canvas.id).css(style_local);
     }
 
     update(data){
@@ -734,6 +737,34 @@ class Text extends AnnotationTool{
     }
 
     activate(){
-        this.updateCss();
+        var style_local = {
+            "z-index": this.zIndexHighest, 
+            "pointer-events": "auto",
+        }
+
+        var style_parent = {
+            "z-index": this.zIndexHighest, 
+            "pointer-events": "auto"
+        }
+        this.updateCss(style_local, style_parent);
+        $('.'+ this.CLS_TEXT_TOOL_CONTAINER).draggable('enable').resizable('enable');
+    }
+
+    deactivate(){
+        var style_local = {
+            "pointer-events": "none",
+            "position": "block",
+            "z-index": this.zIndexHighest,
+            "display": "block",
+            "cursor": "default"
+        }
+
+        var style_parent = {
+            "pointer-events": "none",
+            "cursor": "default"
+        }
+
+        this.updateCss(style_local, style_parent);
+        $('.'+ this.CLS_TEXT_TOOL_CONTAINER).draggable('disable').resizable('disable');
     }
 }

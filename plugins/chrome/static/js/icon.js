@@ -1288,6 +1288,17 @@ class TextAnnotationIcon extends AnnotationIconBase{
         }
         else{
             $("#" + this.container_id).hide();
+
+            window.parent.postMessage(
+                {
+                    "id": "frame2", 
+                    "key": "deactivate_tool",
+                    "sender": "enhant",
+                    "tool_info": {
+                        "name": "Text",
+                        "data": {}
+                    }
+                }, "*")
         }
     }
 }

@@ -13,6 +13,7 @@ const MESSAGING_PROTOCOL = {
     annotation_active: "annotation_active",
     annotation_inactive: "annotation_inactive",
     activate_tool: "activate_tool",
+    deativate_tool: "deactivate_tool",
     update_tool: "update_tool",
     resize: "resize",
     scroll: "scroll"
@@ -188,6 +189,9 @@ class Annotation{
 
         var tool_obj = _this.annotation_tools_ref[_this.selected_cls];
         tool_obj.deactivate();
+
+        // make select the default selected tool
+        _this.selected_cls = Select.name;
     }
 
     clear(){
@@ -258,6 +262,15 @@ window.addEventListener("message", function(m){
             _annotation.updateSelectedTool(tool_data);
         }
        
+    }
+
+    if (key == MESSAGING_PROTOCOL.deativate_tool){
+        var tool_info = m.data.tool_info;
+        var tool_name = tool_info["name"];
+        if (_annotation instanceof Annotation){
+            // remove the previous selected tool
+           _annotation.removeSelectedTool();
+       }
     }
 
 });
