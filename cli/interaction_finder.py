@@ -24,8 +24,8 @@ class InteractionFinder(object):
         """[init function]
 
         """
-        self.total_interaction_scores = 30
-        self.interaction_window = 5 * 1000  # 30 sec
+        self.total_interaction_scores = 120
+        self.interaction_window = 240 * 1000  # 60 sec
 
     def _interaction_duration_in_window(
         self, start_timewindow, end_timewindow, start_time_element, end_time_element
@@ -91,7 +91,7 @@ class InteractionFinder(object):
             speaker_time[speakerID] = (time * 100.0) / total_time
 
         result_json = dict()
-        result_json["speaker_wise_interaction"] = speaker_time
+        result_json["speakerID"] = speaker_time
         result_json["end_time"] = end_timewindow
         # print("result_json", result_json)
 
