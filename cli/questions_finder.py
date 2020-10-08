@@ -8,6 +8,9 @@ import os
 from typing import NoReturn, Tuple, Dict
 from colorama import init, Fore
 
+from nltk.tokenize import RegexpTokenizer
+
+
 init(init(autoreset=True))
 
 sys.path.insert(1, os.path.join(sys.path[0], "..", "nlp_lib"))
@@ -32,6 +35,15 @@ class QuestionsFinder(object):
         """
         self.processed_conversation_collection = "conversations_processed"
         self.collection = "transcriptions"
+        self.tokenizer = RegexpTokenizer(r'\w+')
+
+    def _check_if_junk(self, input_sentence: str) -> bool:
+        
+        tokens = self.tokenizer.tokenize(input_sentence)
+        if len(tokens) <= 4:
+            return True
+        else:
+            return False
 
     def _transformTranscription(self, transcriptions_pkt: dict) -> Dict:
         """[transform transcription packet]
@@ -142,11 +154,12 @@ class QuestionsFinder(object):
                 interrogativeSentences = question_finder.processMessage(transcription)
                 if len(interrogativeSentences) > 0:
                     for interrogativeSentence in interrogativeSentences:
-                        originKey = dict()
-                        originKey["origin"] = speakerTag
-                        originKey["time"] = start_time
-                        originKey["question"] = interrogativeSentence
-                        listOfQuestions.append(originKey)
+                        if not self._check_if_junk(interrogativeSentence):
+                            originKey = dict()
+                            originKey["origin"] = speakerTag
+                            originKey["time"] = start_time
+                            originKey["question"] = interrogativeSentence
+                            listOfQuestions.append(originKey)
 
 
         if len(listOfQuestions) > 0:

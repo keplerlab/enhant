@@ -8,6 +8,7 @@ import os
 from typing import NoReturn, Tuple
 from colorama import init, Fore
 import warnings
+from nltk.tokenize import RegexpTokenizer
 
 warnings.filterwarnings("ignore")
 
@@ -36,6 +37,7 @@ class SentimentFinder(object):
         self.collection = "transcriptions"
         self.low_sentiment_threshold = 0.3
         self.high_sentiment_threshold = 0.7
+        self.tokenizer = RegexpTokenizer(r'\w+')
 
     def _transformTranscription(self, transcriptions_pkt: dict) -> Tuple[dict]:
         """[summary transcription packet]
@@ -49,6 +51,15 @@ class SentimentFinder(object):
             transcriptions_pkt["msg"]["data"]["transcription"]["content"],
             transcriptions_pkt["msg"]["data"]["transcription"]["start_time"],
         )
+
+    def _check_if_junk(self, input_sentence: str) -> bool:
+        
+        tokens = self.tokenizer.tokenize(input_sentence)
+        if len(tokens) <= 4:
+            return True
+        else:
+            return False
+
 
     def _transformTranscriptionbatch(self, transcriptions_pkt: dict) -> dict:
         """[transform transcription packet]
@@ -184,11 +195,13 @@ class SentimentFinder(object):
                 sentiment_with_time = (start_time, transcription, sentiment_score)
                 total_of_sentiment_scores += float(sentiment_score)
                 number_of_sentiment_scores += 1
-
-                if sentiment_score < self.low_sentiment_threshold:
-                    low_sentiment_scores.append(sentiment_with_time)
-                elif sentiment_score > self.high_sentiment_threshold:
-                    high_sentiment_scores.append(sentiment_with_time)
+                #self._check_if_junk()
+                sentence = sentiment_with_time[1]
+                if not self._check_if_junk(sentence):
+                    if sentiment_score < self.low_sentiment_threshold:
+                        low_sentiment_scores.append(sentiment_with_time)
+                    elif sentiment_score > self.high_sentiment_threshold:
+                        high_sentiment_scores.append(sentiment_with_time)
 
         if len(high_sentiment_scores) > 0 :
             jsonPkt = {
