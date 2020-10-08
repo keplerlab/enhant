@@ -1041,7 +1041,7 @@ class PenAnnotationIcon extends AnnotationIconBase{
         this.active_icon_path = "static/images/pen_annotation.svg";
         this.inactive_icon_path = "static/images/pen_annotation_inactive.svg";
 
-        this.color_toolbar_id = "color-toolbar-paint";
+        this.container_id = "color-toolbar-paint";
 
         this.color_click_event_registered = false;
 
@@ -1071,18 +1071,13 @@ class PenAnnotationIcon extends AnnotationIconBase{
         _this.color_click_event_registered = true;
     }
 
-    toggleState(){
-        super.toggleState();
-        $("#" + this.color_toolbar_id).hide();
-    }
-
     handleClick(){
         var _this = this;
         super.handleClick();
 
         if (this.state == ICONSTATE.ACTIVE){
 
-            $("#" + this.color_toolbar_id).show();
+            $("#" + this.container_id).show();
             if (!this.color_click_event_registered){
                 this.registerColorIconClick();
             }
@@ -1100,7 +1095,7 @@ class PenAnnotationIcon extends AnnotationIconBase{
                 }, "*")
         }
         else{
-            $("#" + this.color_toolbar_id).hide();
+            $("#" + this.container_id).hide();
         }
     }
     
@@ -1113,7 +1108,7 @@ class HighlightAnnotationIcon extends AnnotationIconBase{
         this.inactive_icon_path = "static/images/highlight_annotation_inactive.svg";
 
         this.color_click_event_registered = false;
-        this.color_toolbar_id = "color-toolbar-highlight";
+        this.container_id = "color-toolbar-highlight";
 
         this.highlight_cursor = "static/images/highlight_canvas_cursor.svg";
     }
@@ -1141,17 +1136,12 @@ class HighlightAnnotationIcon extends AnnotationIconBase{
         _this.color_click_event_registered = true;
     }
 
-    toggleState(){
-        super.toggleState();
-        $("#" + this.color_toolbar_id).hide();
-    }
-
     handleClick(){
         var _this = this;
         super.handleClick();
 
         if (this.state == ICONSTATE.ACTIVE){
-            $("#" + this.color_toolbar_id).show();
+            $("#" + this.container_id).show();
             if (!this.color_click_event_registered){
                 this.registerColorIconClick();
             }
@@ -1168,7 +1158,7 @@ class HighlightAnnotationIcon extends AnnotationIconBase{
                 }, "*")
         }
         else{
-            $("#" + this.color_toolbar_id).hide();
+            $("#" + this.container_id).hide();
         }
     }
 }
@@ -1250,7 +1240,7 @@ class TextAnnotationIcon extends AnnotationIconBase{
         this.inactive_icon_path = "static/images/text_annotation_inactive.svg";
 
         this.color_click_event_registered = false;
-        this.color_toolbar_id = "color-toolbar-text";
+        this.container_id = "color-toolbar-text";
     }
 
     registerColorIconClick(){
@@ -1281,7 +1271,7 @@ class TextAnnotationIcon extends AnnotationIconBase{
         super.handleClick();
 
         if (_this.state == ICONSTATE.ACTIVE){
-            $("#" + _this.color_toolbar_id).show();
+            $("#" + _this.container_id).show();
             if (!_this.color_click_event_registered){
                 _this.registerColorIconClick();
             }
@@ -1297,7 +1287,7 @@ class TextAnnotationIcon extends AnnotationIconBase{
                 }, "*")
         }
         else{
-            $("#" + this.color_toolbar_id).hide();
+            $("#" + this.container_id).hide();
         }
     }
 }
@@ -1379,7 +1369,6 @@ class AnnotationIcon extends Icon{
                     icon_obj.toggleState();
                     icon_obj.setLocalStorage();
                     icon_obj.stateHandler();
-
                 }
             }
 
