@@ -483,6 +483,7 @@ class Text extends AnnotationTool{
         this.BUFFER_HEIGHT_IN_PX = 20;
 
         this.overlap = false;
+        this.overlap_el = null;
     }
 
     createDeleteIcon(left,top,width,height){
@@ -515,10 +516,10 @@ class Text extends AnnotationTool{
     }
 
     createTextElement(minHeight) {
-        var className = this.CLS_TEXT_TOOL_PREFIX + (new Date())
-            .getTime();
+        var className = this.CLS_TEXT_TOOL_PREFIX;
         var textElement = document.createElement('div');
         textElement.className = className;
+        textElement.id = className + + (new Date()).getTime();
         textElement.contentEditable = "true";
         textElement.style.userSelect = "none";
         textElement.style.paddingBottom = "10px";
@@ -609,6 +610,7 @@ class Text extends AnnotationTool{
 
                 if ((newTop >=  bounding_top) && (newTop <= bounding_bottom)){
                     _this.overlap = true;
+                    _this.overlap_el = $(this);
                 }
             }
         });
@@ -638,6 +640,20 @@ class Text extends AnnotationTool{
             textEle.style.border = "2px solid black";
             textEle.style.zIndex = "2147483642";
             document.body.appendChild(textEle);
+
+            // delete all empty texts
+            var all_texts = $('.' + this.CLS_TEXT_TOOL_PREFIX);
+            $.each(all_texts, function(index, el){
+                var el_content = $(this).html();
+                if (el_content.length == 0){
+                    $(this).parent().remove();
+                }
+            });
+        }
+        else{
+            // focus on overlapping el
+            var textEl_focus = this.overlap_el.find('.' + this.CLS_TEXT_TOOL_PREFIX);    
+            textEl_focus.focus();
         }
     }
 
