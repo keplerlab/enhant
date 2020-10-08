@@ -84,9 +84,9 @@ input_json_file_name = "meeting-data/testing/13_sapestart_1_hour/2nd-hour/speake
 input_json_data = None
 if os.path.isfile(input_json_file_name):
     with open(input_json_file_name) as f:
-        input_json_data = json.load(f)
+        transcription_json = json.load(f)
         # print("input_json_data", input_json_data)
-        transcription_json = parse_speaker_wise_json(input_json_data)
+        #transcription_json = parse_speaker_wise_json(input_json_data)
         #interaction_json = interaction_finder.process(result_json)
         result_json = dict()
         interaction_finder.processbatch(transcription_json,result_json)

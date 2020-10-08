@@ -91,7 +91,7 @@ class InteractionFinder(object):
             speaker_time[speakerID] = (time * 100.0) / total_time
 
         result_json = dict()
-        result_json["speaker_wise_interaction"] = speaker_time
+        result_json["speakerID"] = speaker_time
         result_json["end_time"] = end_timewindow
         # print("result_json", result_json)
 
