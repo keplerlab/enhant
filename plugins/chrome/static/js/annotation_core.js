@@ -3,7 +3,7 @@ class AnnotationTool{
         this.canvas = canvas;
 
         this.zIndexLowest = "-1";
-        this.zIndexHighest = "2147483647";
+        this.zIndexHighest = "2147483645";
 
         this.ctx = ctx;
 
@@ -33,12 +33,6 @@ class AnnotationTool{
 
     getCanvasContext(){
         return this.ctx;
-    }
-
-    addListenerForElement(el, cb){
-    }
-
-    removeListenerForElement(el, cb){
     }
 
     updateParentIframeZIndex(style){
@@ -482,12 +476,26 @@ class Text extends AnnotationTool{
 
         this.CLS_TEXT_TOOL_CONTAINER = "enhant-text-container";
         this.CLS_TEXT_TOOL_PREFIX = "enhant-text-element";
+        this.CLS_IMAGE_DELETE = "delete-text";
 
 
         this.BUFFER_WIDTH_IN_PX = 20;
         this.BUFFER_HEIGHT_IN_PX = 20;
 
         this.overlap = false;
+    }
+
+    createDeleteIcon(left,top,width,height){
+        var iconEl = document.createElement('img');
+        iconEl.className = this.CLS_IMAGE_DELETE;
+        iconEl.id = this.CLS_IMAGE_DELETE + new Date().getTime().toString();
+        iconEl.style.top = "-40px";
+        iconEl.style.left = "90%";
+        iconEl.style.position = "relative";
+        iconEl.style.zIndex = "900000000";
+        iconEl.style.cursor = "pointer";
+        iconEl.src = "static/images/delete_text.svg";
+        return iconEl;
     }
     
     createTextElementContainer(left, top, width, height) {
@@ -539,14 +547,18 @@ class Text extends AnnotationTool{
         width = width - 20 < this.minInitWidth ? this.minInitWidth : width - 20;
         height = height - 20 < this.minInitHeight ? this.minInitHeight : height - 20;
         var textElement = this.createTextElement(height);
+        var deleteTextIcon = this.createDeleteIcon(posX, posY, width, height);
         var textElementContainer = this.createTextElementContainer(posX, posY, width, height);
+        textElementContainer.appendChild(deleteTextIcon);
+    
         textElementContainer.appendChild(textElement);
         document.body.appendChild(textElementContainer);
         // lastEle = textElement;
-        // textElementContainer.addEventListener("click", showEditTextToolbarOnClick, {
-        //     useCapture: true,
-        //     passive: false
-        // });
+
+        deleteTextIcon.addEventListener("click", function(evt){
+            // alert(" clickeed " + this.id);
+            $('#' + this.id).parent().remove();
+        });
         // textElement.addEventListener("click", showEditTextToolbarOnClick, {
         //     useCapture: true,
         //     passive: false
