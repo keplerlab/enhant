@@ -213,12 +213,12 @@ def upload_blob_and_run_transcription(
         print(str(e.output))
         return -1
 
-    print("Deleting blob after processing")
-    try:
-        blob.delete()
-    except Exception as e:
-        print("Error in deleting blob please delete manually: ", str(e.output))
-        return -1
+    # print("Deleting blob after processing")
+    # try:
+    #     blob.delete()
+    # except Exception as e:
+    #     print("Error in deleting blob please delete manually: ", str(e.output))
+    #     return -1
 
 
 @app.command()
@@ -235,11 +235,11 @@ def batchmode(input: str) -> NoReturn:
         try:
             input_video_filename = input
             wav_file_basename = os.path.basename(os.path.splitext(input)[0])
-            print("wav_file_basename", wav_file_basename)
+            #print("wav_file_basename", wav_file_basename)
             output_wav_filename = os.path.join(
                 process_folder, wav_file_basename + ".wav"
             )
-            print("output_wav_filename", output_wav_filename)
+            #print("output_wav_filename", output_wav_filename)
             output = subprocess.check_output(
                 [
                     "ffmpeg",

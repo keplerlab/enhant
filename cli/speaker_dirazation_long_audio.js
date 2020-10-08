@@ -19,7 +19,7 @@ const gcsUri = 'gs://' + storage_bucket + '/' + blob_file_name;
 //console.log("gcsUri", gcsUri)
 const encoding = 'LINEAR16';
 const sampleRateHertz = 16000;
-const languageCode = 'en-US';
+const languageCode = 'en-IN';
 const speakerDiarizationConfig = 
 {
     "enableSpeakerDiarization": true,
