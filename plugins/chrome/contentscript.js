@@ -9,13 +9,13 @@ function createIframeCanvas(){
     iframe2.style.pointerEvents = "none";
     iframe2.style.top = "0px";
     iframe2.style.left = "0px";
-    iframe2.style.zIndex = "-2147483647";
+    iframe2.style.zIndex = "-2147483645";
     iframe2.id = "frame2";
 
-    document.body.appendChild(iframe2);
+    document.body.prepend(iframe2);
 
-    iframe2.style.width = windowWidth;
-    iframe2.style.height = windowHeight;
+    iframe2.style.width = "100%";
+    iframe2.style.height = "100%";
 
     return iframe2;
 }
@@ -49,7 +49,7 @@ function createEnhantPlugin(){
     div.style["boxShadow"] = "0 10px 16px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19)";
 
     div.appendChild(iframe);
-    document.body.appendChild(div);
+    document.body.prepend(div);
 
     const resizer = iFrameResize({ log: false, checkOrigin: false,
         maxHeight: FRAME_MAX_HEIGHT, maxWidth: FRAME_MAX_WIDTH}, '#' + FRAME_ID);
@@ -105,8 +105,8 @@ $(document).ready(function(){
             }
         }
 
-        iframe2.style.width = width;
-        iframe2.style.height = height;
+        // iframe2.style.width = width;
+        // iframe2.style.height = height;
 
         targetFrame.contentWindow.postMessage(parent_dimensions, '*');
     };
