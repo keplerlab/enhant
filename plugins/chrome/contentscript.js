@@ -12,7 +12,7 @@ function createIframeCanvas(){
     iframe2.style.zIndex = "-2147483645";
     iframe2.id = "frame2";
 
-    document.body.prepend(iframe2);
+    document.body.appendChild(iframe2);
 
     iframe2.style.width = "100%";
     iframe2.style.height = "100%";
@@ -49,7 +49,7 @@ function createEnhantPlugin(){
     div.style["boxShadow"] = "0 10px 16px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19)";
 
     div.appendChild(iframe);
-    document.body.prepend(div);
+    document.body.appendChild(div);
 
     const resizer = iFrameResize({ log: false, checkOrigin: false,
         maxHeight: FRAME_MAX_HEIGHT, maxWidth: FRAME_MAX_WIDTH}, '#' + FRAME_ID);
