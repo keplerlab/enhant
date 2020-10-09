@@ -72,7 +72,7 @@ $(document).ready(function(){
 
         if ((m.data.hasOwnProperty("sender")) && (m.data.sender == "enhant")){
             
-            console.log(" received message [Parent content script] : ", m);
+            // console.log(" received message [Parent content script] : ", m);
 
             targetFrame.contentWindow.postMessage(m.data, '*');
 
