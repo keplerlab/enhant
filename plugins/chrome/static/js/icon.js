@@ -1046,12 +1046,40 @@ class PenAnnotationIcon extends AnnotationIconBase{
         this.color_click_event_registered = false;
 
         this.pen_cursor = "static/images/pen_canvas_cursor.svg";
+
+        this.selected_color = "#000000";
+        this.selected_color_img_tag= $('iconPaint[value="' + this.selected_color +'"]').find("img");
+    }
+
+    addSelectedColorClass(){
+        this.selected_color_img_tag.css({
+            "border": "2px solid " + this.selected_color,
+            "border-radius": "50%",
+            "padding": "1px"
+        });
+    }
+
+    removeSelectedColorClass(){
+        this.selected_color_img_tag.css({
+            "border": "",
+            "border-radius": "",
+            "padding": ""
+        });
     }
 
     registerColorIconClick(){
         var _this = this;
         $("iconPaint").click(function(){
             var colorCode = $(this).attr("value");
+
+            // remove selected color
+            _this.removeSelectedColorClass();
+
+            _this.selected_color_img_tag = $(this).find("img");
+            _this.selected_color = colorCode;
+
+            // select new color
+            _this.addSelectedColorClass();
 
             if (_this.state == ICONSTATE.ACTIVE){
                 window.parent.postMessage(
@@ -1122,12 +1150,40 @@ class HighlightAnnotationIcon extends AnnotationIconBase{
         this.container_id = "color-toolbar-highlight";
 
         this.highlight_cursor = "static/images/highlight_canvas_cursor.svg";
+
+        this.selected_color = "#FFCF74";
+        this.selected_color_img_tag= $('iconHighlight[value="' + this.selected_color +'"]').find("img");
+    }
+
+    addSelectedColorClass(){
+        this.selected_color_img_tag.css({
+            "border": "2px solid " + this.selected_color,
+            "border-radius": "50%",
+            "padding": "1px"
+        });
+    }
+
+    removeSelectedColorClass(){
+        this.selected_color_img_tag.css({
+            "border": "",
+            "border-radius": "",
+            "padding": ""
+        });
     }
 
     registerColorIconClick(){
         var _this = this;
         $("iconHighlight").click(function(){
             var colorCode = $(this).attr("value");
+
+            // remove selected color
+            _this.removeSelectedColorClass();
+
+            _this.selected_color_img_tag = $(this).find("img");
+            _this.selected_color = colorCode;
+
+            // select new color
+            _this.addSelectedColorClass();
 
             if (_this.state == ICONSTATE.ACTIVE){
                 window.parent.postMessage(
@@ -1274,12 +1330,40 @@ class TextAnnotationIcon extends AnnotationIconBase{
 
         this.color_click_event_registered = false;
         this.container_id = "color-toolbar-text";
+
+        this.selected_color = "#000000";
+        this.selected_color_img_tag= $('iconText[value="' + this.selected_color +'"]').find("img");
+    }
+
+    addSelectedColorClass(){
+        this.selected_color_img_tag.css({
+            "border": "2px solid " + this.selected_color,
+            "border-radius": "50%",
+            "padding": "1px"
+        });
+    }
+
+    removeSelectedColorClass(){
+        this.selected_color_img_tag.css({
+            "border": "",
+            "border-radius": "",
+            "padding": ""
+        });
     }
 
     registerColorIconClick(){
         var _this = this;
         $("iconText").click(function(){
             var colorCode = $(this).attr("value");
+
+            // remove selected color
+            _this.removeSelectedColorClass();
+
+            _this.selected_color_img_tag = $(this).find("img");
+            _this.selected_color = colorCode;
+
+            // select new color
+            _this.addSelectedColorClass();
 
             if (_this.state == ICONSTATE.ACTIVE){
                 window.parent.postMessage(
