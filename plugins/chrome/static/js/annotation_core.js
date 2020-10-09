@@ -491,7 +491,7 @@ class Text extends AnnotationTool{
     constructor(canvas, ctx){
         super(canvas, ctx);
 
-        this.fontSize = "20";
+        this.fontSize = "17";
         this.fontColor = "#000000";
         this.fillColor = "";
         this.fontFamily = "Arial";
@@ -538,7 +538,7 @@ class Text extends AnnotationTool{
         iconEl.id = this.CLS_IMAGE_DELETE + new Date().getTime().toString();
         iconEl.style.position = "relative";
         iconEl.style.zIndex = "900000000";
-        iconEl.style.display = "inline";
+        iconEl.style.display = "inline-block";
         iconEl.style.float = "right";
         iconEl.style.cursor = "pointer";
         // iconEl.src = "static/images/delete_text.svg";
@@ -551,7 +551,7 @@ class Text extends AnnotationTool{
         textElementContainer.style.width = width + "px";
         textElementContainer.style.height = height + "px";
         textElementContainer.style.position = "absolute";
-        textElementContainer.style.overflow = "scroll";
+        textElementContainer.style.overflow = "auto";
         textElementContainer.style.top = top + "px";
         textElementContainer.style.left = left + "px";
         textElementContainer.style.border = "1px solid " + this.fontColor;
@@ -569,10 +569,10 @@ class Text extends AnnotationTool{
         textElement.id = className + + (new Date()).getTime();
         textElement.contentEditable = "true";
         textElement.style.userSelect = "none";
-        textElement.style.display = "inline";
+        textElement.style.display = "inline-block";
         textElement.style.boxSizing = "border-box";
+        textElement.style.width = "85%";
         textElement.style.height = "auto";
-        textElement.style.minHeight = minHeight + "px";
         textElement.style.outline = "0px solid transparent";
         textElement.style.overflowWrap = "break-word";
         textElement.spellcheck = false;
@@ -615,6 +615,8 @@ class Text extends AnnotationTool{
         textElement.focus();
 
         $('.'+ this.CLS_TEXT_TOOL_CONTAINER).draggable().resizable();
+        $('.ui-resizable-s').css("bottom", "0px");
+        $('.ui-resizable-e').css("right", "0px");
     }
 
     getPosition(event){ 
