@@ -56,6 +56,16 @@ class AnnotationTool{
         }
     }
 
+    updateCss(style_local, style_parent){
+        var _this = this
+        var canvas = _this.canvas;
+
+        _this.updateParentIframeZIndex(style_parent);
+
+        // set the z-index of the canvas to low value so it hides beneath 
+        $('#'+ canvas.id).css(style_local);
+    }
+
     delete(){
         this.clearData();
     }
@@ -81,10 +91,32 @@ class AnnotationTool{
         this.draw();
     }
 
+    //TODO : activate can receive data like cursor path later
+    // This will change some other styling as well.
     activate(data){
+        var style_local = {
+            "z-index": this.zIndexHighest, 
+            "pointer-events": "auto"
+        };
+
+        this.updateCss(style_local, style_local);
     }
 
     deactivate(){
+        var style_local = {
+            "pointer-events": "none",
+            "position": "block",
+            "z-index": this.zIndexHighest,
+            "display": "block",
+            "cursor": "default"
+        }
+
+        var style_parent = {
+            "pointer-events": "none",
+            "cursor": "default"
+        }
+
+        this.updateCss(style_local, style_parent);
     }
 }
 
@@ -95,7 +127,7 @@ class Select extends AnnotationTool{
         this.zIndex = "0";
     }
 
-    updateCss(){
+    enableSelect(){
         var _this = this;
         var canvas = _this.canvas;
 
@@ -118,7 +150,10 @@ class Select extends AnnotationTool{
 
     activate(){
         var _this = this;
-        _this.updateCss();
+        _this.enableSelect();
+    }
+
+    deactivate(){
     }
 
 }
@@ -288,31 +323,8 @@ class Pen extends AnnotationTool{
         }
     }
 
-    updateCss(data){
-        var _this = this
-        var canvas = _this.canvas;
-
-        var style_obj = {
-            "z-index": _this.zIndexHighest, 
-            "pointer-events": "auto",
-            "cursor": _this.cursor_path ? "default" : "url('" + _this.cursor_path + "'), auto"
-        }
-
-        _this.updateParentIframeZIndex({
-            "z-index": _this.zIndexHighest, 
-            "pointer-events": "auto",
-            "cursor": _this.cursor_path ? "default" : "url('" + _this.cursor_path + "'), auto"
-        });
-
-        // set the z-index of the canvas to low value so it hides beneath 
-        $('#'+ canvas.id).css(style_obj);
-    }
     update(data){
         this.setPenData(data);
-    }
-
-    activate(data){
-        this.updateCss(data);
     }
 
 }
@@ -344,7 +356,7 @@ class Eye extends AnnotationTool{
         $('.' + this.CLS_TEXT_TOOL_CONTAINER).show();
     }
 
-    update(data){
+    setState(data){
         var canvas = this.canvas;
 
         if (data.state){
@@ -357,6 +369,15 @@ class Eye extends AnnotationTool{
             $('#'+ canvas.id).show();
             this.showTextOverlays();
         }
+    }
+
+    activate(){
+        this.setState({state: true});
+    }
+
+    deactivate(){
+        this.setState({state: false});
+        super.deactivate();
     }
 }
 
@@ -382,6 +403,15 @@ class Erase extends Pen{
         this.stroke = 20;
         this.lineCap = "round";
         this.lineJoin = "round";
+    }
+
+    handleMouseDown(e){
+        this.paint = true;
+        this.updateMousePosition(e);
+    }
+
+    handleMouseUp(e){
+        this.paint = false;
     }
 
     handleMouseMove(e){
@@ -447,7 +477,13 @@ class Erase extends Pen{
     }
 
     activate(){
+        super.activate();
         this.startErase();
+    }
+
+    deactivate(){
+        this.stopErase();
+        super.deactivate();
     }
 }
 
@@ -720,16 +756,6 @@ class Text extends AnnotationTool{
         this.deleteText();
     }
 
-    updateCss(style_local, style_parent){
-        var _this = this
-        var canvas = _this.canvas;
-
-        _this.updateParentIframeZIndex(style_parent);
-
-        // set the z-index of the canvas to low value so it hides beneath 
-        $('#'+ canvas.id).css(style_local);
-    }
-
     update(data){
         if (data.hasOwnProperty("color")){
             this.fontColor = data.color;
@@ -751,20 +777,7 @@ class Text extends AnnotationTool{
     }
 
     deactivate(){
-        var style_local = {
-            "pointer-events": "none",
-            "position": "block",
-            "z-index": this.zIndexHighest,
-            "display": "block",
-            "cursor": "default"
-        }
-
-        var style_parent = {
-            "pointer-events": "none",
-            "cursor": "default"
-        }
-
-        this.updateCss(style_local, style_parent);
+        super.deactivate();
         $('.'+ this.CLS_TEXT_TOOL_CONTAINER).draggable('disable').resizable('disable');
     }
 }

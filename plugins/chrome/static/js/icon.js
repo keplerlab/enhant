@@ -1096,6 +1096,17 @@ class PenAnnotationIcon extends AnnotationIconBase{
         }
         else{
             $("#" + this.container_id).hide();
+            window.parent.postMessage(
+                {
+                    "id": "frame2", 
+                    "key": "deactivate_tool",
+                    "sender": "enhant",
+                    "tool_info": {
+                        "name": "Pen",
+                        "data": {
+                        }
+                    }
+                }, "*")
         }
     }
     
@@ -1159,6 +1170,18 @@ class HighlightAnnotationIcon extends AnnotationIconBase{
         }
         else{
             $("#" + this.container_id).hide();
+
+            window.parent.postMessage(
+                {
+                    "id": "frame2", 
+                    "key": "deactivate_tool",
+                    "sender": "enhant",
+                    "tool_info": {
+                        "name": "Highlight",
+                        "data": {
+                        }
+                    }
+                }, "*")
         }
     }
 }
@@ -1186,19 +1209,18 @@ class EyeAnnotationIcon extends AnnotationIconBase{
                     }
                 }, "*")
         }
-
-        window.parent.postMessage(
-            {
-                "id": "frame2", 
-                "key": "update_tool",
-                "sender": "enhant",
-                "tool_info": {
-                    "name": "Eye",
-                    "data": {
-                        "state": _this.state == ICONSTATE.ACTIVE ? true : false
+        else {
+            window.parent.postMessage(
+                {
+                    "id": "frame2", 
+                    "key": "deactivate_tool",
+                    "sender": "enhant",
+                    "tool_info": {
+                        "name": "Eye",
+                        "data": {}
                     }
-                }
-            }, "*")
+                }, "*")
+        }
     }
 }
 
@@ -1218,6 +1240,17 @@ class DeleteAnnotationIcon extends AnnotationIconBase{
                 _this.toggleState();
                 _this.setLocalStorage();
                 _this.stateHandler();
+
+                window.parent.postMessage(
+                    {
+                        "id": "frame2", 
+                        "key": "deactivate_tool",
+                        "sender": "enhant",
+                        "tool_info": {
+                            "name": "Delete",
+                            "data": {}
+                        }
+                    }, "*")
         }, 50);
 
         window.parent.postMessage(
@@ -1326,20 +1359,18 @@ class EraseAnnotationIcon extends AnnotationIconBase{
                     }
                 }, "*")
         }
-
-        window.parent.postMessage(
-            {
-                "id": "frame2", 
-                "key": "update_tool",
-                "sender": "enhant",
-                "tool_info": {
-                    "name": "Erase",
-                    "data": {
-                        "state": _this.state == ICONSTATE.ACTIVE ? true : false
+        else{
+            window.parent.postMessage(
+                {
+                    "id": "frame2", 
+                    "key": "deactivate_tool",
+                    "sender": "enhant",
+                    "tool_info": {
+                        "name": "Erase",
+                        "data": {}
                     }
-                }
-            }, "*")
-
+                }, "*")
+        }
     }
 }
 
