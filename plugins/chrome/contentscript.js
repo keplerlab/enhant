@@ -12,10 +12,22 @@ function createIframeCanvas(){
     iframe2.style.zIndex = "-2147483645";
     iframe2.id = "frame2";
 
-    document.body.appendChild(iframe2);
-
     iframe2.style.width = "100%";
     iframe2.style.height = "100%";
+
+    // create a div
+    var DIV_ID_2 = "enhant-frame-canvas-wrapper";
+    var div = document.createElement('div');
+    div.id = DIV_ID_2;
+    div.style.left = "0px";
+    div.style.top = "0px";
+    div.style.position = "fixed";
+    div.style.background = "none";
+    div.style.zIndex = "2147483645";
+
+    div.appendChild(iframe2);
+
+    document.body.appendChild(div);
 
     return iframe2;
 }
@@ -35,7 +47,7 @@ function createEnhantPlugin(){
     iframe.src = chrome.runtime.getURL("popup.html");
 
     // create a div
-    const DIV_ID_2 = "enhant-frame-wrapper";
+    var DIV_ID_2 = "enhant-frame-wrapper";
     var div = document.createElement('div');
     div.id = DIV_ID_2;
     div.style.right = "0px";
