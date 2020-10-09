@@ -43,9 +43,13 @@ class Annotation{
     clearCanvas(){
         var canvas = document.getElementById(this.canvas_id);
         var ctx = canvas.getContext("2d");
-        ctx.clearReact(0, 0, canvas.width, canvas.height);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         this.points = [];
+    }
+
+    removeCanvas(){
+        $('#'+ this.canvas_id).remove();
     }
 
     resizeCanvas(scale_data){
@@ -190,14 +194,28 @@ class Annotation{
         var tool_obj = _this.annotation_tools_ref[_this.selected_cls];
         tool_obj.deactivate();
 
+
         // make select the default selected tool
         _this.selected_cls = Select.name;
     }
 
-    clear(){
+    remove(){
         var _this = this;
+
+        // remove currently selected tool
         _this.removeSelectedTool();
+
+        // select delete (to clear everything)
+        this.selectTool(Delete.name, {});
+
+        // remove the delete
+        _this.removeSelectedTool();
+
+        // remove listeners
         _this.removeListeners();
+
+        //remove canvas
+        _this.removeCanvas();
     }
 }
 
@@ -233,7 +251,7 @@ window.addEventListener("message", function(m){
 
     if (key == MESSAGING_PROTOCOL.annotation_inactive){
         if (_annotation instanceof Annotation){
-            _annotation.clear();
+            _annotation.remove();
             delete _annotation;
             _annotation = null;
         }

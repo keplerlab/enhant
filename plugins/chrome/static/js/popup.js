@@ -39,23 +39,11 @@ $(document).ready(function(){
         AnnotationIcon
     ];
 
-    var annotationsIcons = [
-        SelectAnnotationIcon,
-        PenAnnotationIcon,
-        EyeAnnotationIcon,
-        HighlightAnnotationIcon,
-        DeleteAnnotationIcon
-    ];
-
-    var all_class = [];
-    all_class.push(...icons);
-    all_class.push(...annotationsIcons);
-
     var icons_object_mapping = {};
     var pluginActivated = false;
 
     // register the classes and events
-    all_class.forEach(function(cl){
+    icons.forEach(function(cl){
 
         var obj = new cl();
         obj.registerEvents();
@@ -142,32 +130,35 @@ $(document).ready(function(){
 
             // get the icon type
             var icon_type = $(this).attr("type");
-            var is_annotation_icon = $(this).attr("annotation_icon") !== undefined ? true : false;
-
-            console.log(" is annotation icon ", is_annotation_icon);
 
             var icon_obj = icons_object_mapping[icon_type];
 
             if (icon_type == BookmarkIcon.name || icon_type == CaptureTabIcon.name){
 
-                icon_obj.handleClick();
+                var exception_classes = [ExpandIcon.name, AnnotationIcon.name];
+                var exception_classes_active = exception_classes.filter(function(cls){
+                    var obj = icons_object_mapping[cls];
+                    return obj.state == ICONSTATE.ACTIVE
+                });
 
-                // check if Expand icon is active
-                var expand_icon_class = ExpandIcon.name;
-                if (icons_object_mapping.hasOwnProperty(expand_icon_class)){
+                if (exception_classes_active.length > 0){
+
+                    // check if Expand icon is active
+                    var expand_icon_class = ExpandIcon.name;
                     var expand_icon_obj = icons_object_mapping[expand_icon_class];
-                    
+                        
                     // if expand is not active then hide other icons
-                    if (expand_icon_obj.state == ICONSTATE.INACTIVE){
-                        hideOtherIconWindow(icon_type);
-                    }
-
-                    else{
-
+                    if (expand_icon_obj.state == ICONSTATE.ACTIVE){
                         expand_icon_obj.populateDataContainer();
-                       
                     }
+
                 }
+                else{
+                    hideOtherIconWindow(icon_type);
+                }
+
+                icon_obj.handleClick();
+                
             }
             else{
 
@@ -195,13 +186,6 @@ $(document).ready(function(){
            AnnotationIcon
        ];
 
-       var annotationIconsToDisable = [
-            SelectAnnotationIcon,
-            PenAnnotationIcon,
-            EyeAnnotationIcon,
-            HighlightAnnotationIcon
-       ];
-
        var iconsToEnable = [
            SettingsIcon
        ];
@@ -227,13 +211,6 @@ $(document).ready(function(){
 
         var iconsToDisable = [
             SettingsIcon
-        ];
-
-        var annotationIconsToEnable = [
-            SelectAnnotationIcon,
-            PenAnnotationIcon,
-            EyeAnnotationIcon,
-            HighlightAnnotationIcon
         ];
  
         iconsToEnable.forEach(function(cl){

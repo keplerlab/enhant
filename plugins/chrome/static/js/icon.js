@@ -1398,7 +1398,13 @@ class AnnotationIcon extends Icon{
             EraseAnnotationIcon
         ]
 
-        this.annotation_icons = {}
+        this.default_activated_cls = SelectAnnotationIcon;
+
+        this.annotation_icons = {};
+
+        this.currently_active_icon_obj = null;
+
+        this.registerClickForAnnotationIcons();
     }
 
     hideOtherIconWindow(icon_type){
@@ -1423,6 +1429,12 @@ class AnnotationIcon extends Icon{
             var obj = new cls();
             _this.annotation_icons[cls.name] = obj;
             obj.enableIcon();
+            
+            // initilize with the default selected
+            if (cls.name == _this.default_activated_cls.name){
+                _this.currently_active_icon_obj = obj;
+                obj.handleClick();
+            }
         });
     }
 
@@ -1432,17 +1444,18 @@ class AnnotationIcon extends Icon{
             var icon_type = $(this).attr("type");
 
             var icon_obj = _this.annotation_icons[icon_type];
+            _this.currently_active_icon_obj = icon_obj;
             _this.hideOtherIconWindow(icon_type);
             icon_obj.handleClick();
         });
+
+        // listen to add recording and send a delete command
     }
 
     // as soon as annotation is enabled.. create the canvas
     enableIcon(){
         super.enableIcon();
         this.intializeAnnotationIcons();
-
-        this.registerClickForAnnotationIcons();
 
         window.parent.postMessage(
             {
@@ -1465,6 +1478,29 @@ class AnnotationIcon extends Icon{
                 "key": "annotation_inactive",
                 "tool_info": {}
             }, "*")
+    }
+
+    activateLastSelected(){
+        this.currently_active_icon_obj.handleClick();
+    }
+
+    deactivateLastSelected(){
+        this.currently_active_icon_obj.handleClick();
+    }
+
+    toggleAnnotationIcons(){
+        var _this = this;
+        if (_this.state == ICONSTATE.ACTIVE){
+            _this.activateLastSelected();
+        }
+        else{
+            _this.deactivateLastSelected();
+        }
+    }
+
+    stateHandler(){
+        this.toggleContainer();
+        this.toggleAnnotationIcons();
     }
 }
 
