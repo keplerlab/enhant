@@ -1565,11 +1565,17 @@ class AnnotationIcon extends Icon{
     }
 
     activateLastSelected(){
-        this.currently_active_icon_obj.handleClick();
+
+        if (this.currently_active_icon_obj.state == ICONSTATE.INACTIVE){
+            this.currently_active_icon_obj.handleClick();
+        }
     }
 
     deactivateLastSelected(){
-        this.currently_active_icon_obj.handleClick();
+        if (this.currently_active_icon_obj.state == ICONSTATE.ACTIVE){
+            this.currently_active_icon_obj.handleClick();
+        }
+       
     }
 
     toggleAnnotationIcons(){
