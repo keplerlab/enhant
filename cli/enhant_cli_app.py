@@ -168,6 +168,7 @@ def upload_blob(bucket_name, source_file_name, destination_blob_name):
     # bucket_name = "enhant-testing"
     # source_file_name = "local/path/to/file"
     # destination_blob_name = "storage-object-name"
+    print(Fore.GREEN + f"\n**** Uploading data ****")
 
     storage_client = storage.Client()
     bucket = storage_client.bucket(bucket_name)
@@ -179,13 +180,17 @@ def upload_blob(bucket_name, source_file_name, destination_blob_name):
 
 
 def upload_blob_and_run_transcription(
-    bucket_name, source_file_name, destination_blob_name, process_folder
+    bucket_name, source_file_name, destination_blob_name, process_folder, skipupload
 ):
-    try:
-        blob = upload_blob(bucket_name, source_file_name, destination_blob_name)
-    except Exception as e:
-        print("Error in uploading files: ", str(e.output))
-        return -1
+    #print("skipupload", skipupload)
+    if skipupload == False:
+        try:
+            blob = upload_blob(bucket_name, source_file_name, destination_blob_name)
+        except Exception as e:
+            print("Error in uploading files: ", str(e.output))
+            return -1
+    
+    print(Fore.GREEN + f"\n**** Executing Google speech to text ****")
 
     try:
         output = subprocess.check_output(
@@ -222,10 +227,14 @@ def upload_blob_and_run_transcription(
 
 
 @app.command()
-def batchmode(input: str) -> NoReturn:
-    # print("input", input)
-    if input.endswith(".mp4") or input.endswith(".mov"):
+def batchmode(input: str, skipupload: bool = False) -> NoReturn:
+    if input.startswith("https://storage.cloud.google.com"):
+        url = input 
+        url_components = url.split("/")[-2:]
+        print("url_components", url_components)
+        print("TO run with without uploading")
 
+    elif input.endswith(".mp4") or input.endswith(".mov"):
         process_folder = os.path.splitext(input)[0]
         if not os.path.exists(process_folder):
             os.makedirs(process_folder)
@@ -259,9 +268,8 @@ def batchmode(input: str) -> NoReturn:
             print(str(e.output))
             return -1
         
-        print(Fore.GREEN + f"\n**** Uploading data ****")
         transcription_json = upload_blob_and_run_transcription(
-            "enhant-testing", output_wav_filename, wav_file_basename, process_folder
+            "enhant-testing", output_wav_filename, wav_file_basename, process_folder, skipupload
         )
         result_json = dict()
         interaction_finder.processbatch(transcription_json,result_json)
@@ -283,9 +291,8 @@ def batchmode(input: str) -> NoReturn:
         if not os.path.exists(process_folder):
             os.makedirs(process_folder)
         wav_file_basename = os.path.basename(input)
-        print(Fore.GREEN + f"\n Uploading data", input)
         transcription_json = upload_blob_and_run_transcription(
-            "enhant-testing", input, wav_file_basename, process_folder
+            "enhant-testing", input, wav_file_basename, process_folder, skipupload
         )
         result_json = dict()
         interaction_finder.processbatch(transcription_json, result_json)

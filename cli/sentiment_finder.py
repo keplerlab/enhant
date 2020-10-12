@@ -192,7 +192,7 @@ class SentimentFinder(object):
                     transcriptions_pkt
                 )
                 sentiment_score = sentiment_lib.processMessage(transcription)
-                sentiment_with_time = (start_time, transcription, sentiment_score)
+                sentiment_with_time = (start_time, transcription, sentiment_score, speakerTag)
                 total_of_sentiment_scores += float(sentiment_score)
                 number_of_sentiment_scores += 1
                 #self._check_if_junk()

@@ -19,7 +19,7 @@ const gcsUri = 'gs://' + storage_bucket + '/' + blob_file_name;
 //console.log("gcsUri", gcsUri)
 const encoding = 'LINEAR16';
 const sampleRateHertz = 16000;
-const languageCode = 'en-IN';
+const languageCode = 'en-US';
 const speakerDiarizationConfig = 
 {
     "enableSpeakerDiarization": true,
@@ -36,6 +36,8 @@ const config = {
   enableAutomaticPunctuation: true,
   languageCode: languageCode,
   SpeakerDiarizationConfig:speakerDiarizationConfig,
+  //model: 'PRESENTATION',
+  useEnhanced: true,
   //model: 'phone_call',
   //diarizationSpeakerCount: 2,
 
