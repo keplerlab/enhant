@@ -22,6 +22,7 @@ function createIframeCanvas(){
     div.style.left = "0px";
     div.style.top = "0px";
     div.style.position = "absolute";
+    div.style.zIndex = "-2147483645";
     div.style.background = "none";
     div.style.width = "100%";
     div.style.height = "100%";
@@ -98,6 +99,7 @@ $(document).ready(function(){
 
                 if (m.data.style !== null){
                     $('#' + iframe2.id).css(m.data.style);
+                    $('#' + div_iframe2.id).css(m.data.style);
                 }
                 
             }
