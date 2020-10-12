@@ -80,7 +80,8 @@ class Annotation{
         $("body").prepend(html);
         $('#' + this.canvas_id).css({
             "top": "0px",
-            "left": "0px"
+            "left": "0px",
+            "display": "block"
         });
 
         var htmlCanvas = document.getElementById(this.canvas_id);
@@ -130,11 +131,14 @@ class Annotation{
 
     handleScroll(data){
         var _this = this;
-        $('#'+ _this.canvas_id).css({
-            "left": data.left,
-            "top": data.top
-        });
         _this.clearCanvas();
+
+        var classes = [Pen.name, Highlight.name, Text.name];
+
+        classes.forEach(function(cls_name){
+            var obj = _this.annotation_tools_ref[cls_name];
+            obj.drawScroll(data);
+        });
     }
 
     // will be called when annotation is enabled
