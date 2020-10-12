@@ -80,7 +80,8 @@ class Annotation{
         $("body").prepend(html);
         $('#' + this.canvas_id).css({
             "top": "0px",
-            "left": "0px"
+            "left": "0px",
+            "display": "block"
         });
 
         var htmlCanvas = document.getElementById(this.canvas_id);
