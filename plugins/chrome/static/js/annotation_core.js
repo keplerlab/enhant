@@ -9,6 +9,8 @@ class AnnotationTool{
 
         this.points = [];
 
+        this.points_scroll = this.points;
+
         this.mouse_position = {
             x: 0,
             y: 0
@@ -25,6 +27,7 @@ class AnnotationTool{
 
     addData(arr){
         this.points.push(arr);
+        this.points_scroll.push(arr);
     }
 
     getCanvas(){
@@ -270,14 +273,41 @@ class Pen extends AnnotationTool{
 
     }
 
-    draw(){
+    drawScroll(data){
+        var _this = this;
+        var position = data;
+        var top = position.top;
+        var left = position.left;
+
+        this.points_scroll = this.points_scroll.map(function(curve){
+
+            return curve.map(function(point){
+                var point_x = ((point.x * _this.canvas.width)  + left) / _this.canvas.width;
+                var point_y = ((point.y * _this.canvas.height) + top) / _this.canvas.height;
+                return {
+                    x: point_x,
+                    y: point_y,
+                    lineWidth: point.lineWidth,
+                    lineCap: point.lineCap,
+                    lineJoin: point.lineJoin,
+                    strokeStyle: point.strokeStyle
+                }
+            });
+        });
+
+        this.draw(this.points_scroll);
+    }
+
+    draw(points_arr){
         var _this = this;
         var ctx = this.ctx;
         var canvas_jquery = $('#' + this.canvas.id);
         var scaleWidth = Number(canvas_jquery.attr("scaleWidth"));
         var scaleHeight = Number(canvas_jquery.attr("scaleHeight"));
 
-        this.points.forEach(function(curve_arr){
+        var points = points_arr || this.points;
+
+        points.forEach(function(curve_arr){
 
             curve_arr.forEach(function(point, index){
 
