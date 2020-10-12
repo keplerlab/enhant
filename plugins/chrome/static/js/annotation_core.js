@@ -2,14 +2,14 @@ class AnnotationTool{
     constructor(canvas, ctx){
         this.canvas = canvas;
 
-        this.zIndexLowest = "-1";
+        this.zIndexLowest = "-2147483645";
         this.zIndexHighest = "2147483645";
 
         this.ctx = ctx;
 
         this.points = [];
 
-        this.points_scroll = this.points;
+        this.points_scroll = [];
 
         this.mouse_position = {
             x: 0,
@@ -552,6 +552,25 @@ class Text extends AnnotationTool{
         this.overlap_el = null;
     }
 
+    createPointData(el){
+        var data = {
+            el: el,
+            normalized_position  : {
+                left: (parseInt(el.style.left, 10) / this.canvas.width),
+                top: (parseInt(el.style.top, 10) / this.canvas.height)
+            }
+        }
+
+        return data;
+    }
+
+    addData(el){
+        var data = this.createPointData(el);
+        
+        this.points.push(data);
+        this.points_scroll.push(data);
+    }
+
     createDeleteIcon(left,top,width,height){
         var html = '<svg width="12px" height="12px" viewBox="0 0 12 12" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">'+
         '<title>Fill</title>'+
@@ -578,6 +597,7 @@ class Text extends AnnotationTool{
     createTextElementContainer(left, top, width, height) {
         var textElementContainer = document.createElement('div');
         textElementContainer.className = this.CLS_TEXT_TOOL_CONTAINER;
+        textElementContainer.id = this.CLS_TEXT_TOOL_CONTAINER + (new Date()).getTime();
         textElementContainer.style.width = width + "px";
         textElementContainer.style.height = height + "px";
         textElementContainer.style.position = "absolute";
@@ -596,7 +616,7 @@ class Text extends AnnotationTool{
         var className = this.CLS_TEXT_TOOL_PREFIX;
         var textElement = document.createElement('div');
         textElement.className = className;
-        textElement.id = className + + (new Date()).getTime();
+        textElement.id = className + (new Date()).getTime();
         textElement.contentEditable = "true";
         textElement.style.userSelect = "none";
         textElement.style.display = "inline-block";
@@ -621,7 +641,18 @@ class Text extends AnnotationTool{
         return textElement;
     }
 
+    updatePointsPosition(el){
+        var points_id_arr = this.points.map(function(point){return point.el.id});
+        var index = points_id_arr.indexOf(el.id);
+
+        if (index !== -1){
+            this.points.splice(index, 1, this.createPointData(el));
+            this.points_scroll.splice(index, 1, this.createPointData(el));
+        }
+    }
+
     addText(posX, posY, width, height) {
+        var _this = this;
         width = width - 20 < this.minInitWidth ? this.minInitWidth : width - 20;
         height = height - 20 < this.minInitHeight ? this.minInitHeight : height - 20;
         var textElement = this.createTextElement(height);
@@ -644,9 +675,17 @@ class Text extends AnnotationTool{
        
         textElement.focus();
 
-        $('.'+ this.CLS_TEXT_TOOL_CONTAINER).draggable().resizable();
+        $('.'+ this.CLS_TEXT_TOOL_CONTAINER).draggable({
+            stop: function(evt, ui){
+                var el = this;
+                _this.updatePointsPosition(el);
+            }
+        }).resizable();
         $('.ui-resizable-s').css("bottom", "0px");
         $('.ui-resizable-e').css("right", "0px");
+
+        return textElementContainer;
+        
     }
 
     getPosition(event){ 
@@ -698,6 +737,7 @@ class Text extends AnnotationTool{
     }
 
     handleMouseDown(e){
+        var _this = this;
         this.getPosition(e); 
 
         // reset overlap
@@ -726,6 +766,14 @@ class Text extends AnnotationTool{
                 var el_content = $(this).html();
                 if (el_content.length == 0){
                     $(this).parent().remove();
+
+                    var el_parent_id = $(this).parent().attr("id");
+                    var points_id = _this.points.map(function(p){return p.el.id});
+
+                    var el_index = points_id.indexOf(el_parent_id);
+
+                    _this.points.splice(el_index, 1);
+                    _this.points_scroll.splice(el_index, 1);
                 }
             });
         }
@@ -746,7 +794,8 @@ class Text extends AnnotationTool{
             var eleHeight = parseFloat(textEle.style.height.slice(0, -2));
             textEle.remove();
 
-            this.addText(eleLeft, eleTop, eleWidth, eleHeight);
+            var textElementContainer = this.addText(eleLeft, eleTop, eleWidth, eleHeight);
+            this.addData(textElementContainer);
         }
     }
 
@@ -777,6 +826,37 @@ class Text extends AnnotationTool{
             textEle.style.height = parseFloat(this.moveY - this.startY) + "px";
         }
 
+    }
+
+    drawScroll(data){
+        
+        var _this = this;
+        this.points_scroll = this.points_scroll.map(function(obj){
+
+            var point_x = ((obj.normalized_position.left * _this.canvas.width)  + data.left) / _this.canvas.width;
+            var point_y = ((obj.normalized_position.top * _this.canvas.height) + data.top) / _this.canvas.height;
+            return {
+                el: obj.el,
+                normalized_position: {
+                    left: point_x,
+                    top: point_y
+                }
+            }
+        });
+        
+        this.draw(this.points_scroll);
+    }
+
+    draw(points_arr){
+        var _this = this;
+        var points = points_arr || this.points;
+
+        points.forEach(function(obj){
+            var el = obj.el;
+            var normalized_position = obj.normalized_position;
+            el.style.left = (normalized_position.left * _this.canvas.width) + "px";
+            el.style.top = (normalized_position.top * _this.canvas.height) + "px";
+        });
     }
 
     deleteText(){

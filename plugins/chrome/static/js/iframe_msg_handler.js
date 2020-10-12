@@ -133,7 +133,7 @@ class Annotation{
         var _this = this;
         _this.clearCanvas();
 
-        var classes = [Pen.name, Highlight.name];
+        var classes = [Pen.name, Highlight.name, Text.name];
 
         classes.forEach(function(cls_name){
             var obj = _this.annotation_tools_ref[cls_name];
