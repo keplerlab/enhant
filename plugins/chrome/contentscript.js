@@ -43,7 +43,6 @@ function createEnhantPlugin(){
     var iframe = document.createElement('iframe');
     iframe.frameBorder = "none";
     iframe.style.width = "100%";
-    iframe.style.position = "fixed";
     iframe.id = FRAME_ID
     iframe.src = chrome.runtime.getURL("popup.html");
 
@@ -57,7 +56,6 @@ function createEnhantPlugin(){
     div.style.background = "white";
     div.style.zIndex = "2147483647";
     div.style.width = "380px";
-    div.style.cursor = "move";
 
     div.style["boxShadow"] = "0 10px 16px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19)";
 
@@ -67,10 +65,62 @@ function createEnhantPlugin(){
     const resizer = iFrameResize({ log: false, checkOrigin: false,
         maxHeight: FRAME_MAX_HEIGHT, maxWidth: FRAME_MAX_WIDTH}, '#' + FRAME_ID);
 
-    $('#' + DIV_ID_2).draggable({
-        iframeFix: true
-    });
+    // $('#' + DIV_ID_2).draggable({
+    //     iframeFix: true
+    // });
+
+    return [iframe, div];
     
+}
+
+//handlers iframe drag
+var pageMouseX, pageMouseY;
+var frameContainerLeft = 0,frameContainerTop = 0;
+function handleEnhantIframeDragStart(iframe_container, data){
+
+    var position = iframe_container.getBoundingClientRect();
+
+    frameContainerTop = parseInt(position.top, 10);
+    frameContainerLeft = parseInt(position.left, 10);
+
+    pageMouseX = frameContainerLeft + data.startX;
+    pageMouseY = frameContainerTop + data.startY;
+
+
+    window.addEventListener("mouseup", handleEnhantIframeDragStop);
+    window.addEventListener("mousemove", handleParentMouseMove);
+}
+
+function handleEnhantIframeDragMove(iframe_container, data){
+
+    // console.log(" data incoming for movement ", data);
+
+    frameContainerTop += data.offsetY;
+    frameContainerLeft += data.offsetX;
+
+    iframe_container.style.top = frameContainerTop + "px";
+    iframe_container.style.left = frameContainerLeft + "px";
+
+    pageMouseX += data.offsetX;
+    pageMouseY += data.offsetY;
+}
+
+function handleEnhantIframeDragStop(){
+    window.removeEventListener("mouseup", handleEnhantIframeDragStop);
+    window.removeEventListener("mousemove", handleParentMouseMove);
+}
+
+function handleParentMouseMove(evt){
+    frameContainerLeft += evt.clientX - pageMouseX;
+    frameContainerTop += evt.clientY - pageMouseY;
+
+    var iframe_container = document.getElementById("enhant-frame-wrapper");
+
+    iframe_container.style.top = frameContainerTop + "px";
+    iframe_container.style.left = frameContainerLeft + "px";
+
+    pageMouseX = evt.clientX;
+    pageMouseY = evt.clientY;
 }
 
 $(document).ready(function(){
@@ -83,7 +133,14 @@ $(document).ready(function(){
     var lastScrollY = 0;
     var lastScrollX = 0;
 
-    createEnhantPlugin();
+    // these id should match that in popup.js
+    const _DRAG_START = "DRAG_START";
+    const _DRAG_MOVE = "DRAG_MOVE";
+    const _DRAG_STOP = "DRAG_STOP";
+
+    var enhant_frame = createEnhantPlugin();
+    var enhant_iframe = enhant_frame[0];
+    var enhant_iframe_container = enhant_frame[1];
 
     var targetFrame = document.getElementById(iframe2.id);
 
@@ -106,6 +163,22 @@ $(document).ready(function(){
 
             if (m.data.key == "annotation_active"){
                 windowResizeHandler();
+            }
+
+            // handle mouse drag data from iframe to move iframe
+            if (m.data.key == "iframe_mouse_drag"){
+
+                switch(m.data.msg){
+                    case _DRAG_START:
+                        handleEnhantIframeDragStart(enhant_iframe_container, m.data.input);
+                        break;
+                    case _DRAG_MOVE:
+                        handleEnhantIframeDragMove(enhant_iframe_container, m.data.input);
+                        break;
+                    case _DRAG_STOP:
+                        handleEnhantIframeDragStop();
+                        break;
+                }
             }
         }
     }, false);

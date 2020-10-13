@@ -24,6 +24,77 @@ function powermodeIconHandler(data){
     }
 }
 
+// listener and variables for sending drag information to parent 
+var drag = false;
+var startX = 0;
+var startY = 0;
+
+const _DRAG_START = "DRAG_START";
+const _DRAG_MOVE = "DRAG_MOVE";
+const _DRAG_STOP = "DRAG_STOP";
+
+function sendMouseCoordinatesToParent(msg, data){
+
+    var iframe_to_parent_msg =  {
+        "id": "parent", 
+        "key": "iframe_mouse_drag",
+        "msg": msg,
+        "sender": "enhant",
+        "input": data
+    }
+
+    window.parent.postMessage(iframe_to_parent_msg, "*")
+}
+
+function enhantDragMouseDown(evt){
+    drag = true;
+
+    evt.preventDefault();
+
+    startX = evt.clientX;
+    startY = evt.clientY;
+
+    var data = {
+        startX: startX,
+        startY: startY
+    };
+
+    sendMouseCoordinatesToParent(_DRAG_START ,data);
+
+    document.addEventListener("mouseup", enhantDragMouseUp);
+    document.addEventListener("mousemove", enhantDragMouseMove);
+    
+}
+
+function enhantDragMouseUp(evt){
+    drag = false;
+
+    sendMouseCoordinatesToParent(_DRAG_STOP, {});
+
+    document.removeEventListener("mouseup", enhantDragMouseUp);
+    document.removeEventListener("mousemove", enhantDragMouseMove);
+
+}
+
+function enhantDragMouseMove(evt){
+    if (drag){
+        var offset_data = {
+            offsetX : evt.clientX - startX,
+            offsetY: evt.clientY - startY
+        }
+
+        //! IMPORTANT
+        // This is a hack (if offset > 3px) the toolbar starts shacking
+        // because the postmessage seems to be slower than mousemovement
+        if ((Math.abs(offset_data.offsetX) < 3) && (Math.abs(offset_data.offsetY) < 3)){
+            sendMouseCoordinatesToParent(_DRAG_MOVE, offset_data);
+        }
+    
+    }
+
+}
+
+
 $(document).ready(function(){
 
     var icons = [
@@ -57,6 +128,11 @@ $(document).ready(function(){
         console.log(" Received message from browser action [Activate plugin] : ", message);
     
         if (message.cmd == "activate_plugin"){
+
+            var el = document.getElementById("drag_enhant");
+
+            // attach to mouse down listener, this doesn't get removed
+            el.addEventListener("mousedown", enhantDragMouseDown);
 
             pluginActivated = true;
 
