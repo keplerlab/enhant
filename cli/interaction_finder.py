@@ -25,7 +25,7 @@ class InteractionFinder(object):
 
         """
         self.total_interaction_scores = 120
-        self.interaction_window = 240 * 1000  # 60 sec
+        self.interaction_window = 60 * 1000  # 60 sec
 
     def _interaction_duration_in_window(
         self, start_timewindow, end_timewindow, start_time_element, end_time_element

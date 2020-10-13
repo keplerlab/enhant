@@ -80,7 +80,7 @@ def parse_speaker_wise_json(input_json: dict) -> dict:
     return consolidated_speaker_tag_list
 
 
-input_json_file_name = "meeting-data/testing/13_sapestart_1_hour/2nd-hour/speaker_wise.json"
+input_json_file_name = "meeting-data/testing/16_Learn_something_new/Learn_Something_New/speaker_wise.json"
 input_json_data = None
 if os.path.isfile(input_json_file_name):
     with open(input_json_file_name) as f:
