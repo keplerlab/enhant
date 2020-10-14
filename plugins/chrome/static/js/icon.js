@@ -112,7 +112,7 @@ class Icon{
         local_storage_data[className] = state;
 
         chrome.storage.local.set(local_storage_data, function() {
-            console.log("State value set for : ", local_storage_data);
+            // console.log("State value set for : ", local_storage_data);
         });
     }
 
@@ -275,8 +275,6 @@ class BookmarkIcon extends Icon{
         // obj.content is array
         var p_html = "<p style='margin-top:auto;margin-bottom:auto;'>";
 
-        console.log(" received data obj ", obj);
-
         var host_transcription = obj.content.filter(function(d){
             return d["origin"] == "host";
         });
@@ -312,8 +310,6 @@ class BookmarkIcon extends Icon{
         }
 
         p_html += "</p>";
-
-        console.log(" p html ", p_html);
 
         return "<div class='parent-data row' style='margin-left:10%;padding-top:2%;padding-bottom:2%;align-items:center;display:flex;'>" + 
         "<div class='col-xs-1'><img src='static/images/bookmark.svg'></div>" +
@@ -715,6 +711,45 @@ class RecordIcon extends Icon{
         this.icon_disable_path = "static/images/record_disabled.svg";
     }
 
+    checkRecordingActiveOnAnotherTab(cb){
+        var _status = true;
+
+        chrome.runtime.sendMessage({msg: "tab_info"}, function(response){
+
+            var data = response.data;
+
+            chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
+                var current_tab_id = tabs[0].id;
+
+                if (data.hasOwnProperty("tabId")){
+                    var tabId = data["tabId"];
+                    var meeting_in_progress = data["meeting_in_progress"];
+
+                    if (tabId !== current_tab_id){
+
+                        if (meeting_in_progress){
+                            _status = true;
+                            cb(_status);
+                        }
+                        else{
+                            _status = false;
+                            cb(_status);
+                        }
+                    }
+                    else{
+                        _status = false;
+                        cb(_status);
+                    }
+                }
+                else{
+                    _status = false;
+                    cb(_status);
+                }
+
+            });
+        });
+    }
+
     reset(){
         this.recording = false;
     }
@@ -763,51 +798,44 @@ class RecordIcon extends Icon{
 
     meeting_started(){
         var _this = this;
-        chrome.storage.local.set({"meeting_in_progress": true}, function(){
-            console.log("meeting started flag set in storage .");
+        chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+            var currTab = tabs[0];
+            if (currTab) { 
 
-            chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-                var currTab = tabs[0];
-                if (currTab) { 
+                chrome.runtime.sendMessage({msg: "start", data: currTab.id}, function(response){
 
-                    chrome.runtime.sendMessage({msg: "start", data: currTab.id}, function(response){
+                    _this.startCapturingMicAudio(response.settings);
+                   
+                    if (response.settings){
 
-                        _this.startCapturingMicAudio(response.settings);
-                       
-                        if (response.settings){
+                        // fire setting handler event
+                        var event = new CustomEvent("settingsUpdateHandler", {
+                            detail: response.settings
+                        });
+                        window.dispatchEvent(event);
+                    }
+                });
 
-                            // fire setting handler event
-                            var event = new CustomEvent("settingsUpdateHandler", {
-                                detail: response.settings
-                            });
-                            window.dispatchEvent(event);
-                        }
-                    });
+            }
+        });
 
-                }
-            });
-        })
     }
 
     meeting_stopped(){
         var _this = this;
-        chrome.storage.local.set({"meeting_in_progress": false}, function(){
-            console.log("meeting stopped flag set in storage .");
+        chrome.runtime.sendMessage({msg: "stop"}, function(response){
+            // console.log(response.status);
 
-            chrome.runtime.sendMessage({msg: "stop"}, function(response){
-                // console.log(response.status);
+            _this.stopCapturingMicAudio();
 
-                _this.stopCapturingMicAudio();
+            if (response.settings){
 
-                if (response.settings){
-
-                    // fire setting handler event
-                    var event = new CustomEvent("settingsUpdateHandler", {
-                        detail: response.settings
-                    });
-                    window.dispatchEvent(event);
-                }
-            })
+                // fire setting handler event
+                var event = new CustomEvent("settingsUpdateHandler", {
+                    detail: response.settings
+                });
+                window.dispatchEvent(event);
+            }
         });
     }
 
@@ -860,23 +888,39 @@ class RecordIcon extends Icon{
     }
 
     handleClick(){
-        this.toggleState();
-        this.setLocalStorage();
-        this.stateHandler();
 
-        // set the recording state based on icon state
-        if (this.state == ICONSTATE.ACTIVE){
-            this.recording = true;
-            this.start();
-        }
-        else{
-            this.recording = false;
-            this.stop()
-        }
-
+        var _this  = this;
+        this.checkRecordingActiveOnAnotherTab(function(status){
+            if (!status){
+                _this.toggleState();
+                _this.setLocalStorage();
+                _this.stateHandler();
+    
+                // set the recording state based on icon state
+                if (_this.state == ICONSTATE.ACTIVE){
+                    _this.recording = true;
+                    _this.start();
+                }
+                else{
+                    _this.recording = false;
+                    _this.stop()
+                }
+            }
+            else{
+                var notification_html = "<div class='col-xs-2'>" +
+                "<img title='Info' height=24 width=24 src='static/images/info.svg'>" +
+                "</div>" + 
+                "<div class='col-xs-10'>"+
+                    "<span>Recording is already active on another tab. Stop the recording or close the tab to enable here.</span>" +
+                "</div>";
+    
+                var event = new CustomEvent("showNotification", {
+                    detail: {html: notification_html, timeout_in_sec: 3}
+                });
+                window.dispatchEvent(event);
+            }
+        });    
     }
-
-
 }
 
 class PowerModeIcon extends Icon{
@@ -926,19 +970,11 @@ class PowerModeIcon extends Icon{
     }
 
     stop(){
-        if (this.recording){
-            this.stopCapturingTabAudio();
-            this.recording = false;
-        }
+        this.stopCapturingTabAudio();
     }
 
     start(){
-
-        if (!(this.recording)){
-            this.startCapturingTabAudio();
-
-            this.recording = true;
-        }
+        this.startCapturingTabAudio();
     }
 }
 
@@ -972,7 +1008,7 @@ class AnnotationIconBase extends Icon{
         if ((this.active_icon_path !== null) && (this.inactive_icon_path !== null)){
             var icon_type = this.constructor.name;
 
-            console.log(" toggle icon ", icon_type);
+            // console.log(" toggle icon ", icon_type);
             var icon = $('iconAnnotation[type="' + icon_type +'"]');
             var icon_img = $('iconAnnotation[type="' + icon_type +'"] img');
             var icon_background = icon.parent();

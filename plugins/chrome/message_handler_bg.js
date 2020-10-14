@@ -222,13 +222,18 @@ chrome.runtime.onMessage.addListener(
 
         if (request.msg == "start"){
 
-            obj = {} 
-            obj[STORAGE_KEYS.tab_id] = request.data;
+            //saves tab info
+            var obj = {} 
+            obj[STORAGE_KEYS.tab_info] = {
+                tabId: request.data,
+                meeting_in_progress: true
+            };
+
+            enhant_local_storage_obj.save_basic(obj);
 
             var meeting_start = {};
             meeting_start[STORAGE_KEYS.meeting_start_time] = enhant_local_storage_obj.generateUnixTimestamp();
 
-            enhant_local_storage_obj.save_basic(obj);
             enhant_local_storage_obj.save_basic(meeting_start)
 
             chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
@@ -252,7 +257,6 @@ chrome.runtime.onMessage.addListener(
                                     settings: {}
                                 });
                             }
-                            
                         });
                     });
                 });
@@ -261,27 +265,39 @@ chrome.runtime.onMessage.addListener(
         }
 
         if (request.msg == "stop"){
-            downloadZip(function(){
-                enhant_local_storage_obj.deleteAll();
-            });
 
-            // checkthe settings
-            enhant_local_storage_obj.read_multiple([STORAGE_KEYS.settings], function(result){
+            // update tabInfo
+            enhant_local_storage_obj.read_multiple([STORAGE_KEYS.tab_info, STORAGE_KEYS.settings], function(result){
 
                 var settings_data = result[STORAGE_KEYS.settings];
-                if (settings_data){
-                   sendResponse({
-                       status: true,
-                       settings: settings_data
-                   });
+                var tab_info_data = result[STORAGE_KEYS.tab_info];
+                var new_data = {};
+                new_data[STORAGE_KEYS.tab_info] = {
+                    tabId: tab_info_data.tabId,
+                    meeting_in_progress: false
                 }
-                else{
-                    sendResponse({
-                        status: true,
-                        settings: {}
+
+                enhant_local_storage_obj.save_basic(new_data, function(){
+
+                    // download the zip
+                    downloadZip(function(){
+                        enhant_local_storage_obj.deleteAll();
                     });
-                }
-                
+
+                    if (settings_data){
+                        sendResponse({
+                            status: true,
+                            settings: settings_data
+                        });
+                     }
+                     else{
+                         sendResponse({
+                             status: true,
+                             settings: {}
+                         });
+                    }
+
+                });
             });
         }
 
@@ -397,6 +413,18 @@ chrome.runtime.onMessage.addListener(
                 });
             });
         }
+
+        if (request.msg == "tab_info"){
+
+            enhant_local_storage_obj.read_multiple([STORAGE_KEYS.tab_info], function(result){
+
+                var tab_info = result[STORAGE_KEYS.tab_info];
+                sendResponse({
+                    status: true,
+                    data: tab_info || {}
+                });
+            });
+        }
         return true;
     }
 );
@@ -406,35 +434,46 @@ chrome.tabs.onRemoved.addListener(function(tabId, info) {
     // chrome.runtime.sendMessage({msg: "download_zip", data: null}, function(response) {
     // });
 
-    chrome.storage.local.get(["tab_id"], function(result){
+    chrome.storage.local.get(["tab_info"], function(result){
 
-        if (result["tab_id"]){
+        var tab_info = result.tab_info;
 
-            if (result["tab_id"] == tabId){
+        if (!isEmpty(tab_info)){
 
-                try{
-                    downloadZip(function(){
-                
+            var stored_tab_id = tab_info.tabId;
+            if (stored_tab_id == tabId){
+
+                //saves tab info
+                var obj = {} 
+                obj[STORAGE_KEYS.tab_info] = {
+                    tabId: tab_info.tabId,
+                    meeting_in_progress: false
+                };
+
+                enhant_local_storage_obj.save_basic(obj, function(){
+
+                    // console.log("storage updated in local storage"); 
+                    try{
+                        downloadZip(function(){
+                    
+                            // clear all the data
+                            enhant_local_storage_obj.deleteAll();
+                        });
+                    }
+                    catch(error){
+                        console.log("Encountered error : ", error);
+
                         // clear all the data
                         enhant_local_storage_obj.deleteAll();
-                    });
-                }
-                catch(error){
-                    console.log("Encountered error : ", error);
 
-                    // clear all the data
-                    enhant_local_storage_obj.deleteAll();
-
-                }
-               
+                    }
+                });
             }
-
         }
-        else {
-            // clear all the data
-            enhant_local_storage_obj.deleteAll();
+        else{
+             // clear all the data
+             enhant_local_storage_obj.deleteAll();
         }
-
-    })
+    });
 
 });

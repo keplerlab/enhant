@@ -39,12 +39,12 @@ const STORAGE_KEYS = {
     mode: "mode",
     server_url: "server_url",
     meeting_start_time: "meeting_start_time",
-    tab_id: "tab_id",
     settings: "settings",
     guest: "guest",
     host: "host",
     urls: "urls",
-    enhant_position: "enhant_position"
+    enhant_position: "enhant_position",
+    tab_info: "tab_info"
 }
 
 class EnhantLocalStorage{
@@ -257,9 +257,10 @@ class EnhantLocalStorage{
         var _this = this;
 
         // settings should persist
-        chrome.storage.local.get([STORAGE_KEYS.settings, STORAGE_KEYS.enhant_position], function(r){
+        chrome.storage.local.get([STORAGE_KEYS.settings, STORAGE_KEYS.enhant_position, STORAGE_KEYS.tab_info], function(r){
             var settings_data = r[STORAGE_KEYS.settings];
             var position_data = r[STORAGE_KEYS.enhant_position];
+            var tab_info = r[STORAGE_KEYS.tab_info];
 
             chrome.storage.local.clear(function(){
                 var error = chrome.runtime.lastError;
@@ -274,6 +275,10 @@ class EnhantLocalStorage{
 
             var obj = {};
             obj[STORAGE_KEYS.enhant_position] = position_data;
+            _this.save_basic(obj);
+
+            var obj = {};
+            obj[STORAGE_KEYS.tab_info] = tab_info;
             _this.save_basic(obj);
 
         })

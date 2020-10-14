@@ -94,7 +94,6 @@ function enhantDragMouseMove(evt){
 
 }
 
-
 $(document).ready(function(){
 
     var icons = [
@@ -124,7 +123,33 @@ $(document).ready(function(){
         if (cl.name !== LogoIcon.name){
             obj.disableIcon();
         }
+    });
 
+    // send a message  to background to check if tab id is same and meeting in progress
+    // this would mean a redirect happened
+
+    chrome.runtime.sendMessage({msg: "tab_info"}, function(response){
+
+        var tab_info = response.data;
+
+        chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
+            var current_tab_id = tabs[0].id;
+
+            if (tab_info.hasOwnProperty("tabId")){
+
+                var lastTabId = tab_info.tabId;
+                var meeting_in_progress = tab_info.meeting_in_progress;
+
+                if (lastTabId == current_tab_id){
+                    if (meeting_in_progress){
+                        var record_icon_obj = icons_object_mapping[RecordIcon.name];
+                        record_icon_obj.stateHandler();
+                        record_icon_obj.stop();
+                        record_icon_obj.enableIcon();
+                    }
+                }
+            }
+        });
     });
 
     //activate listner on enhant logo for drag
@@ -147,7 +172,8 @@ $(document).ready(function(){
                 LogoIcon,
                 SeparatorIcon,
                 RecordIcon,
-                SettingsIcon
+                SettingsIcon,
+                AnnotationIcon
             ];
             
             hideNotification();
