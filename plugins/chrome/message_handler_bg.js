@@ -376,11 +376,28 @@ chrome.runtime.onMessage.addListener(
             enhant_local_storage_obj.remove_url(url_to_remove, function(url, status, err){
                 sendResponse({url_removed: url, status: status, error: err });
             });
-            
         }
 
+        if (request.msg == "save_enhant_position"){
+            var obj = {};
+            obj[STORAGE_KEYS.enhant_position] = request.data;
+            enhant_local_storage_obj.save_basic(obj, function(){
+                // console.log("storage updated in local storage"); 
+                sendResponse({status:true, data: obj});
+            });
+        };
+
+        if (request.msg == "get_enhant_position"){
+            enhant_local_storage_obj.read_multiple([STORAGE_KEYS.enhant_position], function(result){
+
+                var position_data = result[STORAGE_KEYS.enhant_position];
+                sendResponse({
+                    status: true,
+                    data: position_data || {}
+                });
+            });
+        }
         return true;
-        
     }
 );
 

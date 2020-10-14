@@ -43,7 +43,8 @@ const STORAGE_KEYS = {
     settings: "settings",
     guest: "guest",
     host: "host",
-    urls: "urls"
+    urls: "urls",
+    enhant_position: "enhant_position"
 }
 
 class EnhantLocalStorage{
@@ -256,8 +257,9 @@ class EnhantLocalStorage{
         var _this = this;
 
         // settings should persist
-        chrome.storage.local.get([STORAGE_KEYS.settings], function(r){
+        chrome.storage.local.get([STORAGE_KEYS.settings, STORAGE_KEYS.enhant_position], function(r){
             var settings_data = r[STORAGE_KEYS.settings];
+            var position_data = r[STORAGE_KEYS.enhant_position];
 
             chrome.storage.local.clear(function(){
                 var error = chrome.runtime.lastError;
@@ -268,7 +270,10 @@ class EnhantLocalStorage{
 
             var obj = {};
             obj[STORAGE_KEYS.settings] = settings_data;
+            _this.save_basic(obj);
 
+            var obj = {};
+            obj[STORAGE_KEYS.enhant_position] = position_data;
             _this.save_basic(obj);
 
         })
