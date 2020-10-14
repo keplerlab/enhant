@@ -54,7 +54,7 @@ class SettingsURL{
             
             if (response.status){
                 console.log(" removed urls : " , response);
-                var text = "You can no longer use enhant on " + response.url_removed;
+                var text = "You can no longer use enhan(t) on " + response.url_removed;
                 _this.showNotificationMessage(text, 3);
             }
         })
@@ -158,7 +158,7 @@ class SettingsURL{
         $('.' + _this.table_body_cls).prepend(html);
 
         if (show_message){
-            var text = "Reload or open " + obj.url + " in the chrome and enhant will appear automatically.";
+            var text = "Reload or open " + obj.url + " in the chrome and enhan(t) will appear automatically.";
             _this.showNotificationMessage(text, 3);
         }
     }
