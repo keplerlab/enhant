@@ -287,12 +287,12 @@ $(document).ready(function(){
            BookmarkIcon,
            CaptureTabIcon,
            NotesIcon,
-           AnnotationIcon,
            ExpandIcon
        ];
 
        var iconsToEnable = [
-           SettingsIcon
+           SettingsIcon,
+           AnnotationIcon
        ];
 
         iconsToDisable.forEach(function(cl){
