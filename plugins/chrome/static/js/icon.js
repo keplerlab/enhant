@@ -451,6 +451,7 @@ class ExpandIcon extends Icon{
         this.inactive_icon_path = "static/images/down_arrow_inactive.svg";
 
         this.icon_disable_path = "static/images/down_arrow_disabled.svg";
+        this.icon_disabled_message = "View captured data when recording.";
     }
 
     reset(){

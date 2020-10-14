@@ -147,8 +147,7 @@ $(document).ready(function(){
                 LogoIcon,
                 SeparatorIcon,
                 RecordIcon,
-                SettingsIcon,
-                ExpandIcon
+                SettingsIcon
             ];
             
             hideNotification();
@@ -262,7 +261,8 @@ $(document).ready(function(){
            BookmarkIcon,
            CaptureTabIcon,
            NotesIcon,
-           AnnotationIcon
+           AnnotationIcon,
+           ExpandIcon
        ];
 
        var iconsToEnable = [
@@ -285,7 +285,8 @@ $(document).ready(function(){
             BookmarkIcon,
             CaptureTabIcon,
             NotesIcon,
-            AnnotationIcon
+            AnnotationIcon,
+            ExpandIcon
         ];
 
         var iconsToDisable = [
