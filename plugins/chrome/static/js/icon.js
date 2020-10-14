@@ -1004,6 +1004,13 @@ class AnnotationIconBase extends Icon{
         super();
     }
 
+    changeTooltipText(text){
+        var icon_type = this.constructor.name;
+        var icon_img = $('iconAnnotation[type="' + icon_type +'"] img');
+
+        icon_img.attr("title", text);
+    }
+
     toggleIcon(){
         if ((this.active_icon_path !== null) && (this.inactive_icon_path !== null)){
             var icon_type = this.constructor.name;
@@ -1087,6 +1094,7 @@ class PenAnnotationIcon extends AnnotationIconBase{
         this.selected_color = "#000000";
         this.selected_color_img_tag= $('iconPaint[value="' + this.selected_color +'"]').find("img");
     }
+    
 
     addSelectedColorClass(){
         this.selected_color_img_tag.css({
@@ -1291,6 +1299,7 @@ class EyeAnnotationIcon extends AnnotationIconBase{
         super.handleClick();
 
         if (_this.state == ICONSTATE.ACTIVE){
+            _this.changeTooltipText("Show Annotations");
             window.parent.postMessage(
                 {
                     "id": "frame2", 
@@ -1303,6 +1312,7 @@ class EyeAnnotationIcon extends AnnotationIconBase{
                 }, "*")
         }
         else {
+            _this.changeTooltipText("Hide Annotations");
             window.parent.postMessage(
                 {
                     "id": "frame2", 
