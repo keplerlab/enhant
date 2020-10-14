@@ -120,19 +120,22 @@ $(document).ready(function(){
         obj.registerEvents();
         icons_object_mapping[cl.name] = obj;
 
-        obj.disableIcon();
+        // except logoicon disable everything
+        if (cl.name !== LogoIcon.name){
+            obj.disableIcon();
+        }
 
     });
+
+    //activate listner on enhant logo for drag
+    var el = document.getElementById("drag_enhant");
+    // attach to mouse down listener, this doesn't get removed
+    el.addEventListener("mousedown", enhantDragMouseDown);
 
     chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         console.log(" Received message from browser action [Activate plugin] : ", message);
     
         if (message.cmd == "activate_plugin"){
-
-            var el = document.getElementById("drag_enhant");
-
-            // attach to mouse down listener, this doesn't get removed
-            el.addEventListener("mousedown", enhantDragMouseDown);
 
             pluginActivated = true;
 
