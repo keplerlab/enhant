@@ -84,9 +84,9 @@ function enhantDragMouseMove(evt){
         }
 
         //! IMPORTANT
-        // This is a hack (if offset > 3px) the toolbar starts shacking
+        // This is a hack (if offset > 10px) the toolbar starts shacking
         // because the postmessage seems to be slower than mousemovement
-        if ((Math.abs(offset_data.offsetX) < 3) && (Math.abs(offset_data.offsetY) < 3)){
+        if ((Math.abs(offset_data.offsetX) < 10) && (Math.abs(offset_data.offsetY) < 10)){
             sendMouseCoordinatesToParent(_DRAG_MOVE, offset_data);
         }
     
@@ -109,6 +109,8 @@ $(document).ready(function(){
         AnnotationIcon
     ];
 
+    var exceptions = [LogoIcon.name, SeparatorIcon.name];
+
     var icons_object_mapping = {};
     var pluginActivated = false;
 
@@ -119,8 +121,8 @@ $(document).ready(function(){
         obj.registerEvents();
         icons_object_mapping[cl.name] = obj;
 
-        // except logoicon disable everything
-        if (cl.name !== LogoIcon.name){
+        // exceptions disable everything
+        if (exceptions.indexOf(cl.name) == -1){
             obj.disableIcon();
         }
     });
@@ -153,9 +155,12 @@ $(document).ready(function(){
     });
 
     //activate listner on enhant logo for drag
-    var el = document.getElementById("drag_enhant");
-    // attach to mouse down listener, this doesn't get removed
-    el.addEventListener("mousedown", enhantDragMouseDown);
+    // var el = document.getElementById("drag_enhant");
+
+    document.querySelectorAll('.drag_enhant').forEach(item => {
+        item.addEventListener("mousedown", enhantDragMouseDown);
+    })
+   
 
     chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         console.log(" Received message from browser action [Activate plugin] : ", message);
