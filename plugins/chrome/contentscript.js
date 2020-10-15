@@ -1,3 +1,5 @@
+var _enhant_position = {};
+
 function isEmpty(obj){
     for(var prop in obj) {
         if(obj.hasOwnProperty(prop)) {
@@ -6,6 +8,60 @@ function isEmpty(obj){
     }
 
     return JSON.stringify(obj) === JSON.stringify({});
+}
+
+function adjustEnhantPosition(position){
+
+    var left = position.left * window.innerWidth;
+    var top = position.top * window.innerHeight;
+
+    var right = left + position.width;
+    var bottom = top + position.height;
+
+    if (window.innerWidth < right){
+        left = left - (right - window.innerWidth);
+    }
+
+    if (window.innerWidth < bottom){
+        top = top - (bottom - window.innerHeight);
+    }
+
+    // console.log(" top / left updated ", position.left * window.innerWidth, left, top);
+
+    return {
+        left: left,
+        top: top,
+        right: right,
+        bottom: bottom,
+        height: position.height,
+        width: position.width
+    }
+
+}
+
+function normalizeTopLeftSavePosition(div){
+    var position = div.getBoundingClientRect().toJSON();
+    position.left = position.left / window.innerWidth;
+    position.top = position.top / window.innerHeight;
+
+    _enhant_position = position;
+}
+
+function setPositionEnhant(position, div){
+    if (position !== null){
+        var adjusted_position = adjustEnhantPosition(position);
+        $('#' + div.id).css({
+            left: adjusted_position.left + "px",
+            top: adjusted_position.top + "px"
+        });
+    }
+    else{
+
+        $('#' + div.id).css({
+            right: "0px",
+            top: "10px"
+        });
+    }
 }
 
 function saveEnhantPosition(position){
@@ -91,19 +147,8 @@ function createEnhantPlugin(position){
     div.appendChild(iframe);
     document.body.appendChild(div);
 
-    if (position !== null){
-        $('#' + div.id).css({
-            left: position.left + "px",
-            top: position.top + "px"
-        });
-    }
-    else{
-
-        $('#' + div.id).css({
-            right: "0px",
-            top: "10px"
-        });
-    }
+    // set the position
+    setPositionEnhant(position, div);
 
     const resizer = iFrameResize({ log: false, checkOrigin: false,
         maxHeight: FRAME_MAX_HEIGHT, maxWidth: FRAME_MAX_WIDTH}, '#' + FRAME_ID);
@@ -148,6 +193,8 @@ function handleEnhantIframeDragMove(iframe_container, data){
 function handleEnhantIframeDragStop(iframe_container){
 
     var position = iframe_container.getBoundingClientRect().toJSON();
+    position["left"] = position["left"] / window.innerWidth;
+    position["top"] = position["top"] / window.innerHeight;
     saveEnhantPosition(position);
 
     window.removeEventListener("mouseup", handleEnhantIframeDragStop);
@@ -165,6 +212,9 @@ function handleParentMouseMove(evt){
 
     pageMouseX = evt.clientX;
     pageMouseY = evt.clientY;
+
+    // update enhant position
+    normalizeTopLeftSavePosition(iframe_container);
 }
 
 $(document).ready(function(){
@@ -186,6 +236,9 @@ $(document).ready(function(){
         var enhant_frame = createEnhantPlugin(position);
         var enhant_iframe = enhant_frame[0];
         var enhant_iframe_container = enhant_frame[1];
+
+        // normalized enhant position (to be used when resize happens)
+        normalizeTopLeftSavePosition(enhant_iframe_container);
 
         var targetFrame = document.getElementById(iframe2.id);
 
@@ -233,6 +286,19 @@ $(document).ready(function(){
 
             var height = window.innerHeight;
             var width = window.innerWidth;
+    
+            var newposition = adjustEnhantPosition(_enhant_position);
+            $('#' + enhant_iframe_container.id).css({
+                left: newposition.left,
+                top: newposition.top
+            });
+
+            var newposition_normalized = newposition;
+            newposition_normalized.left =  newposition_normalized.left / window.innerWidth;
+            newposition_normalized.top = newposition_normalized.top / window.innerHeight;
+
+            // update the enhant position on resize
+            _enhant_position = newposition_normalized;
 
             // send parent dimensions
             var parent_dimensions = {
