@@ -85,12 +85,14 @@ function enhantDragMouseMove(evt){
             offsetY: evt.clientY - startY
         }
 
+        sendMouseCoordinatesToParent(_DRAG_MOVE, offset_data);
+
         //! IMPORTANT
         // This is a hack (if offset > 10px) the toolbar starts shacking
         // because the postmessage seems to be slower than mousemovement
-        if ((Math.abs(offset_data.offsetX) < 10) && (Math.abs(offset_data.offsetY) < 10)){
-            sendMouseCoordinatesToParent(_DRAG_MOVE, offset_data);
-        }
+        // if ((Math.abs(offset_data.offsetX) < 10) && (Math.abs(offset_data.offsetY) < 10)){
+        //     sendMouseCoordinatesToParent(_DRAG_MOVE, offset_data);
+        // }
     
     }
 
