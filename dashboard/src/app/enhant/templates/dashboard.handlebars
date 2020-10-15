@@ -839,7 +839,6 @@
 
             const mediaPlayerTemplate = Handlebars.templates.mediaPlayer;
             const media_html = mediaPlayerTemplate({
-                "url": recording_data.url,
                 "chart": mediaContext.chart
             });
             $('.recording').html(media_html);
@@ -847,7 +846,7 @@
             setTimeout(function(){
                 // forward message to dashboard
                 var event = new CustomEvent("initializePlayer", {
-                    detail: data
+                    detail: {data: data, url: recording_data.url}
                 });
                 window.dispatchEvent(event);
             }, 100);

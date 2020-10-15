@@ -116,7 +116,7 @@
 
 <div class="row">
     <div class="col-xs-12 player">
-        <video width="100%" height="100%" class="viewer" id="recording-video" src="{{url}}"></video>
+       
 
         <div class="settings-container" state="inactive" style="display: none;">
             <div class="clearfix">
@@ -196,9 +196,10 @@
                 this.zip_data = {};
 
                 this.conf = conf;
+                this.url = this.conf.video_url;
 
                 this.player = document.querySelector('.' + this.conf.player_cls);
-                this.video = this.player.querySelector('.' + this.conf.video_cls);
+                this.video = null;
                 this.progress_container = this.player.querySelector('.' + this.conf.progress_container_cls);
                 this.progress_filled_container = this.player.querySelector('.' + this.conf.progress_filled_container_cls);
                 this.toggle_icon = this.player.querySelector('.' + this.conf.toggle_cls); 
@@ -214,6 +215,12 @@
                 // negative offset means recording started before plugin and positive otherwise
                 this.offset = 0; // 0 is no offset, -1 is negative offset, +1 is positive offset
                 this.offset_in_ms = 0;
+            }
+
+            createVideo(){
+                var html = ' <video width="100%" height="100%" class="viewer" id="recording-video" src="' + this.url +'"></video>';
+                $('.' + this.conf.player_cls).prepend(html);
+                this.video = this.player.querySelector('.' + this.conf.video_cls);
             }
 
             setZipData(zip_data){
@@ -322,6 +329,7 @@
         
                 var _this = this;
                 var all_notes = this.zip_data.notes;
+
                 all_notes.forEach(function(note){
 
                     var seconds_elapsed = (note.event_time - _this.recording_start_time) / 1000 ;
@@ -831,9 +839,11 @@
 
         window.addEventListener("initializePlayer", function initializePlayerHandler(evt){
 
-            var data = evt.detail;
+            var data = evt.detail.data;
+            var url = evt.detail.url;
             var conf = {
                 player_cls: "player",
+                video_url: url,
                 video_cls: "viewer",
                 progress_container_cls: "progress",
                 progress_filled_container_cls: "progress__filled",
@@ -861,6 +871,15 @@
 
                 var player = new EnhantMediaPlayer(conf);
 
+                player.createVideo();
+                var video = player.getVideo();
+
+                // video is loaded, add duration data and markers
+                video.onloadedmetadata = function(){
+                    player.showVideoDuration();
+                    player.addMarkersOnProgressBar();
+                }
+
                 // set player zip data
                 player.setZipData(zip_data);
 
@@ -873,6 +892,16 @@
                 // render chart
                 player.renderChartOnVideo(zip_data);
 
+               
+
+                window.APP.player =  player;
+            }
+
+            else if (!isEmpty(notes_data)){
+                
+                var player = new EnhantMediaPlayer(conf);
+
+                player.createVideo();
                 var video = player.getVideo();
 
                 // video is loaded, add duration data and markers
@@ -881,27 +910,14 @@
                     player.addMarkersOnProgressBar();
                 }
 
-                window.APP.player =  player;
-            }
-
-            else if (!isEmpty(notes_data)){
-                var player = new EnhantMediaPlayer(conf);
-
                 // set player zip data
-                player.setZipData(zip_data);
+                player.setZipData(notes_data);
 
                 // set the recording start time (will match the meeting start time without offset)
                 player.setRecordingStartTime();
 
                 // register player events
                 player.registerEvents();
-
-                 var video = player.getVideo();
-
-                // video is loaded, add duration data and markers
-                video.onloadedmetadata = function(){
-                    player.showVideoDuration();
-                }
 
                 window.APP.player =  player;
             }
