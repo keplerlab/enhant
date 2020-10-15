@@ -2,8 +2,8 @@
     "manifest_version": 2,
   
     "name": "enhan(t) Meeting Power Tool",
-    "description": "Bookmark moments, capture screenshots and take notes during your meetings. Get transcripts, sentiment, engagement and questions.",
-    "version": "0.1.0",
+    "description": "Bookmark moments, capture screenshots, take notes and annotate during your meetings. Get transcript, meeting metrics and questions.",
+    "version": "0.2.0",
     "icons": {
       "16": "static/images/logo-16.png",
       "32": "static/images/logo-32.png",
