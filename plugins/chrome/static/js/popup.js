@@ -47,23 +47,25 @@ function sendMouseCoordinatesToParent(msg, data){
 }
 
 function enhantDragMouseDown(evt){
-    drag = true;
+    // only left click
+    if (evt.which == 1){
+        drag = true;
 
-    evt.preventDefault();
+        evt.preventDefault();
 
-    startX = evt.clientX;
-    startY = evt.clientY;
+        startX = evt.clientX;
+        startY = evt.clientY;
 
-    var data = {
-        startX: startX,
-        startY: startY
-    };
+        var data = {
+            startX: startX,
+            startY: startY
+        };
 
-    sendMouseCoordinatesToParent(_DRAG_START ,data);
+        sendMouseCoordinatesToParent(_DRAG_START ,data);
 
-    document.addEventListener("mouseup", enhantDragMouseUp);
-    document.addEventListener("mousemove", enhantDragMouseMove);
-    
+        document.addEventListener("mouseup", enhantDragMouseUp);
+        document.addEventListener("mousemove", enhantDragMouseMove);
+    }
 }
 
 function enhantDragMouseUp(evt){
