@@ -15,6 +15,7 @@ const CONFIG = {
     default_whitelisted_urls: [
         "http://teams.microsoft.com",
         "http://zoom.us",
-        "http://meet.jit.si"
+        "http://meet.jit.si",
+        "https://meet.google.com"
     ]
 }
