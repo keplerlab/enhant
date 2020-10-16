@@ -176,6 +176,8 @@ class Pen extends AnnotationTool{
         this.paint = false;
 
         this.curve_data = [];
+
+        this.globalCompositeOperation = "source-over";
     }
 
     getRGBAString(strColor, alpha) {
@@ -220,8 +222,6 @@ class Pen extends AnnotationTool{
             x: this.mouse_position.x / this.canvas.width,
             y: this.mouse_position.y / this.canvas.height,
             lineWidth: this.stroke,
-            lineCap: this.lineCap,
-            lineJoin: this.lineJoin,
             strokeStyle: this.getRGBAString(this.color, this.strokeAlpha)
         });
 
@@ -233,9 +233,8 @@ class Pen extends AnnotationTool{
         // draw only if paint is enabled (between mouse up and down)
         if (!this.paint) return;
         var ctx = this.ctx;
+        ctx.globalCompositeOperation = this.globalCompositeOperation;
         ctx.lineWidth = this.stroke;
-        ctx.lineCap = this.lineCap;
-        ctx.lineJoin = this.lineJoin;
         ctx.strokeStyle = this.getRGBAString(this.color, this.strokeAlpha);
 
         ctx.beginPath();
@@ -250,8 +249,6 @@ class Pen extends AnnotationTool{
             x: this.mouse_position.x / this.canvas.width,
             y: this.mouse_position.y / this.canvas.height,
             lineWidth: this.stroke,
-            lineCap: this.lineCap,
-            lineJoin: this.lineJoin,
             strokeStyle: this.getRGBAString(this.color, this.strokeAlpha)
         });
 
@@ -288,8 +285,6 @@ class Pen extends AnnotationTool{
                     x: point_x,
                     y: point_y,
                     lineWidth: point.lineWidth,
-                    lineCap: point.lineCap,
-                    lineJoin: point.lineJoin,
                     strokeStyle: point.strokeStyle
                 }
             });
@@ -322,8 +317,7 @@ class Pen extends AnnotationTool{
                     // console.log(" moving point from ", point.x, point.y, " to ", start_x, start_y);
                     ctx.moveTo(start_x, start_y);
                     ctx.lineWidth = point.lineWidth;
-                    ctx.lineCap = point.lineCap;
-                    ctx.lineJoin = point.lineJoin;
+                    ctx.globalCompositeOperation = _this.globalCompositeOperation;
                     ctx.strokeStyle = point.strokeStyle;
 
                     var start_x = curve_arr[index + 1].x;
@@ -348,7 +342,6 @@ class Pen extends AnnotationTool{
         }
 
         if (data.hasOwnProperty("cursor")){
-            console.oog(" cursor found ");
             this.cursor_path = data.cursor;
         }
     }
@@ -366,6 +359,7 @@ class Highlight extends Pen{
         this.color = "#FFCF74";
         this.stroke = 14;
         this.strokeAlpha = 0.2;
+        this.globalCompositeOperation = "multiply";
     }
 }
 
