@@ -443,36 +443,51 @@ chrome.tabs.onRemoved.addListener(function(tabId, info) {
             var stored_tab_id = tab_info.tabId;
             if (stored_tab_id == tabId){
 
-                //saves tab info
-                var obj = {} 
-                obj[STORAGE_KEYS.tab_info] = {
-                    tabId: tab_info.tabId,
-                    meeting_in_progress: false
-                };
-
-                enhant_local_storage_obj.save_basic(obj, function(){
+                if (tab_info.meeting_in_progress){
 
                     // console.log("storage updated in local storage"); 
                     try{
                         downloadZip(function(){
+
+                            //saves tab info
+                            var obj = {} 
+                            obj[STORAGE_KEYS.tab_info] = {
+                                tabId: tab_info.tabId,
+                                meeting_in_progress: false
+                            };
+
+                            enhant_local_storage_obj.save_basic(obj, function(){
+                                
+                                // clear all the data
+                                enhant_local_storage_obj.deleteAll();
+                            })
                     
-                            // clear all the data
-                            enhant_local_storage_obj.deleteAll();
                         });
                     }
                     catch(error){
                         console.log("Encountered error : ", error);
 
                         // clear all the data
-                        enhant_local_storage_obj.deleteAll();
+                        //saves tab info
+                        var obj = {} 
+                        obj[STORAGE_KEYS.tab_info] = {
+                            tabId: tab_info.tabId,
+                            meeting_in_progress: false
+                        };
+
+                        enhant_local_storage_obj.save_basic(obj, function(){
+                            
+                            // clear all the data
+                            enhant_local_storage_obj.deleteAll();
+                        })
 
                     }
-                });
+                }
+                else{
+                    // clear all the data
+                    enhant_local_storage_obj.deleteAll();
+                }
             }
-        }
-        else{
-             // clear all the data
-             enhant_local_storage_obj.deleteAll();
         }
     });
 
