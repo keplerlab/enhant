@@ -212,11 +212,23 @@ function handleEnhantIframeDragMove(iframe_container, data){
 
 function handleEnhantIframeDragStop(iframe_container){
 
-    var position = iframe_container.getBoundingClientRect().toJSON();
-    position["left"] = position["left"] / window.innerWidth;
-    position["top"] = position["top"] / window.innerHeight;
-    saveEnhantPosition(position);
+    try{
+        var position = iframe_container.getBoundingClientRect().toJSON();
+        position["left"] = position["left"] / window.innerWidth;
+        position["top"] = position["top"] / window.innerHeight;
+        saveEnhantPosition(position);
 
+    }
+    catch(err){
+        console.log(" removing listeners as mouse outside of body");
+        var message = {
+            "key": "stop_drag",
+        }
+        var el =  document.getElementById("enhant-frame");
+
+        el.contentWindow.postMessage(message, '*');
+    }
+   
     window.removeEventListener("mouseup", handleEnhantIframeDragStop);
     window.removeEventListener("mousemove", handleParentMouseMove);
 }

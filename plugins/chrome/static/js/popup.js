@@ -395,4 +395,10 @@ $(document).ready(function(){
             icon_obj.disableIcon();
         });
     });
+
+    window.addEventListener("message", function(evt){
+        if (evt.data.key == "stop_drag"){
+            enhantDragMouseUp();
+        }
+    })
 });
