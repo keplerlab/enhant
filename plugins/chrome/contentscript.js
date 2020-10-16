@@ -146,7 +146,7 @@ function createEnhantPlugin(position){
     var DIV_ID_2 = "enhant-frame-wrapper";
     var div = document.createElement('div');
     div.id = DIV_ID_2;
-    div.style.position = "absolute";
+    div.style.position = "fixed";
     div.style.background = "white";
     div.style.zIndex = "2147483647";
     div.style.width = "380px";
