@@ -26,16 +26,24 @@ function adjustEnhantPosition(position){
         top = top - (bottom - window.innerHeight);
     }
 
-    // console.log(" top / left updated ", position.left * window.innerWidth, left, top);
+    if (left <= 0){
+        left = 0;
+    }
 
-    return {
+    if (top <= 0){
+        top = 0;
+    }
+
+    var obj = {
         left: left,
         top: top,
         right: right,
         bottom: bottom,
         height: position.height,
         width: position.width
-    }
+    };
+
+    return obj;
 
 }
 
@@ -180,14 +188,26 @@ function handleEnhantIframeDragMove(iframe_container, data){
 
     // console.log(" data incoming for movement ", data);
 
-    frameContainerTop += data.offsetY;
-    frameContainerLeft += data.offsetX;
+    var newLeft = frameContainerLeft + data.offsetX;
+    var newTop = frameContainerTop + data.offsetY;
 
-    iframe_container.style.top = frameContainerTop + "px";
-    iframe_container.style.left = frameContainerLeft + "px";
+    var el_bounding_data = iframe_container.getBoundingClientRect().toJSON();
 
-    pageMouseX += data.offsetX;
-    pageMouseY += data.offsetY;
+    var boundary_left = 0;
+    var boundary_right = (window.innerWidth - el_bounding_data.width);
+    var boundary_top = 0;
+    var boundary_bottom = (window.innerHeight - el_bounding_data.height);
+
+    if (((newLeft > boundary_left) && (newLeft < boundary_right)) && ((newTop > boundary_top) && (newTop < boundary_bottom))){
+        frameContainerTop = newTop;
+        frameContainerLeft = newLeft;
+
+        iframe_container.style.top = newTop + "px";
+        iframe_container.style.left = newLeft + "px";
+
+        pageMouseX += data.offsetX;
+        pageMouseY += data.offsetY;
+    }
 }
 
 function handleEnhantIframeDragStop(iframe_container){
@@ -202,19 +222,34 @@ function handleEnhantIframeDragStop(iframe_container){
 }
 
 function handleParentMouseMove(evt){
-    frameContainerLeft += evt.clientX - pageMouseX;
-    frameContainerTop += evt.clientY - pageMouseY;
+
+    var newLeft = frameContainerLeft + (evt.clientX - pageMouseX);
+    var newTop = frameContainerTop + (evt.clientY - pageMouseY);
 
     var iframe_container = document.getElementById("enhant-frame-wrapper");
 
-    iframe_container.style.top = frameContainerTop + "px";
-    iframe_container.style.left = frameContainerLeft + "px";
+    var el_bounding_data = iframe_container.getBoundingClientRect().toJSON();
 
-    pageMouseX = evt.clientX;
-    pageMouseY = evt.clientY;
+    var boundary_left = 0;
+    var boundary_right = (window.innerWidth - el_bounding_data.width);
+    var boundary_top = 0;
+    var boundary_bottom = (window.innerHeight - el_bounding_data.height);
 
-    // update enhant position
-    normalizeTopLeftSavePosition(iframe_container);
+    if (((newLeft > boundary_left) && (newLeft < boundary_right)) && ((newTop > boundary_top) && (newTop < boundary_bottom))){
+        frameContainerLeft = newLeft;
+        frameContainerTop = newTop;
+
+        iframe_container.style.top = newTop + "px";
+        iframe_container.style.left = newLeft + "px";
+
+        pageMouseX = evt.clientX;
+        pageMouseY = evt.clientY;
+
+        // update enhant position
+        normalizeTopLeftSavePosition(iframe_container);
+    }
+
+    
 }
 
 $(document).ready(function(){
@@ -288,6 +323,7 @@ $(document).ready(function(){
             var width = window.innerWidth;
     
             var newposition = adjustEnhantPosition(_enhant_position);
+
             $('#' + enhant_iframe_container.id).css({
                 left: newposition.left,
                 top: newposition.top
