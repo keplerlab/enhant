@@ -235,6 +235,8 @@ class Pen extends AnnotationTool{
         var ctx = this.ctx;
         ctx.globalCompositeOperation = this.globalCompositeOperation;
         ctx.lineWidth = this.stroke;
+        ctx.lineCap = this.lineCap;
+        ctx.lineJoin = this.lineJoin;
         ctx.strokeStyle = this.getRGBAString(this.color, this.strokeAlpha);
 
         ctx.beginPath();
@@ -318,6 +320,8 @@ class Pen extends AnnotationTool{
                     ctx.moveTo(start_x, start_y);
                     ctx.lineWidth = point.lineWidth;
                     ctx.globalCompositeOperation = _this.globalCompositeOperation;
+                    ctx.lineCap = _this.lineCap;
+                    ctx.lineJoin = _this.lineJoin;
                     ctx.strokeStyle = point.strokeStyle;
 
                     var start_x = curve_arr[index + 1].x;
@@ -357,6 +361,8 @@ class Highlight extends Pen{
         super(canvas, ctx);
 
         this.color = "#FFCF74";
+        this.lineCap = "butt";
+        this.lineJoin = "round";
         this.stroke = 14;
         this.strokeAlpha = 0.2;
         this.globalCompositeOperation = "multiply";
