@@ -2,15 +2,15 @@
     "manifest_version": 2,
   
     "name": "enhan(t) Meeting Power Tool",
-    "description": "Bookmark moments, capture screenshots and take notes during your meetings. Get transcripts, sentiment, engagement and questions.",
-    "version": "0.1.0",
+    "description": "Bookmark moments, capture screenshots, take notes and annotate during your meetings. Get transcript, meeting metrics and questions.",
+    "version": "0.2.0",
     "icons": {
       "16": "static/images/logo-16.png",
       "32": "static/images/logo-32.png",
       "48": "static/images/logo-48.png",
       "128":"static/images/logo-128.png"
     },
-    "page_action": {
+    "browser_action": {
       "default_icon": {
         "16": "static/images/logo-16.png",
         "32": "static/images/logo-32.png",
@@ -18,27 +18,25 @@
         "128":"static/images/logo-128.png"
       }
     },
+    "options_page": "options.html",
     "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
     "background": {
-      "scripts": ["restrict_url.js", "config.js", 
+      "scripts": ["config.js", "load_settings_in_storage.js",
         "jszip/fileSaver.js" ,"jszip/jszip.js" , "jszip/jszip-utils.js", 
         "utilities.js" , "socket.js" ,"backend.js" , "local_storage.js", "message_handler_bg.js", 
-        "background.js"],
+        "background.js", "loadcontent.js"],
       "persistent": true
     },
     "content_scripts": [
       {
-        "matches": ["https://*.zoom.us/*", "http://*.zoom.us/*", "https://teams.microsoft.com/*",
-           "http://teams.microsoft.com/*", "https://meet.jit.si/*", "http://meet.jit.si/*"],
-        "js": ["config.js", "static/js/jquery.min.js", "static/js/jquery-ui.min.js",
-          "static/js/iframeResizer.js", "contentscript.js" , 
-          "capture_meeting_id.js", "mic_capture_webspeech.js"],
-        "css": ["static/css/jquery-ui.css"],
+        "matches": ["<all_urls>"],
+        "js": ["notifyPageloaded.js"],
         "persistent": true
       }
     ],
-    "web_accessible_resources": ["static/css/jquery-ui.css", "config.js", "popup.html"],
+    "web_accessible_resources": ["static/css/jquery-ui.css", "config.js", "popup.html", "iframe2.html"],
     "permissions": [
+      "webNavigation",
       "declarativeContent",
       "tabs",
       "tabCapture",

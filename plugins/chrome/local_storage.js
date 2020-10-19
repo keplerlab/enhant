@@ -39,10 +39,12 @@ const STORAGE_KEYS = {
     mode: "mode",
     server_url: "server_url",
     meeting_start_time: "meeting_start_time",
-    tab_id: "tab_id",
     settings: "settings",
     guest: "guest",
-    host: "host"
+    host: "host",
+    urls: "urls",
+    enhant_position: "enhant_position",
+    tab_info: "tab_info"
 }
 
 class EnhantLocalStorage{
@@ -62,6 +64,10 @@ class EnhantLocalStorage{
 
     generateUnixTimestamp(){
         return Math.round(new Date().getTime());
+    }
+
+    getHostname(url) {
+        return url.match(/^(.*:)\/\/([A-Za-z0-9\-\.]+)/)[2];
     }
 
     generate_data_obj(data, time){
@@ -111,6 +117,100 @@ class EnhantLocalStorage{
         });
     }
 
+    remove_url(url, cb){
+        var status = true;
+        var error = null;
+        var _this = this;
+
+        chrome.storage.local.get([STORAGE_KEYS.settings], function(result){
+
+            var settings = result[STORAGE_KEYS.settings];
+
+            var urls = settings["urls"];
+
+            var index = urls.findIndex(obj => obj.url == url);
+
+            if (index !== -1){
+                urls.splice(index, 1);
+            }
+
+            var new_obj = {};
+            new_obj[STORAGE_KEYS.settings] = {};
+            new_obj[STORAGE_KEYS.settings]["lang"] = settings["lang"];
+            new_obj[STORAGE_KEYS.settings]["power_mode"] = settings["power_mode"];
+            new_obj[STORAGE_KEYS.settings]["server_url"] = settings["server_url"];
+            new_obj[STORAGE_KEYS.settings]["urls"] = urls;
+            
+            // set the new array value to the same key
+            chrome.storage.local.set(new_obj, function () {
+                cb(url, status, error);
+            });
+
+        });
+    }
+
+    add_url(url, cb){
+
+        var status = true;
+        var error = null;
+        var _this = this;
+
+        var default_urls_arr = CONFIG.default_whitelisted_urls.map(function(url){
+            return {default: true, url: url}
+        });
+       
+        chrome.storage.local.get([STORAGE_KEYS.settings], function(result){
+
+            var settings = result[STORAGE_KEYS.settings];
+
+            // console.log(" settings ", settings);
+
+            var valid_hostnames = settings["urls"].map(function(obj){ return _this.getHostname(obj.url)});
+
+            var urls = [];
+
+            if (settings.hasOwnProperty(STORAGE_KEYS.urls)){
+                urls = settings[STORAGE_KEYS.urls];
+            }
+
+            var hostname_already_included = valid_hostnames.map(function (valid_host){
+
+                if (_this.getHostname(url).length >= valid_host.length){
+                    return _this.getHostname(url).includes(valid_host);
+                }
+                else{
+                    return valid_host.includes(_this.getHostname(url));
+                }
+            });
+
+            // console.log(" hostname already added ", hostname_already_included);
+            
+            if (hostname_already_included.indexOf(true) == -1){
+                // add item to beginning of array
+                urls.unshift({default: false, url: url});
+
+                var new_obj = {};
+                new_obj[STORAGE_KEYS.settings] = {};
+                new_obj[STORAGE_KEYS.settings]["lang"] = settings["lang"];
+                new_obj[STORAGE_KEYS.settings]["power_mode"] = settings["power_mode"];
+                new_obj[STORAGE_KEYS.settings]["server_url"] = settings["server_url"];
+                new_obj[STORAGE_KEYS.settings]["default_urls"] = settings["default_urls"];
+
+                new_obj[STORAGE_KEYS.settings]["urls"] = urls;
+
+                // set the new array value to the same key
+                chrome.storage.local.set(new_obj, function () {
+                    cb(url, status, error);
+                });
+            }
+            else{
+                status = false;
+                error = "Website is already whitelisted.";
+                cb(url, status, error);
+            }
+        })
+    }
+
     read_multiple(keysArr, cb){
         chrome.storage.local.get(keysArr, function(results){
             cb(results);
@@ -157,8 +257,10 @@ class EnhantLocalStorage{
         var _this = this;
 
         // settings should persist
-        chrome.storage.local.get([STORAGE_KEYS.settings], function(r){
+        chrome.storage.local.get([STORAGE_KEYS.settings, STORAGE_KEYS.enhant_position, STORAGE_KEYS.tab_info], function(r){
             var settings_data = r[STORAGE_KEYS.settings];
+            var position_data = r[STORAGE_KEYS.enhant_position];
+            var tab_info = r[STORAGE_KEYS.tab_info];
 
             chrome.storage.local.clear(function(){
                 var error = chrome.runtime.lastError;
@@ -169,7 +271,14 @@ class EnhantLocalStorage{
 
             var obj = {};
             obj[STORAGE_KEYS.settings] = settings_data;
+            _this.save_basic(obj);
 
+            var obj = {};
+            obj[STORAGE_KEYS.enhant_position] = position_data;
+            _this.save_basic(obj);
+
+            var obj = {};
+            obj[STORAGE_KEYS.tab_info] = tab_info;
             _this.save_basic(obj);
 
         })

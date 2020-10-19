@@ -9,7 +9,8 @@ Overview
 enhan(t) is an open source toolkit that makes you super productive with
 the existing video conferencing solutions like Zoom, MS Teams and Jitsi.
 It enables you to take real time notes, bookmark important moments, and
-capture screenshots.
+capture screenshots. It also helps you annotate within the opened page
+using drawing, highlighting and text overlay.
 
 As an efficient assistant, enhan(t) analytics module enables you to
 extract helpful insights like engagement, sentiment and questions from
@@ -33,6 +34,20 @@ Features
 
 -  Download meeting data (which contains above mentioned bookmarks,
    screenshots and notes along with meeting transcript)
+
+-  Annotate within tab
+
+   -  Draw over
+
+   -  Highlight content
+
+   -  Add text
+
+   -  Change colors of above
+
+   -  Erase/hide annotations
+
+-  Whitelist websites to enable enhan(t) on non-default sites
 
 -  Power mode
 
@@ -61,12 +76,16 @@ But can this experience be enhanced?
 That is what enhan(t) is all about. By leveraging existing web based
 meeting solutions and providing a Chrome extension, the user is able to
 now take a bookmark to mark an important moment and what was spoken in
-the last 10 seconds, take screenshot of the tab with a single click
-and still provide the flexibility of taking manual notes. All of these
-come along with when these actions were taken, so that at a later point
-of time, this data could be overlaid on top of a meeting recording to
+the last 10 seconds, take screenshot of the tab with a single click and
+still provide the flexibility of taking manual notes. All of these come
+along with when these actions were taken, so that at a later point of
+time, this data could be overlaid on top of a meeting recording to
 provide a lot more context to the important parts of the meeting. This
 is all apart from the full meeting transcript.
+
+You can also annotate content during presentation to better convey your
+point across by drawing over, highlighting content and adding text in
+the page. You can take the screenshot to save it for future purpose.
 
 Additionally, it provides Power users like customer support agents,
 financial advisors and the likes more pertinent meeting metrics like

@@ -32,6 +32,13 @@ be viewed in the enhan(t) data viewer.
 
   enhan(t) Chrome extension - Basic mode toolbar
 
+The annotation tools in the extension can be used during presentations
+to convey ones point across in a better way. It can also be used for
+reference by taking a screenshot. By providing an ability to draw over,
+highlighting content and adding text over a page, one can enrich meeting
+experiences and add flavor to learning experiences, just to name two use
+cases.
+
 The extension can provide more data if used in Power mode alongside the
 companion transcription service. Once the setup is done, Docker
 application run and the Power mode is enabled in the extension settings,

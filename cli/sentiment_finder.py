@@ -8,6 +8,7 @@ import os
 from typing import NoReturn, Tuple
 from colorama import init, Fore
 import warnings
+from nltk.tokenize import RegexpTokenizer
 
 warnings.filterwarnings("ignore")
 
@@ -36,6 +37,7 @@ class SentimentFinder(object):
         self.collection = "transcriptions"
         self.low_sentiment_threshold = 0.3
         self.high_sentiment_threshold = 0.7
+        self.tokenizer = RegexpTokenizer(r'\w+')
 
     def _transformTranscription(self, transcriptions_pkt: dict) -> Tuple[dict]:
         """[summary transcription packet]
@@ -48,6 +50,29 @@ class SentimentFinder(object):
         return (
             transcriptions_pkt["msg"]["data"]["transcription"]["content"],
             transcriptions_pkt["msg"]["data"]["transcription"]["start_time"],
+        )
+
+    def _check_if_junk(self, input_sentence: str) -> bool:
+        
+        tokens = self.tokenizer.tokenize(input_sentence)
+        if len(tokens) <= 4:
+            return True
+        else:
+            return False
+
+
+    def _transformTranscriptionbatch(self, transcriptions_pkt: dict) -> dict:
+        """[transform transcription packet]
+
+        :param transcriptions_pkt: [description]
+        :type transcriptions_pkt: [type]
+        :return: [description]
+        :rtype: [type]
+        """
+        return (
+            transcriptions_pkt["word"],
+            transcriptions_pkt["startTime"],
+            transcriptions_pkt["speakerTag"],
         )
 
     def process(
@@ -134,3 +159,64 @@ class SentimentFinder(object):
                 total_of_sentiment_scores_host / number_of_sentiment_scores_host
             )
             input_json_data["avgSentimentScoreHost"] = str(avg_sentiment_score_host)
+
+
+
+    def processbatch(
+        self,
+        input_json_data: dict,
+        output_json_data: dict,
+
+    ) -> NoReturn:
+        """[Public function for extracting and getting sentiments]
+
+        :param conv_id: [description]
+        :type conv_id: [type]
+        """
+
+        print(Fore.GREEN + "\n**** Analyzing Sentiment ****")
+        if input_json_data == None:
+            print(f"No matching conversation for input_json_data: {input_json_data}")
+            return
+
+        low_sentiment_scores = []
+        high_sentiment_scores = []
+        total_of_sentiment_scores = 0.0
+        number_of_sentiment_scores = 0
+        avg_sentiment_score = 0.0
+        avg_sentiment_score = 0.0
+
+        if input_json_data is not None:
+            for transcriptions_pkt in input_json_data:
+                transcription, start_time, speakerTag = self._transformTranscriptionbatch(
+                    transcriptions_pkt
+                )
+                sentiment_score = sentiment_lib.processMessage(transcription)
+                sentiment_with_time = (start_time, transcription, sentiment_score, speakerTag)
+                total_of_sentiment_scores += float(sentiment_score)
+                number_of_sentiment_scores += 1
+                #self._check_if_junk()
+                sentence = sentiment_with_time[1]
+                if not self._check_if_junk(sentence):
+                    if sentiment_score < self.low_sentiment_threshold:
+                        low_sentiment_scores.append(sentiment_with_time)
+                    elif sentiment_score > self.high_sentiment_threshold:
+                        high_sentiment_scores.append(sentiment_with_time)
+
+        if len(high_sentiment_scores) > 0 :
+            jsonPkt = {
+                "highSentimentSentences": high_sentiment_scores,
+            }
+            output_json_data["highSentimentSentences"] = jsonPkt
+
+        if len(low_sentiment_scores) > 0 :
+            jsonPkt = {
+                "low_sentiment_scores": low_sentiment_scores,
+            }
+            output_json_data["lowSentimentSentences"] = jsonPkt
+
+        if number_of_sentiment_scores > 0:
+            avg_sentiment_score = (
+                total_of_sentiment_scores / number_of_sentiment_scores
+            )
+            output_json_data["avgSentimentScore"] = str(avg_sentiment_score)

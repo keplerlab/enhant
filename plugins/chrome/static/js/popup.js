@@ -24,9 +24,83 @@ function powermodeIconHandler(data){
     }
 }
 
+// listener and variables for sending drag information to parent 
+var drag = false;
+var startX = 0;
+var startY = 0;
+
+const _DRAG_START = "DRAG_START";
+const _DRAG_MOVE = "DRAG_MOVE";
+const _DRAG_STOP = "DRAG_STOP";
+
+function sendMouseCoordinatesToParent(msg, data){
+
+    var iframe_to_parent_msg =  {
+        "id": "parent", 
+        "key": "iframe_mouse_drag",
+        "msg": msg,
+        "sender": "enhant",
+        "input": data
+    }
+
+    window.parent.postMessage(iframe_to_parent_msg, "*")
+}
+
+function enhantDragMouseDown(evt){
+    // only left click
+    if (evt.which == 1){
+        drag = true;
+
+        evt.preventDefault();
+
+        startX = evt.clientX;
+        startY = evt.clientY;
+
+        var data = {
+            startX: startX,
+            startY: startY
+        };
+
+        sendMouseCoordinatesToParent(_DRAG_START ,data);
+
+        document.addEventListener("mouseup", enhantDragMouseUp);
+        document.addEventListener("mousemove", enhantDragMouseMove);
+    }
+}
+
+function enhantDragMouseUp(evt){
+    drag = false;
+
+    sendMouseCoordinatesToParent(_DRAG_STOP, {});
+
+    document.removeEventListener("mouseup", enhantDragMouseUp);
+    document.removeEventListener("mousemove", enhantDragMouseMove);
+
+}
+
+function enhantDragMouseMove(evt){
+    if (drag){
+        var offset_data = {
+            offsetX : evt.clientX - startX,
+            offsetY: evt.clientY - startY
+        }
+
+        sendMouseCoordinatesToParent(_DRAG_MOVE, offset_data);
+
+        //! IMPORTANT
+        // This is a hack (if offset > 10px) the toolbar starts shacking
+        // because the postmessage seems to be slower than mousemovement
+        // if ((Math.abs(offset_data.offsetX) < 10) && (Math.abs(offset_data.offsetY) < 10)){
+        //     sendMouseCoordinatesToParent(_DRAG_MOVE, offset_data);
+        // }
+    
+    }
+
+}
+
 $(document).ready(function(){
 
-    var registered_classes = [
+    var icons = [
         LogoIcon,
         SeparatorIcon,
         NotesIcon,
@@ -35,22 +109,62 @@ $(document).ready(function(){
         CaptureTabIcon,
         SettingsIcon,
         RecordIcon,
-        PowerModeIcon
+        PowerModeIcon,
+        AnnotationIcon
     ];
+
+    var exceptions = [LogoIcon.name, SeparatorIcon.name];
 
     var icons_object_mapping = {};
     var pluginActivated = false;
 
     // register the classes and events
-    registered_classes.forEach(function(cl){
+    icons.forEach(function(cl){
 
         var obj = new cl();
         obj.registerEvents();
         icons_object_mapping[cl.name] = obj;
 
-        obj.disableIcon();
-
+        // exceptions disable everything
+        if (exceptions.indexOf(cl.name) == -1){
+            obj.disableIcon();
+        }
     });
+
+    // send a message  to background to check if tab id is same and meeting in progress
+    // this would mean a redirect happened
+
+    chrome.runtime.sendMessage({msg: "tab_info"}, function(response){
+
+        var tab_info = response.data;
+
+        chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
+            var current_tab_id = tabs[0].id;
+
+            if (tab_info.hasOwnProperty("tabId")){
+
+                var lastTabId = tab_info.tabId;
+                var meeting_in_progress = tab_info.meeting_in_progress;
+
+                if (lastTabId == current_tab_id){
+                    if (meeting_in_progress){
+                        var record_icon_obj = icons_object_mapping[RecordIcon.name];
+                        record_icon_obj.stateHandler();
+                        record_icon_obj.stop();
+                        record_icon_obj.enableIcon();
+                    }
+                }
+            }
+        });
+    });
+
+    //activate listner on enhant logo for drag
+    // var el = document.getElementById("drag_enhant");
+
+    document.querySelectorAll('.drag_enhant').forEach(item => {
+        item.addEventListener("mousedown", enhantDragMouseDown);
+    })
+   
 
     chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         console.log(" Received message from browser action [Activate plugin] : ", message);
@@ -68,7 +182,7 @@ $(document).ready(function(){
                 SeparatorIcon,
                 RecordIcon,
                 SettingsIcon,
-                ExpandIcon
+                AnnotationIcon
             ];
             
             hideNotification();
@@ -134,24 +248,30 @@ $(document).ready(function(){
 
             if (icon_type == BookmarkIcon.name || icon_type == CaptureTabIcon.name){
 
-                icon_obj.handleClick();
+                var exception_classes = [ExpandIcon.name, AnnotationIcon.name];
+                var exception_classes_active = exception_classes.filter(function(cls){
+                    var obj = icons_object_mapping[cls];
+                    return obj.state == ICONSTATE.ACTIVE
+                });
 
-                // check if Expand icon is active
-                var expand_icon_class = ExpandIcon.name;
-                if (icons_object_mapping.hasOwnProperty(expand_icon_class)){
+                if (exception_classes_active.length > 0){
+
+                    // check if Expand icon is active
+                    var expand_icon_class = ExpandIcon.name;
                     var expand_icon_obj = icons_object_mapping[expand_icon_class];
-                    
+                        
                     // if expand is not active then hide other icons
-                    if (expand_icon_obj.state == ICONSTATE.INACTIVE){
-                        hideOtherIconWindow(icon_type);
-                    }
-
-                    else{
-
+                    if (expand_icon_obj.state == ICONSTATE.ACTIVE){
                         expand_icon_obj.populateDataContainer();
-                       
                     }
+
                 }
+                else{
+                    hideOtherIconWindow(icon_type);
+                }
+
+                icon_obj.handleClick();
+                
             }
             else{
 
@@ -175,12 +295,14 @@ $(document).ready(function(){
        var iconsToDisable = [
            BookmarkIcon,
            CaptureTabIcon,
-           NotesIcon
+           NotesIcon,
+           ExpandIcon
        ];
 
        var iconsToEnable = [
-           SettingsIcon
-       ]
+           SettingsIcon,
+           AnnotationIcon
+       ];
 
         iconsToDisable.forEach(function(cl){
             var icon_obj = icons_object_mapping[cl.name];
@@ -197,23 +319,25 @@ $(document).ready(function(){
         var iconsToEnable = [
             BookmarkIcon,
             CaptureTabIcon,
-            NotesIcon
+            NotesIcon,
+            AnnotationIcon,
+            ExpandIcon
         ];
 
         var iconsToDisable = [
             SettingsIcon
-        ]
+        ];
  
         iconsToEnable.forEach(function(cl){
              var icon_obj = icons_object_mapping[cl.name];
              icon_obj.enableIcon();
+
         });
 
         iconsToDisable.forEach(function(cl){
             var icon_obj = icons_object_mapping[cl.name];
             icon_obj.disableIcon();
-        })
-
+        });
     });
 
     window.addEventListener("switchToIcon", function(event){
@@ -271,4 +395,10 @@ $(document).ready(function(){
             icon_obj.disableIcon();
         });
     });
+
+    window.addEventListener("message", function(evt){
+        if (evt.data.key == "stop_drag"){
+            enhantDragMouseUp();
+        }
+    })
 });

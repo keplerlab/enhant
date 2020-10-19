@@ -18,7 +18,7 @@ class NLP_lib_engagement(object):
         """init function
         """
         self.expected_multiplier = 1.0
-        self.expected_time_window =10
+        self.expected_time_window = 10
         self.totalTime = {}
         self.totalSpokenWordsClient = {}
         self.totalSpokenWordsAdvisor = {}
