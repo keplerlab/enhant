@@ -365,7 +365,7 @@ class Highlight extends Pen{
         this.lineCap = "butt";
         this.lineJoin = "round";
         this.stroke = 14;
-        this.strokeAlpha = 0.2;
+        this.strokeAlpha = 0.35;
         this.globalCompositeOperation = "multiply";
     }
 }
