@@ -23,6 +23,7 @@ class AnnotationTool{
 
     clearData(){
         this.points = [];
+        this.points_scroll = [];
     }
 
     addData(arr){
