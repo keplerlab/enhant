@@ -110,7 +110,7 @@ function createIframeCanvas(){
 
     iframe2.style.width = "100%";
     iframe2.style.height = "100%";
-
+    
     // create a div
     var DIV_ID_2 = "enhant-frame-canvas-wrapper";
     var div = document.createElement('div');
@@ -125,6 +125,10 @@ function createIframeCanvas(){
     div.appendChild(iframe2);
 
     document.body.appendChild(div);
+
+    $('#' + div.id).css({
+        "max-height": windowHeight
+    });
 
     return [iframe2, div];
 }
@@ -359,6 +363,10 @@ $(document).ready(function(){
 
             div_iframe2.style.width = width;
             div_iframe2.style.height = height;
+
+            $('#' + div_iframe2.id).css({
+                "max-height": height
+            });
 
             iframe2.style.width = width;
             iframe2.style.height = height;
