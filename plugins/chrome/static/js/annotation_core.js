@@ -434,6 +434,7 @@ class Erase extends Pen{
         this.stroke = 20;
         this.lineCap = "round";
         this.lineJoin = "round";
+        this.globalCompositeOperation = "destination-out";
     }
 
     handleMouseDown(e){
@@ -453,6 +454,7 @@ class Erase extends Pen{
         ctx.lineWidth = this.stroke;
         ctx.lineCap = this.lineCap;
         ctx.lineJoin = this.lineJoin;
+        ctx.globalCompositeOperation = this.globalCompositeOperation;
         ctx.strokeStyle = "rgba(0,0,0,1)";
 
         ctx.beginPath();
