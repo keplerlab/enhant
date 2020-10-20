@@ -185,6 +185,9 @@ class Annotation{
             var cls_arr = [Pen.name, Highlight.name, Text.name];
             var tool_arr = cls_arr.map(function(cls){return _this.annotation_tools_ref[cls]});
             tool_obj.activate(tool_arr);
+            tool_arr.forEach((function(tool_obj){
+                tool_obj.clearData();
+            }));
         }
         else{
             tool_obj.activate(tool_data);

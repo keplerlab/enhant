@@ -3,7 +3,7 @@
   
     "name": "enhan(t) Meeting Power Tool",
     "description": "Bookmark moments, capture screenshots, take notes and annotate during your meetings. Get transcript, meeting metrics and questions.",
-    "version": "0.2.0",
+    "version": "0.2.1",
     "icons": {
       "16": "static/images/logo-16.png",
       "32": "static/images/logo-32.png",

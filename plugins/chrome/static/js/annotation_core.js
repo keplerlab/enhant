@@ -23,6 +23,7 @@ class AnnotationTool{
 
     clearData(){
         this.points = [];
+        this.points_scroll = [];
     }
 
     addData(arr){
@@ -364,7 +365,7 @@ class Highlight extends Pen{
         this.lineCap = "butt";
         this.lineJoin = "round";
         this.stroke = 14;
-        this.strokeAlpha = 0.2;
+        this.strokeAlpha = 0.35;
         this.globalCompositeOperation = "multiply";
     }
 }
@@ -433,6 +434,7 @@ class Erase extends Pen{
         this.stroke = 20;
         this.lineCap = "round";
         this.lineJoin = "round";
+        this.globalCompositeOperation = "destination-out";
     }
 
     handleMouseDown(e){
@@ -452,6 +454,7 @@ class Erase extends Pen{
         ctx.lineWidth = this.stroke;
         ctx.lineCap = this.lineCap;
         ctx.lineJoin = this.lineJoin;
+        ctx.globalCompositeOperation = this.globalCompositeOperation;
         ctx.strokeStyle = "rgba(0,0,0,1)";
 
         ctx.beginPath();
