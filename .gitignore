@@ -9,8 +9,9 @@ test/*.log
 api/transcription_svc/websocket-server/
 !api/transcription_svc/websocket-server/*.py
 
-cli/
 !cli/*.py
+cli/
+
 
 meeting-data/
 # Ignore certifiacate directories

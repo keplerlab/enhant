@@ -69,7 +69,7 @@ docker-compose -f docker-compose-google-cloud.yml  up
 ```
 cd /path/to/enhant-repo
 docker-compose run cli
-python enhant_cli_app analyze input.zip
+python enhant_cli_app.py analyze meeting_data/input.zip
 ```
 
 # Add certificate for localhost dev
