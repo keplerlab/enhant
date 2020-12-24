@@ -100,7 +100,7 @@ function enhantDragMouseMove(evt){
 
 $(document).ready(function(){
 
-    var icons = [
+    const icons = [
         LogoIcon,
         SeparatorIcon,
         NotesIcon,
@@ -182,7 +182,11 @@ $(document).ready(function(){
                 SeparatorIcon,
                 RecordIcon,
                 SettingsIcon,
-                AnnotationIcon
+                AnnotationIcon,
+                NotesIcon,
+                ExpandIcon,
+                BookmarkIcon,
+                CaptureTabIcon,
             ];
             
             hideNotification();
@@ -236,6 +240,8 @@ $(document).ready(function(){
 
     // set click handler
     $('icon').click(function(){
+
+        console.log(" icon clicked : ", $(this).attr("type"));
 
         var is_icon_clickable = $(this).attr("clickable");
 
@@ -292,22 +298,14 @@ $(document).ready(function(){
     });
 
     window.addEventListener("recordingStopped", function(event){
-       var iconsToDisable = [
-           BookmarkIcon,
-           CaptureTabIcon,
-           NotesIcon,
-           ExpandIcon
-       ];
 
        var iconsToEnable = [
+           BookmarkIcon,
+           NotesIcon,
+           CaptureTabIcon,
            SettingsIcon,
            AnnotationIcon
        ];
-
-        iconsToDisable.forEach(function(cl){
-            var icon_obj = icons_object_mapping[cl.name];
-            icon_obj.disableIcon();
-        });
 
         iconsToEnable.forEach(function(cl){
             var icon_obj = icons_object_mapping[cl.name];
@@ -316,23 +314,10 @@ $(document).ready(function(){
     });
 
     window.addEventListener("recordingStarted", function(event){
-        var iconsToEnable = [
-            BookmarkIcon,
-            CaptureTabIcon,
-            NotesIcon,
-            AnnotationIcon,
-            ExpandIcon
-        ];
 
         var iconsToDisable = [
             SettingsIcon
         ];
- 
-        iconsToEnable.forEach(function(cl){
-             var icon_obj = icons_object_mapping[cl.name];
-             icon_obj.enableIcon();
-
-        });
 
         iconsToDisable.forEach(function(cl){
             var icon_obj = icons_object_mapping[cl.name];
@@ -349,8 +334,6 @@ $(document).ready(function(){
 
         var settings_data = event.detail;
         var icon_obj = icons_object_mapping[PowerModeIcon.name];
-
-        hideOtherIconWindow(PowerModeIcon.name);
 
         // check if recorder in active state
         var recorder_obj = icons_object_mapping[RecordIcon.name];
@@ -384,16 +367,6 @@ $(document).ready(function(){
     });
 
     window.addEventListener("enhant-stop", function(event){
-        var iconsToDisable = [
-            BookmarkIcon,
-            CaptureTabIcon,
-            NotesIcon
-        ];
-        
-        iconsToDisable.forEach(function(cl){
-            var icon_obj = icons_object_mapping[cl.name];
-            icon_obj.disableIcon();
-        });
     });
 
     window.addEventListener("message", function(evt){

@@ -57,14 +57,35 @@ class WebSpeechMicCapture{
 
     recognitionOnResults(event){
 
+        var interim_transcript = '';
+
         for (var i = event.resultIndex; i < event.results.length; ++i) {
             if (event.results[i].isFinal) {
                 var final_transcript = event.results[i][0].transcript;
 
-                console.log("Final transcription : ", final_transcript);
+                // send interim results to popup
+                chrome.runtime.sendMessage({
+                    "msg": "transcription_realtime",
+                    "data": {
+                        "is_final": true,
+                        "transcription": final_transcript
+                    }
+                });
 
                  //save transcription
                 this.saveTranscription(final_transcript);
+            }
+            else{
+                interim_transcript += event.results[i][0].transcript;
+
+                // send interim results to popup
+                chrome.runtime.sendMessage({
+                    "msg": "transcription_realtime",
+                    "data": {
+                        "is_final": false,
+                        "transcription": interim_transcript
+                    }
+                });
             }
         }
 

@@ -129,78 +129,22 @@ chrome.runtime.onMessage.addListener(
             var d_type = "bookmark";
 
             var obj_to_add = {};
+            var current_time = enhant_local_storage_obj.generateUnixTimestamp();
 
-            // get the last transcription from local storage
-            enhant_local_storage_obj.read_multiple(["transcription"], function(results){
-                var arr_transcription = results.transcription || [];
+            var item = {
+                origin: "None",
+                content: request.data,
+                time: current_time
+            }
+            obj_to_add = enhant_local_storage_obj.generate_data_obj([item], current_time);
 
-                var current_time = enhant_local_storage_obj.generateUnixTimestamp();
-                var time_threshold_in_ms = CONFIG.bookmark.transcription_time_in_sec * 1000;
+            enhant_local_storage_obj.save(d_type, obj_to_add, function(r){
+                console.log("Local storage updated with obj : ", r);
 
-                var time_filtered_transcription = arr_transcription.filter(function(obj){ 
-                    return obj["event_time"] > (current_time - time_threshold_in_ms);
-                });
-                
-                var host_transcription = time_filtered_transcription.filter(function(obj){ 
-                    return obj["origin"] == "host";
-                });
-                var guest_transcription = time_filtered_transcription.filter(function(obj){ 
-                    return obj["origin"] == "guest";
-                });
+                // add to local storage
+                sendResponse({data:obj_to_add, status: true});
 
-                if ((!host_transcription.length) && (!guest_transcription.length)){ 
-                    var item = {
-                        origin: "None",
-                        content: request.data,
-                        time: current_time
-                    }
-                    obj_to_add = enhant_local_storage_obj.generate_data_obj([item], current_time);
-                }
-
-                else {
-                    
-                    var bookmark_data = [];
-
-                    if (host_transcription.length){
-
-                        host_transcription.forEach(data => {
-                            var obj = {
-                                origin: "host", 
-                                content: data["transcription"],
-                                time: data["event_time"]
-            
-                            }
-                            bookmark_data.push(obj);
-                        });
-                    }
-
-                    if (guest_transcription.length){
-
-                        guest_transcription.forEach(data => {
-                            var obj = {
-                                origin: "guest", 
-                                content: data["transcription"],
-                                time: data["event_time"]
-            
-                            }
-                            bookmark_data.push(obj);
-                        });
-                    }
-
-                    obj_to_add = enhant_local_storage_obj.generate_data_obj(bookmark_data, current_time);
-
-                }
-
-                enhant_local_storage_obj.save(d_type, obj_to_add, function(r){
-                    console.log("Local storage updated with obj : ", r);
-
-                    // add to local storage
-                    sendResponse({data:obj_to_add, status: true});
-
-                });
-
-                
-            })
+            });
         }
 
         if (request.msg == "save_notes"){
@@ -215,9 +159,6 @@ chrome.runtime.onMessage.addListener(
                 sendResponse(response);
                 
             });
-
-           
-        
         }
 
         if (request.msg == "start"){
@@ -334,6 +275,16 @@ chrome.runtime.onMessage.addListener(
             transcriptionMessageHandler(transcription_data);
             sendResponse({status:true});
 
+        }
+
+        if (request.msg == "transcription_realtime"){
+
+            chrome.runtime.sendMessage({
+                msg: "transcription_notes", 
+                data: request.data
+            });
+
+            sendResponse({status:true});
         }
 
         if (request.msg == "settings_updated"){

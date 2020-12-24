@@ -83,6 +83,7 @@ class Icon{
     }
 
     toggleState(){
+
         if (this.state == ICONSTATE.INACTIVE){
             this.state = ICONSTATE.ACTIVE;
         }
@@ -91,7 +92,6 @@ class Icon{
         }
 
         this.toggleIcon();
-
     }
 
     stateHandler(){
@@ -179,6 +179,51 @@ class Icon{
     }
 
     registerEvents(){}
+
+    // fires an event to start the meeting
+    dispatchStart(){
+        // fire setting handler event
+        var event = new CustomEvent("triggerStart", {});
+        window.dispatchEvent(event);
+    }
+
+    // gets the tab info data
+    _getTabInfo(cb){
+        chrome.runtime.sendMessage({msg: "tab_info"}, function(response){
+            var data = response.data;
+            cb(data);
+        });
+    }
+
+    // get the current recording status into a dict
+    getRecordingStatus(cb){
+
+        // default state of recording data
+        var recording_data = {
+            "tabId": null,
+            "currentTabId": null,
+            "meeting_in_progress": false
+        }
+
+        this._getTabInfo(function(data){
+            chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
+                var current_tab_id = tabs[0].id;
+
+                recording_data["currentTabId"] = current_tab_id;
+
+                if (data.hasOwnProperty("tabId")){
+                    var tabId = data["tabId"];
+                    var meeting_in_progress = data["meeting_in_progress"];
+
+                    recording_data["tabId"] = tabId;
+                    recording_data["meeting_in_progress"] = meeting_in_progress;
+                }
+
+                cb(recording_data);
+
+            });
+        })
+    }
 }
 
 class NotesIcon extends Icon{
@@ -188,13 +233,52 @@ class NotesIcon extends Icon{
 
         this.submit_btn_id = "notes-submit";
 
+        this.voice_btn_id = "notes-voice-btn";
+        this.voice_active = false;
+
         this.active_icon_path = "static/images/notes.svg";
         this.inactive_icon_path = "static/images/notes_inactive.svg";
 
         this.icon_disable_path = "static/images/notes_disabled.svg";
 
         this.icon_disabled_message = "Take note enabled when recording.";
+
+        this.final_text = ""
         
+    }
+
+    stopAnimation(){
+        $('#' + this.voice_btn_id).removeClass("pulse-ring");
+    }
+
+    startAnimation(){
+        $('#' + this.voice_btn_id).addClass("pulse-ring");
+    }
+
+    handleVoice(){
+
+        var _this = this;
+
+        if (_this.voice_active){
+            _this.stopAnimation();
+            _this.voice_active = false;
+        }
+        else{
+
+            // dispatch the start meeting event if required
+            _this.getRecordingStatus(function(recording_data){
+
+                // dispatch start event if meeting not in progress
+                if (!recording_data.meeting_in_progress){
+                    _this.dispatchStart();
+                }
+                
+            });
+
+            _this.startAnimation();
+            _this.voice_active = true;
+            _this.final_text = "";
+        }
     }
 
     registerEvents(){
@@ -203,6 +287,16 @@ class NotesIcon extends Icon{
        
         $('#' + _this.submit_btn_id).click(function(){
             _this.addNotes();
+        });
+
+        $('#' + _this.voice_btn_id).on("click", function(){
+            _this.handleVoice();
+        });
+
+        window.addEventListener("stopAudioNotes", function(event){
+            _this.final_text = "";
+            $("textarea").val("");
+            _this.handleVoice();
         });
 
         chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
@@ -223,6 +317,41 @@ class NotesIcon extends Icon{
                 
             }
         
+        });
+
+        chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+            if (request.msg == "transcription_notes") {
+
+                // dispatch the start meeting event if required
+                _this.getRecordingStatus(function(recording_data){
+
+                    // meeting not in progress, clear the previous text
+                    if (!recording_data["meeting_in_progress"]){
+
+                        _this.final_text = "";
+                        $("textarea").val(_this.final_text);
+                    }
+                    else{
+                        if (_this.voice_active){
+
+                            var transcription_data = request.data;
+        
+                            if (transcription_data.is_final){
+        
+                                _this.final_text += transcription_data["transcription"]
+        
+                                // add transcription to note textarea
+                                $('textarea').val("");
+                                $('textarea').val(_this.final_text);
+                            }
+                            else{
+                                $('textarea').val(_this.final_text + transcription_data["transcription"]);
+                            }
+                        }
+                    }
+                    
+                });
+            }
         });
     }
 
@@ -247,13 +376,48 @@ class NotesIcon extends Icon{
             $('#'+_this.data_container_id).prepend(_this.generateNote(response.data));
 
             // clear the container
-            $("textarea").val('');
+            _this.final_text = ""
+            $("textarea").val(_this.final_text);
+
+            // stop the voice active when note is added
+            if (_this.voice_active){
+                _this.handleVoice();
+            }
+
 
             var event = new CustomEvent("switchToIcon", {
                 detail: {"from": NotesIcon.name, "to": ExpandIcon.name}
             });
             window.dispatchEvent(event);
 
+        });
+
+
+        // when note is added.. dispatch the start meeting event if required
+        _this.getRecordingStatus(function(recording_data){
+
+            // dispatch start event if meeting not in progress
+            if (!recording_data["meeting_in_progress"]){
+                _this.dispatchStart();
+            }
+            
+        });
+
+    }
+
+    handleClick(){
+        var _this = this
+        super.handleClick();
+
+        _this.getRecordingStatus(function(recording_data){
+
+            // dispatch start event if meeting not in progress
+            if (!recording_data["meeting_in_progress"]){
+               
+                // stop the animation (which might come from unclean stop if page reloaded)
+                _this.stopAnimation();
+            }
+            
         });
 
     }
@@ -359,10 +523,23 @@ class BookmarkIcon extends Icon{
     }
 
     handleClick(){
-        this.toggleState();
-        this.stateHandler();
-        this.setLocalStorage();
-        this.addBookMark();
+
+        var _this = this;
+       
+        _this.toggleState();
+        _this.stateHandler();
+        _this.setLocalStorage();
+
+        _this.getRecordingStatus(function(recording_data){
+
+            // dispatch start event if meeting not in progress
+            if (!recording_data["meeting_in_progress"]){
+                _this.dispatchStart();
+            }
+
+            _this.addBookMark();
+            
+        });
     }
 }
 
@@ -429,6 +606,16 @@ class CaptureTabIcon extends Icon{
     }
 
     handleClick(){
+        var _this = this;
+        this.getRecordingStatus(function(recording_data){
+
+            // dispatch start event if meeting not in progress
+            if (!recording_data["meeting_in_progress"]){
+                _this.dispatchStart();
+            }
+            
+        });
+        
         this.toggleState();
         this.stateHandler();
         this.setLocalStorage();
@@ -711,42 +898,15 @@ class RecordIcon extends Icon{
         this.icon_disable_path = "static/images/record_disabled.svg";
     }
 
-    checkRecordingActiveOnAnotherTab(cb){
-        var _status = true;
+    registerEvents(){
 
-        chrome.runtime.sendMessage({msg: "tab_info"}, function(response){
+        var _this =  this;
+        window.addEventListener("triggerStart", function(event){
+            _this.handleClick();
+        });
 
-            var data = response.data;
-
-            chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
-                var current_tab_id = tabs[0].id;
-
-                if (data.hasOwnProperty("tabId")){
-                    var tabId = data["tabId"];
-                    var meeting_in_progress = data["meeting_in_progress"];
-
-                    if (tabId !== current_tab_id){
-
-                        if (meeting_in_progress){
-                            _status = true;
-                            cb(_status);
-                        }
-                        else{
-                            _status = false;
-                            cb(_status);
-                        }
-                    }
-                    else{
-                        _status = false;
-                        cb(_status);
-                    }
-                }
-                else{
-                    _status = false;
-                    cb(_status);
-                }
-
-            });
+        window.addEventListener("triggerStop", function(event){
+            _this.handleClick();
         });
     }
 
@@ -842,7 +1002,7 @@ class RecordIcon extends Icon{
 
     start(){
 
-        this.changeTooltipText("Stop recording");
+        this.changeTooltipText("End");
         this.meeting_started();
 
         var event = new CustomEvent("enhant-start", {});
@@ -864,13 +1024,15 @@ class RecordIcon extends Icon{
     }
 
     stop(){
-        this.changeTooltipText("Start recording");
+        // this.changeTooltipText("Start");
         this.meeting_stopped();
         this.showZipDownloadNotification();
 
-        var event = new CustomEvent("enhant-stop", {});
+        var event = new CustomEvent("stopAudioNotes", {});
         window.dispatchEvent(event);
 
+        var event = new CustomEvent("enhant-stop", {});
+        window.dispatchEvent(event);
     }
 
 
@@ -887,39 +1049,52 @@ class RecordIcon extends Icon{
         }
     }
 
+    _handleClick(){
+        var _this = this;
+        _this.toggleState();
+        _this.setLocalStorage();
+        _this.stateHandler();
+
+        // set the recording state based on icon state
+        if (_this.state == ICONSTATE.ACTIVE){
+            _this.recording = true;
+            _this.start();
+        }
+        else{
+            _this.recording = false;
+            _this.stop()
+        }
+    }
+
     handleClick(){
 
         var _this  = this;
-        this.checkRecordingActiveOnAnotherTab(function(status){
-            if (!status){
-                _this.toggleState();
-                _this.setLocalStorage();
-                _this.stateHandler();
-    
-                // set the recording state based on icon state
-                if (_this.state == ICONSTATE.ACTIVE){
-                    _this.recording = true;
-                    _this.start();
-                }
-                else{
-                    _this.recording = false;
-                    _this.stop()
-                }
+        
+        this.getRecordingStatus(function(recording_data){
+
+            if (!recording_data["meeting_in_progress"]){
+                _this._handleClick();
             }
             else{
-                var notification_html = "<div class='col-xs-2'>" +
-                "<img title='Info' height=24 width=24 src='static/images/info.svg'>" +
-                "</div>" + 
-                "<div class='col-xs-10'>"+
-                    "<span>Recording is already active on another tab. Stop the recording or close the tab to enable here.</span>" +
-                "</div>";
-    
-                var event = new CustomEvent("showNotification", {
-                    detail: {html: notification_html, timeout_in_sec: 3}
-                });
-                window.dispatchEvent(event);
+                // console.log(" recording data : ", recording_data);
+                if(recording_data["tabId"] !== recording_data["currentTabId"]){
+                    var notification_html = "<div class='col-xs-2'>" +
+                    "<img title='Info' height=24 width=24 src='static/images/info.svg'>" +
+                    "</div>" + 
+                    "<div class='col-xs-10'>"+
+                        "<span>Recording is already active on another tab. Stop the recording or close the tab to enable here.</span>" +
+                    "</div>";
+        
+                    var event = new CustomEvent("showNotification", {
+                        detail: {html: notification_html, timeout_in_sec: 3}
+                    });
+                    window.dispatchEvent(event);
+                }
+                else{
+                    _this._handleClick();
+                }
             }
-        });    
+        });
     }
 }
 
