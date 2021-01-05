@@ -33,20 +33,12 @@ Using the enhan(t) extension
    out and disabled.
 
 2. Click on the enhan(t) extension icon in the toolbar to activate the
-   extension. The record icon would now be blue.
+   extension. All the icons (except the icon indicating power mode) will turn blue.
 
-3. Hit the record icon to start enhan(t) and give permission to
-   microphone if asked.
+3. To start the meeting - start capturing notes using Bookmark, Screenshot or Manual Notes icon
+   or click on the record icon.
 
-4. Now you can hit the:
-
-   a. Bookmark icon to bookmark a moment
-
-   b. Camera icon to capture the screenshot of the entire tab
-
-   c. Document icon to take notes
-
-5. You can click the pencil icon to open up various annotation tools.
+4. You can click the pencil icon to open up various annotation tools.
    The functionality of different tools below:
 
    a. Pen icon to draw over the page (with color selection)
@@ -62,7 +54,7 @@ Using the enhan(t) extension
 
    f. Trash icon to delete all annotations
 
-6. Once the meeting is over, hit the animated record icon to stop
+5. Once the meeting is over, hit the animated record icon to stop
    enhan(t). A zip file containing the meeting data is downloaded in
    your default download location.
 

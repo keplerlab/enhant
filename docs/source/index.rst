@@ -25,12 +25,11 @@ enhan(t) = **enh**\ anced + **an**\ alytics + **(t)**\ oolkit
 Features
 --------
 
--  Bookmark moments (to mark an important part of the meeting along with
-   transcript)
+-  Bookmark moments (to mark an important part of the meeting)
 
 -  Capture screenshots (to take a timestamped screenshot of the tab)
 
--  Take notes (to take manual notes along with when it was taken)
+-  Take notes (to take manual notes using your voice along with when it was taken)
 
 -  Download meeting data (which contains above mentioned bookmarks,
    screenshots and notes along with meeting transcript)
@@ -75,9 +74,9 @@ But can this experience be enhanced?
 
 That is what enhan(t) is all about. By leveraging existing web based
 meeting solutions and providing a Chrome extension, the user is able to
-now take a bookmark to mark an important moment and what was spoken in
-the last 10 seconds, take screenshot of the tab with a single click and
-still provide the flexibility of taking manual notes. All of these come
+now take a bookmark to mark an important moment, take screenshot of the tab 
+with a single click and still provide the flexibility of taking manual notes
+by hand-typing it or using their voice. All of these come
 along with when these actions were taken, so that at a later point of
 time, this data could be overlaid on top of a meeting recording to
 provide a lot more context to the important parts of the meeting. This

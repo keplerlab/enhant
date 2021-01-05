@@ -7,7 +7,7 @@ This mode of the extension gives additional functionalities to power users when 
 
 Once the transcription service is installed and run, one can click the settings icon in the extension toolbar, check ‘Enable Power Mode’ and hit ‘Apply’ to activate the Power mode.
 
-.. figure:: ../images/power_mode_settings.png
+.. figure:: ../images/power_mode_settings_v2.png
   :width: 70%
   :alt: enhan(t) Chrome extension settings - 'Enable Power Mode' checked
   :align: center
@@ -16,7 +16,7 @@ Once the transcription service is installed and run, one can click the settings 
 
 A lightning icon will now appear in the toolbar, signifying that the Power mode is active.
 
-.. figure:: ../images/power_mode_toolbar.png
+.. figure:: ../images/power_mode_toolbar_v2.png
   :width: 70%
   :alt: enhan(t) Chrome extension - Power mode icon active in the toolbar
   :align: center

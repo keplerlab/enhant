@@ -11,7 +11,7 @@ To install the enhan(t) extension:
 #.  Click the ‘Add to Chrome’ button. You would be able to see the enhan(t) icon in your toolbar.
 #.  When you open a Zoom, MS Teams or Jitsi meeting, you will find the enhan(t) toolbar on the top right of your tab.
 
-.. figure:: ./images/basic_mode_toolbar.png
+.. figure:: ./images/basic_mode_toolbar_v2.png
   :width: 70%
   :alt: enhan(t) Chrome extension toolbar on the top right of your tab
   :align: center
