@@ -1,12 +1,18 @@
-# Basics
+# enhan(t) Meeting Power Tool
+
+## Resources
+* Homepage and Reference: https://enhant.readthedocs.io/en/latest/
+* Chrome webstore link for plugin: [here](https://chrome.google.com/webstore/detail/enhant-meeting-power-tool/fohcdemnkddkfcbheibnjhnpfliemnfg)
+
+## Basics
 
 enhan(t) is an open source toolkit which enables you to enhance the web experience of existing video conferencing solutions like Zoom, MS Teams and Jitsi. It allows normal users to get an enhanced meeting experience by allowing one to bookmark moments, capture screenshots and take notes and view them in context with the meeting recording. It also enables power users to get NLP (Natural Language Processing) powered meeting metrics like engagement and sentiment. Moreover, it can provide extract questions which were asked during the meeting and when.
 
-# Etymology
+## Etymology
 
 enhan(t) = **enh**anced + **an**alytics + **(t)**oolkit
 
-# Features
+## Features
 
 1. Bookmark moments (to mark an important part of the meeting along with transcript)
 1. Capture screenshots (to take a timestamped screenshot of the tab)
@@ -19,12 +25,12 @@ enhan(t) = **enh**anced + **an**alytics + **(t)**oolkit
 1. Get host side transcription (via microphone) in the Basic mode and both host and guest side transcription (via tab audio) in the Power mode (with the companion docker compose application)
 1. View meeting data in a comprehensive dashboard
 
-# Parts of enhan(t)
+## Parts of enhan(t)
 * Chrome extension
 * Transcription Service and CLI
 * enhan(t) meeting data viewer
 
-## Chrome Extension
+### Chrome Extension
 Then enhan(t) Chrome extension is the minimum requirement to get started with enhan(t) in a meaningful way.  It allows basic users to enhance the meetings conducted in Zoom, MS Teams or Jitsi on the Chrome browser. It enables users to:
 * Bookmark moments (capture the timestamp of the moment along with the last 10 seconds of host side transcription)
 * Capture screenshots (take the screenshot of the visible tab area along with the timestamp)
@@ -38,14 +44,14 @@ The extension can provide more data if used in Power mode alongside the companio
 * Meeting metrics like engagement and sentiment and the questions asked during the meeting, can be extracted by processing the meeting data zip file using the CLI.
 
 
-# Running Enhant
+## Running Enhant
 
 1. Clone repo 
 ```
 git clone https://github.com/keplerlab/enhant.git
 ```
 
-#### On **Windows** to prevent line ending issues clone using this command instead
+##### On **Windows** to prevent line ending issues clone using this command instead
 ```
 git clone  https://github.com/keplerlab/enhant.git --config core.autocrlf=false
 ```
@@ -72,11 +78,11 @@ docker-compose run cli
 python enhant_cli_app.py analyze meeting_data/input.zip
 ```
 
-# Add certificate for localhost dev
+## Add certificate for localhost dev
 
-## Install mkcert utility 
+### Install mkcert utility 
 
-### macOS
+#### macOS
 
 On macOS, use [Homebrew](https://brew.sh/)
 
@@ -93,7 +99,7 @@ sudo port install mkcert
 sudo port install nss # if you use Firefox
 ```
 
-### Linux
+#### Linux
 
 On Linux, first install `certutil`.
 
@@ -108,7 +114,7 @@ sudo zypper install mozilla-nss-tools
 ```
 
 
-### Windows
+#### Windows
 
 On Windows, use [Chocolatey](https://chocolatey.org)
 
@@ -128,7 +134,7 @@ or build from source (requires Go 1.10+), or use [the pre-built binaries](https:
 If you're running into permission problems try running `mkcert` as an Administrator.
 
 
-## Install local certificate authority using mkcert
+### Install local certificate authority using mkcert
 
 ```
 $ mkcert -install
@@ -137,7 +143,7 @@ The local CA is now installed in the system trust store! ⚡️
 The local CA is now installed in the Firefox trust store (requires browser restart)! 🦊
 ```
 
-## Create new certificate using mkcert 
+### Create new certificate using mkcert 
 ```
 $ cd certificates-and-credentials
 $ mkcert -key-file key.pem -cert-file cert.pem localhost 127.0.0.1 ::1
@@ -155,7 +161,7 @@ The certificate is at "cert.pem" and the key at "key.pem" ✅
 ```
 
 
-### Attributions
+## Attributions
 1. For offline speech to text we use vosk-server https://github.com/alphacep/vosk-server which in turn uses Kaldi and Vosk-API.
 2. For sentiment analysis we use pre-trained sentiment model provided by flair library, https://github.com/flairNLP/flair library. 
 3. For correction of text punctuations we use fastpunct https://github.com/notAI-tech/fastPunct library.
