@@ -4,6 +4,7 @@ var backend_obj = new BackendHandler();
 // TODO: connect to backend (should be moved to power mode);
 // backend_obj.connectToBackend();
 
+
 function isEmpty(obj){
     for(var prop in obj) {
         if(obj.hasOwnProperty(prop)) {
@@ -376,6 +377,27 @@ chrome.runtime.onMessage.addListener(
                 });
             });
         }
+
+        if (request.msg == "save_selected_text"){
+
+            var d_type = "notes";
+
+            var obj_to_add = enhant_local_storage_obj.generate_data_obj(request.data);
+            enhant_local_storage_obj.save(d_type, obj_to_add, function(data){
+                console.log("Local storage updated with obj : ", obj_to_add);
+
+                chrome.runtime.sendMessage({
+                    cmd: "selected_text_saved", 
+                    data: request.data
+                });
+
+                var response = {data:obj_to_add, status: true};
+
+                sendResponse(response);
+                
+            });
+        }
+
         return true;
     }
 );

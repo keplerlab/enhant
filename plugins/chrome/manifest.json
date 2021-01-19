@@ -1,57 +1,56 @@
 {
-    "manifest_version": 2,
-  
-    "name": "enhan(t) Meeting Power Tool",
-    "description": "Bookmark moments, capture screenshots, take notes and annotate during your meetings. Get transcript, meeting metrics and questions.",
-    "version": "0.2.3",
-    "icons": {
+  "manifest_version": 2,
+
+  "name": "enhan(t) Meeting Power Tool",
+  "description": "Bookmark moments, capture screenshots, take notes and annotate during your meetings. Get transcript, meeting metrics and questions.",
+  "version": "0.2.3",
+  "icons": {
+    "16": "static/images/logo-16.png",
+    "32": "static/images/logo-32.png",
+    "48": "static/images/logo-48.png",
+    "128":"static/images/logo-128.png"
+  },
+  "browser_action": {
+    "default_icon": {
       "16": "static/images/logo-16.png",
       "32": "static/images/logo-32.png",
       "48": "static/images/logo-48.png",
       "128":"static/images/logo-128.png"
-    },
-    "browser_action": {
-      "default_icon": {
-        "16": "static/images/logo-16.png",
-        "32": "static/images/logo-32.png",
-        "48": "static/images/logo-48.png",
-        "128":"static/images/logo-128.png"
-      }
-    },
-    "options_page": "options.html",
-    "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
-    "background": {
-      "scripts": ["config.js", "load_settings_in_storage.js",
-        "jszip/fileSaver.js" ,"jszip/jszip.js" , "jszip/jszip-utils.js", 
-        "utilities.js" , "socket.js" ,"backend.js" , "local_storage.js", "message_handler_bg.js", 
-        "background.js", "loadcontent.js"],
+    }
+  },
+  "options_page": "options.html",
+  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
+  "background": {
+    "scripts": ["config.js", "load_settings_in_storage.js",
+      "jszip/fileSaver.js" ,"jszip/jszip.js" , "jszip/jszip-utils.js", "jspdf/jspdf.min.js",
+      "utilities.js" , "socket.js" ,"backend.js" , "local_storage.js", "message_handler_bg.js", 
+      "background.js", "loadcontent.js"],
+    "persistent": true
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["notifyPageloaded.js"],
       "persistent": true
-    },
-    "content_scripts": [
-      {
-        "matches": ["<all_urls>"],
-        "js": ["notifyPageloaded.js"],
-        "persistent": true
-      }
-    ],
-    "web_accessible_resources": ["static/css/jquery-ui.css", "config.js", "popup.html", "iframe2.html"],
-    "permissions": [
-      "webNavigation",
-      "declarativeContent",
-      "tabs",
-      "tabCapture",
-      "downloads",
-      "storage",
-      "<all_urls>"
-    ],
-    "commands": {
-      "take-note": {
-        "suggested_key": {
-          "default": "Ctrl+Shift+I",
-          "mac": "Command+Shift+I"
-        },
-        "description": "Take Note"
-      }
+    }
+  ],
+  "web_accessible_resources": ["static/css/jquery-ui.css", "config.js", "popup.html", "iframe2.html"],
+  "permissions": [
+    "webNavigation",
+    "declarativeContent",
+    "tabs",
+    "tabCapture",
+    "downloads",
+    "storage",
+    "<all_urls>"
+  ],
+  "commands": {
+    "take-note": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+I",
+        "mac": "Command+Shift+I"
+      },
+      "description": "Take Note"
     }
   }
-  
+}

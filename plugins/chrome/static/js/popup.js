@@ -24,6 +24,23 @@ function powermodeIconHandler(data){
     }
 }
 
+// msg for plugin activated
+const _PLUGIN_ACTIVATED = "plugin_activated";
+var _MEETING_IN_PROGRESS = false;
+
+function sendPluginActivatedInfo(plugin_activated){
+
+    var iframe_to_parent_msg =  {
+        "id": "parent", 
+        "key": _PLUGIN_ACTIVATED,
+        "sender": "enhant",
+        "state": plugin_activated || false
+    }
+
+    window.parent.postMessage(iframe_to_parent_msg, "*");
+}
+
+
 // listener and variables for sending drag information to parent 
 var drag = false;
 var startX = 0;
@@ -165,11 +182,34 @@ $(document).ready(function(){
         item.addEventListener("mousedown", enhantDragMouseDown);
     })
    
-
     chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-        console.log(" Received message from browser action [Activate plugin] : ", message);
+
+        if (message.cmd == "capture_screenshot_voice"){
+
+            var icon_obj = icons_object_mapping[CaptureTabIcon.name];
+            icon_obj.handleClick();
+            sendResponse({status: true});
+        }
+
+        if (message.cmd == "selected_text_saved"){
+
+            // if meetting not started then
+            if (!_MEETING_IN_PROGRESS){
+                var event = new CustomEvent("triggerStart", {});
+                window.dispatchEvent(event);
+            }
+
+            switchToIcon({
+                "to": ExpandIcon.name,
+                "from": null
+            });
+
+            sendResponse({status: true});
+        }
     
         if (message.cmd == "activate_plugin"){
+
+            console.log(" Received message from browser action [Activate plugin] : ", message);
 
             pluginActivated = true;
 
@@ -197,6 +237,8 @@ $(document).ready(function(){
             });
     
             sendResponse({status: true});
+
+            sendPluginActivatedInfo(true);
     
         }
 
@@ -311,6 +353,9 @@ $(document).ready(function(){
             var icon_obj = icons_object_mapping[cl.name];
             icon_obj.enableIcon();
         });
+
+        _MEETING_IN_PROGRESS = false;
+
     });
 
     window.addEventListener("recordingStarted", function(event){
@@ -323,6 +368,9 @@ $(document).ready(function(){
             var icon_obj = icons_object_mapping[cl.name];
             icon_obj.disableIcon();
         });
+
+        _MEETING_IN_PROGRESS = true;
+
     });
 
     window.addEventListener("switchToIcon", function(event){

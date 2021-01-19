@@ -17,6 +17,14 @@ function imageFileName(obj){
     return date.getHours().toString() + "_" + date.getMinutes().toString() + "_" + date.getSeconds().toString();
 }
 
+function getImageFromURL(obj, callback){
+    var img = new Image();
+    img.src = obj.content;
+    img.onload = function () {
+        callback(img);
+    };
+}
+
 function getElapsedTime(start_time, end_time){
 
     var diff = end_time - start_time;
@@ -197,12 +205,61 @@ function downloadZip(cb){
             return 0;
         })
 
+        // adds a PDF file
+        // a4 size is 595 x 842 
+        var doc = new jspdf.jsPDF('p', 'pt', 'a4');
+
+        var pageWidth = 595;
+        var pageHeight = 842;
+        var pageMargin = 50;
+
+        var pageRatio = pageWidth / pageHeight;
+
+        var startX = 15;
+        var startY = 35;
+
+        var y_position_increment = 50;
+
+        // image width and height (16:9)
+        var image_width = 544;
+        var image_height = 306;
+
+        var maxLineWidth = pageWidth - 100;
+
+        var text_fontsize = 12;
+ 
+        // font size for the title
+        doc.setFontSize(20);
+
+        doc.text("Your Notes", startX, startY);
+        doc.line(startX, startY + 10, startX + 100, startY + 10);
+
+        // font size for rest of the notes
+        doc.setFontSize(text_fontsize);
 
         var notes_content = "";
         combined_data_arr.forEach(function(obj){
 
             if (obj["type"] == valid_data_types[0]){
                 notes_content += getCurrentTime(obj.time) + "\n" + obj.content + "\n\n";
+
+                var textLines = doc.splitTextToSize(obj.content, maxLineWidth);
+
+                // adds a new page if startY goes beyond pageheight
+                if ((startY + textLines.length) >= (pageHeight - pageMargin))
+                {
+                    doc.addPage();
+                    startY = 35;  // Restart height position
+                }
+
+                startY += y_position_increment;
+
+                doc.text(getCurrentTime(obj.time), startX, startY + 10);
+                
+                doc.text(textLines, startX, startY + 25);
+
+                // 12 is the fontsize
+                startY += text_fontsize * textLines.length;
             }
             else if (obj["type"] == valid_data_types[1]){
 
@@ -217,6 +274,18 @@ function downloadZip(cb){
 
                 if (!host_bookmark.length && !guest_bookmark.length){
                     notes_content += getCurrentTime(obj.time) + "\n" +obj.content[0].content + "\n\n";
+
+                    // adds a new page if startY goes beyond pageheight
+                    if (startY >= (pageHeight - pageMargin))
+                    {
+                        doc.addPage();
+                        startY = 35;  // Restart height position
+                    }
+
+                    startY += y_position_increment;
+
+                    doc.text(getCurrentTime(obj.time), startX, startY + 10);
+                    doc.text(obj.content[0].content, startX, startY + 25);
                 }
                 else {
                     
@@ -244,9 +313,24 @@ function downloadZip(cb){
             }
             else if (obj["type"] == valid_data_types[2]){
                 notes_content += getCurrentTime(obj.time) + "\n" + "images/" + imageFileName(obj) +".jpeg" + "\n\n";
+
+                 // adds a new page if startY goes beyond pageheight
+                if ((startY + image_height) >= (pageHeight - pageMargin))
+                {
+                    doc.addPage();
+                    startY = 35;  // Restart height position
+                }
+
+                startY += y_position_increment;
+                doc.text(getCurrentTime(obj.time), startX, startY + 10);
+                doc.addImage(obj.content, "JPEG", startX, startY + 25, image_width, image_height);
+
+                startY += image_height;
             }
             
-        })
+        });
+
+
 
         var transcription_data_host = arr_transcription.filter(function(obj){ return obj["origin"] == "host"});
         var transcription_data_guest = arr_transcription.filter(function(obj){ return obj["origin"] == "guest"});
@@ -267,9 +351,11 @@ function downloadZip(cb){
 
         zip.file("input.json", JSON.stringify(json_data));
        
-
         // create text file for notes
         zip.file("notes.txt", notes_content);
+
+        // creates the pdf file with the data
+        zip.file("notes.pdf", doc.output('blob'))
 
         var img = zip.folder("images");
 

@@ -314,6 +314,15 @@ $(document).ready(function(){
                     windowResizeHandler();
                 }
 
+                if (m.data.key == "plugin_activated"){
+                    if (m.data.state){
+                        registerSelectTextEvents();
+                    }
+                    else{
+                        deregisterSelectTextEvents();
+                    }
+                }
+
                 // handle mouse drag data from iframe to move iframe
                 if (m.data.key == "iframe_mouse_drag"){
 
@@ -425,5 +434,72 @@ $(document).ready(function(){
         window.addEventListener("scroll", windowScrollHandler);
     });
 });
+
+function getSelectedText(){
+    if (window.getSelection){
+        return window.getSelection().toString();
+    }
+    else{
+        return "";
+    }
+}
+
+function selectionTextListener(e){
+
+    if (e.srcElement.id == "submit-selected-text"){
+
+        var selected_text = getSelectedText();
+        chrome.runtime.sendMessage({
+                "msg": "save_selected_text", 
+                "data": selected_text
+        });
+
+        $('#submit-selected-text').remove();
+    }
+    else {
+        var selected_text = getSelectedText();
+        if (selected_text.length > 0){
+        
+            $('#submit-selected-text').remove();
+
+            var selected_text_button = $('<button>').attr({
+                type: 'button',
+                title: 'Add Note',
+                id: 'submit-selected-text'
+            }).html("Add Note").css({
+                "color": "#1E90FF",
+                "position": "absolute",
+                "height": "30px",
+                "background-color": "white",
+                "z-index": 2147483645
+            }).hide();
+
+            $(document.body).append(selected_text_button);
+
+            selected_text_button.css({
+                top: e.pageY - 30,
+                //offsets
+                left: e.pageX - 13 //offsets
+            }).fadeIn();
+        }
+        else{
+            $('#submit-selected-text').remove();
+        }
+    }
+
+    
+}
+
+function registerSelectTextEvents(){
+
+    window.addEventListener("mouseup", selectionTextListener);
+}
+
+function deregisterSelectTextEvents(){
+
+    window.removeEventListener("mouseup", selectionTextListener);
+}
+
+
 
 
