@@ -355,6 +355,9 @@ function downloadZip(cb){
         zip.file("notes.txt", notes_content);
 
         // creates the pdf file with the data
+        doc.setFontSize(10);
+        doc.setTextColor(30,144,255);
+        doc.text("Generated using enahn(t) © Kepler Lab", 200, startY + 2*y_position_increment)
         zip.file("notes.pdf", doc.output('blob'))
 
         var img = zip.folder("images");
