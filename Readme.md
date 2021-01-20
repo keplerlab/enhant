@@ -14,10 +14,11 @@ enhan(t) = **enh**anced + **an**alytics + **(t)**oolkit
 
 ## Features
 
-1. Bookmark moments (to mark an important part of the meeting along with transcript)
+1. Bookmark moments (to mark an important part of the meeting)
 1. Capture screenshots (to take a timestamped screenshot of the tab)
-1. Take notes (to take manual notes along with when it was taken)
-1. Download meeting data (which contains above mentioned bookmarks, screenshots and notes along with meeting transcript)
+1. Take notes (to take manual notes using your voice along with when it was taken)
+1. Select text on the page to add it as a note.
+1. Download meeting data (which contains above mentioned bookmarks, screenshots and notes in .txt and .pdf file along with meeting transcript)
 1. Power mode
     1. Engagement metrics
     1. Sentiment metrics

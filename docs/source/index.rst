@@ -31,8 +31,10 @@ Features
 
 -  Take notes (to take manual notes using your voice along with when it was taken)
 
+-  Select text on the page to add it as a note.
+
 -  Download meeting data (which contains above mentioned bookmarks,
-   screenshots and notes along with meeting transcript)
+   screenshots and notes in .txt and .pdf file along with meeting transcript)
 
 -  Annotate within tab
 

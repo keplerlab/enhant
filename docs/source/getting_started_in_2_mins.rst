@@ -38,7 +38,9 @@ Using the enhan(t) extension
 3. To start the meeting - start capturing notes using Bookmark, Screenshot or Manual Notes icon
    or click on the record icon.
 
-4. You can click the pencil icon to open up various annotation tools.
+4. Select the text on the page and click on "Add Note" to add selected text as a note.
+
+5. You can click the pencil icon to open up various annotation tools.
    The functionality of different tools below:
 
    a. Pen icon to draw over the page (with color selection)
@@ -54,7 +56,7 @@ Using the enhan(t) extension
 
    f. Trash icon to delete all annotations
 
-5. Once the meeting is over, hit the animated record icon to stop
+6. Once the meeting is over, hit the animated record icon to stop
    enhan(t). A zip file containing the meeting data is downloaded in
    your default download location.
 
