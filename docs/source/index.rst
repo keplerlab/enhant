@@ -17,10 +17,6 @@ extract helpful insights like engagement, sentiment and questions from
 your online video interactions. It can be used during your sales calls,
 product walkthrough, interviews and online learning as well.
 
-Etymology
----------
-
-enhan(t) = **enh**\ anced + **an**\ alytics + **(t)**\ oolkit
 
 Features
 --------
@@ -30,6 +26,8 @@ Features
 -  Capture screenshots (to take a timestamped screenshot of the tab)
 
 -  Take notes (to take manual notes using your voice along with when it was taken)
+
+-  Use voice commands such as "Take screenshot" or "Bookmark Moment" to do the same.
 
 -  Select text on the page to add it as a note.
 
@@ -49,6 +47,8 @@ Features
    -  Erase/hide annotations
 
 -  Whitelist websites to enable enhan(t) on non-default sites
+
+- Collapse / expand the toolbar as per your preference.
 
 -  Power mode
 

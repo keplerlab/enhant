@@ -1,4 +1,4 @@
-# enhan(t) Meeting Power Tool
+# enhan(t) Note Taking Power Tool
 
 ## Resources
 * Homepage and Reference: https://enhant.readthedocs.io/en/latest/
@@ -8,28 +8,27 @@
 
 enhan(t) is an open source toolkit which enables you to enhance the web experience of existing video conferencing solutions like Zoom, MS Teams and Jitsi. It allows normal users to get an enhanced meeting experience by allowing one to bookmark moments, capture screenshots and take notes and view them in context with the meeting recording. It also enables power users to get NLP (Natural Language Processing) powered meeting metrics like engagement and sentiment. Moreover, it can provide extract questions which were asked during the meeting and when.
 
-## Etymology
-
-enhan(t) = **enh**anced + **an**alytics + **(t)**oolkit
 
 ## Features
 
 1. Bookmark moments (to mark an important part of the meeting)
 1. Capture screenshots (to take a timestamped screenshot of the tab)
 1. Take notes (to take manual notes using your voice along with when it was taken)
+1. Use voice commands such as "Take screenshot" or "Bookmark Moment" to do the same.
 1. Select text on the page to add it as a note.
-1. Download meeting data (which contains above mentioned bookmarks, screenshots and notes in .txt and .pdf file along with meeting transcript)
+1. Collapse / expand the toolbar as per your preference.
+1. Download data (which contains above mentioned bookmarks, screenshots and notes in .txt and .pdf file along with transcript)
 1. Power mode
     1. Engagement metrics
     1. Sentiment metrics
     1. Extract interrogatives (find what questions were asked during the meeting and when)
 1. Get host side transcription (via microphone) in the Basic mode and both host and guest side transcription (via tab audio) in the Power mode (with the companion docker compose application)
-1. View meeting data in a comprehensive dashboard
+1. View data in a comprehensive dashboard
 
 ## Parts of enhan(t)
 * Chrome extension
 * Transcription Service and CLI
-* enhan(t) meeting data viewer
+* enhan(t) data viewer
 
 ### Chrome Extension
 Then enhan(t) Chrome extension is the minimum requirement to get started with enhan(t) in a meaningful way.  It allows basic users to enhance the meetings conducted in Zoom, MS Teams or Jitsi on the Chrome browser. It enables users to:

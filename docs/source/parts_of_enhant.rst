@@ -72,13 +72,13 @@ engagement and sentiment in the Power mode. The zip file generated in
 the power mode can be provided to the analysis CLI service to generate
 an output zip file which would have engagement and sentiment metrics.
 
-enhan(t) Meeting Data Viewer
+enhan(t) Data Viewer
 ----------------------------
 
-The enhan(t) Meeting Data Viewer where a user can view a downloaded
+The enhan(t) Data Viewer where a user can view a downloaded
 meeting data zip file in context.
 
-Once a basic mode meeting data zip file is loaded locally, the user can
+Once a basic mode data zip file is loaded locally, the user can
 view the following details along with the time:
 
 -  Meeting duration
@@ -94,10 +94,10 @@ view the following details along with the time:
 
 .. figure:: ./images/meeting_data_viewer_basic_mode.png
   :width: 70%
-  :alt: enhan(t) Meeting Data Viewer - Basic mode
+  :alt: enhan(t) Data Viewer - Basic mode
   :align: center
   
-  enhan(t) Meeting Data Viewer - Basic mode
+  enhan(t) Data Viewer - Basic mode
 
 If a power mode meeting data zip file is loaded, along with the basic
 mode details, one can also view:

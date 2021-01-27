@@ -8,12 +8,12 @@ install it is via the Chrome store.
 Installing the enhan(t) extension
 ---------------------------------
 
-1. Navigate to Chrome Webstore `enhan(t) Meeting Power
+1. Navigate to Chrome Webstore `enhan(t) Note Taking Power
    Tool <https://chrome.google.com/webstore/detail/enhant-meeting-power-tool/fohcdemnkddkfcbheibnjhnpfliemnfg>`__
    page via your Chrome browser.
 
 2. Click the ‘Add to Chrome’ button. You would be able to see the
-   ‘enhan(t) Meeting Power Tool’ extension under the ‘Extensions’ jigsaw
+   ‘enhan(t) Note Taking Power Tool’ extension under the ‘Extensions’ jigsaw
    puzzle icon in your toolbar.
 
 3. Pin the extension for easy access.
@@ -35,12 +35,16 @@ Using the enhan(t) extension
 2. Click on the enhan(t) extension icon in the toolbar to activate the
    extension. All the icons (except the icon indicating power mode) will turn blue.
 
-3. To start the meeting - start capturing notes using Bookmark, Screenshot or Manual Notes icon
+3. To start the meeting - start capturing notes using Bookmark, Screenshot or Notes icon
    or click on the record icon.
 
-4. Select the text on the page and click on "Add Note" to add selected text as a note.
+4. enhan(t) is voice enabled - Say "Take Screenshot" or "Bookmark Moment" to take a screenshot
+   and bookmark important moment respectively. You can also click on the icon as mentioned
+   in step 3.
 
-5. You can click the pencil icon to open up various annotation tools.
+5. Select the text on the page and click on "Add Note" to add selected text as a note.
+
+6. You can click the pencil icon to open up various annotation tools.
    The functionality of different tools below:
 
    a. Pen icon to draw over the page (with color selection)
@@ -56,7 +60,9 @@ Using the enhan(t) extension
 
    f. Trash icon to delete all annotations
 
-6. Once the meeting is over, hit the animated record icon to stop
+7. Collapse / Expand the toolbar as per preference.
+
+8. Once the meeting is over, hit the animated record icon to stop
    enhan(t). A zip file containing the meeting data is downloaded in
    your default download location.
 
