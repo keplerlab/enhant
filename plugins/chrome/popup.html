@@ -53,8 +53,12 @@
             margin-top: 8px;
             margin-bottom: 8px;
             display: block;
-            padding-left: 10px;
-            padding-right: 10px;
+            text-align: center;
+        }
+
+        collapsable{
+            padding-left: 0px;
+            padding-right: 0px;
         }
 
         icon[clickable], iconAnnotation[clickable]{
@@ -65,8 +69,7 @@
             margin-top: 4px;
             margin-bottom: 4px;
             display: block;
-            padding-left: 10px;
-            padding-right: 10px;
+            text-align: center;
             cursor: pointer;
         }
 
@@ -116,8 +119,8 @@
             .seven-cols .col-sm-1,
             .seven-cols .col-lg-1, 
             .seven-cols .col-xs-1 {
-                width: 14.2857142857%;
-                *width: 14.2857142857%;
+                width: 50%;
+                *width: 50%;
                 padding-left: 0px;
                 padding-right: 0px;
             }
@@ -154,8 +157,9 @@
                 <div class="col-xs-1 icon drag_enhant">
                     <icon type="LogoIcon"><img title="enhan(t) - Drag to move" height=24 width=24  src="/static/images/logo_24.svg"></icon>
                 </div>
-                <div class="col-xs-1 icon drag_enhant">
-                    <icon type="SeparatorIcon"><img title="Separator" height=24 width=24  src="/static/images/seperator_line.svg"></icon>
+
+                <div class="col-xs-1 icon">
+                    <icon type="CollapseToolbarIcon"><img title="Collpase Toolbar" height=24 width=24  src="/static/images/collapse.svg"></icon>
                 </div>
 
                 <div class="col-xs-1 icon">

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="17px" height="16px" viewBox="0 0 17 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>FIll</title>
+    <g id="Symbols" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="enhant/Icon/expand" transform="translate(-4.000000, -4.000000)" fill="#1E90FF">
+            <path d="M5.99999967,4.00000001 L5.99999967,20 L3.99999967,20 L3.99999967,4.00000001 L5.99999967,4.00000001 Z M11.9262129,6.71741953 L12.9453052,8.03510481 L9.48299967,11.142 L21,11.1428571 L21,13.1428571 L9.78899967,13.142 L13.1345461,15.7386886 L12.2016169,17.1334612 L7.05899967,13.142 L7,13.1428571 L7,11.1428571 L7.03999967,11.142 L7.02236736,11.1190646 L11.9262129,6.71741953 Z" id="FIll" transform="translate(12.500000, 12.000000) rotate(180.000000) translate(-12.500000, -12.000000) "></path>
+        </g>
+    </g>
+</svg>

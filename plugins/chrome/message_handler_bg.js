@@ -4,6 +4,16 @@ var backend_obj = new BackendHandler();
 // TODO: connect to backend (should be moved to power mode);
 // backend_obj.connectToBackend();
 
+const _CAPTURE_SCREENSHOT_STRINGS = [
+    "take screenshot",
+    "capture screenshot",
+];
+
+const _BOOKMARK_MOMENT_STRINGS = [
+    "take bookmark",
+    "bookmark moment"
+]
+
 
 function isEmpty(obj){
     for(var prop in obj) {
@@ -274,8 +284,45 @@ chrome.runtime.onMessage.addListener(
             */
             var transcription_data = request.data;
             transcriptionMessageHandler(transcription_data);
-            sendResponse({status:true});
 
+            if (transcription_data["origin"] == "host"){
+
+                var dictionary = _CAPTURE_SCREENSHOT_STRINGS.concat(_BOOKMARK_MOMENT_STRINGS);
+
+                // send a message to popup to take screenshot
+                var set = FuzzySet(dictionary);
+
+                var match_results = set.get(transcription_data["transcription"].toLowerCase());
+                if (!(match_results == null)) {
+
+                    // console.log(" ---- matched results ---- : ", match_results);
+
+                    if (match_results.length > 0){
+                        var highest_match = match_results[0];
+                        var match_score = highest_match[0];
+                        var matches_with_string = highest_match[1];
+
+                        if (match_score >= CONFIG.voice.threshold){
+
+                            console.log(_CAPTURE_SCREENSHOT_STRINGS.indexOf(matches_with_string) !== -1 ? "[[ Will take screenshot ]]": "[[ Will bookmark moment ]]");
+
+                            if (_CAPTURE_SCREENSHOT_STRINGS.indexOf(matches_with_string) !== -1) {
+                                // send a message to popup to take screenshot
+                                chrome.runtime.sendMessage({
+                                    cmd: "capture_screenshot_voice"
+                                });
+                            }
+                            else{
+                                chrome.runtime.sendMessage({
+                                    cmd: "bookmark_moment_voice"
+                                });
+                            }
+                        }
+                    }
+                }
+            }
+            
+            sendResponse({status:true});
         }
 
         if (request.msg == "transcription_realtime"){

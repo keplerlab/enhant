@@ -170,6 +170,14 @@ function createEnhantPlugin(position){
     
 }
 
+function collpaseEnhantToolbar(){
+    $("#enhant-frame-wrapper").css({"width": "85px"});
+}
+
+function expandEnhantToolbar(){
+    $("#enhant-frame-wrapper").css({"width": "380px"});
+}
+
 //handlers iframe drag
 var pageMouseX, pageMouseY;
 var frameContainerLeft = 0,frameContainerTop = 0;
@@ -321,6 +329,16 @@ $(document).ready(function(){
                     else{
                         deregisterSelectTextEvents();
                     }
+                }
+
+                if (m.data.key == "expand_toolbar"){
+                    console.log(" received message [Parent content script] : ", m);
+                    expandEnhantToolbar();
+                }
+
+                if (m.data.key == "collapse_toolbar"){
+                    console.log(" received message [Parent content script] : ", m);
+                    collpaseEnhantToolbar();
                 }
 
                 // handle mouse drag data from iframe to move iframe

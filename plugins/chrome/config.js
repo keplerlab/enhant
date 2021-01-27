@@ -12,6 +12,9 @@ const CONFIG = {
     bookmark: {
         transcription_time_in_sec: 10
     },
+    voice: {
+        threshold: 0.70
+    },
     default_whitelisted_urls: [
         "http://teams.microsoft.com",
         "http://zoom.us",

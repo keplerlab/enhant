@@ -226,6 +226,57 @@ class Icon{
     }
 }
 
+class CollapseToolbarIcon extends Icon{
+
+    constructor(){
+        super();
+
+        this.active_icon_path = "static/images/collapse.svg";
+        this.inactive_icon_path = "static/images/expand.svg";
+
+        this.icon_disable_path = "static/images/disable_collapse.svg";
+    }
+
+    toggleIcon(){
+        
+        if ((this.active_icon_path !== null) && (this.inactive_icon_path !== null)){
+            var icon_type = this.constructor.name;
+            var icon = $('icon[type="' + icon_type +'"]');
+            var icon_img = $('icon[type="' + icon_type +'"] img');
+
+            console.log(" state : ", this.state);
+
+            if (this.state == ICONSTATE.ACTIVE){
+                this.changeTooltipText("Expand Toolbar");
+                icon_img.attr("src", this.inactive_icon_path);
+            }
+            else if (this.state == ICONSTATE.INACTIVE){
+                this.changeTooltipText("Collpase Toolbar");
+                icon_img.attr("src", this.active_icon_path);
+            }
+        }
+        
+    }
+
+    handleClick(){
+        super.handleClick();
+
+        // Collpase is active
+        if (this.state == ICONSTATE.ACTIVE){
+
+            // send a message to collpase the toolbar based on the width
+            var event = new CustomEvent("collapseToolbar", {});
+            window.dispatchEvent(event);
+        }
+        // expand is active
+        else {
+            // send a message to content script to expand to full width
+            var event = new CustomEvent("expandToolbar", {});
+            window.dispatchEvent(event);
+        }
+    }
+}
+
 class NotesIcon extends Icon{
     constructor(){
         super();

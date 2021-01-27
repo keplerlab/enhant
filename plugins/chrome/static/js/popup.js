@@ -26,6 +26,7 @@ function powermodeIconHandler(data){
 
 // msg for plugin activated
 const _PLUGIN_ACTIVATED = "plugin_activated";
+var _TOOLBAR_COLLAPSED = false;
 var _MEETING_IN_PROGRESS = false;
 
 function sendPluginActivatedInfo(plugin_activated){
@@ -119,7 +120,7 @@ $(document).ready(function(){
 
     const icons = [
         LogoIcon,
-        SeparatorIcon,
+        CollapseToolbarIcon,
         NotesIcon,
         ExpandIcon,
         BookmarkIcon,
@@ -130,7 +131,18 @@ $(document).ready(function(){
         AnnotationIcon
     ];
 
-    var exceptions = [LogoIcon.name, SeparatorIcon.name];
+    const collapsable_icons = [
+        NotesIcon,
+        ExpandIcon,
+        BookmarkIcon,
+        CaptureTabIcon,
+        SettingsIcon,
+        RecordIcon,
+        PowerModeIcon,
+        AnnotationIcon
+    ]
+
+    var exceptions = [LogoIcon.name];
 
     var icons_object_mapping = {};
     var pluginActivated = false;
@@ -146,6 +158,54 @@ $(document).ready(function(){
         if (exceptions.indexOf(cl.name) == -1){
             obj.disableIcon();
         }
+    });
+
+    window.addEventListener("collapseToolbar", function(e){
+
+        const _COLLAPSE_TOOLBAR = "collapse_toolbar";
+    
+        // send iframe message
+        var iframe_to_parent_msg =  {
+            "id": "parent", 
+            "key": _COLLAPSE_TOOLBAR,
+            "sender": "enhant"
+        }
+    
+        window.parent.postMessage(iframe_to_parent_msg, "*");
+
+        // toolbar is collapsed
+        _TOOLBAR_COLLAPSED = true;
+
+        // get all icons except logo & seperators
+        collapsable_icons.forEach(function(cl){
+            var icon_html = $("icon[type='" + cl.name +"']");
+            var icon_parent_div = icon_html.parent();
+            icon_parent_div.addClass("hide");
+        });
+    });
+
+    window.addEventListener("expandToolbar", function(e){
+
+        const _EXPAND_TOOLBAR = "expand_toolbar";
+    
+        // send iframe message
+        var iframe_to_parent_msg =  {
+            "id": "parent", 
+            "key": _EXPAND_TOOLBAR,
+            "sender": "enhant"
+        }
+    
+        window.parent.postMessage(iframe_to_parent_msg, "*");
+
+        // toolbar is not collapsed
+        _TOOLBAR_COLLAPSED = false;
+
+        // get all icons except logo & seperators
+        collapsable_icons.forEach(function(cl){
+            var icon_html = $("icon[type='" + cl.name +"']");
+            var icon_parent_div = icon_html.parent();
+            icon_parent_div.removeClass("hide");
+        });
     });
 
     // send a message  to background to check if tab id is same and meeting in progress
@@ -191,6 +251,13 @@ $(document).ready(function(){
             sendResponse({status: true});
         }
 
+        if (message.cmd == "bookmark_moment_voice"){
+
+            var icon_obj = icons_object_mapping[BookmarkIcon.name];
+            icon_obj.handleClick();
+            sendResponse({status: true});
+        }
+
         if (message.cmd == "selected_text_saved"){
 
             // if meetting not started then
@@ -199,10 +266,12 @@ $(document).ready(function(){
                 window.dispatchEvent(event);
             }
 
-            switchToIcon({
-                "to": ExpandIcon.name,
-                "from": null
-            });
+            if (!_TOOLBAR_COLLAPSED){
+                switchToIcon({
+                    "to": ExpandIcon.name,
+                    "from": null
+                });
+            }
 
             sendResponse({status: true});
         }
@@ -219,7 +288,7 @@ $(document).ready(function(){
             // enable these icons
             var iconsToEnable = [
                 LogoIcon,
-                SeparatorIcon,
+                CollapseToolbarIcon,
                 RecordIcon,
                 SettingsIcon,
                 AnnotationIcon,

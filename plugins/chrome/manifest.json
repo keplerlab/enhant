@@ -1,9 +1,9 @@
 {
   "manifest_version": 2,
 
-  "name": "enhan(t) Meeting Power Tool",
+  "name": "enhan(t) Note Taking Power Tool",
   "description": "Bookmark moments, capture screenshots, take notes and annotate during your meetings. Get transcript, meeting metrics and questions.",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "icons": {
     "16": "static/images/logo-16.png",
     "32": "static/images/logo-32.png",
@@ -22,7 +22,7 @@
   "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
   "background": {
     "scripts": ["config.js", "load_settings_in_storage.js",
-      "jszip/fileSaver.js" ,"jszip/jszip.js" , "jszip/jszip-utils.js", "jspdf/jspdf.min.js",
+      "jszip/fileSaver.js" ,"jszip/jszip.js" , "jszip/jszip-utils.js", "jspdf/jspdf.min.js", "fuzzyset/fuzzyset.js",
       "utilities.js" , "socket.js" ,"backend.js" , "local_storage.js", "message_handler_bg.js", 
       "background.js", "loadcontent.js"],
     "persistent": true
