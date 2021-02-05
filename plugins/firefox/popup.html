@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+  <html>
+    <head>
+        <title>enhan(t) Note Taking Power Tool</title>
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+    
+      <!-- Latest compiled and minified JavaScript -->
+      <script src="/static/js/jquery.min.js"></script>
+     <script src="/static/js/bootstrap.min.js"></script>
+     <script src="/config.js"></script>
+     <style>
+
+        @font-face {
+            font-family: "Inter-Regular";
+            src: url('/static/fonts/Inter-Regular.otf') format("opentype");
+        }
+        @font-face {
+            font-family: "Inter-Bold";
+            src: url('/static/fonts/Inter-Bold.otf') format("opentype");
+        }
+
+        #notification{
+            font-family: "Inter-Regular" ;
+            font-size: 14px;
+            border-top: 1px dashed #8080803b;
+            
+        }
+
+        #notification-content{
+            padding: 3%;
+        }
+
+
+         ul.icon-list{
+             margin-top: 9px;
+         }
+         textarea.notes-textarea{
+             display: block;
+             margin-left: auto;
+             margin-right: auto;
+             border: 1px solid #8080803b;
+             color:  #808080b5;
+         }
+
+         .btn-custom, .btn-custom:hover, .btn-custom:active, .btn-custom:visited {
+            background-color: #1E90FF !important;
+            color: white !important;
+            font-weight: bold;
+        }    
+
+        icon, iconAnnotation{
+            margin-top: 8px;
+            margin-bottom: 8px;
+            display: block;
+            text-align: center;
+        }
+
+        collapsable{
+            padding-left: 0px;
+            padding-right: 0px;
+        }
+
+        icon[clickable], iconAnnotation[clickable]{
+            cursor: pointer;
+        }
+
+        iconPaint, iconHighlight, iconText{
+            margin-top: 4px;
+            margin-bottom: 4px;
+            display: block;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .color-icon{
+            height: 20px;
+        }
+
+        .annotation-icon{
+            height: 40px;
+        }
+
+        .icon{
+            height: 40px;
+        }
+
+        .parent-data p{
+            color:  #808080b5;
+        } 
+
+        label {
+            color:  #808080b5;
+        }
+
+        .custom-checkbox[type="checkbox"] + label:after {
+            background-color: #1E90FF !important;
+        }
+
+        .custom-checkbox[type="checkbox"]:checked + label:after {
+            background-color: white !important;
+            color: #1E90FF !important;
+        }
+
+        @media (min-width: 200px){
+            .ten-cols .col-md-1,
+            .ten-cols .col-sm-1,
+            .ten-cols .col-lg-1, 
+            .ten-cols .col-xs-1 {
+                width: 10%;
+                *width: 10%;
+                padding-left: 0px;
+                padding-right: 0px;
+            }
+        }
+
+        @media (min-width: 200px){
+            .seven-cols .col-md-1,
+            .seven-cols .col-sm-1,
+            .seven-cols .col-lg-1, 
+            .seven-cols .col-xs-1 {
+                width: 50%;
+                *width: 50%;
+                padding-left: 0px;
+                padding-right: 0px;
+            }
+        }
+
+        .pulse-ring {
+            content: '';
+            border: 0px solid #1E90FF;
+            border-radius: 50%;
+            height: 30px;
+            width: 30px;
+            animation: pulsate infinite 1s;
+        }
+
+        @-webkit-keyframes pulsate {
+            0% {
+                box-shadow: 0 0 0 0px rgba(0, 0, 0, 0.2);
+            }
+            100% {
+                box-shadow: 0 0 0 20px rgba(0, 0, 0, 0);
+            }
+        }
+
+        .drag_enhant{
+            cursor:move;
+        }
+
+     </style>
+    </head>
+    <body>
+        <div class="container-fluid" id="main" style="width:376px;height:40px;">
+
+            <div class="row ten-cols" style="height: 40px;">
+                <div class="col-xs-1 icon drag_enhant">
+                    <icon type="LogoIcon"><img title="enhan(t) - Drag to move" height=24 width=24  src="/static/images/logo_24.svg"></icon>
+                </div>
+
+                <div class="col-xs-1 icon">
+                    <icon type="CollapseToolbarIcon"><img title="Collpase Toolbar" height=24 width=24  src="/static/images/collapse.svg"></icon>
+                </div>
+
+                <div class="col-xs-1 icon">
+                    <icon type="BookmarkIcon" available_when_recording><img title="Bookmark Moment" height=18 width=14  src="/static/images/bookmark.svg"></icon>
+                </div>
+                <div class="col-xs-1 icon">
+                    <icon type="CaptureTabIcon" available_when_recording><img title="Capture Screenshot" height=18 width=20 src="/static/images/capture.svg"></icon>
+                </div>
+                <div class="col-xs-1 icon">
+                    <icon type="NotesIcon" available_when_recording><img title="Take Note" height=20 width=16 src="/static/images/notes.svg"></icon>
+                </div>
+
+                <div class="col-xs-1 icon">
+                    <icon type="RecordIcon"><img title="" height=20 width=20 src="/static/images/record.svg"></icon>
+                </div>
+
+                <div class="col-xs-1 icon">
+                    <icon type="AnnotationIcon" available_when_recording><img title="Annotation" height=20 width=20 src="/static/images/annotation.svg"></icon>
+                </div>
+
+                <div class="col-xs-1 icon">
+                    <icon type="PowerModeIcon"><img title="Power Mode OFF" height=22 width=16 src="/static/images/powermode.svg"></icon>
+                </div>
+
+                <div class="col-xs-1 icon">
+                    <icon type="SettingsIcon"><img title="Settings" height=20 width=20 src="/static/images/settings.svg"></icon>
+                </div>
+
+                <div class="col-xs-1 icon">
+                    <icon type="ExpandIcon"><img title="View/Hide History" height=7 width=11 src="/static/images/down_arrow.svg"></icon>
+                </div>
+            </div>
+        </div>
+
+        <!-- Annotation Toolbar -->
+        <div class="container-fluid">
+            <div class="row ten-cols" id="annotation-toolbar" style="display: none;">
+                <div class="col-xs-1 annotation-icon">
+                    <iconEmpty type="Empty"></iconEmpty>
+                </div>
+                <div class="col-xs-1 annotation-icon">
+                    <iconEmpty type="Empty"></iconEmpty>
+                </div>
+                <div class="col-xs-1 annotation-icon">
+                    <iconEmpty type="Empty"></iconEmpty>
+                </div>
+                <div class="col-xs-1 annotation-icon">
+                    <iconEmpty type="Empty"></iconEmpty>
+                </div>
+                <div class="col-xs-1 annotation-icon">
+                    <iconAnnotation type="PenAnnotationIcon"><img title="Pen" height=20 width=20 src="/static/images/pen_annotation.svg"></iconAnnotation>
+                </div>
+                <div class="col-xs-1 annotation-icon">
+                    <iconAnnotation type="HighlightAnnotationIcon"><img title="Highlight" height=20 width=20 src="/static/images/highlight_annotation.svg"></iconAnnotation>
+                </div>
+                <div class="col-xs-1 annotation-icon">
+                    <iconAnnotation type="TextAnnotationIcon"><img title="Text" height=20 width=20 src="/static/images/text_annotation.svg"></iconAnnotation>
+                </div>
+                <div class="col-xs-1 annotation-icon">
+                    <iconAnnotation type="EraseAnnotationIcon"><img title="Erase" height=20 width=20 src="/static/images/erase_annotation.svg"></iconAnnotation>
+                </div>
+                <div class="col-xs-1 annotation-icon">
+                    <iconAnnotation type="EyeAnnotationIcon"><img title="Hide Annotations" height=20 width=20 src="/static/images/eye_opened_annotation.svg"></iconAnnotation>
+                </div>
+                <div class="col-xs-1 annotation-icon">
+                    <iconAnnotation type="DeleteAnnotationIcon"><img title="Delete Annotations" height=20 width=20 src="/static/images/delete_annotation.svg"></iconAnnotation>
+                </div>
+            </div>
+        </div>
+
+        <!--Color Toolbar paint-->
+        <div class="container-fluid">
+            <div class="row ten-cols" id="color-toolbar-paint" style="display: none;">
+                <div class="col-xs-1 annotation-icon">
+                    <iconEmpty type="Empty"></iconEmpty>
+                </div>
+                <div class="col-xs-1 color-icon">
+                    <iconEmpty type="Empty"></iconEmpty>
+                </div>
+                <div class="col-xs-1 color-icon">
+                    <iconPaint value="#000000"><img style="border:2px solid #000000; border-radius: 50%; padding:1px;" title="Black" height=20 width=20 src="/static/images/paint_black.svg"></iconPaint>
+                </div>
+                <div class="col-xs-1 color-icon">
+                    <iconPaint value="#FFBB38"><img title="Yellow" height=20 width=20 src="/static/images/paint_yellow.svg"></iconPaint>
+                </div>
+                <div class="col-xs-1 color-icon">
+                    <iconPaint value="#DF1642"><img title="Red" height=20 width=20 src="/static/images/paint_red.svg"></iconPaint>
+                </div>
+                <div class="col-xs-1 color-icon">
+                    <iconPaint value="#9C0F2E"><img title="Dark Red" height=20 width=20 src="/static/images/paint_red_dark.svg"></iconPaint>
+                </div>
+                <div class="col-xs-1 color-icon">
+                    <iconPaint value="#5DC389"><img title="Green" height=20 width=20 src="/static/images/paint_success.svg"></iconPaint>
+                </div>
+                <div class="col-xs-1 color-icon">
+                    <iconPaint value="#4BA6FF"><img title="Primary" height=20 width=20 src="/static/images/paint_primary.svg"></iconPaint>
+                </div>
+                <div class="col-xs-1 color-iconn">
+                    <iconPaint value="#E6E6E6"><img title="Gray" height=20 width=20 src="/static/images/paint_gray.svg"></iconPaint>
+                </div>
+                <div class="col-xs-1 color-icon">
+                    <iconEmpty type="Empty"></iconEmpty>
+                </div>
+            </div>
+        </div>
+
+        <!--Color Toolbar highlight-->
+        <div class="container-fluid">
+            <div class="row ten-cols" id="color-toolbar-highlight" style="display: none;">
+                <div class="col-xs-1 annotation-icon">
+                    <iconEmpty type="Empty"></iconEmpty>
+                </div>
+                <div class="col-xs-1 color-icon">
+                    <iconEmpty type="Empty"></iconEmpty>
+                </div>
+                <div class="col-xs-1 color-icon">
+                    <iconHighlight value="#FFCF74"><img style="border:2px solid #FFCF74; border-radius: 50%; padding:1px;" title="Yellow Light" height=20 width=20 src="/static/images/highlight_yellow_light.svg"></iconHighlight>
+                </div>
+                <div class="col-xs-1 color-icon">
+                    <iconHighlight value="#E95C7B"><img title="Red Light" height=20 width=20 src="/static/images/highlight_red_light.svg"></iconHighlight>
+                </div>
+                <div class="col-xs-1 color-icon">
+                    <iconHighlight value="#8FC8FF"><img title="Primary Light" height=20 width=20 src="/static/images/highlight_primary_light.svg"></iconHighlight>
+                </div>
+                <div class="col-xs-1 color-icon">
+                    <iconHighlight value="#FFE4AF"><img title="Yellow Lighter" height=20 width=20 src="/static/images/highlight_yellow_lighter.svg"></iconHighlight>
+                </div>
+                <div class="col-xs-1 color-icon">
+                    <iconHighlight value="#A0BFFD"><img title="Secondary Light" height=20 width=20 src="/static/images/highlight_secondary_lighter.svg"></iconHighlight>
+                </div>
+                <div class="col-xs-1 color-icon">
+                    <iconHighlight value="#A3DDBC"><img title="Green Light" height=20 width=20 src="/static/images/highlight_success.svg"></iconHighlight>
+                </div>
+                <div class="col-xs-1 color-iconn">
+                    <iconHighlight value="#8879FC"><img title="Tertiary Light" height=20 width=20 src="/static/images/highlight_tertiary.svg"></iconHighlight>
+                </div>
+                <div class="col-xs-1 color-icon">
+                    <iconEmpty type="Empty"></iconEmpty>
+                </div>
+            </div>
+        </div>
+
+        <!--color toolbar text-->
+        <div class="container-fluid">
+            <div class="row ten-cols" id="color-toolbar-text" style="display: none;">
+                <div class="col-xs-1 annotation-icon">
+                    <iconEmpty type="Empty"></iconEmpty>
+                </div>
+                <div class="col-xs-1 color-icon">
+                    <iconEmpty type="Empty"></iconEmpty>
+                </div>
+                <div class="col-xs-1 color-icon">
+                    <iconText value="#000000"><img style="border:2px solid #000000; border-radius: 50%; padding:1px;" title="Black" height=20 width=20 src="/static/images/paint_black.svg"></iconText>
+                </div>
+                <div class="col-xs-1 color-icon">
+                    <iconText value="#FFBB38"><img title="Yellow" height=20 width=20 src="/static/images/paint_yellow.svg"></iconText>
+                </div>
+                <div class="col-xs-1 color-icon">
+                    <iconText value="#DF1642"><img title="Red" height=20 width=20 src="/static/images/paint_red.svg"></iconText>
+                </div>
+                <div class="col-xs-1 color-icon">
+                    <iconText value="#9C0F2E"><img title="Dark Red" height=20 width=20 src="/static/images/paint_red_dark.svg"></iconText>
+                </div>
+                <div class="col-xs-1 color-icon">
+                    <iconText value="#5DC389"><img title="Green" height=20 width=20 src="/static/images/paint_success.svg"></iconText>
+                </div>
+                <div class="col-xs-1 color-icon">
+                    <iconText value="#4BA6FF"><img title="Primary" height=20 width=20 src="/static/images/paint_primary.svg"></iconText>
+                </div>
+                <div class="col-xs-1 color-iconn">
+                    <iconText value="#E6E6E6"><img title="Gray" height=20 width=20 src="/static/images/paint_gray.svg"></iconText>
+                </div>
+                <div class="col-xs-1 color-icon">
+                    <iconEmpty type="Empty"></iconEmpty>
+                </div>
+            </div>
+        </div>
+        
+        <!-- notes container -->
+        <div class="row" id="notes-container" style="height:370px;display: none;">
+            <div class="col-xs-12">
+                <div class="clearfix">
+                    <textarea class="notes-textarea" id="notes-data" placeholder="Write your notes here.." style="width:344px;height:160px;"></textarea>
+                </div>
+
+                <div class="clearfix" style="margin-top:2%">
+                    <div class="col-xs-12">
+                        <div class="col-xs-4 col-xs-offset-4" style="text-align: center;">
+                            <img id="notes-voice-btn" style="cursor: pointer;" title="" height=30 width=30 src="/static/images/microphone.svg">
+                        </div>
+                    </div>
+                    
+                    <div class="col-xs-12">
+                        <div class="col-xs-4 col-xs-offset-4" style="margin-top:2%;">
+                            <span style="font-family:Inter-Regular;font-size: 14px;"><strong>Speak Now</strong></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="clearfix">
+                    <div class="col-xs-12" style="margin-top:3%;">
+                        <img width="20" height="20" src="/static/images/info.svg">
+                        <span>Press Cmd/Ctrl + Shift + I to add a note.</span>
+                    </div>
+                </div>
+                <div class="clearfix" style="margin-top: 3%;">
+                    <div class="col-xs-4 col-xs-offset-8">
+                        <button class="btn btn-custom" id="notes-submit">Add Note</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notification data -->
+        <div class="row" id="notification">
+            <div id="notification-content" class="col-xs-12">
+                <div class="col-xs-1" style="margin-top:8px">
+                    <img src="/static/images/jigsaw.svg" width="24" height="24">
+                </div>
+                <div class="col-xs-11">
+                    <div class="clearfix">
+                        <span>Can't find enhan(t)? Click on the Chrome jigsaw button to pin it.</span>
+                    </div>
+                    <div class="clearfix" style="margin-top:10px;">
+                        <span style="color: red;">Click on <img style="margin-top:-10px" src="/static/images/logo_24.svg" width="24" height="24"> icon in the Chrome toolbar to enable it</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Expanded data view here -->
+        <div class="row align-self-center" id="data-container" style="height:349px;overflow:scroll;display: none;"></div>
+        
+        <!-- Settings view here -->
+        <div class="row align-self-center" id="settings-container" style="height:196px;display: none;">
+            <div class="row">
+                <div class="col-xs-10" style="margin-left:55px;">
+
+                    <div class="form-group row" style="margin-top:4%;margin-bottom:4%;">
+                        <div class="col-xs-10">
+                            <div class="form-check">
+                              <input class="form-check-input custom-checkbox" type="checkbox" id="setting-enable-powermode">
+                              <label class="form-check-label" for="setting-enable-powermode">
+                                Enable Power Mode
+                              </label>
+                            </div>
+                        </div>
+                    </div>
+                      
+                    <div class="form-group row" style="margin-top:4%;margin-bottom:4%;">
+                        <label class="col-xs-3 col-form-label" for="lang">Language: </label>
+                        <div class="col-xs-7">
+                            <select class="form-control" id="lang">
+                                <option selected value="en-US">English (US)</option>
+                                <option value="en-IN">English (India)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group row" style="margin-top:4%;margin-bottom:4%;">
+                        <label class="col-xs-2 col-form-label" for="base-url">Server: </label>
+                        <div class="col-xs-8">
+                            <input id="setting-server-url" type="text" class="form-control" value="https://127.0.0.1">
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <div class="col-xs-5 pull-right">
+                          <button id="settings-apply-btn" type="button" class="btn btn-custom">Apply</button>
+                        </div>
+                      </div>
+                </div>
+            </div>
+        </div>
+        <script src="/static/js/iframeResizer.contentWindow.js"></script>
+        <script src="/static/js/icon.js"></script>
+        <script src="/static/js/popup.js"></script>
+    </body>
+  </html>

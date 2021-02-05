@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>enhan(t) Options</title>
+        <style>
+            @font-face {
+                font-family: "Inter-Regular";
+                src: url('static/fonts/Inter-Regular.otf') format("opentype");
+            }
+            @font-face {
+                font-family: "Inter-Bold";
+                src: url('static/fonts/Inter-Bold.otf') format("opentype");
+            }
+            @font-face {
+                font-family: "Oxygen-Regular";
+                src: url('static/fonts/Oxygen-Regular.ttf') format("opentype");
+            }
+        </style>
+        <link rel="stylesheet" href="static/css/bootstrap.min.css">
+        <link rel="stylesheet" href="static/css/enhant.css">
+
+        <script src="static/js/jquery.min.js"></script>
+        <script src="static/js/bootstrap.min.js"></script>
+    </head>
+    <body>
+        <div class="container-fluid">
+
+            <!--Header-->
+            <div class="row header">
+                <div class="col-xs-2 col-xs-offset-1 text-center">
+                    <div class="logo">
+                       <img src="static/images/logo_options.svg">
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="sidenav has-shadow">
+                     <!--Side Nav-->
+                    <div>
+                        <ul style="list-style: none;padding:0px">
+                            <li class="home-icon" style="width:100%">
+                                <div id="sidenav-home-icon" style="text-align:center;padding: 20%;background-color:#1E90FF;cursor: pointer;">
+                                    <img src="static/images/home_options.svg">
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+
+                </div>
+                <div class="col-xs-10 col-xs-offset-1 content">
+                    <!--app-->
+                    <!--Contents will render inside this-->
+                    <div id="app" class="clearfix">
+                        <div class="col-xs-12 main has-shadow">
+                            <div class="clearfix main-heading has-padding">
+                               <div class="main-heading-title inter-bold-25"><span>Whitelisted websites</span></div>
+                               <div class="main-heading-description oxygen-regular-14"><span>enhan(t) toolbar would appear on these websites</span></div>
+                            </div>
+
+                            <div class="clearfix has-padding">
+                                <div class="form-group row" style="margin-top:4%;margin-bottom:4%;">
+                                    <label class="col-xs-3 col-form-label inter-bold-21" for="add-url">Enter website: </label>
+                                    <div class="col-xs-6">
+                                        <input id="url-to-add" style="height:45px" type="text" class="form-control inter-regular-16" placeholder="http://">
+                                    </div>
+
+                                    <div class="col-xs-2">
+                                        <img style="cursor: pointer;" id="submit-url" width="32" height="32" src="static/images/check.svg">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="clearfix has-padding">
+                                <div class="has-shadow notification">
+                                    <div class="col-xs-1" style="margin-top:13px;">
+                                        <img height="20" width="20" src="static/images/info.svg">
+                                    </div>
+                                    <div class="col-xs-11" style="margin-top: 13px;">
+                                        <span class="notification-msg inter-regular-16">Microsoft Teams, Zoom, Google Meet and Jitsi platform whitelisted by default.</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="clearfix has-padding">
+                                <div class="table-responsive" style="margin-top:5%;">
+                                    <table class="table table-hover inter-regular-16">
+                                        <thead>
+                                            <tr>
+                                                <th>Website List</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="whitelisted-sites-tbody inter-regular-16">
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal -->
+            <div class="modal fade" id="myModal" role="dialog" style="display: none;">
+                <div class="modal-dialog">
+                    <!-- Modal content-->
+                    <div class="modal-content">
+                        <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Remove Site</h4>
+                        </div>
+                        <div class="modal-body">
+                        <p>enhan(t) by default supports this site. Are you sure you want to remove it?</p>
+                        </div>
+                        <div class="modal-footer">
+                        <button id="modal-submit" type="button" class="btn btn-default" data-dismiss="modal">Remove</button>
+                        </div>
+                    </div>
+                
+                </div>
+            </div>
+            
+        </div>
+
+        <script src="options.js"></script>
+    </body>
+</html>
