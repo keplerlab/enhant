@@ -116,7 +116,7 @@ Knowing the document organization will help you find and use features effectivel
    Getting started in 2 mins <getting_started_in_2_mins>
    Parts of enhan(t) <parts_of_enhant>
    Installation <getting_started>
-   Chrome Extension Usage <chrome_extension_usage>
+   Extension Usage <chrome_extension_usage>
    Analysis CLI Usage <analysis_cli_usage>
    Developer guides <developer_guides>
    Troubleshooting and FAQ <troubleshooting>

@@ -3,16 +3,16 @@
 Basic Mode
 =============================================
 
-This is the minimal mode which can run just by installing the Chrome extension. For installation instructions, see :ref:`installing_chrome_extension`.
+This is the minimal mode which can run just by installing the extension. For installation instructions, see :ref:`installing_chrome_extension` or :ref:`installing_firefox_addon`.
 
 Once the enhan(t) extension is installed, and you open a Zoom, MS Teams or Jitsi web meeting on the browser, the enhan(t) toolbar would show up.
 
 .. figure:: ../images/basic_mode_toolbar_v2.png
   :width: 70%
-  :alt: enhan(t) Chrome extension - Basic mode toolbar
+  :alt: enhan(t) extension - Basic mode toolbar
   :align: center
 
-  enhan(t) Chrome extension - Basic mode toolbar
+  enhan(t) extension - Basic mode toolbar
 
 
 
@@ -20,16 +20,16 @@ If the extension has just been installed for the first time, it would also ask f
 
 .. figure:: ../images/permissions_v2.png
   :width: 100%
-  :alt: enhan(t) Chrome extension - Permissions
+  :alt: enhan(t) extension - Permissions
   :align: center
 
-  enhan(t) Chrome extension - Permissions
+  enhan(t) extension - Permissions
 
 For Basic mode users, you can leave the 'Enable Power Mode' settings unchecked.
 
 .. figure:: ../images/basic_mode_settings_v2.png
   :width: 70%
-  :alt: enhan(t) Chrome extension settings - 'Enable Power Mode' unchecked
+  :alt: enhan(t) extension settings - 'Enable Power Mode' unchecked
   :align: center
 
   Basic mode setting - 'Enable Power Mode' unchecked
@@ -52,3 +52,5 @@ At any point in time, user can click the rightmost chevron icon to toggle the ex
    </video>
 
 The user can end the enhan(t) session by hitting the animated record icon. Once that is done, a zip file is generated which would contain all the captured meeting data. This can be unzipped and then the user can view the plain text data and images. Alternatively, one can go to the `enhan(t) Meeting Data Viewer <https://keplerlab.github.io/enhant-dashboard-viewer/>`_ and view the details of the meeting there.
+
+**For firefox - the downloaded file is of the format a5sZQRsx.zip.part. This is due to a bug in firefox** `367231 <https://bugzilla.mozilla.org/show_bug.cgi?id=367231>`__ . **Remove the .part from the downloaded file and use the zip file as it is to visualize data.**

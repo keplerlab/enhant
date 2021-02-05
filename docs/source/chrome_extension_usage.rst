@@ -1,7 +1,7 @@
 .. _chrome_extension_usage:
 
 ###############################
-Chrome Extension Usage
+Extension Usage
 ###############################
 
 .. toctree::

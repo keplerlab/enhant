@@ -3,6 +3,8 @@
 Power Mode
 ================
 
+**Note : Power mode is unavailable on firefox because of lack of support for capturing tab audio.**
+
 This mode of the extension gives additional functionalities to power users when used in conjunction with the companion transcription service. For installation of the transcription service, please refer to :ref:`installing_transcription_service_and_cli`.
 
 Once the transcription service is installed and run, one can click the settings icon in the extension toolbar, check ‘Enable Power Mode’ and hit ‘Apply’ to activate the Power mode.

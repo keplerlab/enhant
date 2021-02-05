@@ -18,11 +18,37 @@ To install the enhan(t) extension:
 
   enhan(t) Chrome extension toolbar on the top right of your tab
 
+
+.. _installing_firefox_addon:
+
+Installing the Firefox Add-on
+===============================
+
+The firefox add-on is the minimal requirement for most users to leverage enhan(t). The easiest way to install it is via the firefox add-on store.
+
+To install the enhan(t) extension:
+
+#.  Navigate to Firefox add-ons store `enhan(t) Note Taking Power Tool <https://addons.mozilla.org/en-US/firefox/addon/enhan-t-note-taking-power-tool/>`__ page via your firefox browser.
+#.  Click the ‘Add’ button. You would be able to see the enhan(t) icon in your toolbar.
+#.  When you open a Zoom, MS Teams or Jitsi meeting, you will find the enhan(t) toolbar on the top right of your tab.
+
+.. figure:: ./images/basic_mode_toolbar_firefox.png
+  :width: 70%
+  :alt: enhan(t) add-on toolbar on the top right of your tab
+  :align: center
+
+  enhan(t) add-on toolbar on the top right of your tab
+
+
 .. _installing_transcription_service_and_cli:
 
 Installing the Transcription Service and Analysis CLI (Command Line Interface)
 ==============================================================================
+
 The transcription service and analysis CLI enables the Power mode in the Chrome extension to work. It enables guest side transcription, provides engagement, sentiment and interrogatives.
+
+**Note : Power mode is unavailable on firefox because of lack of support for capturing tab audio.**
+
 The transcription service and the analysis CLI can be installed as a Docker compose application.
 To install both as application using docker application follow these instructions:
 
@@ -79,6 +105,8 @@ enhant software is supported on the following host operating systems:
 * RAM: 4GB of system memory
 * Hard disk space: 20 GB
 * Google Chrome or chromium browser
+* Firefox browser version >= 80
+
 
 **Recommended system configuration**:
 
@@ -86,3 +114,4 @@ enhant software is supported on the following host operating systems:
 * RAM: 6GB of system memory
 * Hard disk space: 30 GB
 * Google Chrome or chromium browser
+* Firefox browser version >= 80

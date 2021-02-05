@@ -5,6 +5,17 @@ Tips, Troubleshooting and FAQs
 FAQ
 =========
 
+.. _enable_speech_to_text_firefox:
+
+Speech to text does not work in firefox?
+-----------------------------------------
+
+The web speech API for firefox is not enabled out-of-the-box. To use the API :
+
+First make sure you are running Firefox Nightly newer than 72.0a1 (2019-10-22). Then type *about:config* in your address bar, search for the *media.webspeech.recognition.enable* and *media.webspeech.recognition.force_enable* preferences and make sure they are set as **true**.
+
+Refer `here <https://wiki.mozilla.org/Web_Speech_API_-_Speech_Recognition#How_can_I_use_it.3F>`__ for more details.
+
 What does offset mean in enhan(t) Dashboard Viewer? 
 -----------------------------------------------------
 

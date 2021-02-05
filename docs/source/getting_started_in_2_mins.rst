@@ -5,8 +5,8 @@ To get started with enhan(t) in the time you make your cup noodles, one
 needs to at least have the Chrome extension set up. The easiest way to
 install it is via the Chrome store.
 
-Installing the enhan(t) extension
----------------------------------
+Installing the enhan(t) extension - Chrome
+-------------------------------------------
 
 1. Navigate to Chrome Webstore `enhan(t) Note Taking Power
    Tool <https://chrome.google.com/webstore/detail/enhant-meeting-power-tool/fohcdemnkddkfcbheibnjhnpfliemnfg>`__
@@ -18,15 +18,29 @@ Installing the enhan(t) extension
 
 3. Pin the extension for easy access.
 
-Using the enhan(t) extension
-----------------------------
-
 .. raw:: html
 
    <video width="600" height="auto" controls>
       <source src="_static/getting_started_in_2_mins.mp4" type="video/mp4">
       Your browser does not support the video tag.
    </video>
+
+|
+
+
+Installing the enhan(t) add-on - Firefox
+-------------------------------------------
+
+1.  Navigate to Firefox add-ons store `enhan(t) Note Taking Power Tool <https://addons.mozilla.org/en-US/firefox/addon/enhan-t-note-taking-power-tool/>`__ page via your firefox browser.
+
+2.  Click the ‘Add’ button. You would be able to see the enhan(t) icon in your toolbar.
+
+3.  When you open a Zoom, MS Teams or Jitsi meeting, you will find the enhan(t) toolbar on the top right of your tab.
+
+**Note: Speech Web API is disabled by default on firefox. To enable it check the guide** here :ref:`enable_speech_to_text_firefox`. 
+
+Using the enhan(t) extension
+-----------------------------
 
 1. When you open a Zoom, MS Teams or Jitsi meeting, you will find the
    enhan(t) toolbar on the top right of your tab, with icons all grayed

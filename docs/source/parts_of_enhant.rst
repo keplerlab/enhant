@@ -1,7 +1,7 @@
 Parts of enhan(t)
 =================
 
--  Chrome extension [required]
+-  Browser Extension (for chrome & firefox) [required]
 
 -  Transcription Service [optional]
 
@@ -9,12 +9,12 @@ Parts of enhan(t)
 
 -  enhan(t) meeting data viewer [optional]
 
-Chrome Extension
-----------------
+Browser Extension
+------------------
 
-Then enhan(t) Chrome extension is the minimum requirement to get started
+Then enhan(t) extension is the minimum requirement to get started
 with enhan(t) in a meaningful way. It allows basic users to enhance the
-meetings conducted in Zoom, MS Teams or Jitsi on the Chrome browser. It
+meetings conducted in Zoom, MS Teams or Jitsi on the Chrome & firefox browser. It
 enables users to bookmark moments, capture screenshots (take the screenshot 
 of the visible tab area along with the timestamp), 
 take notes (take manual notes by hand-typing it or using voice along with timestamp). 
@@ -25,10 +25,10 @@ be viewed in the enhan(t) data viewer.
 
 .. figure:: ./images/basic_mode_toolbar_v2.png
   :width: 70%
-  :alt: enhan(t) Chrome extension - Basic mode toolbar
+  :alt: enhan(t) extension - Basic mode toolbar
   :align: center
 
-  enhan(t) Chrome extension - Basic mode toolbar
+  enhan(t) extension - Basic mode toolbar
 
 The annotation tools in the extension can be used during presentations
 to convey ones point across in a better way. It can also be used for
@@ -46,12 +46,18 @@ Additionally, meeting metrics like engagement and sentiment is also provided.
 Post the call, all the questions asked during the meeting can be extracted via
 interrogative analysis.
 
+
+
 .. figure:: ./images/power_mode_toolbar_v2.png
   :width: 70%
-  :alt: enhan(t) Chrome extension - Power mode toolbar
+  :alt: enhan(t) extension - Power mode toolbar
   :align: center
   
-  enhan(t) Chrome extension - Power mode toolbar
+  enhan(t) extension - Power mode toolbar
+
+**Note : Power mode is unavailable on firefox because of lack of support for capturing tab audio.**
+
+|
 
 Transcription Service
 ---------------------
