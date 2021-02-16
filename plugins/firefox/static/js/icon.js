@@ -286,6 +286,7 @@ class NotesIcon extends Icon{
         this.submit_btn_id = "notes-submit";
 
         this.voice_btn_id = "notes-voice-btn";
+        this.voice_btn_text_id = "notes-voice-icn-text";
         this.voice_active = false;
 
         this.active_icon_path = "static/images/notes.svg";
@@ -300,10 +301,12 @@ class NotesIcon extends Icon{
     }
 
     stopAnimation(){
+        $('#' + this.voice_btn_text_id).text("Tap to speak");
         $('#' + this.voice_btn_id).removeClass("pulse-ring");
     }
 
     startAnimation(){
+        $('#' + this.voice_btn_text_id).text("Tap to stop");
         $('#' + this.voice_btn_id).addClass("pulse-ring");
     }
 
@@ -410,11 +413,11 @@ class NotesIcon extends Icon{
     }
 
     generateNote(obj){
-
-        return "<div class='parent-data row' style='margin-left:10%;padding-top:2%;padding-bottom:2%;align-items:center;display:flex;'>" + 
+        return "<div class='parent-data row' style='margin-left:4%;padding-top:2%;padding-bottom:2%;align-items:center;display:flex;'>" + 
         "<div class='col-xs-1'><img src='static/images/notes.svg'></div>" +
         "<div class='col-xs-7'><p style='margin-top:auto;margin-bottom:auto;'>" + obj.content + "</p>" + "</div>" +
-        "<div class='col-xs-3 align-self-center' style='color:#808080b5;'>" + this.getCurrentTime(obj.time) + "</div>" +
+        "<div class='col-xs-2 align-self-center' style='color:#808080b5;margin-left:10px;padding-left:0px;'>" + this.getCurrentTime(obj.time) + "</div>" +
+        "<div class='delete-note' timestamp='" + obj.time +"' style='padding-left:0px;cursor:pointer;' class='col-xs-1'><img width=25 src='static/images/trash.svg'></div>" +
         "<div>";
     }
 
@@ -529,10 +532,11 @@ class BookmarkIcon extends Icon{
 
         p_html += "</p>";
 
-        return "<div class='parent-data row' style='margin-left:10%;padding-top:2%;padding-bottom:2%;align-items:center;display:flex;'>" + 
+        return "<div class='parent-data row' style='margin-left:4%;padding-top:2%;padding-bottom:2%;align-items:center;display:flex;'>" + 
         "<div class='col-xs-1'><img src='static/images/bookmark.svg'></div>" +
         "<div class='col-xs-7'>" + p_html + "</div>" +
-        "<div class='col-xs-3 align-self-center' style='color:#808080b5;'>" + this.getCurrentTime(obj.time) + "</div>" +
+        "<div class='col-xs-2 align-self-center' style='color:#808080b5;margin-left:10px;padding-left:0px;'>" + this.getCurrentTime(obj.time) + "</div>" +
+        "<div class='delete-note' timestamp='" + obj.time +"' style='padding-left:0px;cursor:pointer;' class='col-xs-1'><img width=25 src='static/images/trash.svg'></div>" +
         "<div>";
     }
 
@@ -599,14 +603,55 @@ class BookmarkIcon extends Icon{
     }
 }
 
-class CaptureTabIcon extends Icon{
+class CameraIcon extends Icon{
 
     constructor(){
         super();
+        this.container_id = "camera-toolbar";
         this.active_icon_path = "static/images/capture.svg";
         this.inactive_icon_path = "static/images/capture_inactive.svg";
 
         this.icon_disable_path = "static/images/capture_disabled.svg";
+        this.icon_disabled_message = "Capture screenshot enabled when recording.";
+        
+        this.camera_classes = [
+            CaptureTabIcon, 
+            CaptureSelectedAreaIcon
+        ]
+
+        this.camera_icons = [];
+    }
+
+    enableIcon(){
+        super.enableIcon();
+        var _this = this;
+        this.camera_classes.forEach(function(cls){
+            var obj = new cls();
+            _this.camera_icons[cls.name] = obj;
+            obj.enableIcon();
+        });
+    }
+
+    disableIcon(){
+        super.disableIcon();
+        var _this = this;
+        this.camera_classes.forEach(function(cls){
+            var obj = new cls();
+            _this.camera_icons[cls.name] = obj;
+            obj.disableIcon();
+        });
+    }
+    
+}
+
+class CaptureTabIcon extends Icon{
+
+    constructor(){
+        super();
+        this.active_icon_path = "static/images/capture_full.svg";
+        this.inactive_icon_path = "static/images/capture_full_inactive.svg";
+
+        this.icon_disable_path = "static/images/capture_full_disabled.svg";
         this.icon_disabled_message = "Capture screenshot enabled when recording.";
     }
 
@@ -648,11 +693,11 @@ class CaptureTabIcon extends Icon{
 
     // use chrome tabcapture here
     generateCapture(obj){
-        
-        return "<div class='parent-data row' style='margin-left:10%;padding-top:2%;padding-bottom:2%;align-items:center;display:flex;'>" + 
+        return "<div class='parent-data row' style='margin-left:4%;padding-top:2%;padding-bottom:2%;align-items:center;display:flex;'>" + 
         "<div class='col-xs-1'><img src='static/images/capture.svg'></div>" +
         "<div class='col-xs-7'><img width=200px src='" + obj.content + "'></div>" +
-        "<div class='col-xs-3 align-self-center' style='color:#808080b5;'>" + this.getCurrentTime(obj.time) + "</div>" +
+        "<div class='col-xs-2 align-self-center' style='color:#808080b5;margin-left:10px;padding-left:0px;'>" + this.getCurrentTime(obj.time) + "</div>" +
+        "<div class='delete-note' timestamp='" + obj.time +"' style='padding-left:0px;cursor:pointer;' class='col-xs-1'><img width=25 src='static/images/trash.svg'></div>" +
         "<div>";
     }
     
@@ -691,6 +736,28 @@ class ExpandIcon extends Icon{
 
         this.icon_disable_path = "static/images/down_arrow_disabled.svg";
         this.icon_disabled_message = "View captured data when recording.";
+
+        this.delete_note_btn_class = "delete-note";
+    }
+
+    registerEvents(){
+        var _this = this;
+        $("#" + this.container_id).on("click", "." + this.delete_note_btn_class , function(){
+            var timestamp = $(this).attr("timestamp");
+
+            // send the timestamp to the background for deletion
+            _this.sendMessageToBackground({
+                "msg": "delete-note",
+                "data": {"timestamp": timestamp}
+            }, function(results){
+
+                if (results.status){
+                    _this.populateDataContainer();
+                }
+            });
+
+            // call populate container again
+        });
     }
 
     reset(){
@@ -702,6 +769,7 @@ class ExpandIcon extends Icon{
         var d_type = data["type"];
         var icon_html = "";
         var content_html = "";
+        var delete_html = "<div class='"+ this.delete_note_btn_class +"' timestamp='" + data.time +"' style='padding-left:0px;cursor:pointer;' class='col-xs-1'><img width=25 src='static/images/trash.svg'></div>";
 
         if (d_type == this.valid_data_types[0]){
             icon_html = "<div class='col-xs-1'><img src='static/images/notes.svg'></div>";
@@ -754,11 +822,12 @@ class ExpandIcon extends Icon{
             content_html =  "<div class='col-xs-7'><img width=200px src='" + data.content + "'></div>";
         }
         
-        return "<div class='parent-data row' style='margin-left:10%;padding-top:2%;padding-bottom:2%;align-items:center;display:flex;'>" + 
+        return "<div class='parent-data row' style='margin-left:4%;padding-top:2%;padding-bottom:2%;align-items:center;display:flex;'>" + 
         icon_html +
         content_html +
-        "<div class='col-xs-3 align-self-center' style='color:#808080b5;'>" + this.getCurrentTime(data.time) + "</div>" +
-        "<div>";
+        "<div class='col-xs-2 align-self-center' style='color:#808080b5;margin-left:10px;padding-left:0px;'>" + this.getCurrentTime(data.time) + "</div>" +
+        delete_html +
+        "<div>"; 
     }
 
     populateDataContainer(){
@@ -1734,6 +1803,46 @@ class EraseAnnotationIcon extends AnnotationIconBase{
     }
 }
 
+class CaptureSelectedAreaIcon extends AnnotationIconBase{
+
+    constructor(){
+        super();
+        this.active_icon_path = "static/images/crop.svg";
+        this.inactive_icon_path = "static/images/crop_inactive.svg";
+    }
+
+    handleClick(){
+        var _this = this;
+        super.handleClick();
+
+
+        if (_this.state == ICONSTATE.ACTIVE){
+            window.parent.postMessage(
+                {
+                    "id": "frame2", 
+                    "key": "activate_tool",
+                    "sender": "enhant",
+                    "tool_info": {
+                        "name": "CaptureSelectedArea",
+                        "data": {}
+                    }
+                }, "*")
+        }
+        else{
+            window.parent.postMessage(
+                {
+                    "id": "frame2", 
+                    "key": "deactivate_tool",
+                    "sender": "enhant",
+                    "tool_info": {
+                        "name": "CaptureSelectedArea",
+                        "data": {}
+                    }
+                }, "*")
+        }
+    }
+}
+
 
 class AnnotationIcon extends Icon{
     constructor(){
@@ -1755,7 +1864,8 @@ class AnnotationIcon extends Icon{
             EyeAnnotationIcon,
             TextAnnotationIcon,
             DeleteAnnotationIcon,
-            EraseAnnotationIcon
+            EraseAnnotationIcon,
+            CaptureSelectedAreaIcon
         ]
 
         this.default_activated_cls = SelectAnnotationIcon;
@@ -1802,6 +1912,10 @@ class AnnotationIcon extends Icon{
         var _this = this;
         $('iconAnnotation').click(function(e){
             var icon_type = $(this).attr("type");
+
+            // Hack: Enable annotationIcon as one of its sub icons is used
+            // from cameraIcon
+            _this.state = ICONSTATE.ACTIVE;
 
             var icon_obj = _this.annotation_icons[icon_type];
             _this.currently_active_icon_obj = icon_obj;
