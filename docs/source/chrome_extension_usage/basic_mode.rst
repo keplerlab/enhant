@@ -39,7 +39,7 @@ If you want to change the transcription language setting for the host side (via 
 Once the meeting has been joined, the record icon can be hit to start the enhan(t) session. The record icon will keep animating during the course of the session. The toolbar will expand to show 3 new icons – bookmark, camera and file. These icons provide the following functions:
 
 #.  Bookmark moment (bookmark icon): This allows the user to literally bookmark a moment during the meeting. A lot of times, one wants to mark a moment which seems important so that one can go back later and refer to it. This enables this feature.
-#.  Capture screenshot (camera icon): This allows the user to capture the contents displayed in the tab along with the timestamp. This allows the user to captured shared screen content, like that important slide during a presentation, along with the time.
+#.  Capture screenshot (camera icon): This allows the user to capture the contents displayed in the tab or selected area along with the timestamp. Like that important slide during a presentation or some subsection within the slide, along with the time.
 #.  Take notes (file icon): On clicking this, the user is provided with a text area where one can take notes. The user can also record notes using voice by clicking on the mic icon (speak now) in the notes section. On clicking the ‘Add Notes’ button, the notes are persisted along with the timestamp. Users at times want to add their thoughts during the meeting. This feature enables that.
 
 At any point in time, user can click the rightmost chevron icon to toggle the expansion and collapse the history of actions during the meeting. The latest action appears at the top.

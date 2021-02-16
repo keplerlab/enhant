@@ -52,13 +52,15 @@ Using the enhan(t) extension
 3. To start the meeting - start capturing notes using Bookmark, Screenshot or Notes icon
    or click on the record icon.
 
-4. enhan(t) is voice enabled - Say "Take Screenshot" or "Bookmark Moment" to take a screenshot
+4. Screenshot entire page or selected area using the toolbar under "Camera".
+
+5. enhan(t) is voice enabled - Say "Take Screenshot" or "Bookmark Moment" to take a screenshot
    and bookmark important moment respectively. You can also click on the icon as mentioned
    in step 3.
 
-5. Select the text on the page and click on "Add Note" to add selected text as a note.
+6. Select the text on the page or an image and click on "Add Note" to add selection as a note.
 
-6. You can click the pencil icon to open up various annotation tools.
+7. You can click the pencil icon to open up various annotation tools.
    The functionality of different tools below:
 
    a. Pen icon to draw over the page (with color selection)
@@ -74,9 +76,9 @@ Using the enhan(t) extension
 
    f. Trash icon to delete all annotations
 
-7. Collapse / Expand the toolbar as per preference.
+8. Collapse / Expand the toolbar as per preference.
 
-8. Once the meeting is over, hit the animated record icon to stop
+9. Once the meeting is over, hit the animated record icon to stop
    enhan(t). A zip file containing the meeting data is downloaded in
    your default download location.
 

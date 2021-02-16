@@ -6,8 +6,8 @@
 Overview
 ========
 
-enhan(t) is an open source toolkit that makes you super productive with
-the existing video conferencing solutions like Zoom, MS Teams and Jitsi.
+enhan(t) is an open source toolkit that allows smart note-kaing and 
+makes you super productive with the existing video conferencing solutions like Zoom, MS Teams and Jitsi.
 It enables you to take real time notes, bookmark important moments, and
 capture screenshots. It also helps you annotate within the opened page
 using drawing, highlighting and text overlay.
@@ -23,16 +23,18 @@ Features
 
 -  Bookmark moments (to mark an important part of the meeting)
 
--  Capture screenshots (to take a timestamped screenshot of the tab)
+-  Capture screenshots of entire screen or selected area.
 
 -  Take notes (to take manual notes using your voice along with when it was taken)
 
 -  Use voice commands such as "Take screenshot" or "Bookmark Moment" to do the same.
 
--  Select text on the page to add it as a note.
+-  Select area / text on the page to add it as a note.
 
 -  Download meeting data (which contains above mentioned bookmarks,
    screenshots and notes in .txt and .pdf file along with meeting transcript)
+
+- Delete a note from the timeline.
 
 -  Annotate within tab
 
@@ -101,7 +103,7 @@ Knowing the document organization will help you find and use features effectivel
 
 *  **Getting Started** is guide for starting enhant service in shortest amount of time. Start here if you’re new to enhant.
 
-*  **Chrome Extension Usage** are recipes for enhant users. They guide you through the steps involved in addressing use-cases key issues.
+*  **Extension Usage** are recipes for enhant users. They guide you through the steps involved in addressing use-cases key issues.
 
 *  **Developer guides** are recipes for enhant developer, who want to contribute and extend enhant functionality.
 

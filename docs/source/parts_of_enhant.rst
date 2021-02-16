@@ -91,9 +91,9 @@ view the following details along with the time:
 
 -  Bookmarks
 
--  Screenshots
+-  Screenshots : Full page or selected area.
 
--  Notes
+-  Notes: Using Voice or manually.
 
 -  Audio or video recording overlayed with bookmarks, screenshots and
    notes moments (if user uploads them)
