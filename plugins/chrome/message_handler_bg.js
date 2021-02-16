@@ -136,6 +136,44 @@ chrome.runtime.onMessage.addListener(
             );
         }
 
+        if (request.msg == "capture_tab_without_save"){
+            chrome.tabs.captureVisibleTab(
+                null,
+                {},
+                function(dataUrl)
+                {
+                    var d_type = "image";
+
+                    // save message to local storage 
+                    var obj_to_add = enhant_local_storage_obj.generate_data_obj(dataUrl);
+
+                    // add to local storage
+                    sendResponse({data:obj_to_add, status: true});
+                }
+            );
+        }
+
+        if (request.msg == "save_crop"){
+            var d_type = "image";
+
+            var cropped_image = request.data;
+
+            // save message to local storage 
+            var obj_to_add = enhant_local_storage_obj.generate_data_obj(cropped_image);
+            enhant_local_storage_obj.save(d_type, obj_to_add, function(data){
+                console.log("Local storage updated with obj : ", obj_to_add);
+
+                chrome.runtime.sendMessage({
+                    cmd: "selected_saved"
+                });
+
+                // add to local storage
+                sendResponse({status: true});
+            });
+
+            
+        }
+
         if (request.msg == "save_bookmark"){
             var d_type = "bookmark";
 
@@ -170,6 +208,16 @@ chrome.runtime.onMessage.addListener(
                 sendResponse(response);
                 
             });
+        }
+
+        if (request.msg == "delete-note"){
+
+            var timestamp = request.data.timestamp;
+
+            enhant_local_storage_obj.delete_note(timestamp, function(status, err){
+                sendResponse({status: status});
+            });
+
         }
 
         if (request.msg == "start"){
@@ -434,8 +482,7 @@ chrome.runtime.onMessage.addListener(
                 console.log("Local storage updated with obj : ", obj_to_add);
 
                 chrome.runtime.sendMessage({
-                    cmd: "selected_text_saved", 
-                    data: request.data
+                    cmd: "selected_saved"
                 });
 
                 var response = {data:obj_to_add, status: true};

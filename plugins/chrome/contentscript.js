@@ -119,7 +119,6 @@ function createIframeCanvas(){
     div.style.top = "0px";
     div.style.position = "absolute";
     div.style.zIndex = "-2147483645";
-    div.style.background = "none";
     div.style.width = "100%";
     div.style.height = "100%";
     div.appendChild(iframe2);
@@ -167,7 +166,7 @@ function createEnhantPlugin(position){
 
 
     return [iframe, div];
-    
+     
 }
 
 function collpaseEnhantToolbar(){
@@ -175,7 +174,13 @@ function collpaseEnhantToolbar(){
 }
 
 function expandEnhantToolbar(){
-    $("#enhant-frame-wrapper").css({"width": "380px"});
+    var position = $("#enhant-frame-wrapper").position();
+    if ((window.innerWidth - position.left) <= 380){
+        $("#enhant-frame-wrapper").css({"width": "380px", "left": position.left - 380});
+    }
+    else{
+        $("#enhant-frame-wrapper").css({"width": "380px"});
+    }
 }
 
 //handlers iframe drag
@@ -318,6 +323,43 @@ $(document).ready(function(){
                     
                 }
 
+                if (m.data.key == "capture_crop"){
+
+                    var crop_data = m.data.crop_data;
+
+                    // send a message to background to get the base64 image
+                    chrome.runtime.sendMessage({
+                        "msg": "capture_tab_without_save"
+                    }, function(response) {
+                        var base64_image = response.data.content;
+                        var image = new Image();
+                        image.src = base64_image;
+
+                        image.onload = function(){
+                            var canvas = document.createElement("canvas");
+
+                            var width = crop_data.width;
+                            var height = crop_data.height;
+                            var x = crop_data.x;
+                            var y = crop_data.y;
+
+                            canvas.width = width;
+                            canvas.height = height;
+
+                            var ctx = canvas.getContext("2d");
+                            ctx.drawImage(image, x, y, width * window.devicePixelRatio, height * window.devicePixelRatio, 0, 0, width, height);
+
+                            var cropped_image = canvas.toDataURL("image/png");
+
+                            // send cropped image to be saved as a note
+                            chrome.runtime.sendMessage({
+                                "msg": "save_crop",
+                                "data": cropped_image
+                            });
+                        }
+                    });
+                }
+
                 if (m.data.key == "annotation_active"){
                     windowResizeHandler();
                 }
@@ -453,37 +495,110 @@ $(document).ready(function(){
     });
 });
 
-function getSelectedText(){
+function getSelectionType(){
+
+    var range = window.getSelection().getRangeAt(0);
+    var fragment = range.cloneContents();
+    var imgs = fragment.querySelectorAll('img');
+
+    var data = {
+        "img": false,
+        "text": false
+    }
+
+    if (imgs.length > 0 ){
+        data.img = true;
+    }
+
     if (window.getSelection){
-        return window.getSelection().toString();
+        var text = window.getSelection().toString();
+        if (text.length > 0){
+            data.text = true;
+        }
     }
-    else{
-        return "";
-    }
+    
+    return data;
 }
 
 function selectionTextListener(e){
 
-    if (e.srcElement.id == "submit-selected-text"){
+    if (e.srcElement.id == "submit-selected"){
 
-        var selected_text = getSelectedText();
-        chrome.runtime.sendMessage({
-                "msg": "save_selected_text", 
-                "data": selected_text
-        });
+        var data = getSelectionType();
 
-        $('#submit-selected-text').remove();
+        if (data.img){
+            var range = window.getSelection().getRangeAt(0);
+            var DOMRect = range.getBoundingClientRect();
+            var bound = {
+                "x": parseInt(DOMRect.x * window.devicePixelRatio),
+                "y": parseInt(DOMRect.y * window.devicePixelRatio),
+                "width" : parseInt(DOMRect.width),
+                "height": parseInt(DOMRect.height)
+            }
+
+            // remove selection before taking screenshot
+            window.getSelection().removeAllRanges();
+
+            // take a screenshot after a second so deselection happens 
+            setTimeout(function(){
+                // set bound values
+                chrome.runtime.sendMessage({
+                    "msg": "capture_tab_without_save"
+                }, function(response) {
+                    var base64_image = response.data.content;
+                    var image = new Image();
+                    image.src = base64_image;
+
+                    image.onload = function(){
+                        var canvas = document.createElement("canvas");
+
+                        var width = bound.width;
+                        var height = bound.height;
+                        var x = bound.x;
+                        var y = bound.y;
+
+                        canvas.width = width;
+                        canvas.height = height;
+
+                        var ctx = canvas.getContext("2d");
+                        ctx.drawImage(image, x, y, width * window.devicePixelRatio, height * window.devicePixelRatio, 0, 0, width, height);
+
+                        var cropped_image = canvas.toDataURL("image/png");
+
+                        // send cropped image to be saved as a note
+                        chrome.runtime.sendMessage({
+                            "msg": "save_crop",
+                            "data": cropped_image
+                        });
+                    }
+                });
+            }, 1000);
+
+        }
+        else{
+            if (data.text){
+                var selected_text = window.getSelection().toString();
+                if (selected_text.length > 0){
+                    chrome.runtime.sendMessage({
+                        "msg": "save_selected_text", 
+                        "data": selected_text
+                    });
+                }
+            }
+        }
+
+        $('#submit-selected').remove();
+    
     }
     else {
-        var selected_text = getSelectedText();
-        if (selected_text.length > 0){
-        
-            $('#submit-selected-text').remove();
 
-            var selected_text_button = $('<button>').attr({
+        // check if image or text is present, rendera button
+        var data = getSelectionType();
+        if (data.img || data.text){
+            var selected_button = $('<button>').attr({
                 type: 'button',
                 title: 'Add Note',
-                id: 'submit-selected-text'
+                id: 'submit-selected'
             }).html("Add Note").css({
                 "color": "#1E90FF",
                 "position": "absolute",
@@ -492,19 +607,18 @@ function selectionTextListener(e){
                 "z-index": 2147483645
             }).hide();
 
-            $(document.body).append(selected_text_button);
-
-            selected_text_button.css({
-                top: e.pageY - 30,
-                //offsets
+            $(document.body).append(selected_button);
+            selected_button.css({
+                top: e.pageY - 30,//offsets
                 left: e.pageX - 13 //offsets
             }).fadeIn();
         }
-        else{
-            $('#submit-selected-text').remove();
-        }
-    }
 
+        else{
+            $('#submit-selected').remove();
+        }
+    
+    }
     
 }
 

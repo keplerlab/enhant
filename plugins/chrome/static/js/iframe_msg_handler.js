@@ -5,7 +5,8 @@ const AnnotationTools = [
     Eye,
     Delete,
     Text,
-    Erase
+    Erase,
+    CaptureSelectedArea
 ];
 
 

@@ -117,6 +117,38 @@ class EnhantLocalStorage{
         });
     }
 
+    delete_note(timestamp, cb){
+        var d = {
+            "key": null,
+            "data": []
+        };
+        chrome.storage.local.get([STORAGE_KEYS.notes, STORAGE_KEYS.bookmart, STORAGE_KEYS.capture], function(result){
+        
+            for (var key in result){
+                if (result.hasOwnProperty(key)){
+
+                    var arr = result[key];
+                    var index = arr.findIndex(obj => obj.time == timestamp);
+                    if (index !== -1){
+                        arr.splice(index, 1);
+
+                        d["key"] = key;
+                        d["data"] = arr;
+
+                        break;
+                    }
+                }
+            }
+
+            var new_obj = {};
+            new_obj[d.key] = d.data;
+            chrome.storage.local.set(new_obj, function () {
+                cb(true, null);
+            });
+
+        });
+    }
+
     remove_url(url, cb){
         var status = true;
         var error = null;

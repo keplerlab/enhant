@@ -124,6 +124,7 @@ $(document).ready(function(){
         NotesIcon,
         ExpandIcon,
         BookmarkIcon,
+        CameraIcon,
         CaptureTabIcon,
         SettingsIcon,
         RecordIcon,
@@ -135,7 +136,7 @@ $(document).ready(function(){
         NotesIcon,
         ExpandIcon,
         BookmarkIcon,
-        CaptureTabIcon,
+        CameraIcon,
         SettingsIcon,
         RecordIcon,
         PowerModeIcon,
@@ -258,7 +259,7 @@ $(document).ready(function(){
             sendResponse({status: true});
         }
 
-        if (message.cmd == "selected_text_saved"){
+        if (message.cmd == "selected_saved"){
 
             // if meetting not started then
             if (!_MEETING_IN_PROGRESS){
@@ -295,7 +296,7 @@ $(document).ready(function(){
                 NotesIcon,
                 ExpandIcon,
                 BookmarkIcon,
-                CaptureTabIcon,
+                CameraIcon,
             ];
             
             hideNotification();
@@ -315,23 +316,29 @@ $(document).ready(function(){
 
     function hideOtherIconWindow(icon_type){
 
-        for (const prop in icons_object_mapping){
-            if (!(prop == icon_type)){
-                var icon_obj = icons_object_mapping[prop];
+        // dont hide anything if CaptureTabIcon is clicked because CaptureIcon
+        // is an icon which works like CameraIcon and would hide itself
+        // if default behaviour is in action
+        if (icon_type !== CaptureTabIcon.name){
+            for (const prop in icons_object_mapping){
+                if (!(prop == icon_type)){
+                    var icon_obj = icons_object_mapping[prop];
+    
+                    var exception_classes = [RecordIcon.name, PowerModeIcon.name];
+    
+                    // Record Icon and powermode icon state will  only be set to inactive when the record icon is clicked
+                    if ((icon_obj.state == ICONSTATE.ACTIVE) && (exception_classes.indexOf(prop) == -1)){
 
-                var exception_classes = [RecordIcon.name, PowerModeIcon.name];
-                
-                // Record Icon and powermode icon state will  only be set to inactive when the record icon is clicked
-                if ((icon_obj.state == ICONSTATE.ACTIVE) && (exception_classes.indexOf(prop) == -1)){
-                    icon_obj.toggleState();
-                    icon_obj.setLocalStorage();
-                    icon_obj.stateHandler();
-
+                        icon_obj.toggleState();
+                        icon_obj.setLocalStorage();
+                        icon_obj.stateHandler();
+    
+                    }
+    
+                    // console.log(" icon state after hiding : ", prop, icon_obj.state);
                 }
-
-                // console.log(" icon state after hiding : ", prop, icon_obj.state);
+    
             }
-
         }
     }
 
@@ -363,7 +370,7 @@ $(document).ready(function(){
 
             var icon_obj = icons_object_mapping[icon_type];
 
-            if (icon_type == BookmarkIcon.name || icon_type == CaptureTabIcon.name){
+            if (icon_type == BookmarkIcon.name){
 
                 var exception_classes = [ExpandIcon.name, AnnotationIcon.name];
                 var exception_classes_active = exception_classes.filter(function(cls){
@@ -413,7 +420,7 @@ $(document).ready(function(){
        var iconsToEnable = [
            BookmarkIcon,
            NotesIcon,
-           CaptureTabIcon,
+           CameraIcon,
            SettingsIcon,
            AnnotationIcon
        ];
