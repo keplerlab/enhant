@@ -3,10 +3,12 @@
 ## Resources
 * Homepage and Reference: https://enhant.readthedocs.io/en/latest/
 * Chrome webstore link for plugin: [here](https://chrome.google.com/webstore/detail/enhant-meeting-power-tool/fohcdemnkddkfcbheibnjhnpfliemnfg)
+* Firefox extension link for plugin: [here]
+(https://addons.mozilla.org/en-US/firefox/addon/enhan-t-note-taking-power-tool/)
 
 ## Basics
 
-enhan(t) is an open source toolkit which enables you to enhance the web experience of existing video conferencing solutions like Zoom, MS Teams and Jitsi. It allows normal users to get an enhanced meeting experience by allowing one to bookmark moments, capture screenshots and take notes and view them in context with the meeting recording. It also enables power users to get NLP (Natural Language Processing) powered meeting metrics like engagement and sentiment. Moreover, it can provide extract questions which were asked during the meeting and when.
+enhan(t) is an open source toolkit that enhances your note taking ability on web. Users have reported considerable improvement in their productivity  during video conferencing solutions like Zoom, MS Teams and Jitsi due to effective note taking. The tools doesn't ends here. In the power mode, it enables power meeting metrics like engagement, sentiment and can even extract questions asked during the meeting along with the timestamp.
 
 
 ## Features
