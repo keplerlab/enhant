@@ -594,7 +594,9 @@ function selectionTextListener(e){
 
         // check if image or text is present, rendera button
         var data = getSelectionType();
+        $('#submit-selected').remove();
         if (data.img || data.text){
+
             var selected_button = $('<button>').attr({
                 type: 'button',
                 title: 'Add Note',
@@ -613,13 +615,7 @@ function selectionTextListener(e){
                 left: e.pageX - 13 //offsets
             }).fadeIn();
         }
-
-        else{
-            $('#submit-selected').remove();
-        }
-    
     }
-    
 }
 
 function registerSelectTextEvents(){
