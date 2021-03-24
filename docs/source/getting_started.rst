@@ -89,6 +89,10 @@ To install both as application using docker application follow these instruction
         docker-compose down
 
 
+You can also use Google Cloud Speech for Text for transcription service as an alternative.
+In most of the cases this results in better transcription accuracy. 
+For this please read the guide :ref:`use_google_cloud_for_speech_to_text_cli`. 
+
 Supported Hardware and operating system
 ========================================
 
