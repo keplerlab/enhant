@@ -66,9 +66,12 @@ The transcription service enables the speech to text conversion for the
 guest side conversations in the Power mode of the Chrome extension.
 
 The transcription service uses an open source speech recognition toolkit
-called Vosk (https://alphacephei.com/vosk/) for speech to text
-conversion by default. Alternatively, Google Cloud Speech to Text
-service could be used.
+called Vosk (https://alphacephei.com/vosk/) for speech to text conversion by default..
+One drawback of using  kaldi-vosk speech recognition is that transcribed
+text do not have any punctuations. To add punctuations to the text we use 
+`fastpunct <https://github.com/notAI-tech/fastPunct>`_ library for adding punctuations
+to the text. You can also use Google Cloud Speech to Text for transcription service as an alternative.
+For this please read the guide :ref:`use_google_cloud_for_speech_to_text_cli`. 
 
 Analysis CLI (Command Line Interface)
 -------------------------------------
@@ -77,6 +80,8 @@ The analysis CLI enables the generation of meeting metrics like
 engagement and sentiment in the Power mode. The zip file generated in
 the power mode can be provided to the analysis CLI service to generate
 an output zip file which would have engagement and sentiment metrics.
+If you want to read more about current NLP analyzers avalible in enhant CLI,
+you can read more :ref:`current-nlp-analyzers`.
 
 enhan(t) Data Viewer
 ----------------------------

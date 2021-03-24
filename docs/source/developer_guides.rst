@@ -10,3 +10,4 @@ enhan(t) Developer Guides
       How to use custom transcription service <developer_guides/how_to_use_custom_transcription_service>
       How to add or subtract NLP analyzer <developer_guides/architecture_nlp_analyzer>
       How to build documentation from source <developer_guides/build_docs_from_source>
+      How to use Google cloud for Speech to text in enhant cli <developer_guides/use_google_cloud_for_speech_to_text_cli>

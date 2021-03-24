@@ -31,6 +31,8 @@ Each of the NLP analyzers needs to follow this common input output syntax to hel
 with modularity, hence each of them take input.json with host and guest side transcriptions in .srt format 
 as input and results are written back  in processed.json file.
 
+.. _current-nlp-analyzers:
+
 Current NLP Analyzers
 ----------------------------
 
@@ -45,18 +47,23 @@ is a measure of how much is the guest or audience of your call is participating 
 So for any one sided call in which only host is speaking, engagement score is low, but in any 
 call where host and guest both sides are equally speaking, engagement is high, to calculate 
 engagement score, transcription data of both sides is used, for any given time window, engagement 
-score is calculated by a heuristic of ratio of host vs guest side transcription. 
+score is calculated by a heuristic of ratio of host vs guest side transcription.
+This analyzer is implemented with the help of `nltk library<https://www.nltk.org/>`_ and custom python
+implementation.
 
 **Question Detection**
 This module is used for finding out what are the questions being asked in a given meeting, this 
 is done by training a machine learning model (random forest) trained on nps_chat data which can
 classify whether a sentence is a question or not. 
+This analyzer is implemented with the help of `nltk library <https://www.nltk.org/>`_ , `scikit-learn <https://scikit-learn.org/>`_ 
+and custom python implementation.
 
 **Sentiment Detection**
 This module calculates sentiment score of each of the spoken sentence in meeting, In dashboard
 we can then show sentences which are outliers, means which have highly positive as well as 
 negative sentiment scores. 
-
+This analyzer is implemented with the help of pre-trained sentiment model from `flair library <https://github.com/flairNLP/flair>`_
+and `nltk library <https://www.nltk.org/>`_.
 
 Adding your own nlp analyser
 ----------------------------
