@@ -86,8 +86,8 @@ def listen_print_loop(responses, stream, parent_conn, stream_closed_flag):
         if result.result_end_time.seconds:
             result_seconds = result.result_end_time.seconds
 
-        if result.result_end_time.nanos:
-            result_nanos = result.result_end_time.nanos
+        if result.result_end_time.microseconds:
+            result_nanos = result.result_end_time.microseconds * 1000
 
         stream.result_end_time = int((result_seconds * 1000) + (result_nanos / 1000000))
 
