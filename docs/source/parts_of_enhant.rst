@@ -12,6 +12,10 @@ Parts of enhan(t)
 Browser Extension
 ------------------
 
+.. image:: ./images/enhant_arch_plugin.png
+  :width: 600px
+  :alt: browser Architecture
+
 Then enhan(t) extension is the minimum requirement to get started
 with enhan(t) in a meaningful way. It allows basic users to enhance the
 meetings conducted in Zoom, MS Teams or Jitsi on the Chrome & firefox browser. It
@@ -75,6 +79,13 @@ For this please read the guide :ref:`use_google_cloud_for_speech_to_text_cli`.
 
 Analysis CLI (Command Line Interface)
 -------------------------------------
+
+
+**Architecture NLP analyzer**
+
+.. image:: ./images/enhant_arch_analysis.png
+  :width: 600px
+  :alt: NLP Analyzer Architecture
 
 The analysis CLI enables the generation of meeting metrics like
 engagement and sentiment in the Power mode. The zip file generated in
