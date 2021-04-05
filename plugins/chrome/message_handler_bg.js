@@ -236,7 +236,7 @@ chrome.runtime.onMessage.addListener(
 
             enhant_local_storage_obj.save_basic(meeting_start)
 
-            chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+            chrome.tabs.query({ active: true}, function(tabs) {
                 chrome.tabs.sendMessage(tabs[0].id, {msg: "capture-meeting-info"}, function(response) {
                   console.log(response.status);
 
@@ -503,7 +503,7 @@ chrome.tabs.onRemoved.addListener(function(tabId, info) {
 
     chrome.storage.local.get(["tab_info"], function(result){
 
-        var tab_info = result.tab_info;
+        var tab_info = result.tab_info || {};
 
         if (!isEmpty(tab_info)){
 

@@ -309,10 +309,6 @@ class EnhantLocalStorage{
             obj[STORAGE_KEYS.enhant_position] = position_data;
             _this.save_basic(obj);
 
-            var obj = {};
-            obj[STORAGE_KEYS.tab_info] = tab_info;
-            _this.save_basic(obj);
-
         })
         
     }

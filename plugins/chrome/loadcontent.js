@@ -38,6 +38,35 @@ function urlMatchHandler(settings, data){
     if (has_valid_urls.length > 0){
         loadAllScripts(tabId);
     }
+    else {
+
+        var _enhant_local_storage_obj = new EnhantLocalStorage();
+
+        _enhant_local_storage_obj.read_multiple([STORAGE_KEYS.tab_info, STORAGE_KEYS.settings], function(result){
+
+            var settings_data = result[STORAGE_KEYS.settings];
+            var tab_info_data = result[STORAGE_KEYS.tab_info] || {"tabId": null};
+            var new_data = {};
+
+            new_data[STORAGE_KEYS.tab_info] = {
+                tabId: tab_info_data.tabId,
+                meeting_in_progress: false
+            }
+            _enhant_local_storage_obj.save_basic(new_data, function(){
+
+                combine_notes_data(
+                    function(combined_data){
+                        if (combined_data.length > 0){
+                            // download the zip
+                            downloadZip(function(){
+                                _enhant_local_storage_obj.deleteAll();
+                            });
+                        }
+                    }
+                );
+            });
+        });
+    }
 }
 
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
@@ -60,29 +89,13 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
         });
     }
 
+    if (request.msg == "get-current-tabid"){
+
+        sendResponse({
+            status: true,
+            id: sender.tab.id
+        });
+    }
+
     return true;
 });
-
-// chrome.tabs.onActivated.addListener(function(tabId, changeInfo, tab) {
-
-//     console.log(" tab ", tab);
-
-//     // If the tab changed URL:
-//     if (tab.id == tabId && changeInfo.status == "complete" && tab.status == "complete"){
-
-//         console.log(" tab onupdated called with data ", tabId, changeInfo, tab);
-
-//         // create a custom event to get data and callback func
-
-//         var event = new CustomEvent("inject-content-match-url", {
-//             detail: {
-//                 url : tab.url,
-//                 tabId: tabId,
-//                 handler_cb : urlMatchHandler
-//             }
-//         });
-//         window.dispatchEvent(event);
-
-//     }
-            
-// });

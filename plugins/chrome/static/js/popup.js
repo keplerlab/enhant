@@ -209,6 +209,26 @@ $(document).ready(function(){
         });
     });
 
+    function activateIcons(){
+        // enable these icons
+        var iconsToEnable = [
+            LogoIcon,
+            CollapseToolbarIcon,
+            RecordIcon,
+            SettingsIcon,
+            AnnotationIcon,
+            NotesIcon,
+            ExpandIcon,
+            BookmarkIcon,
+            CameraIcon,
+        ];
+
+        iconsToEnable.forEach(function(cl){
+            var icon_obj = icons_object_mapping[cl.name];
+            icon_obj.enableIcon();
+        });
+    }
+
     // send a message  to background to check if tab id is same and meeting in progress
     // this would mean a redirect happened
 
@@ -224,13 +244,21 @@ $(document).ready(function(){
                 var lastTabId = tab_info.tabId;
                 var meeting_in_progress = tab_info.meeting_in_progress;
 
-                if (lastTabId == current_tab_id){
-                    if (meeting_in_progress){
-                        var record_icon_obj = icons_object_mapping[RecordIcon.name];
-                        record_icon_obj.stateHandler();
-                        record_icon_obj.stop();
-                        record_icon_obj.enableIcon();
-                    }
+                if (meeting_in_progress){
+
+                    pluginActivated = true;
+
+                    var event = new CustomEvent("pluginActivated", {});
+                    window.dispatchEvent(event);
+
+                    activateIcons();
+                    
+                    hideNotification();
+
+                    sendPluginActivatedInfo(true);
+                    var record_icon_obj = icons_object_mapping[RecordIcon.name];
+                    record_icon_obj.handleClick();
+
                 }
             }
         });
@@ -286,29 +314,12 @@ $(document).ready(function(){
             var event = new CustomEvent("pluginActivated", {});
             window.dispatchEvent(event);
 
-            // enable these icons
-            var iconsToEnable = [
-                LogoIcon,
-                CollapseToolbarIcon,
-                RecordIcon,
-                SettingsIcon,
-                AnnotationIcon,
-                NotesIcon,
-                ExpandIcon,
-                BookmarkIcon,
-                CameraIcon,
-            ];
+            activateIcons();
             
             hideNotification();
-
-            iconsToEnable.forEach(function(cl){
-                var icon_obj = icons_object_mapping[cl.name];
-                icon_obj.enableIcon();
-            });
+            sendPluginActivatedInfo(true);
     
             sendResponse({status: true});
-
-            sendPluginActivatedInfo(true);
     
         }
 

@@ -206,23 +206,27 @@ class Icon{
         }
 
         this._getTabInfo(function(data){
-            chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
-                var current_tab_id = tabs[0].id;
 
-                recording_data["currentTabId"] = current_tab_id;
+            //send a message to get tab id
+            chrome.runtime.sendMessage({msg: "get-current-tabid"}, function(response){
+                if (response.status){
+                    recording_data["currentTabId"] = response.id;
 
-                if (data.hasOwnProperty("tabId")){
-                    var tabId = data["tabId"];
-                    var meeting_in_progress = data["meeting_in_progress"];
+                    if (data.hasOwnProperty("tabId")){
+                        var tabId = data["tabId"];
+                        var meeting_in_progress = data["meeting_in_progress"];
 
-                    recording_data["tabId"] = tabId;
-                    recording_data["meeting_in_progress"] = meeting_in_progress;
+                        recording_data["tabId"] = tabId;
+                        recording_data["meeting_in_progress"] = meeting_in_progress;
+                    }
+
+                    cb(recording_data);
                 }
-
-                cb(recording_data);
-
+                else{
+                    cb(recording_data)
+                }
             });
-        })
+        });
     }
 }
 
@@ -1054,7 +1058,7 @@ class RecordIcon extends Icon{
     startCapturingMicAudio(settings){
 
         //sends a message to the content page to capture the mic audio
-        chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
+        chrome.tabs.query({ active: true}, (tabs) => {
     
             // sends message to content script (main.js)
             chrome.tabs.sendMessage(tabs[0].id, {action: "capture_mic_start", data: settings}, function(response){
@@ -1068,7 +1072,7 @@ class RecordIcon extends Icon{
     }
 
     stopCapturingMicAudio(){
-        chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
+        chrome.tabs.query({active: true}, (tabs) => {
 
             // sends message to content script (main.js)
             chrome.tabs.sendMessage(tabs[0].id, {action: "capture_mic_stop"}, function(response){
@@ -1079,7 +1083,7 @@ class RecordIcon extends Icon{
 
     meeting_started(){
         var _this = this;
-        chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+        chrome.tabs.query({ active: true}, function(tabs) {
             var currTab = tabs[0];
             if (currTab) { 
 
@@ -1123,8 +1127,38 @@ class RecordIcon extends Icon{
 
     start(){
 
+
+        var _this = this;
         this.changeTooltipText("End");
-        this.meeting_started();
+
+        // check if recording active on another tab
+        this.getRecordingStatus(function(recording_data){
+
+            if (recording_data["meeting_in_progress"]){
+
+                if(recording_data["tabId"] !== recording_data["currentTabId"]){
+                    var notification_html = "<div class='col-xs-2'>" +
+                    "<img title='Info' height=24 width=24 src='static/images/info.svg'>" +
+                    "</div>" +
+                    "<div class='col-xs-10'>"+
+                    "<span>Recording is already active on another tab.</span>" +
+                    "</div>";
+
+                    var event = new CustomEvent("showNotification", {
+                        detail: {html: notification_html, timeout_in_sec: 3}
+                    });
+                    window.dispatchEvent(event);
+                }
+                else{
+                    _this.meeting_started();
+                }
+            }
+            else{
+                _this.meeting_started();
+            }
+
+        });
+        
 
         var event = new CustomEvent("enhant-start", {});
         window.dispatchEvent(event);
@@ -1190,32 +1224,7 @@ class RecordIcon extends Icon{
     handleClick(){
 
         var _this  = this;
-        
-        this.getRecordingStatus(function(recording_data){
-
-            if (!recording_data["meeting_in_progress"]){
-                _this._handleClick();
-            }
-            else{
-                // console.log(" recording data : ", recording_data);
-                if(recording_data["tabId"] !== recording_data["currentTabId"]){
-                    var notification_html = "<div class='col-xs-2'>" +
-                    "<img title='Info' height=24 width=24 src='static/images/info.svg'>" +
-                    "</div>" + 
-                    "<div class='col-xs-10'>"+
-                        "<span>Recording is already active on another tab. Stop the recording or close the tab to enable here.</span>" +
-                    "</div>";
-        
-                    var event = new CustomEvent("showNotification", {
-                        detail: {html: notification_html, timeout_in_sec: 3}
-                    });
-                    window.dispatchEvent(event);
-                }
-                else{
-                    _this._handleClick();
-                }
-            }
-        });
+        _this._handleClick();
     }
 }
 
