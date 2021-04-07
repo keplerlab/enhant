@@ -142,6 +142,7 @@ function createEnhantPlugin(position){
     var iframe = document.createElement('iframe');
     iframe.frameBorder = "none";
     iframe.style.width = "100%";
+    iframe.style.border = "none";
     iframe.id = FRAME_ID
     iframe.src = chrome.runtime.getURL("popup.html");
 

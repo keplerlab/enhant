@@ -236,7 +236,7 @@ chrome.runtime.onMessage.addListener(
 
             enhant_local_storage_obj.save_basic(meeting_start)
 
-            chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+            chrome.tabs.query({ active: true }, function(tabs) {
                 chrome.tabs.sendMessage(tabs[0].id, {msg: "capture-meeting-info"}, function(response) {
 
                   saveMeetingNumber(response.data, function(){
@@ -284,7 +284,7 @@ chrome.runtime.onMessage.addListener(
                     enhant_local_storage_obj.read_multiple([STORAGE_KEYS.tab_info, STORAGE_KEYS.settings], function(result){
     
                         var settings_data = result[STORAGE_KEYS.settings];
-                        var tab_info_data = result[STORAGE_KEYS.tab_info];
+                        var tab_info_data = result[STORAGE_KEYS.tab_info] || {"tabId": null};
                         var new_data = {};
                         new_data[STORAGE_KEYS.tab_info] = {
                             tabId: tab_info_data.tabId,
@@ -485,7 +485,7 @@ chrome.runtime.onMessage.addListener(
 
                 var tab_info = result[STORAGE_KEYS.tab_info];
 
-                chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+                chrome.tabs.query({active: true}, function(tabs) {
                     var current_tab_id = tabs[0].id;
                     sendResponse({
                         status: true,
@@ -530,7 +530,7 @@ chrome.tabs.onRemoved.addListener(function(tabId, info) {
 
         if (result.hasOwnProperty("tab_info")){
 
-            var tab_info = result["tab_info"];
+            var tab_info = result["tab_info"] || {};
 
             if (!isEmpty(tab_info)){
 

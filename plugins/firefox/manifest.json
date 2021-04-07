@@ -3,7 +3,7 @@
   
     "name": "enhan(t) Note Taking Power Tool",
     "description": "Bookmark moments, capture screenshots, take notes and annotate during your meetings. Get transcript, meeting metrics and questions.",
-    "version": "0.2.8",
+    "version": "0.2.9",
     "browser_specific_settings":{
       "gecko": {
         "id": "enhant@keplerlab.com",

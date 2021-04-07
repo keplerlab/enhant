@@ -209,21 +209,21 @@ class Icon{
         }
 
         this._getTabInfo(function(data){
-            console.log(" tab info finished with data : ", data);
+            chrome.runtime.sendMessage({msg: "get-current-tabid"}, function(response){
+                if (response.status){
+                    recording_data["currentTabId"] = response.id;
 
-            var current_tab_id = data.current_tab_id;
-            var tab_info = data.tab_info;
-            recording_data["currentTabId"] = current_tab_id;
+                    var d_tab_info = data["tab_info"];
+                    recording_data["tabId"] = d_tab_info["tabId"];;
+                    recording_data["meeting_in_progress"] = d_tab_info["meeting_in_progress"];;
 
-            if (tab_info.hasOwnProperty("tabId")){
-                recording_data["tabId"] = tab_info["tabId"];;
-                recording_data["meeting_in_progress"] = tab_info["meeting_in_progress"];;
-            }
-
-            console.log(" recording data : ", recording_data);
-
-            cb(recording_data);
-        })
+                    cb(recording_data);
+                }
+                else {
+                    cb(recording_data);
+                }
+            });
+        });
     }
 }
 
@@ -1123,8 +1123,36 @@ class RecordIcon extends Icon{
 
     start(){
 
+        var _this = this;
         this.changeTooltipText("End");
-        this.meeting_started();
+
+        // check if recording active on another tab
+        this.getRecordingStatus(function(recording_data){
+
+            if (recording_data["meeting_in_progress"]){
+
+                if(recording_data["tabId"] !== recording_data["currentTabId"]){
+                    var notification_html = "<div class='col-xs-2'>" +
+                    "<img title='Info' height=24 width=24 src='static/images/info.svg'>" +
+                    "</div>" +
+                    "<div class='col-xs-10'>"+
+                    "<span>Recording is already active on another tab.</span>" +
+                    "</div>";
+
+                    var event = new CustomEvent("showNotification", {
+                        detail: {html: notification_html, timeout_in_sec: 3}
+                    });
+                    window.dispatchEvent(event);
+                }
+                else{
+                    _this.meeting_started();
+                }
+            }
+            else{
+                _this.meeting_started();
+            }
+
+        });
 
         var event = new CustomEvent("enhant-start", {});
         window.dispatchEvent(event);
@@ -1190,32 +1218,7 @@ class RecordIcon extends Icon{
     handleClick(){
 
         var _this  = this;
-        
-        this.getRecordingStatus(function(recording_data){
-
-            if (!recording_data["meeting_in_progress"]){
-                _this._handleClick();
-            }
-            else{
-                // console.log(" recording data : ", recording_data);
-                if(recording_data["tabId"] !== recording_data["currentTabId"]){
-                    var notification_html = "<div class='col-xs-2'>" +
-                    "<img title='Info' height=24 width=24 src='static/images/info.svg'>" +
-                    "</div>" + 
-                    "<div class='col-xs-10'>"+
-                        "<span>Recording is already active on another tab. Stop the recording or close the tab to enable here.</span>" +
-                    "</div>";
-        
-                    var event = new CustomEvent("showNotification", {
-                        detail: {html: notification_html, timeout_in_sec: 3}
-                    });
-                    window.dispatchEvent(event);
-                }
-                else{
-                    _this._handleClick();
-                }
-            }
-        });
+        _this._handleClick();
     }
 }
 

@@ -1,3 +1,6 @@
+var valid_data_types = ["notes", "bookmark", "image", "transcription", 
+    "meeting_start_time", "meeting_number" , "conv_id", "host", "guest"];
+
 function getCurrentTime(unix_timestamp){
     var date = new Date(unix_timestamp);
 
@@ -155,11 +158,39 @@ function urlToPromise(url) {
     });
 }
 
+function combine_notes_data(cb){
+    chrome.storage.local.get(valid_data_types, function(result){
+
+        var combined_data_arr = [];
+
+        var arr_notes = result[valid_data_types[0]] || [];
+        var arr_bookmark = result[valid_data_types[1]] || [];
+        var arr_images = result[valid_data_types[2]] || [];
+
+        var arr_notes = result[valid_data_types[0]] || [];
+        arr_notes.forEach(function(obj){
+            obj["type"] = valid_data_types[0];
+            combined_data_arr.push(obj);
+        });
+
+        var arr_bookmark =  result[valid_data_types[1]] || [];
+        arr_bookmark.forEach(function(obj){
+            obj["type"] = valid_data_types[1];
+            combined_data_arr.push(obj);
+        });
+
+        var arr_images = result[valid_data_types[2]] || [];
+        arr_images.forEach(function(obj){
+            obj["type"] = valid_data_types[2];
+            combined_data_arr.push(obj);
+        });
+
+        cb(combined_data_arr);
+    });
+}
+
 function downloadZip(cb){
     var zip = new JSZip();
-
-    var valid_data_types = ["notes", "bookmark", "image", "transcription", 
-    "meeting_start_time", "meeting_number" , "conv_id", "host", "guest"];
 
     // get the notes, bookmark and image data
     chrome.storage.local.get(valid_data_types, function(result){
@@ -182,19 +213,19 @@ function downloadZip(cb){
         arr_notes.forEach(function(obj){
             obj["type"] = valid_data_types[0];
             combined_data_arr.push(obj);
-        })
+        });
 
         var arr_bookmark =  result[valid_data_types[1]] || [];
         arr_bookmark.forEach(function(obj){
             obj["type"] = valid_data_types[1];
             combined_data_arr.push(obj);
-        })
+        });
 
         var arr_images = result[valid_data_types[2]] || [];
         arr_images.forEach(function(obj){
             obj["type"] = valid_data_types[2];
             combined_data_arr.push(obj);
-        })
+        });
 
         // sort combined array in descending order
         combined_data_arr.sort(function(a, b){
@@ -203,7 +234,7 @@ function downloadZip(cb){
             if (keyA < keyB) return -1;
             if (keyA > keyB) return 1;
             return 0;
-        })
+        });
 
         // adds a PDF file
         // a4 size is 595 x 842 
@@ -238,10 +269,12 @@ function downloadZip(cb){
         doc.setFontSize(text_fontsize);
 
         var notes_content = "";
+        var markdown_content = "";
         combined_data_arr.forEach(function(obj){
 
             if (obj["type"] == valid_data_types[0]){
                 notes_content += getCurrentTime(obj.time) + "\n" + obj.content + "\n\n";
+                markdown_content += "### " + getCurrentTime(obj.time) + " ###" + "\n" + obj.content + "\n\n";
 
                 var textLines = doc.splitTextToSize(obj.content, maxLineWidth);
 
@@ -274,6 +307,7 @@ function downloadZip(cb){
 
                 if (!host_bookmark.length && !guest_bookmark.length){
                     notes_content += getCurrentTime(obj.time) + "\n" +obj.content[0].content + "\n\n";
+                    markdown_content += "### " + getCurrentTime(obj.time) + " ###" + "\n" + obj.content[0].content + "\n\n";
 
                     // adds a new page if startY goes beyond pageheight
                     if (startY >= (pageHeight - pageMargin))
@@ -290,29 +324,40 @@ function downloadZip(cb){
                 else {
                     
                     notes_content += getCurrentTime(obj.time) + "\n";
+                    markdown_content += "### " + getCurrentTime(obj.time) + " ###" + "\n";
 
                     if (host_bookmark.length){
                         notes_content +=  "Host :" ;
+                        markdown_content += "Host :" ;
+
                         host_bookmark.forEach(function(d){
                             notes_content += d.content;
+                            markdown_content += d.content;
                         });
                     }
 
                     if (guest_bookmark.length){
                         notes_content += "\n";
+                        markdown_content += "\n";
+
                         notes_content += "Guest :" ;
+                        markdown_content += "Guest :" ;
+
                         guest_bookmark.forEach(function(d){
                             notes_content += d.content;
+                            markdown_content += d.content;
                         });
                     }
 
                     notes_content += "\n\n";
+                    markdown_content += "\n\n";
 
                 }
                 
             }
             else if (obj["type"] == valid_data_types[2]){
                 notes_content += getCurrentTime(obj.time) + "\n" + "images/" + imageFileName(obj) +".jpeg" + "\n\n";
+                markdown_content += "### " + getCurrentTime(obj.time) + " ###" + "\n" + "![" + imageFileName(obj) + "]" + "(./images/" + imageFileName(obj) +".jpeg)" + "\n\n";
 
                  // adds a new page if startY goes beyond pageheight
                 if ((startY + image_height) >= (pageHeight - pageMargin))
@@ -330,11 +375,8 @@ function downloadZip(cb){
             
         });
 
-
-
         var transcription_data_host = arr_transcription.filter(function(obj){ return obj["origin"] == "host"});
         var transcription_data_guest = arr_transcription.filter(function(obj){ return obj["origin"] == "guest"});
-
 
         if (transcription_data_host.length){
             var srt_content_host = createSRTContent(transcription_data_host, meeting_start_time)
@@ -353,6 +395,7 @@ function downloadZip(cb){
        
         // create text file for notes
         zip.file("notes.txt", notes_content);
+        zip.file("notes.md", markdown_content);
 
         // creates the pdf file with the data
         doc.setFontSize(10);
