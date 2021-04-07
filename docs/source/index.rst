@@ -121,6 +121,7 @@ Knowing the document organization will help you find and use features effectivel
    Extension Usage <chrome_extension_usage>
    Analysis CLI Usage <analysis_cli_usage>
    Developer guides <developer_guides>
+   Tutorials <tutorials>
    Troubleshooting and FAQ <troubleshooting>
    API reference <reference>
 

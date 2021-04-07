@@ -82,6 +82,9 @@ Using the enhan(t) extension
    enhan(t). A zip file containing the meeting data is downloaded in
    your default download location.
 
+
+.. _viewing_meeting_data:
+
 Viewing the meeting data
 ------------------------
 
